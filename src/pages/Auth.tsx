@@ -34,13 +34,13 @@ const Auth = () => {
             console.error('Error processing referral:', err);
           }
         }
-        navigate("/");
+        navigate({ to: "/" });
       }
     });
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
-        navigate("/");
+        navigate({ to: "/" });
       }
     });
 
@@ -109,7 +109,7 @@ const Auth = () => {
 
       <div className="relative z-10 w-full max-w-md">
         <button
-          onClick={() => navigate("/")}
+          onClick={() => navigate({ to: "/" })}
           className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-6 font-pixel text-[10px]"
         >
           <ArrowLeft className="w-4 h-4" />
