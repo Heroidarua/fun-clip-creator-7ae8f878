@@ -1,21 +1,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
 
 @custom-variant dark (&:is(.dark *));
-
-/*
- * Design system definition.
- *
- * The @theme inline block maps CSS custom properties to Tailwind utility
- * classes (e.g. --color-primary -> bg-primary, text-primary).
- *
- * The :root and .dark blocks define the actual color values using oklch.
- * All colors MUST use oklch format.
- *
- * To add a new semantic color:
- * 1. Add the variable to :root (light value) and .dark (dark value)
- * 2. Register it in @theme inline as --color-<name>: var(--<name>)
- */
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
@@ -50,7 +38,7 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
+  --color-sidebar: var(--sidebar-background);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
@@ -58,84 +46,1359 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-vt323: 'VT323', monospace;
+  --font-orbitron: 'Orbitron', sans-serif;
+  --font-inter: 'Inter', sans-serif;
 }
 
-:root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.984 0.003 247.858);
-  --sidebar-foreground: oklch(0.129 0.042 264.695);
-  --sidebar-primary: oklch(0.208 0.042 265.755);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.968 0.007 247.896);
-  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
-  --sidebar-border: oklch(0.929 0.013 255.508);
-  --sidebar-ring: oklch(0.704 0.04 256.788);
+@layer base {
+  :root {
+    /* Retro Dark Background - preto puro */
+    --background: 0 0% 0%;
+    --foreground: 60 10% 95%;
+
+    /* Cards com borda pixel */
+    --card: 240 12% 8%;
+    --card-foreground: 60 10% 95%;
+
+    --popover: 240 12% 10%;
+    --popover-foreground: 60 10% 95%;
+
+    /* Primary: Vermelho arcade clássico */
+    --primary: 0 85% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary: Roxo retrô (SNES vibes) */
+    --secondary: 280 60% 25%;
+    --secondary-foreground: 60 10% 95%;
+
+    --muted: 240 10% 15%;
+    --muted-foreground: 60 5% 60%;
+
+    /* Accent: Verde neon arcade */
+    --accent: 120 80% 45%;
+    --accent-foreground: 0 0% 0%;
+
+    /* Cores extras retro */
+    --retro-cyan: 180 100% 50%;
+    --retro-yellow: 50 100% 50%;
+    --retro-magenta: 300 100% 50%;
+    --retro-orange: 30 100% 55%;
+    --retro-blue: 220 100% 60%;
+
+    --destructive: 0 70% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 10% 20%;
+    --input: 240 12% 12%;
+    --ring: 0 85% 50%;
+
+    /* Retro Gradients */
+    --gradient-hero: linear-gradient(180deg, hsl(240 15% 4%) 0%, hsl(280 30% 8%) 50%, hsl(240 15% 4%) 100%);
+    --gradient-header: linear-gradient(90deg, hsl(240 15% 6%) 0%, hsl(280 20% 10%) 50%, hsl(240 15% 6%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(240 12% 10%) 0%, hsl(280 15% 12%) 100%);
+    --gradient-button: linear-gradient(135deg, hsl(0 85% 45%) 0%, hsl(0 90% 55%) 100%);
+    --gradient-arcade: linear-gradient(180deg, hsl(280 50% 20%) 0%, hsl(240 30% 10%) 100%);
+    
+    /* Pixel glass effect */
+    --glass-bg: hsla(240 15% 8% / 0.9);
+    --glass-border: hsla(0 85% 50% / 0.3);
+    
+    /* Retro shadows with glow */
+    --shadow-elegant: 0 4px 0 hsla(0 0% 0% / 0.5), 0 8px 20px hsla(0 85% 50% / 0.2);
+    --shadow-glass: 0 0 20px hsla(0 85% 50% / 0.15), 0 0 40px hsla(280 60% 50% / 0.1);
+    --shadow-pixel: 4px 4px 0 hsla(0 0% 0% / 0.8);
+    --shadow-neon: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor;
+
+    --radius: 0.25rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  /* Light Theme - Retro Arcade Light Mode */
+  .light {
+    --background: 220 10% 85%;
+    --foreground: 220 20% 8%;
+
+    --card: 220 8% 80%;
+    --card-foreground: 220 20% 8%;
+
+    --popover: 220 8% 82%;
+    --popover-foreground: 220 20% 8%;
+
+    /* Primary: Vermelho arcade clássico - mais saturado */
+    --primary: 0 90% 38%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary: Roxo retrô (SNES vibes) */
+    --secondary: 280 40% 75%;
+    --secondary-foreground: 280 70% 18%;
+
+    --muted: 220 8% 75%;
+    --muted-foreground: 220 15% 25%;
+
+    /* Accent: Verde neon arcade - mais escuro */
+    --accent: 120 75% 28%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Cores extras retro - ajustadas para melhor contraste */
+    --retro-cyan: 180 85% 32%;
+    --retro-yellow: 45 95% 38%;
+    --retro-magenta: 300 85% 38%;
+    --retro-orange: 25 95% 42%;
+    --retro-blue: 220 95% 42%;
+
+    --destructive: 0 80% 42%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 10% 65%;
+    --input: 220 8% 78%;
+    --ring: 0 90% 38%;
+
+    /* Retro Gradients - Light */
+    --gradient-hero: linear-gradient(180deg, hsl(220 10% 85%) 0%, hsl(220 8% 80%) 50%, hsl(220 10% 85%) 100%);
+    --gradient-header: linear-gradient(90deg, hsl(220 8% 82%) 0%, hsl(280 15% 80%) 50%, hsl(220 8% 82%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(220 8% 82%) 0%, hsl(280 10% 80%) 100%);
+    --gradient-button: linear-gradient(135deg, hsl(0 90% 35%) 0%, hsl(0 95% 45%) 100%);
+    --gradient-arcade: linear-gradient(180deg, hsl(280 20% 80%) 0%, hsl(220 10% 82%) 100%);
+    
+    /* Pixel glass effect - Light */
+    --glass-bg: hsla(220 10% 85% / 0.95);
+    --glass-border: hsla(0 90% 38% / 0.4);
+    
+    /* Retro shadows - Light - mais definidas */
+    --shadow-elegant: 0 4px 0 hsla(0 0% 0% / 0.2), 0 8px 20px hsla(0 90% 38% / 0.2);
+    --shadow-glass: 0 0 20px hsla(0 90% 38% / 0.15), 0 0 40px hsla(280 60% 50% / 0.08);
+    --shadow-pixel: 4px 4px 0 hsla(0 0% 0% / 0.25);
+    --shadow-neon: 0 0 10px currentColor, 0 0 20px currentColor;
+
+    --sidebar-background: 220 8% 82%;
+    --sidebar-foreground: 220 20% 12%;
+    --sidebar-primary: 0 90% 38%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 8% 78%;
+    --sidebar-accent-foreground: 220 20% 12%;
+    --sidebar-border: 220 10% 68%;
+    --sidebar-ring: 0 90% 38%;
+  }
+
+  .dark {
+    --background: 0 0% 0%;
+    --foreground: 60 10% 95%;
+
+    --card: 240 12% 8%;
+    --card-foreground: 60 10% 95%;
+
+    --popover: 240 12% 10%;
+    --popover-foreground: 60 10% 95%;
+
+    /* Primary: Vermelho arcade clássico */
+    --primary: 0 85% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary: Roxo retrô (SNES vibes) */
+    --secondary: 280 60% 25%;
+    --secondary-foreground: 60 10% 95%;
+
+    --muted: 240 10% 15%;
+    --muted-foreground: 60 5% 60%;
+
+    /* Accent: Verde neon arcade */
+    --accent: 120 80% 45%;
+    --accent-foreground: 0 0% 0%;
+
+    /* Cores extras retro */
+    --retro-cyan: 180 100% 50%;
+    --retro-yellow: 50 100% 50%;
+    --retro-magenta: 300 100% 50%;
+    --retro-orange: 30 100% 55%;
+    --retro-blue: 220 100% 60%;
+
+    --destructive: 0 70% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 10% 20%;
+    --input: 240 12% 12%;
+    --ring: 0 85% 50%;
+
+    /* Retro Gradients */
+    --gradient-hero: linear-gradient(180deg, hsl(240 15% 4%) 0%, hsl(280 30% 8%) 50%, hsl(240 15% 4%) 100%);
+    --gradient-header: linear-gradient(90deg, hsl(240 15% 6%) 0%, hsl(280 20% 10%) 50%, hsl(240 15% 6%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(240 12% 10%) 0%, hsl(280 15% 12%) 100%);
+    --gradient-button: linear-gradient(135deg, hsl(0 85% 45%) 0%, hsl(0 90% 55%) 100%);
+    --gradient-arcade: linear-gradient(180deg, hsl(280 50% 20%) 0%, hsl(240 30% 10%) 100%);
+    
+    /* Pixel glass effect */
+    --glass-bg: hsla(240 15% 8% / 0.9);
+    --glass-border: hsla(0 85% 50% / 0.3);
+    
+    /* Retro shadows with glow */
+    --shadow-elegant: 0 4px 0 hsla(0 0% 0% / 0.5), 0 8px 20px hsla(0 85% 50% / 0.2);
+    --shadow-glass: 0 0 20px hsla(0 85% 50% / 0.15), 0 0 40px hsla(280 60% 50% / 0.1);
+    --shadow-pixel: 4px 4px 0 hsla(0 0% 0% / 0.8);
+    --shadow-neon: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor;
+
+    --sidebar-background: 240 15% 6%;
+    --sidebar-foreground: 60 10% 90%;
+    --sidebar-primary: 0 85% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 12% 12%;
+    --sidebar-accent-foreground: 60 10% 90%;
+    --sidebar-border: 240 10% 15%;
+    --sidebar-ring: 0 85% 50%;
+  }
+
+  /* Sepia Theme - Vintage/Retro Warm */
+  .sepia {
+    --background: 35 30% 88%;
+    --foreground: 30 40% 12%;
+
+    --card: 35 25% 82%;
+    --card-foreground: 30 40% 12%;
+
+    --popover: 35 25% 84%;
+    --popover-foreground: 30 40% 12%;
+
+    --primary: 25 85% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 35 30% 75%;
+    --secondary-foreground: 30 50% 20%;
+
+    --muted: 35 20% 78%;
+    --muted-foreground: 30 25% 35%;
+
+    --accent: 45 90% 42%;
+    --accent-foreground: 0 0% 100%;
+
+    --retro-cyan: 180 60% 35%;
+    --retro-yellow: 45 95% 45%;
+    --retro-magenta: 350 70% 50%;
+    --retro-orange: 25 90% 50%;
+    --retro-blue: 200 70% 45%;
+
+    --destructive: 0 75% 48%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 35 20% 70%;
+    --input: 35 22% 80%;
+    --ring: 25 85% 45%;
+
+    --gradient-hero: linear-gradient(180deg, hsl(35 30% 88%) 0%, hsl(35 25% 82%) 50%, hsl(35 30% 88%) 100%);
+    --gradient-header: linear-gradient(90deg, hsl(35 25% 85%) 0%, hsl(30 30% 82%) 50%, hsl(35 25% 85%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(35 25% 84%) 0%, hsl(30 25% 80%) 100%);
+    --gradient-button: linear-gradient(135deg, hsl(25 85% 40%) 0%, hsl(25 90% 50%) 100%);
+    --gradient-arcade: linear-gradient(180deg, hsl(30 30% 82%) 0%, hsl(35 25% 85%) 100%);
+    
+    --glass-bg: hsla(35 30% 88% / 0.95);
+    --glass-border: hsla(25 85% 45% / 0.4);
+    
+    --shadow-elegant: 0 4px 0 hsla(30 30% 20% / 0.15), 0 8px 20px hsla(25 85% 45% / 0.15);
+    --shadow-glass: 0 0 20px hsla(25 85% 45% / 0.12), 0 0 40px hsla(30 60% 50% / 0.06);
+    --shadow-pixel: 4px 4px 0 hsla(30 30% 20% / 0.25);
+    --shadow-neon: 0 0 10px currentColor, 0 0 20px currentColor;
+
+    --sidebar-background: 35 25% 84%;
+    --sidebar-foreground: 30 40% 15%;
+    --sidebar-primary: 25 85% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 35 22% 80%;
+    --sidebar-accent-foreground: 30 40% 15%;
+    --sidebar-border: 35 20% 72%;
+    --sidebar-ring: 25 85% 45%;
+  }
+
+  /* Ocean Theme - Cool Blue */
+  .ocean {
+    --background: 210 40% 12%;
+    --foreground: 200 20% 95%;
+
+    --card: 210 35% 16%;
+    --card-foreground: 200 20% 95%;
+
+    --popover: 210 35% 18%;
+    --popover-foreground: 200 20% 95%;
+
+    --primary: 195 90% 50%;
+    --primary-foreground: 210 40% 10%;
+
+    --secondary: 220 40% 25%;
+    --secondary-foreground: 200 20% 95%;
+
+    --muted: 210 30% 20%;
+    --muted-foreground: 200 15% 60%;
+
+    --accent: 170 80% 45%;
+    --accent-foreground: 0 0% 0%;
+
+    --retro-cyan: 185 100% 50%;
+    --retro-yellow: 55 100% 55%;
+    --retro-magenta: 290 90% 60%;
+    --retro-orange: 35 100% 55%;
+    --retro-blue: 210 100% 60%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 30% 25%;
+    --input: 210 35% 18%;
+    --ring: 195 90% 50%;
+
+    --gradient-hero: linear-gradient(180deg, hsl(210 40% 12%) 0%, hsl(200 35% 15%) 50%, hsl(210 40% 12%) 100%);
+    --gradient-header: linear-gradient(90deg, hsl(210 35% 14%) 0%, hsl(200 40% 18%) 50%, hsl(210 35% 14%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(210 35% 18%) 0%, hsl(200 30% 20%) 100%);
+    --gradient-button: linear-gradient(135deg, hsl(195 90% 45%) 0%, hsl(195 95% 55%) 100%);
+    --gradient-arcade: linear-gradient(180deg, hsl(200 45% 22%) 0%, hsl(210 35% 15%) 100%);
+    
+    --glass-bg: hsla(210 40% 14% / 0.9);
+    --glass-border: hsla(195 90% 50% / 0.35);
+    
+    --shadow-elegant: 0 4px 0 hsla(0 0% 0% / 0.5), 0 8px 20px hsla(195 90% 50% / 0.2);
+    --shadow-glass: 0 0 20px hsla(195 90% 50% / 0.15), 0 0 40px hsla(200 60% 50% / 0.1);
+    --shadow-pixel: 4px 4px 0 hsla(0 0% 0% / 0.7);
+    --shadow-neon: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor;
+
+    --sidebar-background: 210 35% 14%;
+    --sidebar-foreground: 200 20% 92%;
+    --sidebar-primary: 195 90% 50%;
+    --sidebar-primary-foreground: 210 40% 10%;
+    --sidebar-accent: 210 35% 20%;
+    --sidebar-accent-foreground: 200 20% 92%;
+    --sidebar-border: 210 30% 22%;
+    --sidebar-ring: 195 90% 50%;
+  }
+
+  /* Forest Theme - Green Nature */
+  .forest {
+    --background: 150 30% 10%;
+    --foreground: 120 15% 95%;
+
+    --card: 150 25% 14%;
+    --card-foreground: 120 15% 95%;
+
+    --popover: 150 25% 16%;
+    --popover-foreground: 120 15% 95%;
+
+    --primary: 140 75% 45%;
+    --primary-foreground: 0 0% 0%;
+
+    --secondary: 160 30% 22%;
+    --secondary-foreground: 120 15% 95%;
+
+    --muted: 150 20% 18%;
+    --muted-foreground: 120 10% 60%;
+
+    --accent: 80 80% 50%;
+    --accent-foreground: 0 0% 0%;
+
+    --retro-cyan: 175 90% 50%;
+    --retro-yellow: 55 100% 55%;
+    --retro-magenta: 320 85% 55%;
+    --retro-orange: 30 100% 55%;
+    --retro-blue: 200 90% 55%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 150 20% 22%;
+    --input: 150 25% 16%;
+    --ring: 140 75% 45%;
+
+    --gradient-hero: linear-gradient(180deg, hsl(150 30% 10%) 0%, hsl(140 25% 13%) 50%, hsl(150 30% 10%) 100%);
+    --gradient-header: linear-gradient(90deg, hsl(150 25% 12%) 0%, hsl(140 30% 16%) 50%, hsl(150 25% 12%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(150 25% 16%) 0%, hsl(140 20% 18%) 100%);
+    --gradient-button: linear-gradient(135deg, hsl(140 75% 40%) 0%, hsl(140 80% 50%) 100%);
+    --gradient-arcade: linear-gradient(180deg, hsl(140 35% 20%) 0%, hsl(150 25% 13%) 100%);
+    
+    --glass-bg: hsla(150 30% 12% / 0.9);
+    --glass-border: hsla(140 75% 45% / 0.35);
+    
+    --shadow-elegant: 0 4px 0 hsla(0 0% 0% / 0.5), 0 8px 20px hsla(140 75% 45% / 0.2);
+    --shadow-glass: 0 0 20px hsla(140 75% 45% / 0.15), 0 0 40px hsla(150 60% 50% / 0.1);
+    --shadow-pixel: 4px 4px 0 hsla(0 0% 0% / 0.7);
+    --shadow-neon: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor;
+
+    --sidebar-background: 150 25% 12%;
+    --sidebar-foreground: 120 15% 92%;
+    --sidebar-primary: 140 75% 45%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 150 25% 18%;
+    --sidebar-accent-foreground: 120 15% 92%;
+    --sidebar-border: 150 20% 20%;
+    --sidebar-ring: 140 75% 45%;
+  }
 }
 
-.dark {
-  --background: oklch(0.129 0.042 264.695);
-  --foreground: oklch(0.984 0.003 247.858);
-  --card: oklch(0.208 0.042 265.755);
-  --card-foreground: oklch(0.984 0.003 247.858);
-  --popover: oklch(0.208 0.042 265.755);
-  --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: oklch(0.929 0.013 255.508);
-  --primary-foreground: oklch(0.208 0.042 265.755);
-  --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: oklch(0.984 0.003 247.858);
-  --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: oklch(0.704 0.04 256.788);
-  --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: oklch(0.984 0.003 247.858);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.551 0.027 264.364);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.208 0.042 265.755);
-  --sidebar-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.279 0.041 260.031);
-  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.551 0.027 264.364);
+@layer base {
+* {
+  @apply border-border;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
+
+body {
+    @apply bg-background text-foreground font-orbitron;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  /* ===== RETRO GAMING EFFECTS ===== */
+  
+  /* Pixel border card */
+  .pixel-card {
+    background: var(--glass-bg);
+    border: 3px solid hsl(var(--primary));
+    box-shadow: var(--shadow-pixel), 0 0 15px hsl(var(--primary) / 0.3);
+    position: relative;
+  }
+  
+  .pixel-card::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    background: linear-gradient(45deg, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--retro-cyan)), hsl(var(--primary)));
+    background-size: 400% 400%;
+    z-index: -1;
+    animation: gradient-border 3s ease infinite;
+    opacity: 0.5;
+  }
+  
+  @keyframes gradient-border {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  
+  /* Classic glass card with retro twist */
+  .glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 2px solid var(--glass-border);
+    box-shadow: var(--shadow-glass), inset 0 1px 0 hsla(0 0% 100% / 0.1);
+  }
+  
+  /* Retro gradient text */
+  .gradient-text {
+    background: linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(var(--retro-yellow)) 50%, hsl(var(--primary)) 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: retro-shimmer 3s linear infinite;
+  }
+  
+  @keyframes retro-shimmer {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
+  }
+  
+  /* Scanline overlay effect */
+  .scanlines::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      hsla(0 0% 0% / 0.1) 2px,
+      hsla(0 0% 0% / 0.1) 4px
+    );
+    pointer-events: none;
+    z-index: 10;
+  }
+  
+  /* CRT flicker effect */
+  .crt-flicker {
+    animation: crt-flicker 0.15s infinite;
+  }
+  
+  @keyframes crt-flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.98; }
+  }
+  
+  /* Pixel hover lift */
+  .hover-lift {
+    transition: all 0.2s steps(4);
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-pixel), 0 0 20px hsl(var(--primary) / 0.4);
+  }
+  
+  /* Arcade button press effect */
+  .floating-click {
+    transition: all 0.1s steps(2);
+    box-shadow: 0 4px 0 hsla(0 0% 0% / 0.5);
+  }
+  
+  .floating-click:active {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 hsla(0 0% 0% / 0.5);
+  }
+  
+  /* Retro button styles */
+  .btn-retro {
+    font-family: 'Press Start 2P', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 3px solid currentColor;
+    box-shadow: 4px 4px 0 currentColor;
+    transition: all 0.1s steps(2);
+  }
+  
+  .btn-retro:hover {
+    box-shadow: 2px 2px 0 currentColor;
+    transform: translate(2px, 2px);
+  }
+  
+  .btn-retro:active {
+    box-shadow: 0 0 0 currentColor;
+    transform: translate(4px, 4px);
+  }
+  
+  /* Neon glow text - subtle version */
+  .neon-text {
+    text-shadow: 
+      0 0 2px currentColor,
+      0 0 4px hsl(var(--primary) / 0.4);
+  }
+  
+  /* Pixel font text */
+  .pixel-text {
+    font-family: 'Press Start 2P', monospace;
+    letter-spacing: 0.1em;
+    line-height: 1.8;
+  }
+  
+  /* Retro VT323 text */
+  .retro-text {
+    font-family: 'VT323', monospace;
+    letter-spacing: 0.05em;
+  }
+  
+  /* Arcade badge */
+  .arcade-badge {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.6rem;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.8) 100%);
+    border: 2px solid hsl(var(--retro-yellow));
+    box-shadow: 0 0 10px hsl(var(--primary) / 0.5), inset 0 1px 0 hsla(0 0% 100% / 0.3);
+    text-transform: uppercase;
+  }
+  
+  /* Enhanced button animations */
+  .btn-pulse {
+    animation: arcade-pulse 1.5s ease-in-out infinite;
+  }
+  
+  @keyframes arcade-pulse {
+    0%, 100% { 
+      box-shadow: 0 0 10px hsl(var(--primary) / 0.5);
+    }
+    50% { 
+      box-shadow: 0 0 25px hsl(var(--primary) / 0.8), 0 0 50px hsl(var(--primary) / 0.4);
+    }
+  }
+  
+  .btn-gradient {
+    background: var(--gradient-button);
+  }
+  
+  .btn-glow {
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.5);
+  }
+  
+  /* Loading spinner - pixel style */
+  .spinner {
+    border: 3px solid hsla(0 0% 100% / 0.2);
+    border-top: 3px solid hsl(var(--accent));
+    border-radius: 0;
+    animation: pixel-spin 0.8s steps(8) infinite;
+  }
+  
+  @keyframes pixel-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  /* Button Hover Effects */
+  .btn-glow-hover {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-glow-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(178, 34, 34, 0.4);
+  }
+
+  /* Efeitos Retrô para Loading */
+  @keyframes scan {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100vh); }
+  }
+  
+  @keyframes glitch {
+    0%, 100% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+  }
+  
+  .glitch {
+    position: relative;
+    animation: glitch 0.3s infinite;
+  }
+
+  .btn-glow-hover::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s;
+  }
+
+  .btn-glow-hover:hover::before {
+    left: 100%;
+  }
+
+  /* Micro interactions */
+  .micro-bounce {
+    transition: transform 0.2s ease;
+  }
+
+  .micro-bounce:hover {
+    transform: scale(1.05) rotate(2deg);
+    animation: bounce-gentle 0.6s ease;
+  }
+
+  .micro-rotate {
+    transition: transform 0.3s ease;
+  }
+
+  .micro-rotate:hover {
+    transform: rotate(5deg);
+  }
+
+  /* Neon effects - subtle version */
+  .neon-glow {
+    text-shadow: 
+      0 0 2px hsl(var(--primary)),
+      0 0 5px hsl(var(--primary) / 0.5);
+  }
+
+  .neon-border {
+    border: 2px solid hsl(var(--primary));
+    box-shadow: 
+      0 0 10px hsl(var(--primary) / 0.5),
+      inset 0 0 10px hsl(var(--primary) / 0.1);
+  }
+
+  /* Soft text effects - subtle version */
+  .soft-glow-title {
+    text-shadow: 
+      0 0 5px hsl(var(--primary) / 0.3),
+      0 0 10px hsl(var(--primary) / 0.2),
+      0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Modern Title Reveal Animation */
+  .title-reveal {
+    animation: title-reveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+  }
+
+  @keyframes title-reveal {
+    0% {
+      opacity: 0;
+      transform: translateY(30px);
+      filter: blur(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+  }
+
+  /* Flowing Gradient Text */
+  .text-gradient-flow {
+    background: linear-gradient(
+      90deg,
+      hsl(0 75% 60%) 0%,
+      hsl(340 80% 65%) 25%,
+      hsl(280 70% 60%) 50%,
+      hsl(340 80% 65%) 75%,
+      hsl(0 75% 60%) 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradient-flow 4s linear infinite;
+  }
+
+  @keyframes gradient-flow {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
+  }
+
+  /* Icon Float Animation */
+  .icon-float {
+    animation: icon-float 3s ease-in-out infinite;
+    filter: drop-shadow(0 4px 12px rgba(255, 255, 255, 0.2));
+  }
+
+  @keyframes icon-float {
+    0%, 100% {
+      transform: translateY(0) scale(1);
+    }
+    50% {
+      transform: translateY(-8px) scale(1.05);
+    }
+  }
+
+
+  /* Custom keyframes */
+  @keyframes gentle-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @keyframes bounce-gentle {
+    0%, 20%, 50%, 80%, 100% {
+      transform: translateY(0);
+    }
+    40% {
+      transform: translateY(-5px);
+    }
+    60% {
+      transform: translateY(-3px);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .shimmer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: shimmer 2s infinite;
+  }
+  
+  /* Full screen utilities for all devices */
+  .full-screen {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height for mobile */
+  }
+  
+  .full-width {
+    width: 100vw;
+    max-width: 100vw;
+  }
+  
+  .full-height {
+    height: 100vh;
+    height: 100dvh;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+  
+  /* Prevent horizontal overflow on all devices */
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  /* Mobile viewport optimization */
+  @supports (height: 100dvh) {
+    .full-height {
+      height: 100dvh;
+      min-height: 100dvh;
+    }
+  }
+  /* Cosmic Stars Animation */
+  .cosmic-bg {
+    animation: cosmic-fade-in 3s ease-out;
+  }
+  
+  /* Star layers with different sizes and speeds */
+  .stars-layer-1, .stars-layer-2, .stars-layer-3, .stars-layer-4, .stars-layer-5 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  
+  .stars-layer-1::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 3px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 
+      25vw 18vh 2px 1px rgba(255, 255, 255, 0.9),
+      10vw 40vh 1px 1px rgba(173, 216, 230, 0.8),
+      80vw 10vh 1px 2px rgba(255, 255, 255, 0.7),
+      90vw 35vh 1px 1px rgba(135, 206, 235, 0.9),
+      45vw 60vh 2px 1px rgba(255, 255, 255, 0.8),
+      60vw 25vh 1px 1px rgba(176, 224, 230, 0.7),
+      30vw 80vh 1px 2px rgba(255, 255, 255, 0.9),
+      75vw 70vh 2px 1px rgba(173, 216, 230, 0.8),
+      15vw 15vh 1px 1px rgba(255, 255, 255, 0.6),
+      85vw 50vh 1px 1px rgba(135, 206, 235, 0.7),
+      5vw 55vh 2px 1px rgba(255, 255, 255, 0.85),
+      65vw 5vh 1px 2px rgba(173, 216, 230, 0.75),
+      35vw 95vh 1px 1px rgba(255, 255, 255, 0.9),
+      95vw 65vh 2px 1px rgba(135, 206, 235, 0.8),
+      50vw 30vh 1px 1px rgba(255, 255, 255, 0.7),
+      70vw 85vh 1px 2px rgba(176, 224, 230, 0.85),
+      20vw 45vh 2px 1px rgba(255, 255, 255, 0.9),
+      40vw 12vh 1px 1px rgba(173, 216, 230, 0.75),
+      88vw 75vh 1px 1px rgba(255, 255, 255, 0.8),
+      55vw 88vh 2px 1px rgba(135, 206, 235, 0.85);
+    animation: 
+      twinkle-large 4s ease-in-out infinite alternate,
+      float-stars-1 20s ease-in-out infinite;
+  }
+  
+  .stars-layer-2::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 
+      20vw 30vh 1px 0px rgba(255, 255, 255, 0.6),
+      40vw 70vh 1px 0px rgba(173, 216, 230, 0.5),
+      70vw 40vh 1px 0px rgba(255, 255, 255, 0.7),
+      90vw 80vh 1px 0px rgba(135, 206, 235, 0.6),
+      10vw 10vh 1px 0px rgba(255, 255, 255, 0.5),
+      50vw 50vh 1px 0px rgba(176, 224, 230, 0.6),
+      30vw 20vh 1px 0px rgba(255, 255, 255, 0.4),
+      80vw 60vh 1px 0px rgba(173, 216, 230, 0.7),
+      60vw 90vh 1px 0px rgba(255, 255, 255, 0.5),
+      95vw 5vh 1px 0px rgba(135, 206, 235, 0.6),
+      5vw 95vh 1px 0px rgba(255, 255, 255, 0.4),
+      25vw 75vh 1px 0px rgba(176, 224, 230, 0.5),
+      75vw 25vh 1px 0px rgba(255, 255, 255, 0.6),
+      55vw 35vh 1px 0px rgba(173, 216, 230, 0.4),
+      15vw 65vh 1px 0px rgba(255, 255, 255, 0.65),
+      45vw 15vh 1px 0px rgba(173, 216, 230, 0.55),
+      85vw 45vh 1px 0px rgba(255, 255, 255, 0.7),
+      35vw 85vh 1px 0px rgba(135, 206, 235, 0.6),
+      65vw 55vh 1px 0px rgba(255, 255, 255, 0.5),
+      8vw 38vh 1px 0px rgba(176, 224, 230, 0.6),
+      48vw 78vh 1px 0px rgba(255, 255, 255, 0.45),
+      78vw 8vh 1px 0px rgba(173, 216, 230, 0.65),
+      28vw 48vh 1px 0px rgba(255, 255, 255, 0.55),
+      68vw 28vh 1px 0px rgba(135, 206, 235, 0.6),
+      98vw 68vh 1px 0px rgba(255, 255, 255, 0.5),
+      18vw 88vh 1px 0px rgba(176, 224, 230, 0.55),
+      58vw 18vh 1px 0px rgba(255, 255, 255, 0.65),
+      88vw 58vh 1px 0px rgba(173, 216, 230, 0.45);
+    animation: 
+      twinkle-medium 3s ease-in-out infinite alternate,
+      float-stars-2 25s ease-in-out infinite;
+  }
+  
+  .stars-layer-3::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 1px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 
+      15vw 25vh 0px 0px rgba(255, 255, 255, 0.4),
+      35vw 45vh 0px 0px rgba(173, 216, 230, 0.3),
+      65vw 15vh 0px 0px rgba(255, 255, 255, 0.5),
+      85vw 75vh 0px 0px rgba(135, 206, 235, 0.4),
+      5vw 85vh 0px 0px rgba(255, 255, 255, 0.3),
+      45vw 5vh 0px 0px rgba(176, 224, 230, 0.4),
+      25vw 65vh 0px 0px rgba(255, 255, 255, 0.3),
+      75vw 35vh 0px 0px rgba(173, 216, 230, 0.5),
+      55vw 55vh 0px 0px rgba(255, 255, 255, 0.4),
+      95vw 25vh 0px 0px rgba(135, 206, 235, 0.3),
+      10vw 75vh 0px 0px rgba(255, 255, 255, 0.3),
+      30vw 95vh 0px 0px rgba(176, 224, 230, 0.4),
+      70vw 85vh 0px 0px rgba(255, 255, 255, 0.3),
+      90vw 45vh 0px 0px rgba(173, 216, 230, 0.4),
+      50vw 10vh 0px 0px rgba(255, 255, 255, 0.5),
+      20vw 50vh 0px 0px rgba(135, 206, 235, 0.3),
+      80vw 20vh 0px 0px rgba(176, 224, 230, 0.4),
+      40vw 80vh 0px 0px rgba(255, 255, 255, 0.3),
+      60vw 40vh 0px 0px rgba(173, 216, 230, 0.4),
+      17vw 33vh 0px 0px rgba(255, 255, 255, 0.3),
+      3vw 62vh 0px 0px rgba(255, 255, 255, 0.4),
+      27vw 8vh 0px 0px rgba(173, 216, 230, 0.35),
+      47vw 92vh 0px 0px rgba(255, 255, 255, 0.45),
+      67vw 27vh 0px 0px rgba(135, 206, 235, 0.4),
+      87vw 67vh 0px 0px rgba(255, 255, 255, 0.35),
+      13vw 47vh 0px 0px rgba(176, 224, 230, 0.4),
+      33vw 13vh 0px 0px rgba(255, 255, 255, 0.3),
+      53vw 73vh 0px 0px rgba(173, 216, 230, 0.45),
+      73vw 53vh 0px 0px rgba(255, 255, 255, 0.4),
+      93vw 33vh 0px 0px rgba(135, 206, 235, 0.35),
+      22vw 82vh 0px 0px rgba(255, 255, 255, 0.35),
+      42vw 22vh 0px 0px rgba(176, 224, 230, 0.4),
+      62vw 62vh 0px 0px rgba(255, 255, 255, 0.3),
+      82vw 42vh 0px 0px rgba(173, 216, 230, 0.4),
+      8vw 18vh 0px 0px rgba(255, 255, 255, 0.45),
+      28vw 58vh 0px 0px rgba(135, 206, 235, 0.35),
+      48vw 28vh 0px 0px rgba(176, 224, 230, 0.4),
+      68vw 88vh 0px 0px rgba(255, 255, 255, 0.35),
+      88vw 38vh 0px 0px rgba(173, 216, 230, 0.4),
+      12vw 98vh 0px 0px rgba(255, 255, 255, 0.3);
+    animation: 
+      twinkle-small 2s ease-in-out infinite alternate,
+      float-stars-3 30s ease-in-out infinite;
+  }
+  
+  .stars-layer-4::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0.5px;
+    height: 0.5px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 
+      12vw 22vh 0px 0px rgba(255, 255, 255, 0.2),
+      38vw 48vh 0px 0px rgba(173, 216, 230, 0.15),
+      68vw 18vh 0px 0px rgba(255, 255, 255, 0.25),
+      88vw 78vh 0px 0px rgba(135, 206, 235, 0.2),
+      8vw 88vh 0px 0px rgba(255, 255, 255, 0.15),
+      48vw 8vh 0px 0px rgba(176, 224, 230, 0.2),
+      28vw 68vh 0px 0px rgba(255, 255, 255, 0.15),
+      78vw 38vh 0px 0px rgba(173, 216, 230, 0.25),
+      58vw 58vh 0px 0px rgba(255, 255, 255, 0.2),
+      98vw 28vh 0px 0px rgba(135, 206, 235, 0.15),
+      18vw 78vh 0px 0px rgba(255, 255, 255, 0.15),
+      33vw 98vh 0px 0px rgba(176, 224, 230, 0.2),
+      73vw 88vh 0px 0px rgba(255, 255, 255, 0.15),
+      93vw 48vh 0px 0px rgba(173, 216, 230, 0.2),
+      53vw 13vh 0px 0px rgba(255, 255, 255, 0.25),
+      23vw 53vh 0px 0px rgba(135, 206, 235, 0.15),
+      83vw 23vh 0px 0px rgba(176, 224, 230, 0.2),
+      43vw 83vh 0px 0px rgba(255, 255, 255, 0.15),
+      63vw 43vh 0px 0px rgba(173, 216, 230, 0.2),
+      3vw 3vh 0px 0px rgba(255, 255, 255, 0.15),
+      37vw 67vh 0px 0px rgba(135, 206, 235, 0.2),
+      77vw 27vh 0px 0px rgba(176, 224, 230, 0.15),
+      13vw 57vh 0px 0px rgba(255, 255, 255, 0.2),
+      87vw 93vh 0px 0px rgba(173, 216, 230, 0.15),
+      2vw 42vh 0px 0px rgba(255, 255, 255, 0.2),
+      24vw 14vh 0px 0px rgba(173, 216, 230, 0.18),
+      46vw 76vh 0px 0px rgba(255, 255, 255, 0.22),
+      66vw 32vh 0px 0px rgba(135, 206, 235, 0.2),
+      86vw 86vh 0px 0px rgba(255, 255, 255, 0.17),
+      6vw 6vh 0px 0px rgba(176, 224, 230, 0.2),
+      26vw 66vh 0px 0px rgba(255, 255, 255, 0.16),
+      56vw 36vh 0px 0px rgba(173, 216, 230, 0.23),
+      76vw 96vh 0px 0px rgba(255, 255, 255, 0.19),
+      96vw 56vh 0px 0px rgba(135, 206, 235, 0.17),
+      16vw 16vh 0px 0px rgba(255, 255, 255, 0.18),
+      36vw 46vh 0px 0px rgba(176, 224, 230, 0.21),
+      72vw 72vh 0px 0px rgba(255, 255, 255, 0.16),
+      92vw 22vh 0px 0px rgba(173, 216, 230, 0.2),
+      52vw 62vh 0px 0px rgba(255, 255, 255, 0.24),
+      32vw 32vh 0px 0px rgba(135, 206, 235, 0.17),
+      82vw 82vh 0px 0px rgba(176, 224, 230, 0.19),
+      42vw 52vh 0px 0px rgba(255, 255, 255, 0.16),
+      62vw 12vh 0px 0px rgba(173, 216, 230, 0.21),
+      9vw 69vh 0px 0px rgba(255, 255, 255, 0.18),
+      29vw 39vh 0px 0px rgba(135, 206, 235, 0.17),
+      49vw 89vh 0px 0px rgba(176, 224, 230, 0.2),
+      69vw 49vh 0px 0px rgba(255, 255, 255, 0.15),
+      89vw 19vh 0px 0px rgba(173, 216, 230, 0.19),
+      11vw 91vh 0px 0px rgba(255, 255, 255, 0.17);
+    animation: 
+      twinkle-micro 1.5s ease-in-out infinite alternate,
+      float-stars-4 35s ease-in-out infinite;
+  }
+  
+  .stars-layer-5::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0.3px;
+    height: 0.3px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.6;
+    box-shadow: 
+      7vw 14vh 0px 0px rgba(255, 255, 255, 0.1),
+      21vw 31vh 0px 0px rgba(173, 216, 230, 0.08),
+      49vw 72vh 0px 0px rgba(255, 255, 255, 0.12),
+      67vw 23vh 0px 0px rgba(135, 206, 235, 0.1),
+      91vw 56vh 0px 0px rgba(255, 255, 255, 0.08),
+      14vw 89vh 0px 0px rgba(176, 224, 230, 0.1),
+      36vw 12vh 0px 0px rgba(255, 255, 255, 0.08),
+      82vw 41vh 0px 0px rgba(173, 216, 230, 0.12),
+      59vw 67vh 0px 0px rgba(255, 255, 255, 0.1),
+      26vw 84vh 0px 0px rgba(135, 206, 235, 0.08),
+      74vw 19vh 0px 0px rgba(255, 255, 255, 0.08),
+      41vw 52vh 0px 0px rgba(176, 224, 230, 0.1),
+      88vw 77vh 0px 0px rgba(255, 255, 255, 0.08),
+      52vw 6vh 0px 0px rgba(173, 216, 230, 0.1),
+      19vw 38vh 0px 0px rgba(255, 255, 255, 0.12),
+      84vw 63vh 0px 0px rgba(135, 206, 235, 0.08),
+      31vw 95vh 0px 0px rgba(176, 224, 230, 0.1),
+      76vw 47vh 0px 0px rgba(255, 255, 255, 0.08),
+      44vw 74vh 0px 0px rgba(173, 216, 230, 0.1),
+      11vw 26vh 0px 0px rgba(255, 255, 255, 0.08),
+      66vw 81vh 0px 0px rgba(135, 206, 235, 0.1),
+      96vw 34vh 0px 0px rgba(176, 224, 230, 0.08),
+      29vw 59vh 0px 0px rgba(255, 255, 255, 0.1),
+      71vw 92vh 0px 0px rgba(173, 216, 230, 0.08),
+      16vw 17vh 0px 0px rgba(255, 255, 255, 0.08),
+      54vw 29vh 0px 0px rgba(135, 206, 235, 0.1),
+      39vw 86vh 0px 0px rgba(176, 224, 230, 0.08),
+      79vw 51vh 0px 0px rgba(255, 255, 255, 0.1),
+      22vw 64vh 0px 0px rgba(173, 216, 230, 0.08),
+      61vw 8vh 0px 0px rgba(255, 255, 255, 0.08),
+      4vw 44vh 0px 0px rgba(255, 255, 255, 0.1),
+      24vw 24vh 0px 0px rgba(173, 216, 230, 0.09),
+      47vw 87vh 0px 0px rgba(255, 255, 255, 0.11),
+      64vw 34vh 0px 0px rgba(135, 206, 235, 0.1),
+      94vw 64vh 0px 0px rgba(255, 255, 255, 0.08),
+      9vw 79vh 0px 0px rgba(176, 224, 230, 0.1),
+      34vw 4vh 0px 0px rgba(255, 255, 255, 0.09),
+      77vw 49vh 0px 0px rgba(173, 216, 230, 0.11),
+      57vw 69vh 0px 0px rgba(255, 255, 255, 0.1),
+      27vw 97vh 0px 0px rgba(135, 206, 235, 0.08),
+      72vw 27vh 0px 0px rgba(255, 255, 255, 0.08),
+      42vw 57vh 0px 0px rgba(176, 224, 230, 0.1),
+      87vw 72vh 0px 0px rgba(255, 255, 255, 0.09),
+      51vw 11vh 0px 0px rgba(173, 216, 230, 0.1),
+      17vw 41vh 0px 0px rgba(255, 255, 255, 0.11),
+      83vw 68vh 0px 0px rgba(135, 206, 235, 0.08),
+      32vw 93vh 0px 0px rgba(176, 224, 230, 0.1),
+      78vw 43vh 0px 0px rgba(255, 255, 255, 0.08),
+      43vw 78vh 0px 0px rgba(173, 216, 230, 0.1),
+      13vw 23vh 0px 0px rgba(255, 255, 255, 0.09),
+      68vw 83vh 0px 0px rgba(135, 206, 235, 0.1),
+      93vw 38vh 0px 0px rgba(176, 224, 230, 0.08),
+      28vw 58vh 0px 0px rgba(255, 255, 255, 0.1),
+      73vw 98vh 0px 0px rgba(173, 216, 230, 0.08),
+      18vw 13vh 0px 0px rgba(255, 255, 255, 0.09),
+      53vw 33vh 0px 0px rgba(135, 206, 235, 0.1),
+      38vw 88vh 0px 0px rgba(176, 224, 230, 0.08),
+      81vw 53vh 0px 0px rgba(255, 255, 255, 0.1),
+      23vw 68vh 0px 0px rgba(173, 216, 230, 0.08),
+      63vw 3vh 0px 0px rgba(255, 255, 255, 0.09),
+      1vw 61vh 0px 0px rgba(135, 206, 235, 0.1),
+      46vw 16vh 0px 0px rgba(176, 224, 230, 0.08),
+      86vw 46vh 0px 0px rgba(255, 255, 255, 0.1),
+      56vw 76vh 0px 0px rgba(173, 216, 230, 0.08),
+      33vw 21vh 0px 0px rgba(255, 255, 255, 0.09);
+    animation: 
+      twinkle-ultra 1s ease-in-out infinite alternate,
+      float-stars-5 40s ease-in-out infinite;
+  }
+  
+  /* Keyframe animations */
+  @keyframes cosmic-fade-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes twinkle-large {
+    0%, 100% {
+      opacity: 0.7;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.2);
+    }
+  }
+  
+  @keyframes twinkle-medium {
+    0%, 100% {
+      opacity: 0.5;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.9;
+      transform: scale(1.1);
+    }
+  }
+  
+  @keyframes twinkle-small {
+    0%, 100% {
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+  
+  @keyframes twinkle-micro {
+    0%, 100% {
+      opacity: 0.15;
+    }
+    50% {
+      opacity: 0.4;
+    }
+  }
+  
+  @keyframes twinkle-ultra {
+    0%, 100% {
+      opacity: 0.08;
+    }
+    50% {
+      opacity: 0.2;
+    }
+  }
+  
+  @keyframes float-stars-1 {
+    0%, 100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    25% {
+      transform: translateY(-10px) translateX(5px);
+    }
+    50% {
+      transform: translateY(-5px) translateX(-3px);
+    }
+    75% {
+      transform: translateY(-8px) translateX(2px);
+    }
+  }
+  
+  @keyframes float-stars-2 {
+    0%, 100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    33% {
+      transform: translateY(-6px) translateX(-4px);
+    }
+    66% {
+      transform: translateY(-3px) translateX(3px);
+    }
+  }
+  
+  @keyframes float-stars-3 {
+    0%, 100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    50% {
+      transform: translateY(-3px) translateX(-2px);
+    }
+  }
+  
+  @keyframes float-stars-4 {
+    0%, 100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    25% {
+      transform: translateY(-2px) translateX(1px);
+    }
+    75% {
+      transform: translateY(-1px) translateX(-1px);
+    }
+  }
+  
+  @keyframes float-stars-5 {
+    0%, 100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    50% {
+      transform: translateY(-1px) translateX(-0.5px);
+    }
+  }
+  
+  /* Laser Grid Security Effect */
+  @keyframes laser-flicker {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+    75% {
+      opacity: 0.9;
+    }
+  }
+  
+  @keyframes laser-scan {
+    0% {
+      background-position: 0% 0%;
+    }
+    100% {
+      background-position: 0% 100%;
+    }
+  }
+  
+  @keyframes laser-shutdown {
+    0% {
+      opacity: 1;
+      filter: blur(0px);
+    }
+    50% {
+      opacity: 0.5;
+      filter: blur(2px);
+    }
+    100% {
+      opacity: 0;
+      filter: blur(8px);
+      transform: scaleY(0);
+    }
+  }
+  
+  @keyframes unlock-flash {
+    0% {
+      background: transparent;
+    }
+    20% {
+      background: hsla(0, 100%, 50%, 0.3);
+    }
+    40% {
+      background: hsla(0, 0%, 100%, 0.8);
+    }
+    60% {
+      background: hsla(120, 100%, 50%, 0.3);
+    }
+    100% {
+      background: transparent;
+    }
+  }
+  
+  .laser-beam {
+    animation: laser-flicker 0.5s ease-in-out infinite;
+  }
+  
+  .laser-shutdown {
+    animation: laser-shutdown 1s ease-out forwards !important;
+  }
+  
+  .laser-scan {
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      hsla(0, 100%, 50%, 0.1) 45%,
+      hsla(0, 100%, 60%, 0.3) 50%,
+      hsla(0, 100%, 50%, 0.1) 55%,
+      transparent 100%
+    );
+    background-size: 100% 200%;
+    animation: laser-scan 3s linear infinite;
+  }
+  
+  .unlock-flash {
+    animation: unlock-flash 1.5s ease-out forwards;
+  }
+  
+  /* Hexagon clip path */
+  .clip-hexagon {
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  }
+
+}
+  
+
+
+@keyframes letterWalk {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  20% {
+    transform: translate(50px, -30px) scale(1.1);
+    opacity: 0.8;
+  }
+  40% {
+    transform: translate(120px, 10px) scale(0.9);
+    opacity: 0.6;
+  }
+  60% {
+    transform: translate(-80px, 50px) scale(1.05);
+    opacity: 0.9;
+  }
+  80% {
+    transform: translate(-40px, -60px) scale(1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-letter-walk {
+  animation: letterWalk 6s ease-in-out infinite alternate;
+}
+
 
 @layer base {
   * {
     border-color: var(--color-border);
   }
-
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
