@@ -15,7 +15,7 @@ const ClipyAssistant = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const greetingTimeout = useRef<ReturnType<typeof setTimeout>>();
+  const greetingTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {

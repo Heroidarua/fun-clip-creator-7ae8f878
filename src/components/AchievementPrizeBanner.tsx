@@ -74,7 +74,7 @@ const AchievementPrizeBanner = () => {
                 Ver Ranking do Desafio
               </Link>
               <Link 
-                to="/termos#regulamento-desafio" 
+                to="/termos" hash="regulamento-desafio" 
                 className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-yellow-400 transition-colors"
               >
                 <FileText className="w-4 h-4" />

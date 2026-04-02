@@ -379,7 +379,7 @@ const Desafio = () => {
 
             <div className="mt-6 pt-4 border-t border-border">
               <Link 
-                to="/termos#regulamento-desafio" 
+                to="/termos" hash="regulamento-desafio" 
                 className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
               >
                 <FileText className="w-4 h-4" />

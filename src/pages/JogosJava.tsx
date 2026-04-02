@@ -1,7 +1,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Joystick, Maximize2, Minimize2 } from "lucide-react";
-import { Helmet } from "react-helmet";
+
 import { useRef, useState, useEffect } from "react";
 
 const JogosJava = () => {
