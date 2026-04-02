@@ -68,14 +68,15 @@ const QRCodeGenerator = ({ onSuccess }: QRCodeGeneratorProps) => {
 
     try {
       // Generate QR code as data URL
-      const qrOptions = {
+      const errorLevel: import("qrcode").QRCodeErrorCorrectionLevel = logo ? 'H' : 'M';
+      const qrOptions: import("qrcode").QRCodeToDataURLOptions = {
         width: 400,
         margin: 2,
         color: {
           dark: fgColor,
           light: bgColor,
         },
-        errorCorrectionLevel: (logo ? 'H' : 'M') as const,
+        errorCorrectionLevel: errorLevel,
       };
 
       const dataUrl = await QRCode.toDataURL(text, qrOptions);
