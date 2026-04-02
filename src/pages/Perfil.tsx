@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { Trophy, Gamepad2, Download, Wrench, Users, Star, Sparkles, Calendar, Target, Zap, Award, TrendingUp, BarChart3, Crown, LogIn, Pencil, X, Check, Share2 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";

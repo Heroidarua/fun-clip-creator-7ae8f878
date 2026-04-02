@@ -1,5 +1,5 @@
 import { Trophy, Gift, Mail, Sparkles, FileText } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { useAchievements } from "@/hooks/useAchievements";
 
 const AchievementPrizeBanner = () => {

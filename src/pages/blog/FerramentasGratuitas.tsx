@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ArrowLeft, Wrench, UserSquare2, Music, Link2, Eraser, Image, QrCode, Stamp, KeyRound, Sparkles, FileImage } from "lucide-react";

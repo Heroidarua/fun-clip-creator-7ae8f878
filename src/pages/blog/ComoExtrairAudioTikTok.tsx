@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { ArrowLeft, Music, Headphones, Download } from "lucide-react";
 
 const ComoExtrairAudioTikTok = () => {

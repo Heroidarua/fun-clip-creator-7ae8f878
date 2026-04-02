@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ArrowLeft, Heart, Rocket, Gamepad2, Lightbulb, Users, Star, Code, Zap } from "lucide-react";

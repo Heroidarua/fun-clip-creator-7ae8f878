@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { Trophy, Gift, Mail, Sparkles, Crown, Medal, Award, Target, Users, ArrowLeft, FileText } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";

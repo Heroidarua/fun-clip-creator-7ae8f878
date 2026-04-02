@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { Lock, Plus, Trash2, Edit, Eye, EyeOff, ArrowLeft, CheckCircle, AlertTriangle, RefreshCw } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { Switch } from "@/components/ui/switch";
 
 type Announcement = {

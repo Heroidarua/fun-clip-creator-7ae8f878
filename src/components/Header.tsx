@@ -1,5 +1,5 @@
 import { Gamepad2, Joystick, Share2, Sparkles } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import spidermanWeb from "@/assets/spiderman-web.gif";
 import FreeMario from "@/components/FreeMario";

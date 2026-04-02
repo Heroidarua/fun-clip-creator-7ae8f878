@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Trophy, Medal, Crown, Star, TrendingUp, RefreshCw, User, LogIn } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";

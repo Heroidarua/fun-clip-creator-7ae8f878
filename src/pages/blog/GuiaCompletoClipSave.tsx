@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ArrowLeft, Download, Video, Music, Image, Gamepad2, BookOpen, CheckCircle } from "lucide-react";

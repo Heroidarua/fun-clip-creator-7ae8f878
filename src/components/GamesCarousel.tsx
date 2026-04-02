@@ -1,5 +1,5 @@
 import { useRef, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { Gamepad2, Play, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {

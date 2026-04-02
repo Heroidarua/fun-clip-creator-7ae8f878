@@ -1,5 +1,5 @@
 import { Trophy, Sparkles, ExternalLink } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link } from "@tanstack/react-router";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import AchievementsPanel from './AchievementsPanel';

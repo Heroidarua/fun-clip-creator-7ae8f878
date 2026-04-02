@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { ArrowLeft, TrendingUp, Clock, Users, Zap } from "lucide-react";
 
 const DicasCriadoresConteudo = () => {

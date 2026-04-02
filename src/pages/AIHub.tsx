@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { ArrowLeft, Sparkles, Zap, Trash2 } from "lucide-react";
 import clipyMascot from "@/assets/clipy-mascot.png";
 import HubMessage, { type HubMessageType } from "@/components/hub/HubMessage";
