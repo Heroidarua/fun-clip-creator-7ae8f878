@@ -75,7 +75,7 @@ const QRCodeGenerator = ({ onSuccess }: QRCodeGeneratorProps) => {
           dark: fgColor,
           light: bgColor,
         },
-        errorCorrectionLevel: logo ? 'H' : 'M' as const,
+        errorCorrectionLevel: (logo ? 'H' : 'M') as const,
       };
 
       const dataUrl = await QRCode.toDataURL(text, qrOptions);

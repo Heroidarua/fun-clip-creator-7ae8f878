@@ -33,10 +33,6 @@ const JogosJava = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Jogos 2️⃣ - ClipSave | Clássicos Java para Celular</title>
-        <meta name="description" content="Jogue os melhores jogos Java clássicos diretamente no navegador. Reviva a nostalgia dos games de celular antigos." />
-      </Helmet>
       
       <div className="min-h-screen bg-background text-foreground flex flex-col">
         <Header />
