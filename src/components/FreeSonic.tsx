@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import sonicRunning from "@/assets/sonic-running.gif";
 
 const FreeSonic = () => {
-  const [position, setPosition] = useState(Math.floor(window.innerWidth * 0.6));
+  const [position, setPosition] = useState(typeof window !== "undefined" ? Math.floor(window.innerWidth * 0.6) : 600);
   const [direction, setDirection] = useState<'right' | 'left'>('left');
 
   useEffect(() => {

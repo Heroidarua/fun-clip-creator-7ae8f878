@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import luigiWalking from "@/assets/luigi-walking.gif";
 
 const FreeLuigi = () => {
-  const [position, setPosition] = useState(Math.floor(window.innerWidth * 0.7));
+  const [position, setPosition] = useState(typeof window !== "undefined" ? Math.floor(window.innerWidth * 0.7) : 700);
   const [direction, setDirection] = useState<'right' | 'left'>('left');
 
   useEffect(() => {

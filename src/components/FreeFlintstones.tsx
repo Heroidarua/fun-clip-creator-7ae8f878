@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import flinstonesWalking from "@/assets/flintstones-walking.gif";
 
 const FreeFlintstones = () => {
-  const [position, setPosition] = useState(Math.floor(window.innerWidth * 0.3));
+  const [position, setPosition] = useState(typeof window !== "undefined" ? Math.floor(window.innerWidth * 0.3) : 300);
   const [direction, setDirection] = useState<'right' | 'left'>('right');
 
   useEffect(() => {

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import yoshiWalking from "@/assets/yoshi-walking.gif";
 
 const FreeYoshi = () => {
-  const [position, setPosition] = useState(Math.floor(window.innerWidth / 2));
+  const [position, setPosition] = useState(typeof window !== "undefined" ? Math.floor(window.innerWidth / 2) : 500);
   const [direction, setDirection] = useState<'right' | 'left'>('right');
 
   useEffect(() => {
