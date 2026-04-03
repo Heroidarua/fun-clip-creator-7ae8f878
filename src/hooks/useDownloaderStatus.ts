@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { fromTable } from "@/integrations/supabase/helpers";
 
 interface DownloaderStatus {
   id: string;
@@ -14,14 +14,12 @@ export const useDownloaderStatus = () => {
 
   const fetchStatuses = async () => {
     try {
-      const { data, error } = await supabase
-        .from("downloader_status")
-        .select("*");
+      const { data, error } = await fromTable("downloader_status").select("*");
 
       if (error) throw error;
 
       const statusMap: Record<string, boolean> = {};
-      data?.forEach((item: DownloaderStatus) => {
+      (data as DownloaderStatus[] || []).forEach((item) => {
         statusMap[item.id] = item.is_active;
       });
       setStatuses(statusMap);

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { fromTable } from '@/integrations/supabase/helpers';
 import { useUserStats } from './useUserStats';
 
 export interface Notification {
@@ -19,7 +20,6 @@ export function useNotifications() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  // Fetch notifications
   const fetchNotifications = useCallback(async () => {
     if (!user) {
       setNotifications([]);
@@ -29,8 +29,7 @@ export function useNotifications() {
     }
 
     try {
-      const { data, error } = await supabase
-        .from('notifications')
+      const { data, error } = await fromTable('notifications')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
@@ -51,14 +50,12 @@ export function useNotifications() {
     }
   }, [user]);
 
-  // Initial fetch
   useEffect(() => {
     if (isAuthenticated) {
       fetchNotifications();
     }
   }, [isAuthenticated, fetchNotifications]);
 
-  // Subscribe to realtime notifications
   useEffect(() => {
     if (!user) return;
 
@@ -85,13 +82,11 @@ export function useNotifications() {
     };
   }, [user]);
 
-  // Mark notification as read
   const markAsRead = useCallback(async (notificationId: string) => {
     if (!user) return;
 
     try {
-      const { error } = await supabase
-        .from('notifications')
+      const { error } = await fromTable('notifications')
         .update({ read: true })
         .eq('id', notificationId)
         .eq('user_id', user.id);
@@ -110,13 +105,11 @@ export function useNotifications() {
     }
   }, [user]);
 
-  // Mark all as read
   const markAllAsRead = useCallback(async () => {
     if (!user) return;
 
     try {
-      const { error } = await supabase
-        .from('notifications')
+      const { error } = await fromTable('notifications')
         .update({ read: true })
         .eq('user_id', user.id)
         .eq('read', false);
