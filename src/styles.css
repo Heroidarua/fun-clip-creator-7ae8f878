@@ -95,14 +95,14 @@
     --ring: 0 85% 50%;
 
     /* Retro Gradients */
-    --gradient-hero: linear-gradient(180deg, hsl(240 15% 4%) 0%, hsl(280 30% 8%) 50%, hsl(240 15% 4%) 100%);
-    --gradient-header: linear-gradient(90deg, hsl(240 15% 6%) 0%, hsl(280 20% 10%) 50%, hsl(240 15% 6%) 100%);
-    --gradient-card: linear-gradient(135deg, hsl(240 12% 10%) 0%, hsl(280 15% 12%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(0 0% 0%) 0%, hsl(280 20% 5%) 50%, hsl(0 0% 0%) 100%);
+    --gradient-header: linear-gradient(90deg, hsl(0 0% 2%) 0%, hsl(280 15% 5%) 50%, hsl(0 0% 2%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 5%) 0%, hsl(280 10% 7%) 100%);
     --gradient-button: linear-gradient(135deg, hsl(0 85% 45%) 0%, hsl(0 90% 55%) 100%);
-    --gradient-arcade: linear-gradient(180deg, hsl(280 50% 20%) 0%, hsl(240 30% 10%) 100%);
+    --gradient-arcade: linear-gradient(180deg, hsl(280 30% 10%) 0%, hsl(0 0% 2%) 100%);
     
     /* Pixel glass effect */
-    --glass-bg: hsla(240 15% 8% / 0.9);
+    --glass-bg: hsla(0 0% 4% / 0.95);
     --glass-border: hsla(0 85% 50% / 0.3);
     
     /* Retro shadows with glow */
