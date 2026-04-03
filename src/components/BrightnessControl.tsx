@@ -22,6 +22,7 @@ const DEFAULT_SETTINGS: ScreenSettings = {
 
 const BrightnessControl = () => {
   const [settings, setSettings] = useState<ScreenSettings>(() => {
+    if (typeof window === "undefined") return DEFAULT_SETTINGS;
     const stored = localStorage.getItem("clipsave-screen-settings");
     return stored ? JSON.parse(stored) : DEFAULT_SETTINGS;
   });
