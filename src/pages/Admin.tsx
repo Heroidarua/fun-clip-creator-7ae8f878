@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { fromTable } from "@/integrations/supabase/helpers";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { Lock, Plus, Trash2, Edit, Eye, EyeOff, ArrowLeft, CheckCircle, AlertTriangle, RefreshCw } from "lucide-react";
+import { Lock, Plus, Trash2, Edit, Eye, EyeOff, ArrowLeft, RefreshCw } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Switch } from "@/components/ui/switch";
 
@@ -30,15 +31,10 @@ export default function Admin() {
   const [downloaderStatuses, setDownloaderStatuses] = useState<DownloaderStatus[]>([]);
   const [loading, setLoading] = useState(false);
   const [statusLoading, setStatusLoading] = useState<string | null>(null);
-
-  // Form state
   const [editingId, setEditingId] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
-  // O invoke exige Authorization header; como é uma função protegida por senha,
-  // enviamos a chave pública do projeto (JWT "anon") para satisfazer o gateway.
-  // Obs: nesta base o env exposto é VITE_SUPABASE_PUBLISHABLE_KEY.
   const functionHeaders = {
     Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
   };
@@ -50,16 +46,12 @@ export default function Admin() {
     });
 
   const fetchDownloaderStatuses = async () => {
-    console.log("Fetching downloader statuses...");
-    const { data, error } = await supabase
-      .from("downloader_status")
+    const { data, error } = await fromTable("downloader_status")
       .select("*")
       .order("name");
     
-    console.log("Downloader statuses response:", { data, error });
-    
     if (!error && data) {
-      setDownloaderStatuses(data);
+      setDownloaderStatuses(data as DownloaderStatus[]);
     } else if (error) {
       console.error("Error fetching downloader statuses:", error);
       toast({ title: "Erro ao carregar status dos downloaders", variant: "destructive" });
@@ -69,8 +61,7 @@ export default function Admin() {
   const toggleDownloaderStatus = async (downloader: DownloaderStatus) => {
     setStatusLoading(downloader.id);
     
-    const { error } = await supabase
-      .from("downloader_status")
+    const { error } = await fromTable("downloader_status")
       .update({ is_active: !downloader.is_active, updated_at: new Date().toISOString() })
       .eq("id", downloader.id);
     
@@ -91,10 +82,7 @@ export default function Admin() {
     setLoading(true);
     try {
       const { data, error } = await invokeManageAnnouncements({ action: "list", password });
-
       if (error) throw error;
-
-      // Se conseguiu listar, a senha está correta
       setIsAuthenticated(true);
       setAnnouncements(data.data || []);
       fetchDownloaderStatuses();
@@ -156,7 +144,6 @@ export default function Admin() {
 
   const deleteAnnouncement = async (id: string) => {
     if (!confirm("Tem certeza que deseja excluir este aviso?")) return;
-
     await invokeManageAnnouncements({ action: "delete", password, data: { id } });
     toast({ title: "Aviso excluído!" });
     fetchAnnouncements();
@@ -208,7 +195,6 @@ export default function Admin() {
           </Link>
         </div>
 
-        {/* Status dos Downloaders */}
         <div className="bg-card border border-border rounded-xl p-6 mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold flex items-center gap-2">
@@ -217,7 +203,7 @@ export default function Admin() {
             </h2>
           </div>
           <p className="text-sm text-muted-foreground mb-4">
-            Ative ou desative cada serviço de download. Quando desativado, os usuários verão uma mensagem de manutenção e o botão "Buscar" será bloqueado.
+            Ative ou desative cada serviço de download.
           </p>
           {downloaderStatuses.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
@@ -266,35 +252,20 @@ export default function Admin() {
           )}
         </div>
 
-        {/* Formulário de Avisos */}
         <form onSubmit={handleSubmit} className="bg-card border border-border rounded-xl p-6 mb-8">
           <h2 className="font-semibold mb-4 flex items-center gap-2">
             {editingId ? <Edit size={18} /> : <Plus size={18} />}
             {editingId ? "Editar Aviso" : "Novo Aviso"}
           </h2>
           <div className="space-y-4">
-            <Input
-              placeholder="Título do aviso"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="bg-background"
-            />
-            <Textarea
-              placeholder="Conteúdo do aviso"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              className="bg-background min-h-[100px]"
-            />
+            <Input placeholder="Título do aviso" value={title} onChange={(e) => setTitle(e.target.value)} className="bg-background" />
+            <Textarea placeholder="Conteúdo do aviso" value={content} onChange={(e) => setContent(e.target.value)} className="bg-background min-h-[100px]" />
             <div className="flex gap-2">
               <Button type="submit" disabled={loading}>
                 {loading ? "Salvando..." : editingId ? "Atualizar" : "Criar Aviso"}
               </Button>
               {editingId && (
-                <Button type="button" variant="outline" onClick={() => {
-                  setEditingId(null);
-                  setTitle("");
-                  setContent("");
-                }}>
+                <Button type="button" variant="outline" onClick={() => { setEditingId(null); setTitle(""); setContent(""); }}>
                   Cancelar
                 </Button>
               )}
@@ -302,7 +273,6 @@ export default function Admin() {
           </div>
         </form>
 
-        {/* Lista de avisos */}
         <div className="space-y-4">
           <h2 className="font-semibold">Avisos Existentes</h2>
           {announcements.length === 0 ? (
@@ -325,27 +295,13 @@ export default function Admin() {
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => toggleActive(announcement)}
-                      title={announcement.is_active ? "Desativar" : "Ativar"}
-                    >
+                    <Button size="icon" variant="ghost" onClick={() => toggleActive(announcement)} title={announcement.is_active ? "Desativar" : "Ativar"}>
                       {announcement.is_active ? <Eye size={18} /> : <EyeOff size={18} />}
                     </Button>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => editAnnouncement(announcement)}
-                    >
+                    <Button size="icon" variant="ghost" onClick={() => editAnnouncement(announcement)}>
                       <Edit size={18} />
                     </Button>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="text-destructive hover:text-destructive"
-                      onClick={() => deleteAnnouncement(announcement.id)}
-                    >
+                    <Button size="icon" variant="ghost" className="text-destructive hover:text-destructive" onClick={() => deleteAnnouncement(announcement.id)}>
                       <Trash2 size={18} />
                     </Button>
                   </div>

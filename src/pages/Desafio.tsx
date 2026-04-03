@@ -9,7 +9,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import ScrollReveal from "@/components/ScrollReveal";
 import { useAchievements } from "@/hooks/useAchievements";
 import { useUserStats } from "@/hooks/useUserStats";
-import { supabase } from "@/integrations/supabase/client";
+import { fromTable } from "@/integrations/supabase/helpers";
 
 interface ChallengeEntry {
   rank: number;
@@ -35,8 +35,7 @@ const Desafio = () => {
     setLoading(true);
     try {
       // Fetch users ordered by achievements_unlocked
-      const { data: statsData, error: statsError } = await supabase
-        .from('user_stats')
+      const { data: statsData, error: statsError } = await fromTable('user_stats')
         .select('user_id, achievements_unlocked')
         .order('achievements_unlocked', { ascending: false })
         .limit(50);
@@ -53,9 +52,8 @@ const Desafio = () => {
       }
 
       // Fetch profiles for these users
-      const userIds = statsData.map(s => s.user_id);
-      const { data: profilesData, error: profilesError } = await supabase
-        .from('profiles')
+      const userIds = (statsData as any[]).map((s: any) => s.user_id);
+      const { data: profilesData, error: profilesError } = await fromTable('profiles')
         .select('user_id, display_name, avatar_url')
         .in('user_id', userIds);
 
@@ -64,14 +62,14 @@ const Desafio = () => {
       }
 
       const profilesMap = new Map(
-        (profilesData || []).map(p => [p.user_id, {
+        ((profilesData || []) as any[]).map((p: any) => [p.user_id, {
           display_name: p.display_name || 'Jogador Anônimo',
           avatar_url: p.avatar_url
         }])
       );
 
-      const challengeEntries: ChallengeEntry[] = statsData.map((stat, index) => {
-        const profileInfo = profilesMap.get(stat.user_id);
+      const challengeEntries: ChallengeEntry[] = (statsData as any[]).map((stat: any, index: number) => {
+        const profileInfo = profilesMap.get(stat.user_id) as any;
         return {
           rank: index + 1,
           user_id: stat.user_id,

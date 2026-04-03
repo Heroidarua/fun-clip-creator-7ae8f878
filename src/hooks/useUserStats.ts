@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { fromTable } from '@/integrations/supabase/helpers';
 import { User, Session } from '@supabase/supabase-js';
 import { useAchievements } from './useAchievements';
 
@@ -52,7 +53,6 @@ export function useUserStats() {
   
   const { stats, xpData, unlockedCount } = useAchievements();
 
-  // Listen for auth changes
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
@@ -81,8 +81,7 @@ export function useUserStats() {
 
   const fetchProfile = async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
+      const { data, error } = await fromTable('profiles')
         .select('id, user_id, display_name, avatar_url, banner_url, bio, username_change_count, created_at, profile_theme, referral_code, referral_count')
         .eq('user_id', userId)
         .maybeSingle();
@@ -93,14 +92,15 @@ export function useUserStats() {
       }
 
       if (data) {
+        const d = data as any;
         setProfile({
-          ...data,
-          username_change_count: data.username_change_count ?? 0,
-          profile_theme: (data.profile_theme as ProfileTheme) || 'purple',
-          banner_url: data.banner_url || null,
-          bio: data.bio || null,
-          referral_code: data.referral_code || null,
-          referral_count: data.referral_count ?? 0
+          ...d,
+          username_change_count: d.username_change_count ?? 0,
+          profile_theme: (d.profile_theme as ProfileTheme) || 'purple',
+          banner_url: d.banner_url || null,
+          bio: d.bio || null,
+          referral_code: d.referral_code || null,
+          referral_count: d.referral_count ?? 0
         });
       }
     } catch (error) {
@@ -108,14 +108,12 @@ export function useUserStats() {
     }
   };
 
-  // Sync local stats to database
   const syncStats = useCallback(async () => {
     if (!user) return;
     
     setSyncing(true);
     try {
-      const { error } = await supabase
-        .from('user_stats')
+      const { error } = await fromTable('user_stats')
         .upsert({
           user_id: user.id,
           total_xp: xpData.totalXP,
@@ -137,7 +135,6 @@ export function useUserStats() {
     }
   }, [user, xpData, unlockedCount, stats]);
 
-  // Auto-sync when stats change (debounced)
   useEffect(() => {
     if (!user) return;
 
@@ -148,18 +145,15 @@ export function useUserStats() {
     return () => clearTimeout(timeout);
   }, [xpData.totalXP, unlockedCount, stats.totalDownloads, user]);
 
-  // Update display name (max 2 changes)
   const updateDisplayName = useCallback(async (displayName: string) => {
     if (!user || !profile) return { success: false, error: 'not_authenticated' };
 
-    // Check if user has reached the limit
     if (profile.username_change_count >= 2) {
       return { success: false, error: 'limit_reached' };
     }
 
     try {
-      const { error } = await supabase
-        .from('profiles')
+      const { error } = await fromTable('profiles')
         .update({ 
           display_name: displayName,
           username_change_count: profile.username_change_count + 1
@@ -183,12 +177,10 @@ export function useUserStats() {
     }
   }, [user, profile]);
 
-  // Remove avatar
   const removeAvatar = useCallback(async () => {
     if (!user) return false;
 
     try {
-      // Remove from storage
       const { error: deleteError } = await supabase.storage
         .from('avatars')
         .remove([`${user.id}/avatar.jpg`, `${user.id}/avatar.png`, `${user.id}/avatar.webp`, `${user.id}/avatar.jpeg`]);
@@ -197,9 +189,7 @@ export function useUserStats() {
         console.error('Storage delete error:', deleteError);
       }
 
-      // Update profile to remove avatar URL
-      const { error: updateError } = await supabase
-        .from('profiles')
+      const { error: updateError } = await fromTable('profiles')
         .update({ avatar_url: null })
         .eq('user_id', user.id);
 
@@ -216,12 +206,10 @@ export function useUserStats() {
     }
   }, [user]);
 
-  // Upload avatar
   const uploadAvatar = useCallback(async (file: File) => {
     if (!user) return null;
 
     try {
-      // Validate file
       if (!file.type.startsWith('image/')) {
         throw new Error('File must be an image');
       }
@@ -232,7 +220,6 @@ export function useUserStats() {
       const fileExt = file.name.split('.').pop();
       const filePath = `${user.id}/avatar.${fileExt}`;
 
-      // Upload to storage
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(filePath, file, { upsert: true });
@@ -242,16 +229,13 @@ export function useUserStats() {
         throw uploadError;
       }
 
-      // Get public URL
       const { data: urlData } = supabase.storage
         .from('avatars')
         .getPublicUrl(filePath);
 
-      const avatarUrl = urlData.publicUrl + '?t=' + Date.now(); // Cache bust
+      const avatarUrl = urlData.publicUrl + '?t=' + Date.now();
 
-      // Update profile with new avatar URL
-      const { error: updateError } = await supabase
-        .from('profiles')
+      const { error: updateError } = await fromTable('profiles')
         .update({ avatar_url: avatarUrl })
         .eq('user_id', user.id);
 
@@ -268,13 +252,11 @@ export function useUserStats() {
     }
   }, [user]);
 
-  // Update profile theme
   const updateProfileTheme = useCallback(async (theme: ProfileTheme) => {
     if (!user) return false;
 
     try {
-      const { error } = await supabase
-        .from('profiles')
+      const { error } = await fromTable('profiles')
         .update({ profile_theme: theme })
         .eq('user_id', user.id);
 
@@ -291,13 +273,11 @@ export function useUserStats() {
     }
   }, [user]);
 
-  // Update bio
   const updateBio = useCallback(async (bio: string) => {
     if (!user) return false;
 
     try {
-      const { error } = await supabase
-        .from('profiles')
+      const { error } = await fromTable('profiles')
         .update({ bio: bio || null })
         .eq('user_id', user.id);
 
@@ -314,12 +294,10 @@ export function useUserStats() {
     }
   }, [user]);
 
-  // Upload banner
   const uploadBanner = useCallback(async (file: File) => {
     if (!user) return null;
 
     try {
-      // Validate file
       if (!file.type.startsWith('image/')) {
         throw new Error('File must be an image');
       }
@@ -330,7 +308,6 @@ export function useUserStats() {
       const fileExt = file.name.split('.').pop();
       const filePath = `${user.id}/banner.${fileExt}`;
 
-      // Upload to storage
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(filePath, file, { upsert: true });
@@ -340,16 +317,13 @@ export function useUserStats() {
         throw uploadError;
       }
 
-      // Get public URL
       const { data: urlData } = supabase.storage
         .from('avatars')
         .getPublicUrl(filePath);
 
-      const bannerUrl = urlData.publicUrl + '?t=' + Date.now(); // Cache bust
+      const bannerUrl = urlData.publicUrl + '?t=' + Date.now();
 
-      // Update profile with new banner URL
-      const { error: updateError } = await supabase
-        .from('profiles')
+      const { error: updateError } = await fromTable('profiles')
         .update({ banner_url: bannerUrl })
         .eq('user_id', user.id);
 
@@ -366,12 +340,10 @@ export function useUserStats() {
     }
   }, [user]);
 
-  // Remove banner
   const removeBanner = useCallback(async () => {
     if (!user) return false;
 
     try {
-      // Remove from storage
       const { error: deleteError } = await supabase.storage
         .from('avatars')
         .remove([`${user.id}/banner.jpg`, `${user.id}/banner.png`, `${user.id}/banner.webp`, `${user.id}/banner.jpeg`]);
@@ -380,9 +352,7 @@ export function useUserStats() {
         console.error('Storage delete error:', deleteError);
       }
 
-      // Update profile to remove banner URL
-      const { error: updateError } = await supabase
-        .from('profiles')
+      const { error: updateError } = await fromTable('profiles')
         .update({ banner_url: null })
         .eq('user_id', user.id);
 
@@ -419,7 +389,6 @@ export function useUserStats() {
   };
 }
 
-// Separate hook for leaderboard data
 export function useLeaderboard(limit: number = 50) {
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -429,9 +398,7 @@ export function useLeaderboard(limit: number = 50) {
   const fetchLeaderboard = useCallback(async () => {
     setLoading(true);
     try {
-      // Fetch top users by XP
-      const { data: statsData, error: statsError } = await supabase
-        .from('user_stats')
+      const { data: statsData, error: statsError } = await fromTable('user_stats')
         .select('user_id, total_xp, level, achievements_unlocked')
         .order('total_xp', { ascending: false })
         .limit(limit);
@@ -447,10 +414,9 @@ export function useLeaderboard(limit: number = 50) {
         return;
       }
 
-      // Fetch profiles for these users
-      const userIds = statsData.map(s => s.user_id);
-      const { data: profilesData, error: profilesError } = await supabase
-        .from('profiles')
+      const sdAny = statsData as any[];
+      const userIds = sdAny.map((s: any) => s.user_id);
+      const { data: profilesData, error: profilesError } = await fromTable('profiles')
         .select('user_id, display_name, avatar_url')
         .in('user_id', userIds);
 
@@ -459,13 +425,13 @@ export function useLeaderboard(limit: number = 50) {
       }
 
       const profilesMap = new Map(
-        (profilesData || []).map(p => [p.user_id, { 
+        ((profilesData || []) as any[]).map((p: any) => [p.user_id, { 
           display_name: p.display_name || 'Jogador Anônimo',
           avatar_url: p.avatar_url 
         }])
       );
 
-      const leaderboardEntries: LeaderboardEntry[] = statsData.map((stat, index) => {
+      const leaderboardEntries: LeaderboardEntry[] = sdAny.map((stat: any, index: number) => {
         const profileInfo = profilesMap.get(stat.user_id);
         return {
           rank: index + 1,
@@ -481,39 +447,36 @@ export function useLeaderboard(limit: number = 50) {
 
       setEntries(leaderboardEntries);
 
-      // Find current user's rank if logged in
       if (user) {
         const currentUserEntry = leaderboardEntries.find(e => e.user_id === user.id);
         if (currentUserEntry) {
           setUserRank(currentUserEntry);
         } else {
-          // User not in top 50, fetch their rank
-          const { data: userStats } = await supabase
-            .from('user_stats')
+          const { data: userStats } = await fromTable('user_stats')
             .select('total_xp, level, achievements_unlocked')
             .eq('user_id', user.id)
             .maybeSingle();
 
           if (userStats) {
-            const { count } = await supabase
-              .from('user_stats')
+            const us = userStats as any;
+            const { count } = await fromTable('user_stats')
               .select('*', { count: 'exact', head: true })
-              .gt('total_xp', userStats.total_xp);
+              .gt('total_xp', us.total_xp);
 
-            const { data: profileData } = await supabase
-              .from('profiles')
+            const { data: profileData } = await fromTable('profiles')
               .select('display_name, avatar_url')
               .eq('user_id', user.id)
               .maybeSingle();
 
+            const pd = profileData as any;
             setUserRank({
               rank: (count || 0) + 1,
               user_id: user.id,
-              display_name: profileData?.display_name || 'Você',
-              avatar_url: profileData?.avatar_url || null,
-              total_xp: userStats.total_xp,
-              level: userStats.level,
-              achievements_unlocked: userStats.achievements_unlocked,
+              display_name: pd?.display_name || 'Você',
+              avatar_url: pd?.avatar_url || null,
+              total_xp: us.total_xp,
+              level: us.level,
+              achievements_unlocked: us.achievements_unlocked,
               isCurrentUser: true,
             });
           }

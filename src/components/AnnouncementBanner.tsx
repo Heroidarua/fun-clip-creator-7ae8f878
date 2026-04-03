@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { fromTable } from "@/integrations/supabase/helpers";
 import { Megaphone } from "lucide-react";
 
 type Announcement = {
@@ -14,8 +14,7 @@ export default function AnnouncementBanner() {
 
   useEffect(() => {
     const fetchAnnouncements = async () => {
-      const { data, error } = await supabase
-        .from("announcements" as any)
+      const { data, error } = await fromTable("announcements")
         .select("*")
         .eq("is_active", true)
         .order("created_at", { ascending: false });

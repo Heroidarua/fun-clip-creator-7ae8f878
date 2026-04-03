@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { rpcCall } from "@/integrations/supabase/helpers";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Mail, Lock, Eye, EyeOff, ArrowLeft, LogIn, UserPlus, Gift } from "lucide-react";
@@ -23,10 +24,9 @@ const Auth = () => {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
-        // Process referral if exists and user just signed up
         if (event === 'SIGNED_IN' && referralCode) {
           try {
-            await supabase.rpc('process_referral', {
+            await rpcCall('process_referral', {
               referrer_code: referralCode,
               new_user_id: session.user.id
             });
@@ -101,7 +101,6 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      {/* Background effects */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
@@ -117,7 +116,6 @@ const Auth = () => {
         </button>
 
         <div className="bg-card border-4 border-primary/50 p-8">
-          {/* Referral Banner */}
           {referralCode && !isLogin && (
             <div className="mb-6 p-4 bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/30 rounded-lg flex items-center gap-3">
               <Gift className="w-6 h-6 text-green-400 shrink-0" />
