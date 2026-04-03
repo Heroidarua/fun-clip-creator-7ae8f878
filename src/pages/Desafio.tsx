@@ -35,8 +35,7 @@ const Desafio = () => {
     setLoading(true);
     try {
       // Fetch users ordered by achievements_unlocked
-      const { data: statsData, error: statsError } = await supabase
-        .from('user_stats')
+      const { data: statsData, error: statsError } = await fromTable('user_stats')
         .select('user_id, achievements_unlocked')
         .order('achievements_unlocked', { ascending: false })
         .limit(50);
