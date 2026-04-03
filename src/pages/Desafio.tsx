@@ -9,7 +9,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import ScrollReveal from "@/components/ScrollReveal";
 import { useAchievements } from "@/hooks/useAchievements";
 import { useUserStats } from "@/hooks/useUserStats";
-import { supabase } from "@/integrations/supabase/client";
+import { fromTable } from "@/integrations/supabase/helpers";
 
 interface ChallengeEntry {
   rank: number;
