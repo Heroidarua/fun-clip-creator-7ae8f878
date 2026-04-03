@@ -59,10 +59,10 @@
     --foreground: 60 10% 95%;
 
     /* Cards com borda pixel */
-    --card: 240 12% 8%;
+    --card: 0 0% 6%;
     --card-foreground: 60 10% 95%;
 
-    --popover: 240 12% 10%;
+    --popover: 0 0% 8%;
     --popover-foreground: 60 10% 95%;
 
     /* Primary: Vermelho arcade clássico */
@@ -73,7 +73,7 @@
     --secondary: 280 60% 25%;
     --secondary-foreground: 60 10% 95%;
 
-    --muted: 240 10% 15%;
+    --muted: 0 0% 12%;
     --muted-foreground: 60 5% 60%;
 
     /* Accent: Verde neon arcade */
@@ -90,19 +90,19 @@
     --destructive: 0 70% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 10% 20%;
-    --input: 240 12% 12%;
+    --border: 0 0% 15%;
+    --input: 0 0% 10%;
     --ring: 0 85% 50%;
 
     /* Retro Gradients */
-    --gradient-hero: linear-gradient(180deg, hsl(240 15% 4%) 0%, hsl(280 30% 8%) 50%, hsl(240 15% 4%) 100%);
-    --gradient-header: linear-gradient(90deg, hsl(240 15% 6%) 0%, hsl(280 20% 10%) 50%, hsl(240 15% 6%) 100%);
-    --gradient-card: linear-gradient(135deg, hsl(240 12% 10%) 0%, hsl(280 15% 12%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(0 0% 0%) 0%, hsl(280 20% 5%) 50%, hsl(0 0% 0%) 100%);
+    --gradient-header: linear-gradient(90deg, hsl(0 0% 2%) 0%, hsl(280 15% 5%) 50%, hsl(0 0% 2%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 5%) 0%, hsl(280 10% 7%) 100%);
     --gradient-button: linear-gradient(135deg, hsl(0 85% 45%) 0%, hsl(0 90% 55%) 100%);
-    --gradient-arcade: linear-gradient(180deg, hsl(280 50% 20%) 0%, hsl(240 30% 10%) 100%);
+    --gradient-arcade: linear-gradient(180deg, hsl(280 30% 10%) 0%, hsl(0 0% 2%) 100%);
     
     /* Pixel glass effect */
-    --glass-bg: hsla(240 15% 8% / 0.9);
+    --glass-bg: hsla(0 0% 4% / 0.95);
     --glass-border: hsla(0 85% 50% / 0.3);
     
     /* Retro shadows with glow */
@@ -201,10 +201,10 @@
     --background: 0 0% 0%;
     --foreground: 60 10% 95%;
 
-    --card: 240 12% 8%;
+    --card: 0 0% 6%;
     --card-foreground: 60 10% 95%;
 
-    --popover: 240 12% 10%;
+    --popover: 0 0% 8%;
     --popover-foreground: 60 10% 95%;
 
     /* Primary: Vermelho arcade clássico */
@@ -215,7 +215,7 @@
     --secondary: 280 60% 25%;
     --secondary-foreground: 60 10% 95%;
 
-    --muted: 240 10% 15%;
+    --muted: 0 0% 12%;
     --muted-foreground: 60 5% 60%;
 
     /* Accent: Verde neon arcade */
@@ -232,19 +232,19 @@
     --destructive: 0 70% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 10% 20%;
-    --input: 240 12% 12%;
+    --border: 0 0% 15%;
+    --input: 0 0% 10%;
     --ring: 0 85% 50%;
 
     /* Retro Gradients */
-    --gradient-hero: linear-gradient(180deg, hsl(240 15% 4%) 0%, hsl(280 30% 8%) 50%, hsl(240 15% 4%) 100%);
-    --gradient-header: linear-gradient(90deg, hsl(240 15% 6%) 0%, hsl(280 20% 10%) 50%, hsl(240 15% 6%) 100%);
-    --gradient-card: linear-gradient(135deg, hsl(240 12% 10%) 0%, hsl(280 15% 12%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(0 0% 0%) 0%, hsl(280 20% 5%) 50%, hsl(0 0% 0%) 100%);
+    --gradient-header: linear-gradient(90deg, hsl(0 0% 2%) 0%, hsl(280 15% 5%) 50%, hsl(0 0% 2%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 5%) 0%, hsl(280 10% 7%) 100%);
     --gradient-button: linear-gradient(135deg, hsl(0 85% 45%) 0%, hsl(0 90% 55%) 100%);
-    --gradient-arcade: linear-gradient(180deg, hsl(280 50% 20%) 0%, hsl(240 30% 10%) 100%);
+    --gradient-arcade: linear-gradient(180deg, hsl(280 30% 10%) 0%, hsl(0 0% 2%) 100%);
     
     /* Pixel glass effect */
-    --glass-bg: hsla(240 15% 8% / 0.9);
+    --glass-bg: hsla(0 0% 4% / 0.95);
     --glass-border: hsla(0 85% 50% / 0.3);
     
     /* Retro shadows with glow */
@@ -253,13 +253,13 @@
     --shadow-pixel: 4px 4px 0 hsla(0 0% 0% / 0.8);
     --shadow-neon: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor;
 
-    --sidebar-background: 240 15% 6%;
+    --sidebar-background: 0 0% 3%;
     --sidebar-foreground: 60 10% 90%;
     --sidebar-primary: 0 85% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 12% 12%;
+    --sidebar-accent: 0 0% 8%;
     --sidebar-accent-foreground: 60 10% 90%;
-    --sidebar-border: 240 10% 15%;
+    --sidebar-border: 0 0% 12%;
     --sidebar-ring: 0 85% 50%;
   }
 
