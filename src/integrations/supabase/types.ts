@@ -14,7 +14,225 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      announcements: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          message: string
+          priority: number
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          message: string
+          priority?: number
+          title: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          message?: string
+          priority?: number
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      downloader_status: {
+        Row: {
+          created_at: string
+          id: string
+          last_checked: string
+          platform: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_checked?: string
+          platform: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_checked?: string
+          platform?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      favorite_games: {
+        Row: {
+          created_at: string
+          game_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          game_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          game_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          message: string
+          read: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          data?: Json
+          id?: string
+          message: string
+          read?: boolean
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          message?: string
+          read?: boolean
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          banner_url: string | null
+          bio: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          profile_theme: string
+          referral_code: string | null
+          referral_count: number
+          updated_at: string
+          user_id: string
+          username_change_count: number
+        }
+        Insert: {
+          avatar_url?: string | null
+          banner_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          profile_theme?: string
+          referral_code?: string | null
+          referral_count?: number
+          updated_at?: string
+          user_id: string
+          username_change_count?: number
+        }
+        Update: {
+          avatar_url?: string | null
+          banner_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          profile_theme?: string
+          referral_code?: string | null
+          referral_count?: number
+          updated_at?: string
+          user_id?: string
+          username_change_count?: number
+        }
+        Relationships: []
+      }
+      referral_tracking: {
+        Row: {
+          created_at: string
+          id: string
+          referral_code: string
+          referred_id: string
+          referrer_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          referral_code: string
+          referred_id: string
+          referrer_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          referral_code?: string
+          referred_id?: string
+          referrer_id?: string
+        }
+        Relationships: []
+      }
+      user_stats: {
+        Row: {
+          achievements_unlocked: number
+          days_active: number
+          games_played: number
+          id: string
+          level: number
+          tools_used: number
+          total_downloads: number
+          total_xp: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          achievements_unlocked?: number
+          days_active?: number
+          games_played?: number
+          id?: string
+          level?: number
+          tools_used?: number
+          total_downloads?: number
+          total_xp?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          achievements_unlocked?: number
+          days_active?: number
+          games_played?: number
+          id?: string
+          level?: number
+          tools_used?: number
+          total_downloads?: number
+          total_xp?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
