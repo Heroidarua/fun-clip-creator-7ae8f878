@@ -62,14 +62,14 @@ const Desafio = () => {
       }
 
       const profilesMap = new Map(
-        (profilesData || []).map(p => [p.user_id, {
+        ((profilesData || []) as any[]).map((p: any) => [p.user_id, {
           display_name: p.display_name || 'Jogador Anônimo',
           avatar_url: p.avatar_url
         }])
       );
 
-      const challengeEntries: ChallengeEntry[] = statsData.map((stat, index) => {
-        const profileInfo = profilesMap.get(stat.user_id);
+      const challengeEntries: ChallengeEntry[] = (statsData as any[]).map((stat: any, index: number) => {
+        const profileInfo = profilesMap.get(stat.user_id) as any;
         return {
           rank: index + 1,
           user_id: stat.user_id,
