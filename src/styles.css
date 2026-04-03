@@ -253,13 +253,13 @@
     --shadow-pixel: 4px 4px 0 hsla(0 0% 0% / 0.8);
     --shadow-neon: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor;
 
-    --sidebar-background: 240 15% 6%;
+    --sidebar-background: 0 0% 3%;
     --sidebar-foreground: 60 10% 90%;
     --sidebar-primary: 0 85% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 12% 12%;
+    --sidebar-accent: 0 0% 8%;
     --sidebar-accent-foreground: 60 10% 90%;
-    --sidebar-border: 240 10% 15%;
+    --sidebar-border: 0 0% 12%;
     --sidebar-ring: 0 85% 50%;
   }
 
