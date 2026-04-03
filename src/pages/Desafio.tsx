@@ -52,9 +52,8 @@ const Desafio = () => {
       }
 
       // Fetch profiles for these users
-      const userIds = statsData.map(s => s.user_id);
-      const { data: profilesData, error: profilesError } = await supabase
-        .from('profiles')
+      const userIds = (statsData as any[]).map((s: any) => s.user_id);
+      const { data: profilesData, error: profilesError } = await fromTable('profiles')
         .select('user_id, display_name, avatar_url')
         .in('user_id', userIds);
 
