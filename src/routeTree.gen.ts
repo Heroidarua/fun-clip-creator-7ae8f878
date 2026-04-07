@@ -38,11 +38,11 @@ import { Route as BlogComoBaixarVideosYoutubeRouteImport } from './routes/blog.c
 import { Route as BlogComoBaixarVideosTiktokSemMarcaRouteImport } from './routes/blog.como-baixar-videos-tiktok-sem-marca'
 import { Route as BlogComoBaixarVideosKwaiRouteImport } from './routes/blog.como-baixar-videos-kwai'
 import { Route as BlogBibliotecaQuadrinhosRouteImport } from './routes/blog.biblioteca-quadrinhos'
-import { Route as ApiManageAnnouncementsRouteImport } from './routes/api/manage-announcements'
-import { Route as ApiDownloadYoutubeRouteImport } from './routes/api/download-youtube'
-import { Route as ApiDownloadTiktokRouteImport } from './routes/api/download-tiktok'
-import { Route as ApiDownloadKwaiRouteImport } from './routes/api/download-kwai'
-import { Route as ApiDownloadInstagramRouteImport } from './routes/api/download-instagram'
+import { Route as ApiManageAnnouncementsRouteImport } from './routes/api.manage-announcements'
+import { Route as ApiDownloadYoutubeRouteImport } from './routes/api.download-youtube'
+import { Route as ApiDownloadTiktokRouteImport } from './routes/api.download-tiktok'
+import { Route as ApiDownloadKwaiRouteImport } from './routes/api.download-kwai'
+import { Route as ApiDownloadInstagramRouteImport } from './routes/api.download-instagram'
 
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
