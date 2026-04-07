@@ -42,8 +42,9 @@ export const Route = createFileRoute("/api/download-tiktok")({
           }
 
           const d = json.data;
+          const tikwmBase = "https://www.tikwm.com";
           const prefixUrl = (path: string) =>
-            path.startsWith("http") ? path : `${baseUrl}${path}`;
+            path.startsWith("http") ? path : `${tikwmBase}${path}`;
 
           return Response.json(
             {
