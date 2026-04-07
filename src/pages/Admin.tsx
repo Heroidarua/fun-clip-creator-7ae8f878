@@ -48,7 +48,7 @@ export default function Admin() {
   const fetchDownloaderStatuses = async () => {
     const { data, error } = await fromTable("downloader_status")
       .select("*")
-      .order("name");
+      .order("platform");
     
     if (!error && data) {
       setDownloaderStatuses(data as DownloaderStatus[]);
@@ -60,17 +60,18 @@ export default function Admin() {
 
   const toggleDownloaderStatus = async (downloader: DownloaderStatus) => {
     setStatusLoading(downloader.id);
+    const newStatus = downloader.status === "active" ? "maintenance" : "active";
     
     const { error } = await fromTable("downloader_status")
-      .update({ is_active: !downloader.is_active, updated_at: new Date().toISOString() })
+      .update({ status: newStatus, last_checked: new Date().toISOString() })
       .eq("id", downloader.id);
     
     if (error) {
       toast({ title: "Erro ao atualizar status", variant: "destructive" });
     } else {
       toast({ 
-        title: `${downloader.name} ${!downloader.is_active ? "ativado" : "em manutenção"}!`,
-        description: !downloader.is_active ? "O serviço está ativo." : "O serviço está em manutenção."
+        title: `${downloader.platform} ${newStatus === "active" ? "ativado" : "em manutenção"}!`,
+        description: newStatus === "active" ? "O serviço está ativo." : "O serviço está em manutenção."
       });
       fetchDownloaderStatuses();
     }
@@ -111,14 +112,14 @@ export default function Admin() {
         await invokeManageAnnouncements({
           action: "update",
           password,
-          data: { id: editingId, title, content, is_active: true },
+          data: { id: editingId, title, message: content, active: true },
         });
         toast({ title: "Aviso atualizado!" });
       } else {
         await invokeManageAnnouncements({
           action: "create",
           password,
-          data: { title, content },
+          data: { title, message: content },
         });
         toast({ title: "Aviso criado!" });
       }
@@ -137,7 +138,7 @@ export default function Admin() {
     await invokeManageAnnouncements({
       action: "update",
       password,
-      data: { ...announcement, is_active: !announcement.is_active },
+      data: { ...announcement, active: !announcement.active },
     });
     fetchAnnouncements();
   };
@@ -152,7 +153,7 @@ export default function Admin() {
   const editAnnouncement = (announcement: Announcement) => {
     setEditingId(announcement.id);
     setTitle(announcement.title);
-    setContent(announcement.content);
+    setContent(announcement.message);
   };
 
   if (!isAuthenticated) {
@@ -212,42 +213,45 @@ export default function Admin() {
             </div>
           ) : (
             <div className="grid gap-3">
-              {downloaderStatuses.map((downloader) => (
-                <div
-                  key={downloader.id}
-                  className={`flex items-center justify-between p-4 rounded-lg border ${
-                    downloader.is_active 
-                      ? "bg-green-500/5 border-green-500/30" 
-                      : "bg-yellow-500/5 border-yellow-500/30"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={`w-3 h-3 rounded-full ${
-                      downloader.is_active ? "bg-green-500" : "bg-yellow-500 animate-pulse"
-                    }`} />
-                    <div>
-                      <span className="font-medium">{downloader.name}</span>
-                      <span className={`ml-2 text-xs px-2 py-0.5 rounded ${
-                        downloader.is_active 
-                          ? "bg-green-500/20 text-green-400" 
-                          : "bg-yellow-500/20 text-yellow-400"
-                      }`}>
-                        {downloader.is_active ? "ATIVO" : "MANUTENÇÃO"}
+              {downloaderStatuses.map((downloader) => {
+                const isActive = downloader.status === "active";
+                return (
+                  <div
+                    key={downloader.id}
+                    className={`flex items-center justify-between p-4 rounded-lg border ${
+                      isActive
+                        ? "bg-green-500/5 border-green-500/30" 
+                        : "bg-yellow-500/5 border-yellow-500/30"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`w-3 h-3 rounded-full ${
+                        isActive ? "bg-green-500" : "bg-yellow-500 animate-pulse"
+                      }`} />
+                      <div>
+                        <span className="font-medium">{downloader.platform}</span>
+                        <span className={`ml-2 text-xs px-2 py-0.5 rounded ${
+                          isActive
+                            ? "bg-green-500/20 text-green-400" 
+                            : "bg-yellow-500/20 text-yellow-400"
+                        }`}>
+                          {isActive ? "ATIVO" : "MANUTENÇÃO"}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-muted-foreground mr-2">
+                        {isActive ? "Desativar" : "Ativar"}
                       </span>
+                      <Switch
+                        checked={isActive}
+                        onCheckedChange={() => toggleDownloaderStatus(downloader)}
+                        disabled={statusLoading === downloader.id}
+                      />
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground mr-2">
-                      {downloader.is_active ? "Desativar" : "Ativar"}
-                    </span>
-                    <Switch
-                      checked={downloader.is_active}
-                      onCheckedChange={() => toggleDownloaderStatus(downloader)}
-                      disabled={statusLoading === downloader.id}
-                    />
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
@@ -282,21 +286,21 @@ export default function Admin() {
               <div
                 key={announcement.id}
                 className={`bg-card border rounded-xl p-4 ${
-                  announcement.is_active ? "border-border" : "border-border/50 opacity-60"
+                  announcement.active ? "border-border" : "border-border/50 opacity-60"
                 }`}
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <h3 className="font-semibold">{announcement.title}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">{announcement.content}</p>
+                    <p className="text-sm text-muted-foreground mt-1">{announcement.message}</p>
                     <span className="text-xs text-muted-foreground/60 mt-2 block">
                       {new Date(announcement.created_at).toLocaleDateString("pt-BR")}
-                      {!announcement.is_active && " • Inativo"}
+                      {!announcement.active && " • Inativo"}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button size="icon" variant="ghost" onClick={() => toggleActive(announcement)} title={announcement.is_active ? "Desativar" : "Ativar"}>
-                      {announcement.is_active ? <Eye size={18} /> : <EyeOff size={18} />}
+                    <Button size="icon" variant="ghost" onClick={() => toggleActive(announcement)} title={announcement.active ? "Desativar" : "Ativar"}>
+                      {announcement.active ? <Eye size={18} /> : <EyeOff size={18} />}
                     </Button>
                     <Button size="icon" variant="ghost" onClick={() => editAnnouncement(announcement)}>
                       <Edit size={18} />
