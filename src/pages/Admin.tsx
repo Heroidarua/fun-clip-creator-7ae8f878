@@ -35,15 +35,16 @@ export default function Admin() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
-  const functionHeaders = {
-    Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-  };
-
-  const invokeManageAnnouncements = (body: any) =>
-    supabase.functions.invoke("manage-announcements", {
-      body,
-      headers: functionHeaders,
+  const invokeManageAnnouncements = async (body: any) => {
+    const resp = await fetch('/api/manage-announcements', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
     });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error || 'Erro');
+    return { data };
+  };
 
   const fetchDownloaderStatuses = async () => {
     const { data, error } = await fromTable("downloader_status")
