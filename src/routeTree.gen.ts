@@ -38,6 +38,11 @@ import { Route as BlogComoBaixarVideosYoutubeRouteImport } from './routes/blog.c
 import { Route as BlogComoBaixarVideosTiktokSemMarcaRouteImport } from './routes/blog.como-baixar-videos-tiktok-sem-marca'
 import { Route as BlogComoBaixarVideosKwaiRouteImport } from './routes/blog.como-baixar-videos-kwai'
 import { Route as BlogBibliotecaQuadrinhosRouteImport } from './routes/blog.biblioteca-quadrinhos'
+import { Route as ApiManageAnnouncementsRouteImport } from './routes/api.manage-announcements'
+import { Route as ApiDownloadYoutubeRouteImport } from './routes/api.download-youtube'
+import { Route as ApiDownloadTiktokRouteImport } from './routes/api.download-tiktok'
+import { Route as ApiDownloadKwaiRouteImport } from './routes/api.download-kwai'
+import { Route as ApiDownloadInstagramRouteImport } from './routes/api.download-instagram'
 
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
@@ -192,6 +197,31 @@ const BlogBibliotecaQuadrinhosRoute =
     path: '/biblioteca-quadrinhos',
     getParentRoute: () => BlogRoute,
   } as any)
+const ApiManageAnnouncementsRoute = ApiManageAnnouncementsRouteImport.update({
+  id: '/api/manage-announcements',
+  path: '/api/manage-announcements',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDownloadYoutubeRoute = ApiDownloadYoutubeRouteImport.update({
+  id: '/api/download-youtube',
+  path: '/api/download-youtube',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDownloadTiktokRoute = ApiDownloadTiktokRouteImport.update({
+  id: '/api/download-tiktok',
+  path: '/api/download-tiktok',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDownloadKwaiRoute = ApiDownloadKwaiRouteImport.update({
+  id: '/api/download-kwai',
+  path: '/api/download-kwai',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDownloadInstagramRoute = ApiDownloadInstagramRouteImport.update({
+  id: '/api/download-instagram',
+  path: '/api/download-instagram',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -211,6 +241,11 @@ export interface FileRoutesByFullPath {
   '/ranking': typeof RankingRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
+  '/api/download-instagram': typeof ApiDownloadInstagramRoute
+  '/api/download-kwai': typeof ApiDownloadKwaiRoute
+  '/api/download-tiktok': typeof ApiDownloadTiktokRoute
+  '/api/download-youtube': typeof ApiDownloadYoutubeRoute
+  '/api/manage-announcements': typeof ApiManageAnnouncementsRoute
   '/blog/biblioteca-quadrinhos': typeof BlogBibliotecaQuadrinhosRoute
   '/blog/como-baixar-videos-kwai': typeof BlogComoBaixarVideosKwaiRoute
   '/blog/como-baixar-videos-tiktok-sem-marca': typeof BlogComoBaixarVideosTiktokSemMarcaRoute
@@ -241,6 +276,11 @@ export interface FileRoutesByTo {
   '/ranking': typeof RankingRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
+  '/api/download-instagram': typeof ApiDownloadInstagramRoute
+  '/api/download-kwai': typeof ApiDownloadKwaiRoute
+  '/api/download-tiktok': typeof ApiDownloadTiktokRoute
+  '/api/download-youtube': typeof ApiDownloadYoutubeRoute
+  '/api/manage-announcements': typeof ApiManageAnnouncementsRoute
   '/blog/biblioteca-quadrinhos': typeof BlogBibliotecaQuadrinhosRoute
   '/blog/como-baixar-videos-kwai': typeof BlogComoBaixarVideosKwaiRoute
   '/blog/como-baixar-videos-tiktok-sem-marca': typeof BlogComoBaixarVideosTiktokSemMarcaRoute
@@ -273,6 +313,11 @@ export interface FileRoutesById {
   '/ranking': typeof RankingRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
+  '/api/download-instagram': typeof ApiDownloadInstagramRoute
+  '/api/download-kwai': typeof ApiDownloadKwaiRoute
+  '/api/download-tiktok': typeof ApiDownloadTiktokRoute
+  '/api/download-youtube': typeof ApiDownloadYoutubeRoute
+  '/api/manage-announcements': typeof ApiManageAnnouncementsRoute
   '/blog/biblioteca-quadrinhos': typeof BlogBibliotecaQuadrinhosRoute
   '/blog/como-baixar-videos-kwai': typeof BlogComoBaixarVideosKwaiRoute
   '/blog/como-baixar-videos-tiktok-sem-marca': typeof BlogComoBaixarVideosTiktokSemMarcaRoute
@@ -306,6 +351,11 @@ export interface FileRouteTypes {
     | '/ranking'
     | '/sobre'
     | '/termos'
+    | '/api/download-instagram'
+    | '/api/download-kwai'
+    | '/api/download-tiktok'
+    | '/api/download-youtube'
+    | '/api/manage-announcements'
     | '/blog/biblioteca-quadrinhos'
     | '/blog/como-baixar-videos-kwai'
     | '/blog/como-baixar-videos-tiktok-sem-marca'
@@ -336,6 +386,11 @@ export interface FileRouteTypes {
     | '/ranking'
     | '/sobre'
     | '/termos'
+    | '/api/download-instagram'
+    | '/api/download-kwai'
+    | '/api/download-tiktok'
+    | '/api/download-youtube'
+    | '/api/manage-announcements'
     | '/blog/biblioteca-quadrinhos'
     | '/blog/como-baixar-videos-kwai'
     | '/blog/como-baixar-videos-tiktok-sem-marca'
@@ -367,6 +422,11 @@ export interface FileRouteTypes {
     | '/ranking'
     | '/sobre'
     | '/termos'
+    | '/api/download-instagram'
+    | '/api/download-kwai'
+    | '/api/download-tiktok'
+    | '/api/download-youtube'
+    | '/api/manage-announcements'
     | '/blog/biblioteca-quadrinhos'
     | '/blog/como-baixar-videos-kwai'
     | '/blog/como-baixar-videos-tiktok-sem-marca'
@@ -399,6 +459,11 @@ export interface RootRouteChildren {
   RankingRoute: typeof RankingRoute
   SobreRoute: typeof SobreRoute
   TermosRoute: typeof TermosRoute
+  ApiDownloadInstagramRoute: typeof ApiDownloadInstagramRoute
+  ApiDownloadKwaiRoute: typeof ApiDownloadKwaiRoute
+  ApiDownloadTiktokRoute: typeof ApiDownloadTiktokRoute
+  ApiDownloadYoutubeRoute: typeof ApiDownloadYoutubeRoute
+  ApiManageAnnouncementsRoute: typeof ApiManageAnnouncementsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -606,6 +671,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogBibliotecaQuadrinhosRouteImport
       parentRoute: typeof BlogRoute
     }
+    '/api/manage-announcements': {
+      id: '/api/manage-announcements'
+      path: '/api/manage-announcements'
+      fullPath: '/api/manage-announcements'
+      preLoaderRoute: typeof ApiManageAnnouncementsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/download-youtube': {
+      id: '/api/download-youtube'
+      path: '/api/download-youtube'
+      fullPath: '/api/download-youtube'
+      preLoaderRoute: typeof ApiDownloadYoutubeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/download-tiktok': {
+      id: '/api/download-tiktok'
+      path: '/api/download-tiktok'
+      fullPath: '/api/download-tiktok'
+      preLoaderRoute: typeof ApiDownloadTiktokRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/download-kwai': {
+      id: '/api/download-kwai'
+      path: '/api/download-kwai'
+      fullPath: '/api/download-kwai'
+      preLoaderRoute: typeof ApiDownloadKwaiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/download-instagram': {
+      id: '/api/download-instagram'
+      path: '/api/download-instagram'
+      fullPath: '/api/download-instagram'
+      preLoaderRoute: typeof ApiDownloadInstagramRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -660,6 +760,11 @@ const rootRouteChildren: RootRouteChildren = {
   RankingRoute: RankingRoute,
   SobreRoute: SobreRoute,
   TermosRoute: TermosRoute,
+  ApiDownloadInstagramRoute: ApiDownloadInstagramRoute,
+  ApiDownloadKwaiRoute: ApiDownloadKwaiRoute,
+  ApiDownloadTiktokRoute: ApiDownloadTiktokRoute,
+  ApiDownloadYoutubeRoute: ApiDownloadYoutubeRoute,
+  ApiManageAnnouncementsRoute: ApiManageAnnouncementsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

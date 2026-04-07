@@ -3,7 +3,7 @@ import { Clipboard, Search, Download, Headphones, Gamepad2, Book, Music, Camera,
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+
 import { useDownloaderStatus } from "@/hooks/useDownloaderStatus";
 import { useAchievements } from "@/hooks/useAchievements";
 
@@ -194,15 +194,14 @@ const HeroSection = () => {
     }, 200);
 
     try {
-      console.log("Chamando edge function com URL:", url.trim());
+      console.log("Chamando API TikTok com URL:", url.trim());
       
-      const { data, error } = await supabase.functions.invoke('download-tiktok', {
-        body: { url: url.trim() }
+      const resp = await fetch('/api/download-tiktok', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: url.trim() }),
       });
-
-      console.log("Resposta da edge function:", { data, error });
-
-      if (error) throw error;
+      const data = await resp.json();
 
       setProgress(100);
       clearInterval(progressInterval);
@@ -339,15 +338,14 @@ const HeroSection = () => {
     }, 200);
 
     try {
-      console.log("Chamando edge function Instagram com URL:", instagramUrl.trim());
+      console.log("Chamando API Instagram com URL:", instagramUrl.trim());
       
-      const { data, error } = await supabase.functions.invoke('download-instagram', {
-        body: { url: instagramUrl.trim() }
+      const resp = await fetch('/api/download-instagram', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: instagramUrl.trim() }),
       });
-
-      console.log("Resposta da edge function Instagram:", { data, error });
-
-      if (error) throw error;
+      const data = await resp.json();
 
       setInstagramProgress(100);
       clearInterval(progressInterval);
@@ -497,15 +495,14 @@ const HeroSection = () => {
     }, 200);
 
     try {
-      console.log("Chamando edge function Kwai com URL:", kwaiUrl.trim());
+      console.log("Chamando API Kwai com URL:", kwaiUrl.trim());
       
-      const { data, error } = await supabase.functions.invoke('download-kwai', {
-        body: { url: kwaiUrl.trim() }
+      const resp = await fetch('/api/download-kwai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: kwaiUrl.trim() }),
       });
-
-      console.log("Resposta da edge function Kwai:", { data, error });
-
-      if (error) throw error;
+      const data = await resp.json();
 
       setKwaiProgress(100);
       clearInterval(progressInterval);
@@ -627,15 +624,14 @@ const HeroSection = () => {
     }, 200);
 
     try {
-      console.log("Chamando edge function YouTube com URL:", youtubeUrl.trim());
+      console.log("Chamando API YouTube com URL:", youtubeUrl.trim());
       
-      const { data, error } = await supabase.functions.invoke('download-youtube', {
-        body: { url: youtubeUrl.trim() }
+      const resp = await fetch('/api/download-youtube', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: youtubeUrl.trim() }),
       });
-
-      console.log("Resposta da edge function YouTube:", { data, error });
-
-      if (error) throw error;
+      const data = await resp.json();
 
       setYoutubeProgress(100);
       clearInterval(progressInterval);
@@ -694,11 +690,14 @@ const HeroSection = () => {
       });
 
       // Request the Edge Function to download the file directly (handles tunnel URLs)
-      const { data: freshData, error: fetchError } = await supabase.functions.invoke('download-youtube', {
-        body: { url: youtubeUrl.trim(), download: true }
+      const freshResp = await fetch('/api/download-youtube', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: youtubeUrl.trim(), download: true }),
       });
+      const freshData = await freshResp.json();
 
-      if (fetchError || !freshData?.success) {
+      if (!freshData?.success) {
         throw new Error(freshData?.error || "Não foi possível obter o vídeo");
       }
 
