@@ -3,7 +3,7 @@ import { Clipboard, Search, Download, Headphones, Gamepad2, Book, Music, Camera,
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+
 import { useDownloaderStatus } from "@/hooks/useDownloaderStatus";
 import { useAchievements } from "@/hooks/useAchievements";
 
