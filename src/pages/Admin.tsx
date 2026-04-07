@@ -12,16 +12,16 @@ import { Switch } from "@/components/ui/switch";
 type Announcement = {
   id: string;
   title: string;
-  content: string;
-  is_active: boolean;
+  message: string;
+  active: boolean;
   created_at: string;
 };
 
 type DownloaderStatus = {
   id: string;
-  name: string;
-  is_active: boolean;
-  updated_at: string;
+  platform: string;
+  status: string;
+  last_checked: string;
 };
 
 export default function Admin() {

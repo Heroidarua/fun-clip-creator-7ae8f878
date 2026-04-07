@@ -16,7 +16,7 @@ export default function AnnouncementBanner() {
     const fetchAnnouncements = async () => {
       const { data, error } = await fromTable("announcements")
         .select("*")
-        .eq("is_active", true)
+        .eq("active", true)
         .order("created_at", { ascending: false });
 
       if (!error && data) {

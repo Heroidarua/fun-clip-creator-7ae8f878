@@ -3,9 +3,10 @@ import { fromTable } from "@/integrations/supabase/helpers";
 
 interface DownloaderStatus {
   id: string;
-  name: string;
-  is_active: boolean;
-  updated_at: string;
+  platform: string;
+  status: string;
+  last_checked: string;
+  created_at: string;
 }
 
 export const useDownloaderStatus = () => {
@@ -20,7 +21,7 @@ export const useDownloaderStatus = () => {
 
       const statusMap: Record<string, boolean> = {};
       (data as DownloaderStatus[] || []).forEach((item) => {
-        statusMap[item.id] = item.is_active;
+        statusMap[item.platform] = item.status === "active";
       });
       setStatuses(statusMap);
     } catch (error) {
