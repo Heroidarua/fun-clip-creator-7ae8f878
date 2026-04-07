@@ -5,7 +5,7 @@ import { Megaphone } from "lucide-react";
 type Announcement = {
   id: string;
   title: string;
-  content: string;
+  message: string;
   created_at: string;
 };
 
@@ -16,7 +16,7 @@ export default function AnnouncementBanner() {
     const fetchAnnouncements = async () => {
       const { data, error } = await fromTable("announcements")
         .select("*")
-        .eq("is_active", true)
+        .eq("active", true)
         .order("created_at", { ascending: false });
 
       if (!error && data) {
@@ -45,7 +45,7 @@ export default function AnnouncementBanner() {
                 {announcement.title}
               </h3>
               <p className="text-sm text-muted-foreground">
-                {announcement.content}
+                {announcement.message}
               </p>
               <span className="text-xs text-muted-foreground/60 mt-2 block">
                 {new Date(announcement.created_at).toLocaleDateString("pt-BR")}
