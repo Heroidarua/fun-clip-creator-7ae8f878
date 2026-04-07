@@ -42,22 +42,23 @@ export const Route = createFileRoute("/api/download-tiktok")({
           }
 
           const d = json.data;
-          const baseUrl = "https://www.tikwm.com";
+          const prefixUrl = (path: string) =>
+            path.startsWith("http") ? path : `${baseUrl}${path}`;
 
           return Response.json(
             {
               success: true,
               data: {
                 video_urls: {
-                  hd: d.hdplay ? `${baseUrl}${d.hdplay}` : `${baseUrl}${d.play}`,
-                  sd: `${baseUrl}${d.play}`,
-                  watermark: d.wmplay ? `${baseUrl}${d.wmplay}` : "",
+                  hd: d.hdplay ? prefixUrl(d.hdplay) : prefixUrl(d.play),
+                  sd: prefixUrl(d.play),
+                  watermark: d.wmplay ? prefixUrl(d.wmplay) : "",
                 },
-                audio_url: d.music ? `${baseUrl}${d.music}` : "",
+                audio_url: d.music ? prefixUrl(d.music) : "",
                 title: d.title || "TikTok Video",
                 author: d.author?.nickname || d.author?.unique_id || "Unknown",
                 duration: d.duration || 0,
-                thumbnail: d.cover ? `${baseUrl}${d.cover}` : d.origin_cover || "",
+                thumbnail: d.cover ? prefixUrl(d.cover) : d.origin_cover || "",
               },
             },
             { headers: corsHeaders() }
