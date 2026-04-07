@@ -690,11 +690,14 @@ const HeroSection = () => {
       });
 
       // Request the Edge Function to download the file directly (handles tunnel URLs)
-      const { data: freshData, error: fetchError } = await supabase.functions.invoke('download-youtube', {
-        body: { url: youtubeUrl.trim(), download: true }
+      const freshResp = await fetch('/api/download-youtube', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: youtubeUrl.trim(), download: true }),
       });
+      const freshData = await freshResp.json();
 
-      if (fetchError || !freshData?.success) {
+      if (!freshData?.success) {
         throw new Error(freshData?.error || "Não foi possível obter o vídeo");
       }
 
