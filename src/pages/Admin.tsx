@@ -83,8 +83,7 @@ export default function Admin() {
   const authenticate = async () => {
     setLoading(true);
     try {
-      const { data, error } = await invokeManageAnnouncements({ action: "list", password });
-      if (error) throw error;
+      const { data } = await invokeManageAnnouncements({ action: "list", password });
       setIsAuthenticated(true);
       setAnnouncements(data.data || []);
       fetchDownloaderStatuses();
