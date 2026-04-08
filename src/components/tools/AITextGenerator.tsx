@@ -25,18 +25,12 @@ const AITextGenerator = ({ onSuccess }: AITextGeneratorProps) => {
     abortRef.current = new AbortController();
 
     try {
-      const resp = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-text-tools`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-          },
-          body: JSON.stringify({ action: "generate", prompt: prompt.trim() }),
-          signal: abortRef.current.signal,
-        }
-      );
+      const resp = await fetch("/api/ai-text", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "generate", prompt: prompt.trim() }),
+        signal: abortRef.current.signal,
+      });
 
       if (!resp.ok) {
         const err = await resp.json();
