@@ -43,6 +43,7 @@ import { Route as ApiDownloadYoutubeRouteImport } from './routes/api.download-yo
 import { Route as ApiDownloadTiktokRouteImport } from './routes/api.download-tiktok'
 import { Route as ApiDownloadKwaiRouteImport } from './routes/api.download-kwai'
 import { Route as ApiDownloadInstagramRouteImport } from './routes/api.download-instagram'
+import { Route as ApiAiTextRouteImport } from './routes/api.ai-text'
 
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
@@ -222,6 +223,11 @@ const ApiDownloadInstagramRoute = ApiDownloadInstagramRouteImport.update({
   path: '/api/download-instagram',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAiTextRoute = ApiAiTextRouteImport.update({
+  id: '/api/ai-text',
+  path: '/api/ai-text',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -241,6 +247,7 @@ export interface FileRoutesByFullPath {
   '/ranking': typeof RankingRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
+  '/api/ai-text': typeof ApiAiTextRoute
   '/api/download-instagram': typeof ApiDownloadInstagramRoute
   '/api/download-kwai': typeof ApiDownloadKwaiRoute
   '/api/download-tiktok': typeof ApiDownloadTiktokRoute
@@ -276,6 +283,7 @@ export interface FileRoutesByTo {
   '/ranking': typeof RankingRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
+  '/api/ai-text': typeof ApiAiTextRoute
   '/api/download-instagram': typeof ApiDownloadInstagramRoute
   '/api/download-kwai': typeof ApiDownloadKwaiRoute
   '/api/download-tiktok': typeof ApiDownloadTiktokRoute
@@ -313,6 +321,7 @@ export interface FileRoutesById {
   '/ranking': typeof RankingRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
+  '/api/ai-text': typeof ApiAiTextRoute
   '/api/download-instagram': typeof ApiDownloadInstagramRoute
   '/api/download-kwai': typeof ApiDownloadKwaiRoute
   '/api/download-tiktok': typeof ApiDownloadTiktokRoute
@@ -351,6 +360,7 @@ export interface FileRouteTypes {
     | '/ranking'
     | '/sobre'
     | '/termos'
+    | '/api/ai-text'
     | '/api/download-instagram'
     | '/api/download-kwai'
     | '/api/download-tiktok'
@@ -386,6 +396,7 @@ export interface FileRouteTypes {
     | '/ranking'
     | '/sobre'
     | '/termos'
+    | '/api/ai-text'
     | '/api/download-instagram'
     | '/api/download-kwai'
     | '/api/download-tiktok'
@@ -422,6 +433,7 @@ export interface FileRouteTypes {
     | '/ranking'
     | '/sobre'
     | '/termos'
+    | '/api/ai-text'
     | '/api/download-instagram'
     | '/api/download-kwai'
     | '/api/download-tiktok'
@@ -459,6 +471,7 @@ export interface RootRouteChildren {
   RankingRoute: typeof RankingRoute
   SobreRoute: typeof SobreRoute
   TermosRoute: typeof TermosRoute
+  ApiAiTextRoute: typeof ApiAiTextRoute
   ApiDownloadInstagramRoute: typeof ApiDownloadInstagramRoute
   ApiDownloadKwaiRoute: typeof ApiDownloadKwaiRoute
   ApiDownloadTiktokRoute: typeof ApiDownloadTiktokRoute
@@ -706,6 +719,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiDownloadInstagramRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/ai-text': {
+      id: '/api/ai-text'
+      path: '/api/ai-text'
+      fullPath: '/api/ai-text'
+      preLoaderRoute: typeof ApiAiTextRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -760,6 +780,7 @@ const rootRouteChildren: RootRouteChildren = {
   RankingRoute: RankingRoute,
   SobreRoute: SobreRoute,
   TermosRoute: TermosRoute,
+  ApiAiTextRoute: ApiAiTextRoute,
   ApiDownloadInstagramRoute: ApiDownloadInstagramRoute,
   ApiDownloadKwaiRoute: ApiDownloadKwaiRoute,
   ApiDownloadTiktokRoute: ApiDownloadTiktokRoute,

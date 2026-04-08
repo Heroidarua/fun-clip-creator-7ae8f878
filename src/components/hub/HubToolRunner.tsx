@@ -2,17 +2,14 @@
 import type { ToolId } from "./HubQuickActions";
 import { toast } from "sonner";
 
-const AI_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-text-tools`;
-const AUTH = `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`;
-
 async function streamAI(
   action: string,
   payload: Record<string, string>,
   onDelta: (text: string) => void
 ): Promise<string> {
-  const resp = await fetch(AI_URL, {
+  const resp = await fetch("/api/ai-text", {
     method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: AUTH },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ action, ...payload }),
   });
 
@@ -93,7 +90,6 @@ export async function runTool(
 
     case "qr_code": {
       const qrText = input || "https://clipsave.com.br";
-      // Use QRCode library
       const QRCode = await import("qrcode");
       const url = await QRCode.toDataURL(qrText, { width: 400, margin: 2, color: { dark: "#ffffff", light: "#00000000" } });
       onDelta("✅ QR Code gerado com sucesso!");
