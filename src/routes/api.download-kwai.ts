@@ -45,6 +45,13 @@ async function fetchWithTimeout(url: string, options: any = {}, timeout = 10000)
   }
 }
 
+/* ================= EXTRAIR URL DO TEXTO ================= */
+function extractUrl(text: string): string | null {
+  if (!text) return null;
+  const match = text.match(/https?:\/\/[^\s]+/);
+  return match ? match[0] : null;
+}
+
 /* ================= EXPAND URL ================= */
 async function expandShortUrl(url: string): Promise<string> {
   try {
@@ -62,7 +69,7 @@ async function expandShortUrl(url: string): Promise<string> {
 
 /* ================= VALIDATION ================= */
 function isKwaiUrl(url: string): boolean {
-  return /(kwai\.com|kw\.ai)/i.test(url);
+  return /(kwai\.com|kw\.ai|kwai-video\.com)/i.test(url);
 }
 
 /* ================= SCRAPER ================= */
@@ -76,7 +83,7 @@ async function tryDirectScrape(url: string): Promise<KwaiResponse | null> {
 
     const html = await res.text();
 
-    /* ===== TENTAR PEGAR JSON GLOBAL ===== */
+    /* ===== JSON GLOBAL ===== */
     const jsonMatch = html.match(/window\.__INITIAL_STATE__\s*=\s*(\{.*?\});/);
 
     if (jsonMatch) {
@@ -99,7 +106,7 @@ async function tryDirectScrape(url: string): Promise<KwaiResponse | null> {
       } catch {}
     }
 
-    /* ===== FALLBACK REGEX ===== */
+    /* ===== FALLBACK ===== */
     const match = html.match(/https?:\/\/[^"]+\.mp4[^"]*/);
 
     if (!match) return null;
@@ -140,18 +147,25 @@ async function tryThirdPartyApi(url: string): Promise<KwaiResponse | null> {
 }
 
 /* ================= MAIN ================= */
-async function downloadKwaiVideo(url: string): Promise<KwaiResponse> {
-  if (!url || typeof url !== "string") {
-    throw new Error("URL inválida");
+async function downloadKwaiVideo(input: string): Promise<KwaiResponse> {
+  if (!input || typeof input !== "string") {
+    throw new Error("Entrada inválida");
   }
 
-  const expanded = await expandShortUrl(url);
+  // 🔥 EXTRAI URL DO TEXTO
+  const extractedUrl = extractUrl(input);
+
+  if (!extractedUrl) {
+    throw new Error("Nenhuma URL encontrada no texto");
+  }
+
+  const expanded = await expandShortUrl(extractedUrl);
 
   if (!isKwaiUrl(expanded)) {
     throw new Error("Link não é do Kwai");
   }
 
-  let result =
+  const result =
     (await tryDirectScrape(expanded)) ||
     (await tryThirdPartyApi(expanded));
 
