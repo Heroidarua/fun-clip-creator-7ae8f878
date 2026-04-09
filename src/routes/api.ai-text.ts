@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-const LOVABLE_AI_URL = "https://ai-gateway.lovable.dev/v1/chat/completions";
+const LOVABLE_AI_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
 export const Route = createFileRoute("/api/ai-text")({
   server: {
@@ -90,7 +90,7 @@ export const Route = createFileRoute("/api/ai-text")({
               Authorization: `Bearer ${apiKey}`,
             },
             body: JSON.stringify({
-              model: "google/gemini-2.5-flash",
+              model: "google/gemini-3-flash-preview",
               messages: [
                 { role: "system", content: systemPrompt },
                 { role: "user", content: userContent },
@@ -103,6 +103,18 @@ export const Route = createFileRoute("/api/ai-text")({
           if (!aiResp.ok) {
             const errText = await aiResp.text().catch(() => "Unknown error");
             console.error("AI Gateway error:", aiResp.status, errText);
+            if (aiResp.status === 429) {
+              return Response.json(
+                { error: "Limite de requisições excedido. Tente novamente em alguns segundos." },
+                { status: 429, headers: corsHeaders() }
+              );
+            }
+            if (aiResp.status === 402) {
+              return Response.json(
+                { error: "Créditos de IA esgotados. Adicione créditos nas configurações." },
+                { status: 402, headers: corsHeaders() }
+              );
+            }
             return Response.json(
               { error: "Erro ao processar com IA" },
               { status: 502, headers: corsHeaders() }
