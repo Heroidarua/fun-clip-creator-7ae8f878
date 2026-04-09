@@ -1,215 +1,213 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { serve } from "https://deno.land/std@0.192.0/http/server.ts";
 
-/* ================= CORS ================= */
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
 };
 
-/* ================= TYPES ================= */
-interface KwaiResponse {
-  video_url: string;
+interface MediaData {
+  media_url: string;
+  media_type: "video";
   thumbnail: string;
   title: string;
   author: string;
-  duration?: number;
 }
 
-/* ================= USER AGENTS ================= */
+interface MediaResponse {
+  success: boolean;
+  data?: MediaData;
+  error?: string;
+}
+
 const USER_AGENTS = [
   "Mozilla/5.0 (Linux; Android 13)",
   "Mozilla/5.0 (iPhone; CPU iPhone OS 16_4 like Mac OS X)",
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
 ];
 
 const pick = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
-const getHeaders = () => ({
-  "User-Agent": pick(USER_AGENTS),
-  "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
-});
+function getHeaders(): Record<string, string> {
+  return {
+    "User-Agent": pick(USER_AGENTS),
+    Accept: "*/*",
+    "Accept-Language": "pt-BR,pt;q=0.9",
+    Referer: "https://kwai-video.com/",
+  };
+}
 
-/* ================= FETCH COM TIMEOUT ================= */
-async function fetchWithTimeout(url: string, options: any = {}, timeout = 10000) {
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeout);
-
+// =============================
+// MÉTODO 1: OpenGraph (mais confiável)
+// =============================
+async function tryOpenGraph(url: string): Promise<MediaResponse | null> {
   try {
-    const res = await fetch(url, {
-      ...options,
-      signal: controller.signal,
-    });
-    return res;
-  } finally {
-    clearTimeout(id);
-  }
-}
-
-/* ================= EXTRAIR URL DO TEXTO ================= */
-function extractUrl(text: string): string | null {
-  if (!text) return null;
-  const match = text.match(/https?:\/\/[^\s]+/);
-  return match ? match[0] : null;
-}
-
-/* ================= EXPAND URL ================= */
-async function expandShortUrl(url: string): Promise<string> {
-  try {
-    const res = await fetchWithTimeout(url, {
-      method: "GET",
-      redirect: "follow",
-      headers: getHeaders(),
-    });
-
-    return res.url || url;
-  } catch {
-    return url;
-  }
-}
-
-/* ================= VALIDATION ================= */
-function isKwaiUrl(url: string): boolean {
-  return /(kwai\.com|kw\.ai|kwai-video\.com)/i.test(url);
-}
-
-/* ================= SCRAPER ================= */
-async function tryDirectScrape(url: string): Promise<KwaiResponse | null> {
-  try {
-    const res = await fetchWithTimeout(url, {
-      headers: getHeaders(),
-    });
-
-    if (!res.ok) return null;
-
+    const res = await fetch(url, { headers: getHeaders() });
     const html = await res.text();
 
-    /* ===== JSON GLOBAL ===== */
-    const jsonMatch = html.match(/window\.__INITIAL_STATE__\s*=\s*(\{.*?\});/);
+    const extract = (prop: string) => {
+      const regex = new RegExp(
+        `<meta[^>]+property=["']${prop}["'][^>]+content=["']([^"']+)["']`,
+        "i"
+      );
+      return html.match(regex)?.[1] || "";
+    };
 
-    if (jsonMatch) {
-      try {
-        const json = JSON.parse(jsonMatch[1]);
+    const video = extract("og:video") || extract("og:video:secure_url");
+    const image = extract("og:image");
+    const title = extract("og:title") || "Kwai Video";
 
-        const video =
-          json?.video?.playUrl ||
-          json?.video?.url ||
-          json?.photo?.playUrl;
+    if (!video) return null;
 
-        if (video) {
-          return {
-            video_url: video,
-            thumbnail: json?.video?.coverUrl || "",
-            title: json?.video?.caption || "Kwai Video",
-            author: json?.video?.userName || "Unknown",
-          };
-        }
-      } catch {}
-    }
+    return {
+      success: true,
+      data: {
+        media_url: video,
+        media_type: "video",
+        thumbnail: image,
+        title,
+        author: "Kwai",
+      },
+    };
+  } catch {
+    return null;
+  }
+}
 
-    /* ===== FALLBACK ===== */
-    const match = html.match(/https?:\/\/[^"]+\.mp4[^"]*/);
+// =============================
+// MÉTODO 2: JSON EMBUTIDO
+// =============================
+async function tryEmbeddedJSON(url: string): Promise<MediaResponse | null> {
+  try {
+    const res = await fetch(url, { headers: getHeaders() });
+    const html = await res.text();
+
+    const match = html.match(/window\.__INITIAL_STATE__\s*=\s*(\{.*?\});/);
 
     if (!match) return null;
 
+    const json = JSON.parse(match[1]);
+
+    const videoUrl =
+      json?.videoDetail?.photoUrl ||
+      json?.videoDetail?.playUrl ||
+      "";
+
+    const cover =
+      json?.videoDetail?.coverUrl || "";
+
+    if (!videoUrl) return null;
+
     return {
-      video_url: match[0],
-      thumbnail: "",
-      title: "Kwai Video",
-      author: "Unknown",
+      success: true,
+      data: {
+        media_url: videoUrl,
+        media_type: "video",
+        thumbnail: cover,
+        title: "Kwai Video",
+        author: "Kwai",
+      },
     };
   } catch {
     return null;
   }
 }
 
-/* ================= API EXTERNA ================= */
-async function tryThirdPartyApi(url: string): Promise<KwaiResponse | null> {
+// =============================
+// MÉTODO PRINCIPAL
+// =============================
+async function downloadKwai(url: string): Promise<MediaResponse> {
+  const methods = [
+    () => tryOpenGraph(url),
+    () => tryEmbeddedJSON(url),
+  ];
+
+  for (const method of methods) {
+    try {
+      const result = await method();
+      if (result?.success) return result;
+    } catch {}
+  }
+
+  return {
+    success: false,
+    error: "Não foi possível baixar o vídeo do Kwai",
+  };
+}
+
+// =============================
+// PROXY (DOWNLOAD DIRETO)
+// =============================
+async function handleProxy(mediaUrl: string): Promise<Response> {
   try {
-    const api = `https://api.tiklydown.eu.org/api/download/kwai?url=${encodeURIComponent(url)}`;
+    const res = await fetch(mediaUrl, {
+      headers: {
+        "User-Agent": pick(USER_AGENTS),
+      },
+    });
 
-    const res = await fetchWithTimeout(api);
-
-    if (!res.ok) return null;
-
-    const data = await res.json();
-
-    if (!data?.result?.video) return null;
-
-    return {
-      video_url: data.result.video,
-      thumbnail: data.result.thumbnail || "",
-      title: data.result.title || "Kwai Video",
-      author: data.result.author || "Unknown",
-    };
+    return new Response(res.body, {
+      headers: {
+        ...corsHeaders,
+        "Content-Type": "video/mp4",
+        "Content-Disposition": `attachment; filename="kwai_${Date.now()}.mp4"`,
+      },
+    });
   } catch {
-    return null;
+    return new Response(JSON.stringify({ success: false }), {
+      headers: corsHeaders,
+    });
   }
 }
 
-/* ================= MAIN ================= */
-async function downloadKwaiVideo(input: string): Promise<KwaiResponse> {
-  if (!input || typeof input !== "string") {
-    throw new Error("Entrada inválida");
-  }
-
-  // 🔥 EXTRAI URL DO TEXTO
-  const extractedUrl = extractUrl(input);
-
-  if (!extractedUrl) {
-    throw new Error("Nenhuma URL encontrada no texto");
-  }
-
-  const expanded = await expandShortUrl(extractedUrl);
-
-  if (!isKwaiUrl(expanded)) {
-    throw new Error("Link não é do Kwai");
-  }
-
-  const result =
-    (await tryDirectScrape(expanded)) ||
-    (await tryThirdPartyApi(expanded));
-
-  if (!result) {
-    throw new Error("Não foi possível obter o vídeo");
-  }
-
-  return result;
-}
-
-/* ================= SERVER ================= */
+// =============================
+// SERVER
+// =============================
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
-  try {
-    let body;
+  const urlObj = new URL(req.url);
+  const action = urlObj.searchParams.get("action");
 
-    try {
-      body = await req.json();
-    } catch {
-      return new Response(
-        JSON.stringify({ success: false, error: "Body inválido" }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+  // PROXY
+  if (action === "proxy") {
+    const mediaUrl = urlObj.searchParams.get("media_url");
+    if (!mediaUrl) {
+      return new Response(JSON.stringify({ error: "media_url obrigatória" }), {
+        headers: corsHeaders,
+      });
     }
+    return handleProxy(mediaUrl);
+  }
 
-    const { url } = body;
+  // GET URL
+  let url = urlObj.searchParams.get("url") || "";
 
-    const data = await downloadKwaiVideo(url);
+  if (!url) {
+    return new Response(JSON.stringify({ error: "URL obrigatória" }), {
+      headers: corsHeaders,
+    });
+  }
 
+  // VALIDAR KWAI
+  if (!url.includes("kwai")) {
     return new Response(
-      JSON.stringify({ success: true, data }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-  } catch (err: any) {
-    return new Response(
-      JSON.stringify({
-        success: false,
-        error: err.message || "Erro interno",
-      }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify({ error: "URL precisa ser do Kwai" }),
+      { headers: corsHeaders }
     );
   }
+
+  const result = await downloadKwai(url);
+
+  // ADD PROXY LINK
+  if (result.success && result.data) {
+    result.data.media_url =
+      `${urlObj.origin}${urlObj.pathname}?action=proxy&media_url=` +
+      encodeURIComponent(result.data.media_url);
+  }
+
+  return new Response(JSON.stringify(result), {
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
 });
-  
