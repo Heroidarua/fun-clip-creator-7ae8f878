@@ -1,213 +1,160 @@
-import { serve } from "https://deno.land/std@0.192.0/http/server.ts";
+import { createFileRoute } from "@tanstack/react-router";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
-};
-
-interface MediaData {
-  media_url: string;
-  media_type: "video";
-  thumbnail: string;
-  title: string;
-  author: string;
-}
-
-interface MediaResponse {
-  success: boolean;
-  data?: MediaData;
-  error?: string;
-}
-
-const USER_AGENTS = [
-  "Mozilla/5.0 (Linux; Android 13)",
-  "Mozilla/5.0 (iPhone; CPU iPhone OS 16_4 like Mac OS X)",
-];
-
-const pick = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
-
-function getHeaders(): Record<string, string> {
-  return {
-    "User-Agent": pick(USER_AGENTS),
-    Accept: "*/*",
-    "Accept-Language": "pt-BR,pt;q=0.9",
-    Referer: "https://kwai-video.com/",
-  };
-}
-
-// =============================
-// MÉTODO 1: OpenGraph (mais confiável)
-// =============================
-async function tryOpenGraph(url: string): Promise<MediaResponse | null> {
-  try {
-    const res = await fetch(url, { headers: getHeaders() });
-    const html = await res.text();
-
-    const extract = (prop: string) => {
-      const regex = new RegExp(
-        `<meta[^>]+property=["']${prop}["'][^>]+content=["']([^"']+)["']`,
-        "i"
-      );
-      return html.match(regex)?.[1] || "";
-    };
-
-    const video = extract("og:video") || extract("og:video:secure_url");
-    const image = extract("og:image");
-    const title = extract("og:title") || "Kwai Video";
-
-    if (!video) return null;
-
-    return {
-      success: true,
-      data: {
-        media_url: video,
-        media_type: "video",
-        thumbnail: image,
-        title,
-        author: "Kwai",
+export const Route = createFileRoute("/api/download-kwai")({
+  server: {
+    handlers: {
+      OPTIONS: async () => {
+        return new Response(null, {
+          status: 204,
+          headers: corsHeaders(),
+        });
       },
-    };
-  } catch {
-    return null;
-  }
-}
+      POST: async ({ request }) => {
+        try {
+          const body = await request.json();
+          let url = body?.url?.trim();
 
-// =============================
-// MÉTODO 2: JSON EMBUTIDO
-// =============================
-async function tryEmbeddedJSON(url: string): Promise<MediaResponse | null> {
-  try {
-    const res = await fetch(url, { headers: getHeaders() });
-    const html = await res.text();
+          if (!url || (!url.includes("kwai.com") && !url.includes("kw.ai"))) {
+            return Response.json(
+              { success: false, error: "URL do Kwai inválida" },
+              { status: 400, headers: corsHeaders() }
+            );
+          }
 
-    const match = html.match(/window\.__INITIAL_STATE__\s*=\s*(\{.*?\});/);
+          // Expand short URLs
+          if (url.includes("kw.ai") || url.includes("s.kwai.com")) {
+            try {
+              const expandResp = await fetch(url, {
+                method: "HEAD",
+                redirect: "follow",
+                headers: {
+                  "User-Agent":
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                },
+              });
+              if (expandResp.url) {
+                url = expandResp.url;
+              }
+            } catch {
+              // Continue with original URL
+            }
+          }
 
-    if (!match) return null;
+          // Extract video ID from Kwai URL
+          const videoIdMatch = url.match(
+            /(?:video|p)\/([a-zA-Z0-9_-]+)/
+          );
 
-    const json = JSON.parse(match[1]);
+          // Try using Kwai's internal API
+          const apiResp = await fetch(
+            "https://www.kwai.com/rest/n/feed/hot?count=1",
+            {
+              method: "POST",
+              headers: {
+                "User-Agent":
+                  "Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36",
+                "Content-Type": "application/json",
+                Referer: url,
+              },
+              body: JSON.stringify({ url }),
+            }
+          );
 
-    const videoUrl =
-      json?.videoDetail?.photoUrl ||
-      json?.videoDetail?.playUrl ||
-      "";
+          // Fallback: try to scrape the page directly
+          const pageResp = await fetch(url, {
+            headers: {
+              "User-Agent":
+                "Mozilla/5.0 (Linux; Android 12; SM-G991B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
+              Accept: "text/html,application/xhtml+xml",
+            },
+          });
 
-    const cover =
-      json?.videoDetail?.coverUrl || "";
+          if (!pageResp.ok) {
+            throw new Error("Não foi possível acessar o vídeo do Kwai");
+          }
 
-    if (!videoUrl) return null;
+          const html = await pageResp.text();
 
-    return {
-      success: true,
-      data: {
-        media_url: videoUrl,
-        media_type: "video",
-        thumbnail: cover,
-        title: "Kwai Video",
-        author: "Kwai",
+          // Try to extract video URL from page HTML
+          let videoUrl = "";
+          let title = "";
+          let author = "";
+          let thumbnail = "";
+
+          // Look for video URL in meta tags or script data
+          const ogVideoMatch = html.match(
+            /property="og:video(?::url)?"\s+content="([^"]+)"/
+          );
+          const ogTitleMatch = html.match(
+            /property="og:title"\s+content="([^"]+)"/
+          );
+          const ogImageMatch = html.match(
+            /property="og:image"\s+content="([^"]+)"/
+          );
+          const ogDescMatch = html.match(
+            /property="og:description"\s+content="([^"]+)"/
+          );
+
+          if (ogVideoMatch) videoUrl = ogVideoMatch[1];
+          if (ogTitleMatch) title = ogTitleMatch[1];
+          if (ogImageMatch) thumbnail = ogImageMatch[1];
+
+          // Also try finding video URL in JSON data embedded in page
+          if (!videoUrl) {
+            const jsonMatch = html.match(
+              /"playUrl"\s*:\s*"([^"]+)"/
+            );
+            if (jsonMatch) {
+              videoUrl = jsonMatch[1].replace(/\\u002F/g, "/");
+            }
+          }
+
+          if (!videoUrl) {
+            const srcMatch = html.match(
+              /src="(https?:\/\/[^"]*\.mp4[^"]*)"/
+            );
+            if (srcMatch) videoUrl = srcMatch[1];
+          }
+
+          if (!videoUrl) {
+            throw new Error(
+              "Não foi possível extrair o vídeo do Kwai. Tente outro link."
+            );
+          }
+
+          return Response.json(
+            {
+              success: true,
+              data: {
+                video_url: videoUrl,
+                thumbnail: thumbnail,
+                title: title || "Kwai Video",
+                author: author || "Kwai",
+                duration: 0,
+              },
+            },
+            { headers: corsHeaders() }
+          );
+        } catch (error: any) {
+          console.error("Kwai download error:", error);
+          return Response.json(
+            {
+              success: false,
+              error: error.message || "Erro ao processar vídeo do Kwai",
+            },
+            { status: 500, headers: corsHeaders() }
+          );
+        }
       },
-    };
-  } catch {
-    return null;
-  }
-}
-
-// =============================
-// MÉTODO PRINCIPAL
-// =============================
-async function downloadKwai(url: string): Promise<MediaResponse> {
-  const methods = [
-    () => tryOpenGraph(url),
-    () => tryEmbeddedJSON(url),
-  ];
-
-  for (const method of methods) {
-    try {
-      const result = await method();
-      if (result?.success) return result;
-    } catch {}
-  }
-
-  return {
-    success: false,
-    error: "Não foi possível baixar o vídeo do Kwai",
-  };
-}
-
-// =============================
-// PROXY (DOWNLOAD DIRETO)
-// =============================
-async function handleProxy(mediaUrl: string): Promise<Response> {
-  try {
-    const res = await fetch(mediaUrl, {
-      headers: {
-        "User-Agent": pick(USER_AGENTS),
-      },
-    });
-
-    return new Response(res.body, {
-      headers: {
-        ...corsHeaders,
-        "Content-Type": "video/mp4",
-        "Content-Disposition": `attachment; filename="kwai_${Date.now()}.mp4"`,
-      },
-    });
-  } catch {
-    return new Response(JSON.stringify({ success: false }), {
-      headers: corsHeaders,
-    });
-  }
-}
-
-// =============================
-// SERVER
-// =============================
-serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
-
-  const urlObj = new URL(req.url);
-  const action = urlObj.searchParams.get("action");
-
-  // PROXY
-  if (action === "proxy") {
-    const mediaUrl = urlObj.searchParams.get("media_url");
-    if (!mediaUrl) {
-      return new Response(JSON.stringify({ error: "media_url obrigatória" }), {
-        headers: corsHeaders,
-      });
-    }
-    return handleProxy(mediaUrl);
-  }
-
-  // GET URL
-  let url = urlObj.searchParams.get("url") || "";
-
-  if (!url) {
-    return new Response(JSON.stringify({ error: "URL obrigatória" }), {
-      headers: corsHeaders,
-    });
-  }
-
-  // VALIDAR KWAI
-  if (!url.includes("kwai")) {
-    return new Response(
-      JSON.stringify({ error: "URL precisa ser do Kwai" }),
-      { headers: corsHeaders }
-    );
-  }
-
-  const result = await downloadKwai(url);
-
-  // ADD PROXY LINK
-  if (result.success && result.data) {
-    result.data.media_url =
-      `${urlObj.origin}${urlObj.pathname}?action=proxy&media_url=` +
-      encodeURIComponent(result.data.media_url);
-  }
-
-  return new Response(JSON.stringify(result), {
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
+    },
+  },
 });
+
+function corsHeaders(): Record<string, string> {
+  return {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  };
+}
