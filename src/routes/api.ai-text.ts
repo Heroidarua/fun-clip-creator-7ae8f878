@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-const LOVABLE_AI_URL = "https://ai-gateway.lovable.dev/v1/chat/completions";
+const LOVABLE_AI_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
 export const Route = createFileRoute("/api/ai-text")({
   server: {
@@ -90,7 +90,7 @@ export const Route = createFileRoute("/api/ai-text")({
               Authorization: `Bearer ${apiKey}`,
             },
             body: JSON.stringify({
-              model: "google/gemini-2.5-flash",
+              model: "google/gemini-3-flash-preview",
               messages: [
                 { role: "system", content: systemPrompt },
                 { role: "user", content: userContent },
