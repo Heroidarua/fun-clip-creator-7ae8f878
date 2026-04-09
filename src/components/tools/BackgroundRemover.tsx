@@ -3,7 +3,7 @@ import { Upload, Download, Loader2, X, CheckCircle, Image as ImageIcon, Eraser, 
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+
 import ImageCompareSlider from "./ImageCompareSlider";
 import BackgroundSelector from "./BackgroundSelector";
 import BackgroundAdjustmentsPanel, { BackgroundAdjustments, DEFAULT_ADJUSTMENTS } from "./BackgroundAdjustments";

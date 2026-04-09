@@ -5,7 +5,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { Download, RefreshCw, Sparkles, User, Bot, Ghost, Cat, Rocket, Share2, Copy, Trash2, Image, X, Mail, MessageCircle, Palette, Shirt, Scissors, Move, Star } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+
 import { useAvatarGallery } from "@/hooks/useAvatarGallery";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
