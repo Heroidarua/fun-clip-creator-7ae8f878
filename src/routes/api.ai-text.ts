@@ -103,6 +103,18 @@ export const Route = createFileRoute("/api/ai-text")({
           if (!aiResp.ok) {
             const errText = await aiResp.text().catch(() => "Unknown error");
             console.error("AI Gateway error:", aiResp.status, errText);
+            if (aiResp.status === 429) {
+              return Response.json(
+                { error: "Limite de requisições excedido. Tente novamente em alguns segundos." },
+                { status: 429, headers: corsHeaders() }
+              );
+            }
+            if (aiResp.status === 402) {
+              return Response.json(
+                { error: "Créditos de IA esgotados. Adicione créditos nas configurações." },
+                { status: 402, headers: corsHeaders() }
+              );
+            }
             return Response.json(
               { error: "Erro ao processar com IA" },
               { status: 502, headers: corsHeaders() }
