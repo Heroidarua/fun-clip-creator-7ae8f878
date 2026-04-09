@@ -3,7 +3,7 @@ import { Upload, Download, Loader2, X, CheckCircle, Image as ImageIcon, Eraser, 
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+
 import ImageCompareSlider from "./ImageCompareSlider";
 import BackgroundSelector from "./BackgroundSelector";
 import BackgroundAdjustmentsPanel, { BackgroundAdjustments, DEFAULT_ADJUSTMENTS } from "./BackgroundAdjustments";
@@ -157,11 +157,14 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
   const fetchCredits = async () => {
     setLoadingCredits(true);
     try {
-      const { data, error } = await supabase.functions.invoke('remove-background', {
-        body: { action: 'check-credits' }
+      const resp = await fetch('/api/remove-background', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'check-credits' }),
       });
+      const data = await resp.json();
 
-      if (!error && data?.success) {
+      if (data?.success) {
         setCredits(data.credits);
       }
     } catch (err) {
@@ -222,39 +225,39 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
 
     try {
       const base64 = preview.split(',')[1];
-      
-      const { data, error } = await supabase.functions.invoke('remove-background', {
-        body: { 
+
+      const resp = await fetch('/api/remove-background', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           image: base64,
-          filename: file.name
-        }
+          filename: file.name,
+        }),
       });
 
+      const data = await resp.json();
       clearInterval(progressInterval);
 
-      if (error) throw error;
+      if (!resp.ok || !data.success) {
+        throw new Error(data.error || "Erro ao processar imagem");
+      }
 
-      if (data.success && data.result) {
+      if (data.result) {
         setResultUrl(data.result);
         setProgress(100);
         setShowCompare(true);
         setShowBackgroundSelector(true);
-        
+
         if (data.creditsRemaining !== undefined) {
           setCredits(data.creditsRemaining);
         }
-        
+
         onSuccess?.();
-        
-        const methodMessage = data.method === 'ai' 
-          ? "Processado com IA (fallback)" 
-          : `Processado com remove.bg`;
+
         toast({
           title: "✅ Fundo removido!",
-          description: methodMessage,
+          description: "Processado com IA",
         });
-      } else {
-        throw new Error(data.error || "Erro ao processar imagem");
       }
     } catch (error: any) {
       console.error("Background removal error:", error);

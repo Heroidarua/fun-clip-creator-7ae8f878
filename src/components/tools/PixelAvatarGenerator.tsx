@@ -5,7 +5,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { Download, RefreshCw, Sparkles, User, Bot, Ghost, Cat, Rocket, Share2, Copy, Trash2, Image, X, Mail, MessageCircle, Palette, Shirt, Scissors, Move, Star } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+
 import { useAvatarGallery } from "@/hooks/useAvatarGallery";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -452,34 +452,33 @@ const PixelAvatarGenerator = ({ onSuccess }: PixelAvatarGeneratorProps) => {
 
     try {
       const selectedSize = sizes.find(s => s.value === size) || sizes[2];
-      const { data, error } = await supabase.functions.invoke("generate-avatar", {
-        body: { 
-          style, 
-          color, 
-          accessories, // Now an array of accessories
-          expression, 
-          background, 
-          width: selectedSize.width, 
+      const resp = await fetch("/api/generate-avatar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          style,
+          color,
+          accessories,
+          expression,
+          background,
+          width: selectedSize.width,
           height: selectedSize.height,
           artStyle,
           pose,
           outfit,
           hairStyle,
           customPrompt: customPrompt.trim(),
-        },
+        }),
       });
 
-      if (error) {
-        throw new Error(error.message);
-      }
+      const data = await resp.json();
 
-      if (data.error) {
-        throw new Error(data.error);
+      if (!resp.ok || data.error) {
+        throw new Error(data.error || "Erro ao gerar avatar");
       }
 
       if (data.imageUrl) {
         setGeneratedAvatar(data.imageUrl);
-        // Auto-save to gallery
         saveAvatar(data.imageUrl, style, size);
         onSuccess?.();
         toast({

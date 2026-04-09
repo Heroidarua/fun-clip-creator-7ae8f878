@@ -38,7 +38,9 @@ import { Route as BlogComoBaixarVideosYoutubeRouteImport } from './routes/blog.c
 import { Route as BlogComoBaixarVideosTiktokSemMarcaRouteImport } from './routes/blog.como-baixar-videos-tiktok-sem-marca'
 import { Route as BlogComoBaixarVideosKwaiRouteImport } from './routes/blog.como-baixar-videos-kwai'
 import { Route as BlogBibliotecaQuadrinhosRouteImport } from './routes/blog.biblioteca-quadrinhos'
+import { Route as ApiRemoveBackgroundRouteImport } from './routes/api.remove-background'
 import { Route as ApiManageAnnouncementsRouteImport } from './routes/api.manage-announcements'
+import { Route as ApiGenerateAvatarRouteImport } from './routes/api.generate-avatar'
 import { Route as ApiDownloadYoutubeRouteImport } from './routes/api.download-youtube'
 import { Route as ApiDownloadTiktokRouteImport } from './routes/api.download-tiktok'
 import { Route as ApiDownloadKwaiRouteImport } from './routes/api.download-kwai'
@@ -198,9 +200,19 @@ const BlogBibliotecaQuadrinhosRoute =
     path: '/biblioteca-quadrinhos',
     getParentRoute: () => BlogRoute,
   } as any)
+const ApiRemoveBackgroundRoute = ApiRemoveBackgroundRouteImport.update({
+  id: '/api/remove-background',
+  path: '/api/remove-background',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiManageAnnouncementsRoute = ApiManageAnnouncementsRouteImport.update({
   id: '/api/manage-announcements',
   path: '/api/manage-announcements',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGenerateAvatarRoute = ApiGenerateAvatarRouteImport.update({
+  id: '/api/generate-avatar',
+  path: '/api/generate-avatar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiDownloadYoutubeRoute = ApiDownloadYoutubeRouteImport.update({
@@ -252,7 +264,9 @@ export interface FileRoutesByFullPath {
   '/api/download-kwai': typeof ApiDownloadKwaiRoute
   '/api/download-tiktok': typeof ApiDownloadTiktokRoute
   '/api/download-youtube': typeof ApiDownloadYoutubeRoute
+  '/api/generate-avatar': typeof ApiGenerateAvatarRoute
   '/api/manage-announcements': typeof ApiManageAnnouncementsRoute
+  '/api/remove-background': typeof ApiRemoveBackgroundRoute
   '/blog/biblioteca-quadrinhos': typeof BlogBibliotecaQuadrinhosRoute
   '/blog/como-baixar-videos-kwai': typeof BlogComoBaixarVideosKwaiRoute
   '/blog/como-baixar-videos-tiktok-sem-marca': typeof BlogComoBaixarVideosTiktokSemMarcaRoute
@@ -288,7 +302,9 @@ export interface FileRoutesByTo {
   '/api/download-kwai': typeof ApiDownloadKwaiRoute
   '/api/download-tiktok': typeof ApiDownloadTiktokRoute
   '/api/download-youtube': typeof ApiDownloadYoutubeRoute
+  '/api/generate-avatar': typeof ApiGenerateAvatarRoute
   '/api/manage-announcements': typeof ApiManageAnnouncementsRoute
+  '/api/remove-background': typeof ApiRemoveBackgroundRoute
   '/blog/biblioteca-quadrinhos': typeof BlogBibliotecaQuadrinhosRoute
   '/blog/como-baixar-videos-kwai': typeof BlogComoBaixarVideosKwaiRoute
   '/blog/como-baixar-videos-tiktok-sem-marca': typeof BlogComoBaixarVideosTiktokSemMarcaRoute
@@ -326,7 +342,9 @@ export interface FileRoutesById {
   '/api/download-kwai': typeof ApiDownloadKwaiRoute
   '/api/download-tiktok': typeof ApiDownloadTiktokRoute
   '/api/download-youtube': typeof ApiDownloadYoutubeRoute
+  '/api/generate-avatar': typeof ApiGenerateAvatarRoute
   '/api/manage-announcements': typeof ApiManageAnnouncementsRoute
+  '/api/remove-background': typeof ApiRemoveBackgroundRoute
   '/blog/biblioteca-quadrinhos': typeof BlogBibliotecaQuadrinhosRoute
   '/blog/como-baixar-videos-kwai': typeof BlogComoBaixarVideosKwaiRoute
   '/blog/como-baixar-videos-tiktok-sem-marca': typeof BlogComoBaixarVideosTiktokSemMarcaRoute
@@ -365,7 +383,9 @@ export interface FileRouteTypes {
     | '/api/download-kwai'
     | '/api/download-tiktok'
     | '/api/download-youtube'
+    | '/api/generate-avatar'
     | '/api/manage-announcements'
+    | '/api/remove-background'
     | '/blog/biblioteca-quadrinhos'
     | '/blog/como-baixar-videos-kwai'
     | '/blog/como-baixar-videos-tiktok-sem-marca'
@@ -401,7 +421,9 @@ export interface FileRouteTypes {
     | '/api/download-kwai'
     | '/api/download-tiktok'
     | '/api/download-youtube'
+    | '/api/generate-avatar'
     | '/api/manage-announcements'
+    | '/api/remove-background'
     | '/blog/biblioteca-quadrinhos'
     | '/blog/como-baixar-videos-kwai'
     | '/blog/como-baixar-videos-tiktok-sem-marca'
@@ -438,7 +460,9 @@ export interface FileRouteTypes {
     | '/api/download-kwai'
     | '/api/download-tiktok'
     | '/api/download-youtube'
+    | '/api/generate-avatar'
     | '/api/manage-announcements'
+    | '/api/remove-background'
     | '/blog/biblioteca-quadrinhos'
     | '/blog/como-baixar-videos-kwai'
     | '/blog/como-baixar-videos-tiktok-sem-marca'
@@ -476,7 +500,9 @@ export interface RootRouteChildren {
   ApiDownloadKwaiRoute: typeof ApiDownloadKwaiRoute
   ApiDownloadTiktokRoute: typeof ApiDownloadTiktokRoute
   ApiDownloadYoutubeRoute: typeof ApiDownloadYoutubeRoute
+  ApiGenerateAvatarRoute: typeof ApiGenerateAvatarRoute
   ApiManageAnnouncementsRoute: typeof ApiManageAnnouncementsRoute
+  ApiRemoveBackgroundRoute: typeof ApiRemoveBackgroundRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -684,11 +710,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogBibliotecaQuadrinhosRouteImport
       parentRoute: typeof BlogRoute
     }
+    '/api/remove-background': {
+      id: '/api/remove-background'
+      path: '/api/remove-background'
+      fullPath: '/api/remove-background'
+      preLoaderRoute: typeof ApiRemoveBackgroundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/manage-announcements': {
       id: '/api/manage-announcements'
       path: '/api/manage-announcements'
       fullPath: '/api/manage-announcements'
       preLoaderRoute: typeof ApiManageAnnouncementsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/generate-avatar': {
+      id: '/api/generate-avatar'
+      path: '/api/generate-avatar'
+      fullPath: '/api/generate-avatar'
+      preLoaderRoute: typeof ApiGenerateAvatarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/download-youtube': {
@@ -785,7 +825,9 @@ const rootRouteChildren: RootRouteChildren = {
   ApiDownloadKwaiRoute: ApiDownloadKwaiRoute,
   ApiDownloadTiktokRoute: ApiDownloadTiktokRoute,
   ApiDownloadYoutubeRoute: ApiDownloadYoutubeRoute,
+  ApiGenerateAvatarRoute: ApiGenerateAvatarRoute,
   ApiManageAnnouncementsRoute: ApiManageAnnouncementsRoute,
+  ApiRemoveBackgroundRoute: ApiRemoveBackgroundRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
