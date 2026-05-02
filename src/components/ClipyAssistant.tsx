@@ -36,8 +36,8 @@ const ClipyAssistant = () => {
   const quickReplies = [
     "Como baixar vídeos?",
     "Quais ferramentas têm?",
-    "Como funciona o desafio?",
     "O site é gratuito?",
+    "Como usar o AI Hub?",
   ];
 
   const streamResponse = useCallback(async (allMessages: Message[]) => {
