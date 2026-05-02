@@ -2,7 +2,6 @@ import { useState, useMemo } from "react";
 import { Book, ExternalLink, X, Maximize2, Minimize2, Filter } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import ScrollReveal from "./ScrollReveal";
-import { useAchievements } from "@/hooks/useAchievements";
 import comicsBanner from "@/assets/comics-banner.jpg";
 import batmanGif from "@/assets/batman-walking.gif";
 import supermanGif from "@/assets/superman-pixel.gif";
@@ -37,7 +36,6 @@ const ComicsSection = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<Category>("Todos");
-  const { trackComicRead } = useAchievements();
 
   const filteredComics = useMemo(() => {
     if (selectedCategory === "Todos") return COMICS_DATA;
@@ -46,7 +44,6 @@ const ComicsSection = () => {
 
   const openLibrary = () => {
     setIsOpen(true);
-    trackComicRead();
   };
 
   const closeLibrary = () => {
