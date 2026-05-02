@@ -151,85 +151,8 @@ const TermsOfService = () => {
 
             <section>
               <h2 className="text-xl font-semibold text-foreground mb-3 flex items-center gap-2">
-                <Trophy className="w-5 h-5 text-yellow-500" />
-                10. Regulamento do Desafio R$5.000
-              </h2>
-              <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-6 mb-4">
-                <p className="font-semibold text-foreground mb-3">
-                  PROMOÇÃO: Complete todas as conquistas e ganhe R$5.000!
-                </p>
-              </div>
-              
-              <h3 className="font-semibold text-foreground mt-4 mb-2">10.1. Descrição da Promoção</h3>
-              <p>
-                O "Desafio R$5.000" é uma promoção do ClipSave que premia o primeiro usuário que completar 100% das conquistas disponíveis na plataforma com o valor de R$5.000,00 (cinco mil reais) em dinheiro.
-              </p>
-
-              <h3 className="font-semibold text-foreground mt-4 mb-2">10.2. Período de Vigência</h3>
-              <p>
-                A promoção tem vigência indeterminada, podendo ser encerrada a qualquer momento mediante aviso prévio no site. Uma vez que o prêmio seja reivindicado por um ganhador válido, a promoção será encerrada.
-              </p>
-
-              <h3 className="font-semibold text-foreground mt-4 mb-2">10.3. Elegibilidade</h3>
-              <ul className="list-disc ml-6 space-y-2 mt-2">
-                <li>Participantes devem ter conta cadastrada no ClipSave</li>
-                <li>Ser maior de 18 anos ou ter autorização expressa dos responsáveis legais</li>
-                <li>Residir em território brasileiro</li>
-                <li>Completar legitimamente todas as conquistas disponíveis</li>
-              </ul>
-
-              <h3 className="font-semibold text-foreground mt-4 mb-2">10.4. Mecânica de Participação</h3>
-              <ul className="list-disc ml-6 space-y-2 mt-2">
-                <li>Criar conta gratuita no ClipSave</li>
-                <li>Desbloquear todas as conquistas disponíveis na plataforma</li>
-                <li>Após completar 100% das conquistas, entrar em contato pelo email oficial</li>
-                <li>Fornecer comprovação de identidade e dados bancários para recebimento</li>
-              </ul>
-
-              <h3 className="font-semibold text-foreground mt-4 mb-2">10.5. Premiação</h3>
-              <ul className="list-disc ml-6 space-y-2 mt-2">
-                <li><strong>Prêmio:</strong> R$5.000,00 (cinco mil reais)</li>
-                <li><strong>Ganhador:</strong> Apenas 1 (um) participante</li>
-                <li><strong>Forma de pagamento:</strong> Transferência bancária (PIX ou TED)</li>
-                <li><strong>Prazo:</strong> Até 30 dias úteis após validação</li>
-              </ul>
-
-              <h3 className="font-semibold text-foreground mt-4 mb-2">10.6. Validação</h3>
-              <p>
-                O ClipSave reserva-se o direito de validar a legitimidade das conquistas. Serão consideradas inválidas conquistas obtidas por:
-              </p>
-              <ul className="list-disc ml-6 space-y-2 mt-2">
-                <li>Uso de bots, scripts ou automações</li>
-                <li>Manipulação do localStorage ou banco de dados</li>
-                <li>Exploração de bugs ou vulnerabilidades</li>
-                <li>Criação de múltiplas contas</li>
-                <li>Qualquer forma de fraude ou má-fé</li>
-              </ul>
-
-              <h3 className="font-semibold text-foreground mt-4 mb-2">10.7. Desclassificação</h3>
-              <p>
-                Participantes que violarem estas regras serão desclassificados sem direito a recurso, podendo ter sua conta suspensa permanentemente.
-              </p>
-
-              <h3 className="font-semibold text-foreground mt-4 mb-2">10.8. Contato para Reivindicação</h3>
-              <p>
-                Ao completar todas as conquistas, envie email para{" "}
-                <a href="mailto:contatoclipsave@gmail.com" className="text-primary hover:underline">
-                  contatoclipsave@gmail.com
-                </a>{" "}
-                com o assunto "Desafio R$5.000 - Reivindicação" contendo:
-              </p>
-              <ul className="list-disc ml-6 space-y-2 mt-2">
-                <li>Nome completo</li>
-                <li>Email cadastrado no ClipSave</li>
-                <li>Captura de tela do perfil com 100% das conquistas</li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="text-xl font-semibold text-foreground mb-3 flex items-center gap-2">
                 <Mail className="w-5 h-5 text-primary" />
-                11. Contato
+                10. Contato
               </h2>
               <p>
                 Para dúvidas sobre estes Termos de Uso ou para reportar violações, entre em contato:
