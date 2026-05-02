@@ -1,9 +1,21 @@
 [build]
-  publish = "dist"
   command = "npm run build"
+  publish = "dist/client"
 
+[build.environment]
+  NODE_VERSION = "20"
+  TARGET = "netlify"
+
+[functions]
+  node_bundler = "esbuild"
+  directory = "netlify/functions"
+  # Ship the SSR build output alongside the function
+  included_files = ["dist/server/**"]
+
+# Static files in dist/client are served first by Netlify's CDN.
+# Anything not matched falls through to the SSR function.
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to = "/.netlify/functions/server"
   status = 200
-  
+  force = false
