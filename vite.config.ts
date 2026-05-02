@@ -203,11 +203,7 @@ export default defineConfig(({ command, mode }) => {
       devClientErrorLogger(),
       devServerFnErrorLogger(),
       ...(useCloudflare ? [cloudflare({ viteEnvironment: { name: "ssr" } })] : []),
-      tanstackStart(
-        isNetlify
-          ? { target: "netlify" }
-          : undefined,
-      ),
+      tanstackStart(),
       viteReact(),
       mode === "development" && componentTagger(),
     ].filter(Boolean),
