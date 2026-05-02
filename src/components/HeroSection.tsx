@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 
 import { useDownloaderStatus } from "@/hooks/useDownloaderStatus";
-import { useAchievements } from "@/hooks/useAchievements";
 
 import ScrollReveal from "./ScrollReveal";
 import tiktokIcon from "@/assets/tiktok-icon.png";
@@ -111,7 +110,7 @@ const HeroSection = () => {
   const [clickedButton, setClickedButton] = useState<string | null>(null);
   const { toast } = useToast();
   const { isActive } = useDownloaderStatus();
-  const { trackDownload } = useAchievements();
+  const trackDownload = (_: string) => {};
 
   // Instagram states
   const [instagramUrl, setInstagramUrl] = useState("");
