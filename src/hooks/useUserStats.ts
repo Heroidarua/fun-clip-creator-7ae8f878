@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { fromTable } from '@/integrations/supabase/helpers';
 import { User, Session } from '@supabase/supabase-js';
-import { useAchievements } from './useAchievements';
 
 export type ProfileTheme = 'purple' | 'blue' | 'green' | 'red' | 'orange' | 'pink' | 'cyan';
 
@@ -20,38 +19,11 @@ export interface UserProfile {
   referral_count: number;
 }
 
-export interface UserStats {
-  id: string;
-  user_id: string;
-  total_xp: number;
-  level: number;
-  achievements_unlocked: number;
-  total_downloads: number;
-  tools_used: number;
-  games_played: number;
-  days_active: number;
-  updated_at: string;
-}
-
-export interface LeaderboardEntry {
-  rank: number;
-  user_id: string;
-  display_name: string;
-  avatar_url: string | null;
-  total_xp: number;
-  level: number;
-  achievements_unlocked: number;
-  isCurrentUser?: boolean;
-}
-
 export function useUserStats() {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const [syncing, setSyncing] = useState(false);
-  
-  const { stats, xpData, unlockedCount } = useAchievements();
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
@@ -107,43 +79,6 @@ export function useUserStats() {
       console.error('Error fetching profile:', error);
     }
   };
-
-  const syncStats = useCallback(async () => {
-    if (!user) return;
-    
-    setSyncing(true);
-    try {
-      const { error } = await fromTable('user_stats')
-        .upsert({
-          user_id: user.id,
-          total_xp: xpData.totalXP,
-          level: xpData.level,
-          achievements_unlocked: unlockedCount,
-          total_downloads: stats.totalDownloads,
-          tools_used: stats.toolsUsed,
-          games_played: stats.gamesPlayed,
-          days_active: stats.daysActive,
-        }, { onConflict: 'user_id' });
-
-      if (error) {
-        console.error('Error syncing stats:', error);
-      }
-    } catch (error) {
-      console.error('Error syncing stats:', error);
-    } finally {
-      setSyncing(false);
-    }
-  }, [user, xpData, unlockedCount, stats]);
-
-  useEffect(() => {
-    if (!user) return;
-
-    const timeout = setTimeout(() => {
-      syncStats();
-    }, 2000);
-
-    return () => clearTimeout(timeout);
-  }, [xpData.totalXP, unlockedCount, stats.totalDownloads, user]);
 
   const updateDisplayName = useCallback(async (displayName: string) => {
     if (!user || !profile) return { success: false, error: 'not_authenticated' };
