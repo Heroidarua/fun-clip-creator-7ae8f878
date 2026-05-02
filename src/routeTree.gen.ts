@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermosRouteImport } from './routes/termos'
 import { Route as SobreRouteImport } from './routes/sobre'
-import { Route as RankingRouteImport } from './routes/ranking'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as JogosJavaRouteImport } from './routes/jogos-java'
@@ -19,7 +18,6 @@ import { Route as JogosRouteImport } from './routes/jogos'
 import { Route as HubRouteImport } from './routes/hub'
 import { Route as FerramentasRouteImport } from './routes/ferramentas'
 import { Route as DmcaRouteImport } from './routes/dmca'
-import { Route as DesafioRouteImport } from './routes/desafio'
 import { Route as ContatoRouteImport } from './routes/contato'
 import { Route as ComoUsarRouteImport } from './routes/como-usar'
 import { Route as BlogRouteImport } from './routes/blog'
@@ -57,11 +55,6 @@ const SobreRoute = SobreRouteImport.update({
   path: '/sobre',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RankingRoute = RankingRouteImport.update({
-  id: '/ranking',
-  path: '/ranking',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const PrivacidadeRoute = PrivacidadeRouteImport.update({
   id: '/privacidade',
   path: '/privacidade',
@@ -95,11 +88,6 @@ const FerramentasRoute = FerramentasRouteImport.update({
 const DmcaRoute = DmcaRouteImport.update({
   id: '/dmca',
   path: '/dmca',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DesafioRoute = DesafioRouteImport.update({
-  id: '/desafio',
-  path: '/desafio',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContatoRoute = ContatoRouteImport.update({
@@ -248,7 +236,6 @@ export interface FileRoutesByFullPath {
   '/blog': typeof BlogRouteWithChildren
   '/como-usar': typeof ComoUsarRoute
   '/contato': typeof ContatoRoute
-  '/desafio': typeof DesafioRoute
   '/dmca': typeof DmcaRoute
   '/ferramentas': typeof FerramentasRoute
   '/hub': typeof HubRoute
@@ -256,7 +243,6 @@ export interface FileRoutesByFullPath {
   '/jogos-java': typeof JogosJavaRoute
   '/perfil': typeof PerfilRoute
   '/privacidade': typeof PrivacidadeRoute
-  '/ranking': typeof RankingRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
   '/api/ai-text': typeof ApiAiTextRoute
@@ -286,7 +272,6 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/como-usar': typeof ComoUsarRoute
   '/contato': typeof ContatoRoute
-  '/desafio': typeof DesafioRoute
   '/dmca': typeof DmcaRoute
   '/ferramentas': typeof FerramentasRoute
   '/hub': typeof HubRoute
@@ -294,7 +279,6 @@ export interface FileRoutesByTo {
   '/jogos-java': typeof JogosJavaRoute
   '/perfil': typeof PerfilRoute
   '/privacidade': typeof PrivacidadeRoute
-  '/ranking': typeof RankingRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
   '/api/ai-text': typeof ApiAiTextRoute
@@ -326,7 +310,6 @@ export interface FileRoutesById {
   '/blog': typeof BlogRouteWithChildren
   '/como-usar': typeof ComoUsarRoute
   '/contato': typeof ContatoRoute
-  '/desafio': typeof DesafioRoute
   '/dmca': typeof DmcaRoute
   '/ferramentas': typeof FerramentasRoute
   '/hub': typeof HubRoute
@@ -334,7 +317,6 @@ export interface FileRoutesById {
   '/jogos-java': typeof JogosJavaRoute
   '/perfil': typeof PerfilRoute
   '/privacidade': typeof PrivacidadeRoute
-  '/ranking': typeof RankingRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
   '/api/ai-text': typeof ApiAiTextRoute
@@ -367,7 +349,6 @@ export interface FileRouteTypes {
     | '/blog'
     | '/como-usar'
     | '/contato'
-    | '/desafio'
     | '/dmca'
     | '/ferramentas'
     | '/hub'
@@ -375,7 +356,6 @@ export interface FileRouteTypes {
     | '/jogos-java'
     | '/perfil'
     | '/privacidade'
-    | '/ranking'
     | '/sobre'
     | '/termos'
     | '/api/ai-text'
@@ -405,7 +385,6 @@ export interface FileRouteTypes {
     | '/auth'
     | '/como-usar'
     | '/contato'
-    | '/desafio'
     | '/dmca'
     | '/ferramentas'
     | '/hub'
@@ -413,7 +392,6 @@ export interface FileRouteTypes {
     | '/jogos-java'
     | '/perfil'
     | '/privacidade'
-    | '/ranking'
     | '/sobre'
     | '/termos'
     | '/api/ai-text'
@@ -444,7 +422,6 @@ export interface FileRouteTypes {
     | '/blog'
     | '/como-usar'
     | '/contato'
-    | '/desafio'
     | '/dmca'
     | '/ferramentas'
     | '/hub'
@@ -452,7 +429,6 @@ export interface FileRouteTypes {
     | '/jogos-java'
     | '/perfil'
     | '/privacidade'
-    | '/ranking'
     | '/sobre'
     | '/termos'
     | '/api/ai-text'
@@ -484,7 +460,6 @@ export interface RootRouteChildren {
   BlogRoute: typeof BlogRouteWithChildren
   ComoUsarRoute: typeof ComoUsarRoute
   ContatoRoute: typeof ContatoRoute
-  DesafioRoute: typeof DesafioRoute
   DmcaRoute: typeof DmcaRoute
   FerramentasRoute: typeof FerramentasRoute
   HubRoute: typeof HubRoute
@@ -492,7 +467,6 @@ export interface RootRouteChildren {
   JogosJavaRoute: typeof JogosJavaRoute
   PerfilRoute: typeof PerfilRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
-  RankingRoute: typeof RankingRoute
   SobreRoute: typeof SobreRoute
   TermosRoute: typeof TermosRoute
   ApiAiTextRoute: typeof ApiAiTextRoute
@@ -519,13 +493,6 @@ declare module '@tanstack/react-router' {
       path: '/sobre'
       fullPath: '/sobre'
       preLoaderRoute: typeof SobreRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ranking': {
-      id: '/ranking'
-      path: '/ranking'
-      fullPath: '/ranking'
-      preLoaderRoute: typeof RankingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacidade': {
@@ -575,13 +542,6 @@ declare module '@tanstack/react-router' {
       path: '/dmca'
       fullPath: '/dmca'
       preLoaderRoute: typeof DmcaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/desafio': {
-      id: '/desafio'
-      path: '/desafio'
-      fullPath: '/desafio'
-      preLoaderRoute: typeof DesafioRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contato': {
@@ -809,7 +769,6 @@ const rootRouteChildren: RootRouteChildren = {
   BlogRoute: BlogRouteWithChildren,
   ComoUsarRoute: ComoUsarRoute,
   ContatoRoute: ContatoRoute,
-  DesafioRoute: DesafioRoute,
   DmcaRoute: DmcaRoute,
   FerramentasRoute: FerramentasRoute,
   HubRoute: HubRoute,
@@ -817,7 +776,6 @@ const rootRouteChildren: RootRouteChildren = {
   JogosJavaRoute: JogosJavaRoute,
   PerfilRoute: PerfilRoute,
   PrivacidadeRoute: PrivacidadeRoute,
-  RankingRoute: RankingRoute,
   SobreRoute: SobreRoute,
   TermosRoute: TermosRoute,
   ApiAiTextRoute: ApiAiTextRoute,
