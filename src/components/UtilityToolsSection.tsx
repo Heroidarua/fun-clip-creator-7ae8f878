@@ -14,7 +14,6 @@ import AITextGenerator from "@/components/tools/AITextGenerator";
 import AutoTranslator from "@/components/tools/AutoTranslator";
 import TextSummarizer from "@/components/tools/TextSummarizer";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { useAchievements } from "@/hooks/useAchievements";
 
 interface Tool {
   id: string;
@@ -30,7 +29,7 @@ interface Tool {
 
 const UtilityToolsSection = () => {
   const [openTool, setOpenTool] = useState<string | null>(null);
-  const { trackToolUsage } = useAchievements();
+  const trackToolUsage = (_: string) => {};
 
   const handleToggle = (toolId: string) => {
     setOpenTool(openTool === toolId ? null : toolId);

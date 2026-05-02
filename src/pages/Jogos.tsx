@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { games, Game } from "@/data/games";
 import { useFavoriteGames } from "@/hooks/useFavoriteGames";
-import { useAchievements } from "@/hooks/useAchievements";
 
 function GameCard({ game, onPlay, isFavorite, onToggleFavorite }: { game: Game; onPlay: () => void; isFavorite: boolean; onToggleFavorite: () => void }) {
   const cardRef = useRef<HTMLDivElement | null>(null);
@@ -132,7 +131,7 @@ export default function Jogos() {
   const [gridSize, setGridSize] = useState<"small" | "large">("large");
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const { favorites, toggleFavorite, isFavorite } = useFavoriteGames();
-  const { trackGamePlayed } = useAchievements();
+  const trackGamePlayed = () => {};
 
   // Track game when fullscreen game changes
   useEffect(() => {
