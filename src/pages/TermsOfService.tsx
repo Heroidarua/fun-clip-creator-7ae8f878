@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { FileText, AlertTriangle, CheckCircle, XCircle, Scale, Mail, Trophy } from "lucide-react";
+import { FileText, AlertTriangle, CheckCircle, XCircle, Scale, Mail } from "lucide-react";
 
 const TermsOfService = () => {
   return (
