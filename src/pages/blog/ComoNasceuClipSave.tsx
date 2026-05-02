@@ -154,10 +154,7 @@ const ComoNasceuClipSave = () => {
             <h2 className="text-2xl font-bold text-foreground m-0">O sistema de gamificação: transformando uso em diversão</h2>
           </div>
           <p className="text-muted-foreground">
-            Inspirado pelos games que marcaram sua infância, Matheus teve uma ideia ousada: e se usar as ferramentas rendesse <strong>XP, conquistas e níveis</strong>? Nasceu o sistema de gamificação do ClipSave, onde cada download, cada ferramenta usada e cada dia ativo desbloqueia novas conquistas.
-          </p>
-          <p className="text-muted-foreground">
-            E para ir ainda mais longe, lançou o <strong>Desafio R$5.000</strong> — uma competição real onde os usuários mais engajados concorrem a um prêmio em dinheiro. Não é marketing vazio. É uma forma de devolver à comunidade que fez o ClipSave crescer.
+            Inspirado pelos games que marcaram sua infância, Matheus moldou o ClipSave com uma identidade retrô única — interface pixel art, paleta neon e a energia dos arcades. Cada detalhe foi pensado para fazer baixar um vídeo parecer divertido, não burocrático.
           </p>
 
           {/* Capítulo final */}
