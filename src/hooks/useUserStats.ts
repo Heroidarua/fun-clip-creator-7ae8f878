@@ -309,8 +309,6 @@ export function useUserStats() {
     session,
     profile,
     loading,
-    syncing,
-    syncStats,
     updateDisplayName,
     updateProfileTheme,
     updateBio,
@@ -321,117 +319,5 @@ export function useUserStats() {
     isAuthenticated: !!user,
     canChangeUsername: profile ? profile.username_change_count < 2 : true,
     usernameChangesRemaining: profile ? 2 - profile.username_change_count : 2,
-  };
-}
-
-export function useLeaderboard(limit: number = 50) {
-  const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [userRank, setUserRank] = useState<LeaderboardEntry | null>(null);
-  const { user } = useUserStats();
-
-  const fetchLeaderboard = useCallback(async () => {
-    setLoading(true);
-    try {
-      const { data: statsData, error: statsError } = await fromTable('user_stats')
-        .select('user_id, total_xp, level, achievements_unlocked')
-        .order('total_xp', { ascending: false })
-        .limit(limit);
-
-      if (statsError) {
-        console.error('Error fetching leaderboard:', statsError);
-        return;
-      }
-
-      if (!statsData || statsData.length === 0) {
-        setEntries([]);
-        setLoading(false);
-        return;
-      }
-
-      const sdAny = statsData as any[];
-      const userIds = sdAny.map((s: any) => s.user_id);
-      const { data: profilesData, error: profilesError } = await fromTable('profiles')
-        .select('user_id, display_name, avatar_url')
-        .in('user_id', userIds);
-
-      if (profilesError) {
-        console.error('Error fetching profiles:', profilesError);
-      }
-
-      const profilesMap = new Map(
-        ((profilesData || []) as any[]).map((p: any) => [p.user_id, { 
-          display_name: p.display_name || 'Jogador Anônimo',
-          avatar_url: p.avatar_url 
-        }])
-      );
-
-      const leaderboardEntries: LeaderboardEntry[] = sdAny.map((stat: any, index: number) => {
-        const profileInfo = profilesMap.get(stat.user_id);
-        return {
-          rank: index + 1,
-          user_id: stat.user_id,
-          display_name: profileInfo?.display_name || 'Jogador Anônimo',
-          avatar_url: profileInfo?.avatar_url || null,
-          total_xp: stat.total_xp,
-          level: stat.level,
-          achievements_unlocked: stat.achievements_unlocked,
-          isCurrentUser: user?.id === stat.user_id,
-        };
-      });
-
-      setEntries(leaderboardEntries);
-
-      if (user) {
-        const currentUserEntry = leaderboardEntries.find(e => e.user_id === user.id);
-        if (currentUserEntry) {
-          setUserRank(currentUserEntry);
-        } else {
-          const { data: userStats } = await fromTable('user_stats')
-            .select('total_xp, level, achievements_unlocked')
-            .eq('user_id', user.id)
-            .maybeSingle();
-
-          if (userStats) {
-            const us = userStats as any;
-            const { count } = await fromTable('user_stats')
-              .select('*', { count: 'exact', head: true })
-              .gt('total_xp', us.total_xp);
-
-            const { data: profileData } = await fromTable('profiles')
-              .select('display_name, avatar_url')
-              .eq('user_id', user.id)
-              .maybeSingle();
-
-            const pd = profileData as any;
-            setUserRank({
-              rank: (count || 0) + 1,
-              user_id: user.id,
-              display_name: pd?.display_name || 'Você',
-              avatar_url: pd?.avatar_url || null,
-              total_xp: us.total_xp,
-              level: us.level,
-              achievements_unlocked: us.achievements_unlocked,
-              isCurrentUser: true,
-            });
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching leaderboard:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, [limit, user]);
-
-  useEffect(() => {
-    fetchLeaderboard();
-  }, [fetchLeaderboard]);
-
-  return {
-    entries,
-    loading,
-    userRank,
-    refresh: fetchLeaderboard,
   };
 }
