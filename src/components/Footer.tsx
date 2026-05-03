@@ -79,8 +79,8 @@ const Footer = () => {
                 <Joystick className="w-5 h-5 text-primary-foreground" />
               </div>
               <div className="flex flex-col">
-                <span className="font-pixel text-[10px] text-primary">CLIP</span>
-                <span className="font-pixel text-[10px] text-[hsl(var(--accent))]">SAVE</span>
+                <span className="font-pixel text-[10px] text-primary">SOS</span>
+                <span className="font-pixel text-[10px] text-[hsl(var(--accent))]">01</span>
               </div>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed font-orbitron">
