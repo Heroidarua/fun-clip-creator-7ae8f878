@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /perfil
+Disallow: /auth
+
+Sitemap: https://fun-clip-creator.lovable.app/sitemap.xml
