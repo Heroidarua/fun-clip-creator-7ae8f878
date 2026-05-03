@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermosRouteImport } from './routes/termos'
 import { Route as SobreRouteImport } from './routes/sobre'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as JogosJavaRouteImport } from './routes/jogos-java'
@@ -53,6 +54,11 @@ const TermosRoute = TermosRouteImport.update({
 const SobreRoute = SobreRouteImport.update({
   id: '/sobre',
   path: '/sobre',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacidadeRoute = PrivacidadeRouteImport.update({
@@ -243,6 +249,7 @@ export interface FileRoutesByFullPath {
   '/jogos-java': typeof JogosJavaRoute
   '/perfil': typeof PerfilRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
   '/api/ai-text': typeof ApiAiTextRoute
@@ -279,6 +286,7 @@ export interface FileRoutesByTo {
   '/jogos-java': typeof JogosJavaRoute
   '/perfil': typeof PerfilRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
   '/api/ai-text': typeof ApiAiTextRoute
@@ -317,6 +325,7 @@ export interface FileRoutesById {
   '/jogos-java': typeof JogosJavaRoute
   '/perfil': typeof PerfilRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
   '/api/ai-text': typeof ApiAiTextRoute
@@ -356,6 +365,7 @@ export interface FileRouteTypes {
     | '/jogos-java'
     | '/perfil'
     | '/privacidade'
+    | '/sitemap.xml'
     | '/sobre'
     | '/termos'
     | '/api/ai-text'
@@ -392,6 +402,7 @@ export interface FileRouteTypes {
     | '/jogos-java'
     | '/perfil'
     | '/privacidade'
+    | '/sitemap.xml'
     | '/sobre'
     | '/termos'
     | '/api/ai-text'
@@ -429,6 +440,7 @@ export interface FileRouteTypes {
     | '/jogos-java'
     | '/perfil'
     | '/privacidade'
+    | '/sitemap.xml'
     | '/sobre'
     | '/termos'
     | '/api/ai-text'
@@ -467,6 +479,7 @@ export interface RootRouteChildren {
   JogosJavaRoute: typeof JogosJavaRoute
   PerfilRoute: typeof PerfilRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SobreRoute: typeof SobreRoute
   TermosRoute: typeof TermosRoute
   ApiAiTextRoute: typeof ApiAiTextRoute
@@ -493,6 +506,13 @@ declare module '@tanstack/react-router' {
       path: '/sobre'
       fullPath: '/sobre'
       preLoaderRoute: typeof SobreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacidade': {
@@ -776,6 +796,7 @@ const rootRouteChildren: RootRouteChildren = {
   JogosJavaRoute: JogosJavaRoute,
   PerfilRoute: PerfilRoute,
   PrivacidadeRoute: PrivacidadeRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   SobreRoute: SobreRoute,
   TermosRoute: TermosRoute,
   ApiAiTextRoute: ApiAiTextRoute,
