@@ -189,7 +189,7 @@ const ClipyAssistant = () => {
                 ClipY <Sparkles className="h-3 w-3 text-primary" />
               </p>
               <p className="text-[10px] text-muted-foreground">
-                {isLoading ? "Digitando..." : "Assistente IA do ClipSave"}
+                {isLoading ? "Digitando..." : "Assistente IA do sos01"}
               </p>
             </div>
             <button
@@ -206,7 +206,7 @@ const ClipyAssistant = () => {
               <div className="text-center space-y-3">
                 <img src={clipyMascot} alt="ClipY" className="h-16 w-16 mx-auto object-contain" />
                 <p className="text-xs text-muted-foreground">
-                  Olá! Sou o <span className="text-primary font-bold">ClipY</span> com IA! Pergunte-me qualquer coisa sobre o ClipSave! 🚀
+                  Olá! Sou o <span className="text-primary font-bold">ClipY</span> com IA! Pergunte-me qualquer coisa sobre o sos01! 🚀
                 </p>
                 <div className="flex flex-wrap gap-1.5 justify-center">
                   {quickReplies.map((q) => (

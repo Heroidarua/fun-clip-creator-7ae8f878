@@ -71,7 +71,7 @@ const ComoExtrairAudioTikTok = () => {
                 <li className="flex items-start">
                   <span className="bg-accent text-accent-foreground rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5">3</span>
                   <div>
-                    <strong>Cole no ClipSave</strong>
+                    <strong>Cole no sos01</strong>
                     <p className="text-sm text-muted-foreground mt-1">Acesse nossa ferramenta e cole o link na caixa de texto.</p>
                   </div>
                 </li>

@@ -23,12 +23,12 @@ const themes: Theme[] = ["dark", "light", "sepia", "ocean", "forest"];
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setThemeState] = useState<Theme>(() => {
     if (typeof window === "undefined") return "dark";
-    const stored = localStorage.getItem("clipsave-theme");
+    const stored = localStorage.getItem("sos01-theme");
     return (stored as Theme) || "dark";
   });
 
   useEffect(() => {
-    localStorage.setItem("clipsave-theme", theme);
+    localStorage.setItem("sos01-theme", theme);
     document.documentElement.classList.remove(...themes);
     document.documentElement.classList.add(theme);
   }, [theme]);

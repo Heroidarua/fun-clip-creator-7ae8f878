@@ -551,7 +551,7 @@ const PixelAvatarGenerator = ({ onSuccess }: PixelAvatarGeneratorProps) => {
       if (navigator.share && navigator.canShare({ files: [file] })) {
         await navigator.share({
           title: 'Meu Avatar Pixelado',
-          text: 'Confira o avatar que eu criei no ClipSave!',
+          text: 'Confira o avatar que eu criei no sos01!',
           files: [file],
         });
       } else {

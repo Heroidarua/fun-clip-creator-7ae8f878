@@ -25,7 +25,7 @@ const TermsOfService = () => {
               <div className="flex items-start gap-3">
                 <AlertTriangle className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0" />
                 <p className="text-base leading-relaxed">
-                  Ao acessar e utilizar o ClipSave, você declara ter lido, compreendido e concordado com estes Termos de Uso. Caso não concorde com qualquer disposição, solicitamos que não utilize nossa plataforma.
+                  Ao acessar e utilizar o sos01, você declara ter lido, compreendido e concordado com estes Termos de Uso. Caso não concorde com qualquer disposição, solicitamos que não utilize nossa plataforma.
                 </p>
               </div>
             </div>
@@ -36,7 +36,7 @@ const TermsOfService = () => {
                 1. Aceitação dos Termos
               </h2>
               <p>
-                Estes Termos de Uso constituem um acordo legal entre você ("Usuário") e o ClipSave ("Plataforma"). O uso continuado de nossos serviços implica na aceitação integral destes termos, incluindo eventuais atualizações.
+                Estes Termos de Uso constituem um acordo legal entre você ("Usuário") e o sos01 ("Plataforma"). O uso continuado de nossos serviços implica na aceitação integral destes termos, incluindo eventuais atualizações.
               </p>
             </section>
 
@@ -45,7 +45,7 @@ const TermsOfService = () => {
                 2. Descrição do Serviço
               </h2>
               <p>
-                O ClipSave é uma plataforma de utilidades digitais que oferece:
+                O sos01 é uma plataforma de utilidades digitais que oferece:
               </p>
               <ul className="list-disc ml-6 space-y-2 mt-3">
                 <li>Ferramentas técnicas para acesso a conteúdos publicamente disponíveis na internet</li>
@@ -54,7 +54,7 @@ const TermsOfService = () => {
                 <li>Ferramentas de utilidade com inteligência artificial</li>
               </ul>
               <p className="mt-4">
-                <strong>Importante:</strong> O ClipSave não hospeda, armazena ou distribui qualquer conteúdo de mídia. Nossa plataforma atua exclusivamente como uma interface técnica.
+                <strong>Importante:</strong> O sos01 não hospeda, armazena ou distribui qualquer conteúdo de mídia. Nossa plataforma atua exclusivamente como uma interface técnica.
               </p>
             </section>
 
@@ -63,7 +63,7 @@ const TermsOfService = () => {
                 <CheckCircle className="w-5 h-5 text-green-500" />
                 3. Uso Permitido
               </h2>
-              <p>O Usuário está autorizado a utilizar o ClipSave para:</p>
+              <p>O Usuário está autorizado a utilizar o sos01 para:</p>
               <ul className="list-disc ml-6 space-y-2 mt-3">
                 <li>Acessar conteúdos públicos para uso pessoal e não comercial</li>
                 <li>Utilizar ferramentas de entretenimento disponibilizadas</li>
@@ -94,7 +94,7 @@ const TermsOfService = () => {
                 5. Direitos Autorais e Propriedade Intelectual
               </h2>
               <p>
-                O ClipSave respeita os direitos de propriedade intelectual de terceiros. Todo conteúdo acessado através de nossa plataforma permanece de propriedade de seus respectivos criadores e detentores de direitos.
+                O sos01 respeita os direitos de propriedade intelectual de terceiros. Todo conteúdo acessado através de nossa plataforma permanece de propriedade de seus respectivos criadores e detentores de direitos.
               </p>
               <p className="mt-3">
                 <strong>O Usuário reconhece e concorda que:</strong>
@@ -112,7 +112,7 @@ const TermsOfService = () => {
                 6. Limitação de Responsabilidade
               </h2>
               <p>
-                O ClipSave é fornecido "como está" e "conforme disponível". Na máxima extensão permitida por lei:
+                O sos01 é fornecido "como está" e "conforme disponível". Na máxima extensão permitida por lei:
               </p>
               <ul className="list-disc ml-6 space-y-2 mt-3">
                 <li>Não garantimos disponibilidade ininterrupta do serviço</li>
@@ -127,7 +127,7 @@ const TermsOfService = () => {
                 7. Indenização
               </h2>
               <p>
-                O Usuário concorda em indenizar, defender e isentar o ClipSave, seus administradores, funcionários e parceiros de quaisquer reclamações, perdas, danos, custos e despesas (incluindo honorários advocatícios) decorrentes do uso inadequado da plataforma ou violação destes Termos.
+                O Usuário concorda em indenizar, defender e isentar o sos01, seus administradores, funcionários e parceiros de quaisquer reclamações, perdas, danos, custos e despesas (incluindo honorários advocatícios) decorrentes do uso inadequado da plataforma ou violação destes Termos.
               </p>
             </section>
 
@@ -159,8 +159,8 @@ const TermsOfService = () => {
               </p>
               <p className="mt-2">
                 <strong>Email:</strong>{" "}
-                <a href="mailto:contatoclipsave@gmail.com" className="text-primary hover:underline">
-                  contatoclipsave@gmail.com
+                <a href="mailto:contatosos01@gmail.com" className="text-primary hover:underline">
+                  contatosos01@gmail.com
                 </a>
               </p>
             </section>
@@ -168,7 +168,7 @@ const TermsOfService = () => {
             <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-6 mt-8">
               <h3 className="font-semibold text-foreground mb-2">Aviso Legal</h3>
               <p className="text-sm">
-                O ClipSave não hospeda, armazena ou distribui conteúdo. A plataforma apenas oferece ferramentas para acesso a conteúdos publicamente disponíveis na internet. O usuário é o único responsável por garantir que possui os direitos necessários sobre qualquer conteúdo utilizado.
+                O sos01 não hospeda, armazena ou distribui conteúdo. A plataforma apenas oferece ferramentas para acesso a conteúdos publicamente disponíveis na internet. O usuário é o único responsável por garantir que possui os direitos necessários sobre qualquer conteúdo utilizado.
               </p>
             </div>
           </div>

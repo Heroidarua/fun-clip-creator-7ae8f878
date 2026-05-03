@@ -36,7 +36,7 @@ const ComoBaixarVideosTikTokSemMarca = () => {
 
           <div className="prose prose-lg max-w-none text-muted-foreground space-y-6">
             <p className="text-lg leading-relaxed">
-              Baixar vídeos sem a marca d'água do TikTok nunca foi tão fácil. Com o ClipSave, você pode colar o link do vídeo e fazer o download limpo, em alta qualidade, sem precisar instalar aplicativos. Ideal para criar conteúdos em outras redes sociais, como Reels e Shorts.
+              Baixar vídeos sem a marca d'água do TikTok nunca foi tão fácil. Com o sos01, você pode colar o link do vídeo e fazer o download limpo, em alta qualidade, sem precisar instalar aplicativos. Ideal para criar conteúdos em outras redes sociais, como Reels e Shorts.
             </p>
 
             <h2 className="text-xl font-semibold text-foreground mt-8 mb-4">Por que baixar vídeos sem marca d'água?</h2>
@@ -57,8 +57,8 @@ const ComoBaixarVideosTikTokSemMarca = () => {
                 <li className="flex items-start">
                   <span className="bg-primary text-primary-foreground rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5">2</span>
                   <div>
-                    <strong>Cole no ClipSave</strong>
-                    <p className="text-sm text-muted-foreground mt-1">Acesse o ClipSave e cole o link na caixa de texto principal.</p>
+                    <strong>Cole no sos01</strong>
+                    <p className="text-sm text-muted-foreground mt-1">Acesse o sos01 e cole o link na caixa de texto principal.</p>
                   </div>
                 </li>
                 <li className="flex items-start">
@@ -78,7 +78,7 @@ const ComoBaixarVideosTikTokSemMarca = () => {
               </ol>
             </div>
 
-            <h2 className="text-xl font-semibold text-foreground mt-8 mb-4">Vantagens do ClipSave</h2>
+            <h2 className="text-xl font-semibold text-foreground mt-8 mb-4">Vantagens do sos01</h2>
             <div className="grid md:grid-cols-2 gap-4 my-6">
               <div className="bg-background border border-border rounded-lg p-4">
                 <Smartphone className="w-8 h-8 text-accent mb-2" />
@@ -109,7 +109,7 @@ const ComoBaixarVideosTikTokSemMarca = () => {
                 to="/"
                 className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-lg hover:opacity-90 transition-opacity"
               >
-                Experimentar ClipSave Grátis
+                Experimentar sos01 Grátis
               </Link>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
-const STORAGE_KEY = 'clipsave-avatar-gallery';
+const STORAGE_KEY = 'sos01-avatar-gallery';
 const MAX_AVATARS = 20;
 
 export interface SavedAvatar {

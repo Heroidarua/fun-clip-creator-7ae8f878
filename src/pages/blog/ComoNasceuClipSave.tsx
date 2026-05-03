@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ArrowLeft, Heart, Rocket, Gamepad2, Lightbulb, Users, Star, Code, Zap } from "lucide-react";
 
-const ComoNasceuClipSave = () => {
+const ComoNasceusos01 = () => {
   return (
     <div className="min-h-screen bg-background font-inter">
       <Header />
@@ -25,7 +25,7 @@ const ComoNasceuClipSave = () => {
                 <span className="bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-full">NOSSA HISTÓRIA</span>
               </div>
               <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-3 leading-tight">
-                Como Nasceu o ClipSave
+                Como Nasceu o sos01
               </h1>
               <p className="text-muted-foreground text-lg m-0">
                 A história de um desenvolvedor brasileiro que transformou frustração em uma plataforma usada por milhares de pessoas.
@@ -109,10 +109,10 @@ const ComoNasceuClipSave = () => {
             <h2 className="text-2xl font-bold text-foreground m-0">O DNA geek por trás de tudo</h2>
           </div>
           <p className="text-muted-foreground">
-            Quem conhece o Matheus sabe: ele cresceu jogando Super Mario, Sonic, Pac-Man. Passava horas na frente de emuladores e lia quadrinhos da Marvel e DC como quem respira. Essa paixão não ficou de fora do ClipSave.
+            Quem conhece o Matheus sabe: ele cresceu jogando Super Mario, Sonic, Pac-Man. Passava horas na frente de emuladores e lia quadrinhos da Marvel e DC como quem respira. Essa paixão não ficou de fora do sos01.
           </p>
           <p className="text-muted-foreground">
-            Ele adicionou uma <strong>seção completa de jogos retrô</strong> jogáveis direto no navegador — mais de 60 clássicos dos consoles antigos. Depois veio a <strong>biblioteca de quadrinhos e mangás</strong> gratuita. O ClipSave deixou de ser apenas uma ferramenta. Virou um <strong>hub de entretenimento digital</strong>.
+            Ele adicionou uma <strong>seção completa de jogos retrô</strong> jogáveis direto no navegador — mais de 60 clássicos dos consoles antigos. Depois veio a <strong>biblioteca de quadrinhos e mangás</strong> gratuita. O sos01 deixou de ser apenas uma ferramenta. Virou um <strong>hub de entretenimento digital</strong>.
           </p>
           <p className="text-muted-foreground">
             O visual retrô pixelado do site? A tipografia estilo arcade? O mascote ClipY (um esquilo futurista 3D)? Tudo isso é reflexo direto da personalidade do criador — alguém que acredita que <strong>tecnologia e diversão caminham juntas</strong>.
@@ -126,7 +126,7 @@ const ComoNasceuClipSave = () => {
             <h2 className="text-2xl font-bold text-foreground m-0">A comunidade que deu sentido a tudo</h2>
           </div>
           <p className="text-muted-foreground">
-            Os primeiros usuários chegaram pelo boca a boca. Um amigo contou para outro, que contou para mais três. Logo, pessoas que Matheus nunca tinha visto estavam usando o ClipSave diariamente. As mensagens de agradecimento começaram a aparecer:
+            Os primeiros usuários chegaram pelo boca a boca. Um amigo contou para outro, que contou para mais três. Logo, pessoas que Matheus nunca tinha visto estavam usando o sos01 diariamente. As mensagens de agradecimento começaram a aparecer:
           </p>
           <div className="space-y-3 my-6">
             <div className="bg-card border border-border rounded-lg p-4">
@@ -134,7 +134,7 @@ const ComoNasceuClipSave = () => {
               <span className="text-xs text-muted-foreground mt-1 block">— Usuário anônimo</span>
             </div>
             <div className="bg-card border border-border rounded-lg p-4">
-              <p className="text-foreground italic m-0 text-sm">"Uso o ClipSave todo dia pro meu trabalho como social media. Vocês salvam minha vida."</p>
+              <p className="text-foreground italic m-0 text-sm">"Uso o sos01 todo dia pro meu trabalho como social media. Vocês salvam minha vida."</p>
               <span className="text-xs text-muted-foreground mt-1 block">— Social Media de São Paulo</span>
             </div>
             <div className="bg-card border border-border rounded-lg p-4">
@@ -143,7 +143,7 @@ const ComoNasceuClipSave = () => {
             </div>
           </div>
           <p className="text-muted-foreground">
-            Foi aí que Matheus entendeu: o ClipSave não era mais só dele. Era da <strong>comunidade</strong>. Cada nova funcionalidade passou a ser pensada com base no feedback real dos usuários.
+            Foi aí que Matheus entendeu: o sos01 não era mais só dele. Era da <strong>comunidade</strong>. Cada nova funcionalidade passou a ser pensada com base no feedback real dos usuários.
           </p>
 
           {/* Capítulo 6 */}
@@ -154,7 +154,7 @@ const ComoNasceuClipSave = () => {
             <h2 className="text-2xl font-bold text-foreground m-0">O sistema de gamificação: transformando uso em diversão</h2>
           </div>
           <p className="text-muted-foreground">
-            Inspirado pelos games que marcaram sua infância, Matheus moldou o ClipSave com uma identidade retrô única — interface pixel art, paleta neon e a energia dos arcades. Cada detalhe foi pensado para fazer baixar um vídeo parecer divertido, não burocrático.
+            Inspirado pelos games que marcaram sua infância, Matheus moldou o sos01 com uma identidade retrô única — interface pixel art, paleta neon e a energia dos arcades. Cada detalhe foi pensado para fazer baixar um vídeo parecer divertido, não burocrático.
           </p>
 
           {/* Capítulo final */}
@@ -165,18 +165,18 @@ const ComoNasceuClipSave = () => {
             <h2 className="text-2xl font-bold text-foreground m-0">O futuro é da comunidade</h2>
           </div>
           <p className="text-muted-foreground">
-            Hoje, o ClipSave é muito mais do que Matheus imaginou naquela primeira noite de código. É um ecossistema completo com <strong>downloaders, ferramentas com IA, jogos, quadrinhos, sistema de conquistas e uma comunidade ativa</strong>.
+            Hoje, o sos01 é muito mais do que Matheus imaginou naquela primeira noite de código. É um ecossistema completo com <strong>downloaders, ferramentas com IA, jogos, quadrinhos, sistema de conquistas e uma comunidade ativa</strong>.
           </p>
           <p className="text-muted-foreground">
-            Mas uma coisa nunca mudou desde o primeiro dia: o compromisso de que <strong>tudo será sempre 100% gratuito</strong>. Sem pegadinhas. Sem letras miúdas. Sem "versão premium". O ClipSave nasceu para democratizar o acesso a ferramentas digitais, e essa missão continua.
+            Mas uma coisa nunca mudou desde o primeiro dia: o compromisso de que <strong>tudo será sempre 100% gratuito</strong>. Sem pegadinhas. Sem letras miúdas. Sem "versão premium". O sos01 nasceu para democratizar o acesso a ferramentas digitais, e essa missão continua.
           </p>
 
           <div className="bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 rounded-xl p-6 mt-8">
             <p className="text-foreground font-medium text-center m-0 text-lg">
-              ❤️ O ClipSave é feito <strong>por uma pessoa</strong>, mas existe <strong>por milhares</strong>.
+              ❤️ O sos01 é feito <strong>por uma pessoa</strong>, mas existe <strong>por milhares</strong>.
             </p>
             <p className="text-muted-foreground text-center m-0 mt-2 text-sm">
-              Obrigado por fazer parte dessa história. Cada vez que você usa o ClipSave, você faz parte dela também.
+              Obrigado por fazer parte dessa história. Cada vez que você usa o sos01, você faz parte dela também.
             </p>
           </div>
 
@@ -187,7 +187,7 @@ const ComoNasceuClipSave = () => {
               className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-bold px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors"
             >
               <Rocket className="w-4 h-4" />
-              Explorar o ClipSave
+              Explorar o sos01
             </Link>
             <Link
               to="/sobre"
@@ -199,7 +199,7 @@ const ComoNasceuClipSave = () => {
 
           <div className="mt-10 pt-6 border-t border-border">
             <p className="text-sm text-muted-foreground">
-              Escrito com ❤️ pela equipe ClipSave · Março 2026
+              Escrito com ❤️ pela equipe sos01 · Março 2026
             </p>
           </div>
         </article>
@@ -210,4 +210,4 @@ const ComoNasceuClipSave = () => {
   );
 };
 
-export default ComoNasceuClipSave;
+export default ComoNasceusos01;

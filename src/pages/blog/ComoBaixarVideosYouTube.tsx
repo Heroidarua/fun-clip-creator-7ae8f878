@@ -20,7 +20,7 @@ const ComoBaixarVideosYouTube = () => {
 
         <article className="prose prose-lg max-w-none">
           <h1 className="text-3xl font-bold mb-4 text-foreground">
-            Como Baixar Vídeos do YouTube em MP4 e MP3 com ClipSave
+            Como Baixar Vídeos do YouTube em MP4 e MP3 com sos01
           </h1>
           
           <p className="text-muted-foreground mb-6">
@@ -29,7 +29,7 @@ const ComoBaixarVideosYouTube = () => {
 
           <p className="text-foreground mb-6">
             O YouTube é a maior plataforma de vídeos do mundo, com bilhões de horas de conteúdo disponível. 
-            Com o ClipSave, você pode salvar seus vídeos favoritos para assistir offline ou extrair 
+            Com o sos01, você pode salvar seus vídeos favoritos para assistir offline ou extrair 
             apenas o áudio em formato MP3. Tudo de forma rápida, gratuita e sem necessidade de instalação.
           </p>
 
@@ -59,7 +59,7 @@ const ComoBaixarVideosYouTube = () => {
               </li>
               <li className="flex items-start gap-2">
                 <span className="font-semibold text-primary">2.</span>
-                <span>Acesse o ClipSave e clique na aba "YouTube"</span>
+                <span>Acesse o sos01 e clique na aba "YouTube"</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="font-semibold text-primary">3.</span>
@@ -82,14 +82,14 @@ const ComoBaixarVideosYouTube = () => {
           </h2>
           
           <p className="text-foreground mb-6">
-            O ClipSave permite extrair apenas o áudio dos vídeos em formato MP3 de alta qualidade. 
+            O sos01 permite extrair apenas o áudio dos vídeos em formato MP3 de alta qualidade. 
             Ideal para músicas, podcasts, audiobooks e qualquer conteúdo que você queira ouvir 
             sem precisar assistir ao vídeo. Basta selecionar a opção MP3 antes de baixar.
           </p>
 
           <h2 className="text-2xl font-semibold mt-8 mb-4 text-foreground flex items-center gap-2">
             <CheckCircle className="w-6 h-6 text-primary" />
-            Vantagens do ClipSave para YouTube
+            Vantagens do sos01 para YouTube
           </h2>
           
           <ul className="list-disc list-inside text-foreground mb-6 space-y-2">
@@ -107,7 +107,7 @@ const ComoBaixarVideosYouTube = () => {
               Uso Responsável
             </h3>
             <p className="text-foreground text-sm">
-              O ClipSave é uma ferramenta de utilidade digital. Os usuários são responsáveis por 
+              O sos01 é uma ferramenta de utilidade digital. Os usuários são responsáveis por 
               garantir que possuem os direitos necessários sobre qualquer conteúdo baixado. 
               Respeite os direitos autorais e utilize os downloads apenas para fins pessoais e 
               legais. Conteúdos protegidos por direitos autorais devem ser utilizados conforme 
@@ -120,14 +120,14 @@ const ComoBaixarVideosYouTube = () => {
               Experimente Agora!
             </h3>
             <p className="text-foreground mb-4">
-              Pronto para baixar seus vídeos favoritos do YouTube? Acesse o ClipSave e 
+              Pronto para baixar seus vídeos favoritos do YouTube? Acesse o sos01 e 
               comece a usar gratuitamente.
             </p>
             <Link
               to="/"
               className="inline-flex items-center bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors"
             >
-              Ir para o ClipSave
+              Ir para o sos01
             </Link>
           </div>
         </article>

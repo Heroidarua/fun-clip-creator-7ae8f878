@@ -25,7 +25,7 @@ const BibliotecaQuadrinhos = () => {
           </h1>
           
           <p className="text-muted-foreground mb-8">
-            O ClipSave oferece acesso <strong>100% gratuito</strong> a uma vasta coleção de quadrinhos e mangás. Sem cadastro, sem assinatura, sem pegadinhas.
+            O sos01 oferece acesso <strong>100% gratuito</strong> a uma vasta coleção de quadrinhos e mangás. Sem cadastro, sem assinatura, sem pegadinhas.
           </p>
 
           <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-6 mb-8">
@@ -104,7 +104,7 @@ const BibliotecaQuadrinhos = () => {
               <span className="font-bold text-foreground">Aviso Legal</span>
             </div>
             <p className="text-sm text-muted-foreground m-0">
-              O ClipSave não hospeda conteúdo. A biblioteca utiliza agregadores externos para exibição. Os direitos autorais pertencem aos respectivos criadores e editoras. Use para leitura pessoal e apoie os autores comprando os originais.
+              O sos01 não hospeda conteúdo. A biblioteca utiliza agregadores externos para exibição. Os direitos autorais pertencem aos respectivos criadores e editoras. Use para leitura pessoal e apoie os autores comprando os originais.
             </p>
           </div>
 

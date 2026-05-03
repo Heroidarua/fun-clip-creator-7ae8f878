@@ -9,16 +9,16 @@ import FreeFlash from "@/components/FreeFlash";
 const FAQ = () => {
   const faqs = [
     {
-      question: "O que é o ClipSave?",
-      answer: "O ClipSave é uma plataforma 100% gratuita de utilidades digitais que oferece ferramentas para download de vídeos, biblioteca de quadrinhos e mangás, jogos clássicos retrô e utilitários com inteligência artificial — tudo sem cadastro e sem custos."
+      question: "O que é o sos01?",
+      answer: "O sos01 é uma plataforma 100% gratuita de utilidades digitais que oferece ferramentas para download de vídeos, biblioteca de quadrinhos e mangás, jogos clássicos retrô e utilitários com inteligência artificial — tudo sem cadastro e sem custos."
     },
     {
       question: "Como funcionam as ferramentas de mídia?",
       answer: "Nossas ferramentas processam URLs de conteúdos públicos. Cole o link no campo apropriado, clique em 'Procurar' e, se disponível, poderá acessar o conteúdo. Importante: o usuário é responsável por garantir que possui os direitos necessários sobre qualquer conteúdo."
     },
     {
-      question: "O ClipSave armazena conteúdos?",
-      answer: "Não. O ClipSave não hospeda, armazena ou distribui qualquer conteúdo de mídia. Nossa plataforma atua exclusivamente como uma interface técnica para acessar conteúdos públicos de terceiros."
+      question: "O sos01 armazena conteúdos?",
+      answer: "Não. O sos01 não hospeda, armazena ou distribui qualquer conteúdo de mídia. Nossa plataforma atua exclusivamente como uma interface técnica para acessar conteúdos públicos de terceiros."
     },
     {
       question: "Como funciona o Gerador de Avatar Pixelado?",
@@ -66,15 +66,15 @@ const FAQ = () => {
     },
     {
       question: "A biblioteca de quadrinhos é realmente gratuita?",
-      answer: "Sim! A biblioteca de quadrinhos e mangás do ClipSave é 100% gratuita. Não cobramos nenhuma assinatura ou taxa. Você pode ler quantos quadrinhos quiser, quando quiser, sem pagar nada."
+      answer: "Sim! A biblioteca de quadrinhos e mangás do sos01 é 100% gratuita. Não cobramos nenhuma assinatura ou taxa. Você pode ler quantos quadrinhos quiser, quando quiser, sem pagar nada."
     },
     {
       question: "Preciso respeitar direitos autorais?",
-      answer: "Sim. Todos os conteúdos acessados através do ClipSave mantêm os direitos autorais de seus criadores originais. O usuário é responsável por utilizar os conteúdos em conformidade com as leis de propriedade intelectual e dar os devidos créditos aos criadores."
+      answer: "Sim. Todos os conteúdos acessados através do sos01 mantêm os direitos autorais de seus criadores originais. O usuário é responsável por utilizar os conteúdos em conformidade com as leis de propriedade intelectual e dar os devidos créditos aos criadores."
     },
     {
-      question: "É legal usar o ClipSave?",
-      answer: "O ClipSave oferece ferramentas legais para acesso a conteúdos públicos. No entanto, a responsabilidade pelo uso adequado é do usuário. Recomendamos utilizar apenas conteúdos sobre os quais você possua direitos ou autorização."
+      question: "É legal usar o sos01?",
+      answer: "O sos01 oferece ferramentas legais para acesso a conteúdos públicos. No entanto, a responsabilidade pelo uso adequado é do usuário. Recomendamos utilizar apenas conteúdos sobre os quais você possua direitos ou autorização."
     },
     {
       question: "Quais jogos estão disponíveis?",
@@ -90,11 +90,11 @@ const FAQ = () => {
     },
     {
       question: "Como reportar violação de direitos autorais?",
-      answer: "Se você é detentor de direitos autorais e acredita que houve uso inadequado, consulte nossa Política DMCA e envie uma notificação formal para contatoclipsave@gmail.com."
+      answer: "Se você é detentor de direitos autorais e acredita que houve uso inadequado, consulte nossa Política DMCA e envie uma notificação formal para contatosos01@gmail.com."
     },
     {
       question: "Vocês coletam dados pessoais?",
-      answer: "O ClipSave foi projetado com privacidade em mente. Não coletamos dados pessoais durante o uso regular das ferramentas. Para mais detalhes, consulte nossa Política de Privacidade."
+      answer: "O sos01 foi projetado com privacidade em mente. Não coletamos dados pessoais durante o uso regular das ferramentas. Para mais detalhes, consulte nossa Política de Privacidade."
     }
   ];
 

@@ -25,7 +25,7 @@ const JogosRetroGratis = () => {
           </h1>
           
           <p className="text-muted-foreground mb-8">
-            Relembre os clássicos dos anos 80, 90 e 2000! O ClipSave oferece uma biblioteca de <strong>mais de 60 jogos de arcade</strong> que rodam diretamente no seu navegador, sem precisar instalar nada.
+            Relembre os clássicos dos anos 80, 90 e 2000! O sos01 oferece uma biblioteca de <strong>mais de 60 jogos de arcade</strong> que rodam diretamente no seu navegador, sem precisar instalar nada.
           </p>
 
           <div className="bg-primary/5 border border-primary/20 rounded-lg p-6 mb-8">
@@ -39,7 +39,7 @@ const JogosRetroGratis = () => {
           </div>
 
           <h2 className="text-2xl font-semibold text-foreground mt-8 mb-4">
-            Por Que Jogar no ClipSave?
+            Por Que Jogar no sos01?
           </h2>
           <div className="grid md:grid-cols-2 gap-4 my-6">
             <div className="bg-card border border-border rounded-lg p-4">

@@ -9,7 +9,7 @@ import { detectInput } from "@/components/hub/HubSmartDetector";
 import { runTool } from "@/components/hub/HubToolRunner";
 import { toast } from "sonner";
 
-// AI Hub - ClipSave Central
+// AI Hub - sos01 Central
 let msgCounter = 0;
 const uid = () => `msg-${++msgCounter}-${Date.now()}`;
 
@@ -164,7 +164,7 @@ const AIHub = () => {
               </div>
               <div>
                 <h1 className="text-sm font-bold text-foreground flex items-center gap-1.5">
-                  ClipSave AI Hub
+                  sos01 AI Hub
                   <Sparkles className="w-4 h-4 text-primary" />
                 </h1>
                 <p className="text-[10px] text-muted-foreground">

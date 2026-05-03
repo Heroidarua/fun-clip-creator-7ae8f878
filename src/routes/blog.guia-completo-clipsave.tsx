@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import GuiaCompletoClipSave from "@/pages/blog/GuiaCompletoClipSave";
+import GuiaCompletosos01 from "@/pages/blog/GuiaCompletosos01";
 
-export const Route = createFileRoute("/blog/guia-completo-clipsave")({
-  component: GuiaCompletoClipSave,
+export const Route = createFileRoute("/blog/guia-completo-sos01")({
+  component: GuiaCompletosos01,
 });

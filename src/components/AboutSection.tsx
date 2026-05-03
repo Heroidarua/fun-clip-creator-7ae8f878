@@ -46,7 +46,7 @@ const AboutSection = () => {
           <h2 className="font-pixel text-xl sm:text-2xl text-foreground mb-2">
             QUEM <span className="text-primary">CRIOU</span>
           </h2>
-          <p className="text-muted-foreground font-orbitron text-sm">O desenvolvedor por trás do ClipSave</p>
+          <p className="text-muted-foreground font-orbitron text-sm">O desenvolvedor por trás do sos01</p>
         </div>
         
         {/* Developer Card */}
@@ -85,7 +85,7 @@ const AboutSection = () => {
                     {/* Photo */}
                     <img 
                       src={developerPhoto} 
-                      alt="Matheus Marinho - Desenvolvedor do ClipSave"
+                      alt="Matheus Marinho - Desenvolvedor do sos01"
                       className="relative w-full h-full object-cover rounded-lg"
                     />
                     
@@ -114,7 +114,7 @@ const AboutSection = () => {
                 
                 {/* Description */}
                 <p className="text-muted-foreground font-orbitron text-sm text-center mb-6 leading-relaxed">
-                  Desenvolvedor web brasileiro, criador do ClipSave — uma plataforma 100% gratuita 
+                  Desenvolvedor web brasileiro, criador do sos01 — uma plataforma 100% gratuita 
                   que reúne ferramentas de download, utilitários com IA, jogos retrô e quadrinhos. 
                   Apaixonado por tecnologia, nostalgia gamer e por criar soluções que facilitam o dia a dia dos usuários.
                 </p>
@@ -122,7 +122,7 @@ const AboutSection = () => {
                 {/* Social Link */}
                 <div className="flex justify-center">
                   <a 
-                    href="mailto:contatoclipsave@gmail.com"
+                    href="mailto:contatosos01@gmail.com"
                     className="w-10 h-10 bg-primary/10 border border-primary/20 rounded-full 
                                flex items-center justify-center
                                hover:bg-primary hover:border-primary
