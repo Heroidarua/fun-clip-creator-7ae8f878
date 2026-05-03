@@ -97,8 +97,8 @@ const Header = () => {
             
             {/* Brand Name */}
             <div className="flex flex-col">
-              <span className="font-pixel text-xs sm:text-sm text-primary neon-text tracking-wider">CLIP</span>
-              <span className="font-pixel text-xs sm:text-sm text-[hsl(var(--accent))] tracking-wider">SAVE</span>
+              <span className="font-pixel text-xs sm:text-sm text-primary neon-text tracking-wider">SOS</span>
+              <span className="font-pixel text-xs sm:text-sm text-[hsl(var(--accent))] tracking-wider">01</span>
             </div>
           </Link>
           
