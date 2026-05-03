@@ -89,7 +89,7 @@ export async function runTool(
     }
 
     case "qr_code": {
-      const qrText = input || "https://clipsave.com.br";
+      const qrText = input || "https://sos01.com.br";
       const QRCode = await import("qrcode");
       const url = await QRCode.toDataURL(qrText, { width: 400, margin: 2, color: { dark: "#ffffff", light: "#00000000" } });
       onDelta("✅ QR Code gerado com sucesso!");

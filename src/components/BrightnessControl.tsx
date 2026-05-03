@@ -23,14 +23,14 @@ const DEFAULT_SETTINGS: ScreenSettings = {
 const BrightnessControl = () => {
   const [settings, setSettings] = useState<ScreenSettings>(() => {
     if (typeof window === "undefined") return DEFAULT_SETTINGS;
-    const stored = localStorage.getItem("clipsave-screen-settings");
+    const stored = localStorage.getItem("sos01-screen-settings");
     return stored ? JSON.parse(stored) : DEFAULT_SETTINGS;
   });
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    localStorage.setItem("clipsave-screen-settings", JSON.stringify(settings));
+    localStorage.setItem("sos01-screen-settings", JSON.stringify(settings));
     const { brightness, contrast, saturation, sepia, grayscale } = settings;
     document.documentElement.style.filter = `brightness(${brightness / 100}) contrast(${contrast / 100}) saturate(${saturation / 100}) sepia(${sepia / 100}) grayscale(${grayscale / 100})`;
   }, [settings]);

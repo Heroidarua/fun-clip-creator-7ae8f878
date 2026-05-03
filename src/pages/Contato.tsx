@@ -30,10 +30,10 @@ const Contato = () => {
                   Para dúvidas técnicas, sugestões, notificações DMCA ou solicitações:
                 </p>
                 <a 
-                  href="mailto:contatoclipsave@gmail.com"
+                  href="mailto:contatosos01@gmail.com"
                   className="text-primary hover:text-primary/80 font-medium text-lg transition-colors"
                 >
-                  contatoclipsave@gmail.com
+                  contatosos01@gmail.com
                 </a>
               </div>
 
@@ -131,7 +131,7 @@ const Contato = () => {
                 <div>
                   <h3 className="font-semibold text-foreground mb-2">Aviso Legal</h3>
                   <p className="text-sm text-muted-foreground">
-                    O ClipSave não hospeda, armazena ou distribui conteúdo. A plataforma apenas oferece ferramentas para acesso a conteúdos publicamente disponíveis na internet. O usuário é o único responsável por garantir que possui os direitos necessários sobre qualquer conteúdo utilizado.
+                    O sos01 não hospeda, armazena ou distribui conteúdo. A plataforma apenas oferece ferramentas para acesso a conteúdos publicamente disponíveis na internet. O usuário é o único responsável por garantir que possui os direitos necessários sobre qualquer conteúdo utilizado.
                   </p>
                 </div>
               </div>
@@ -145,7 +145,7 @@ const Contato = () => {
                 Compromisso com o Usuário
               </h3>
               <p className="text-muted-foreground max-w-3xl mx-auto mb-6">
-                O ClipSave é uma plataforma desenvolvida com foco na experiência do usuário, 
+                O sos01 é uma plataforma desenvolvida com foco na experiência do usuário, 
                 transparência e conformidade legal. Valorizamos cada feedback recebido.
               </p>
               <div className="flex flex-wrap justify-center gap-4 text-sm">

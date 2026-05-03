@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ArrowLeft, Download, Video, Music, Image, Gamepad2, BookOpen, CheckCircle } from "lucide-react";
 
-const GuiaCompletoClipSave = () => {
+const GuiaCompletosos01 = () => {
   return (
     <div className="min-h-screen bg-background font-inter">
       <Header />
@@ -20,7 +20,7 @@ const GuiaCompletoClipSave = () => {
 
         <article className="prose prose-lg max-w-none">
           <h1 className="text-3xl font-bold mb-4 text-foreground">
-            Guia Completo do ClipSave: Todas as Funcionalidades 100% Gratuitas em 2025
+            Guia Completo do sos01: Todas as Funcionalidades 100% Gratuitas em 2025
           </h1>
           
           <p className="text-muted-foreground mb-6">
@@ -29,12 +29,12 @@ const GuiaCompletoClipSave = () => {
 
           <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 mb-6">
             <p className="text-foreground font-medium m-0">
-              🎉 <strong>Tudo 100% Gratuito!</strong> Todas as funcionalidades do ClipSave são gratuitas, sem assinatura, sem cadastro e sem limites de uso.
+              🎉 <strong>Tudo 100% Gratuito!</strong> Todas as funcionalidades do sos01 são gratuitas, sem assinatura, sem cadastro e sem limites de uso.
             </p>
           </div>
 
           <p className="text-foreground mb-6">
-            O ClipSave é uma plataforma completa de utilidades digitais que oferece 
+            O sos01 é uma plataforma completa de utilidades digitais que oferece 
             ferramentas <strong>totalmente gratuitas</strong> para download de vídeos, ferramentas com IA, 
             extração de áudio, jogos retrô, biblioteca de quadrinhos e muito mais!
           </p>
@@ -45,7 +45,7 @@ const GuiaCompletoClipSave = () => {
           </h2>
           
           <p className="text-foreground mb-4">
-            O ClipSave suporta download de vídeos das principais plataformas de redes sociais:
+            O sos01 suporta download de vídeos das principais plataformas de redes sociais:
           </p>
 
           <div className="grid gap-4 mb-6">
@@ -97,7 +97,7 @@ const GuiaCompletoClipSave = () => {
           
           <p className="text-foreground mb-6">
             Além de vídeos, você pode extrair apenas o áudio dos conteúdos. 
-            Perfeito para músicas, podcasts e audiobooks. O ClipSave converte 
+            Perfeito para músicas, podcasts e audiobooks. O sos01 converte 
             automaticamente para MP3 de alta qualidade.
           </p>
 
@@ -107,7 +107,7 @@ const GuiaCompletoClipSave = () => {
           </h2>
           
           <p className="text-foreground mb-6">
-            O ClipSave oferece uma coleção de <strong>+60 jogos clássicos gratuitos</strong> para você 
+            O sos01 oferece uma coleção de <strong>+60 jogos clássicos gratuitos</strong> para você 
             relembrar os velhos tempos diretamente no navegador:
           </p>
 
@@ -125,7 +125,7 @@ const GuiaCompletoClipSave = () => {
           </h2>
           
           <p className="text-foreground mb-6">
-            Para os fãs de quadrinhos, o ClipSave oferece acesso <strong>100% gratuito</strong> a uma biblioteca 
+            Para os fãs de quadrinhos, o sos01 oferece acesso <strong>100% gratuito</strong> a uma biblioteca 
             de HQs e mangás com títulos populares: Marvel (Spider-Man, X-Men, Vingadores), 
             DC Comics (Batman, Superman, Liga da Justiça), Mangás (Naruto, One Piece, Dragon Ball, 
             Demon Slayer) e muito mais. Sem cadastro, sem assinatura!
@@ -137,7 +137,7 @@ const GuiaCompletoClipSave = () => {
           </h2>
           
           <p className="text-foreground mb-4">
-            Além dos downloads, o ClipSave oferece diversas ferramentas gratuitas:
+            Além dos downloads, o sos01 oferece diversas ferramentas gratuitas:
           </p>
 
           <div className="grid gap-3 mb-6">
@@ -175,7 +175,7 @@ const GuiaCompletoClipSave = () => {
 
           <h2 className="text-2xl font-semibold mt-8 mb-4 text-foreground flex items-center gap-2">
             <CheckCircle className="w-6 h-6 text-primary" />
-            Por que escolher o ClipSave?
+            Por que escolher o sos01?
           </h2>
           
           <div className="bg-card border border-border rounded-xl p-6 mb-6">
@@ -209,17 +209,17 @@ const GuiaCompletoClipSave = () => {
 
           <div className="bg-primary/10 border border-primary/30 rounded-xl p-6 mt-8">
             <h3 className="text-xl font-semibold text-foreground mb-3">
-              Explore o ClipSave!
+              Explore o sos01!
             </h3>
             <p className="text-foreground mb-4">
-              Descubra todas as funcionalidades do ClipSave e aproveite as 
+              Descubra todas as funcionalidades do sos01 e aproveite as 
               melhores ferramentas digitais gratuitamente.
             </p>
             <Link
               to="/"
               className="inline-flex items-center bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors"
             >
-              Acessar ClipSave
+              Acessar sos01
             </Link>
           </div>
         </article>
@@ -230,4 +230,4 @@ const GuiaCompletoClipSave = () => {
   );
 };
 
-export default GuiaCompletoClipSave;
+export default GuiaCompletosos01;

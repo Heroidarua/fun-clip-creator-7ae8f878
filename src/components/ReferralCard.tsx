@@ -42,8 +42,8 @@ const ReferralCard = ({ referralCode, referralCount }: ReferralCardProps) => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'ClipSave - Baixe vídeos de TikTok, Instagram e mais!',
-          text: 'Confira o ClipSave, o melhor site para baixar vídeos e usar ferramentas gratuitas!',
+          title: 'sos01 - Baixe vídeos de TikTok, Instagram e mais!',
+          text: 'Confira o sos01, o melhor site para baixar vídeos e usar ferramentas gratuitas!',
           url: referralLink,
         });
       } catch (err) {

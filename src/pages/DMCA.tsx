@@ -25,7 +25,7 @@ const DMCA = () => {
               <div className="flex items-start gap-3">
                 <AlertTriangle className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0" />
                 <p className="text-base leading-relaxed">
-                  O ClipSave respeita os direitos de propriedade intelectual de terceiros e espera que seus usuários façam o mesmo. Esta política descreve nosso procedimento para notificações de violação de direitos autorais conforme a Lei de Direitos Autorais do Milênio Digital (DMCA).
+                  O sos01 respeita os direitos de propriedade intelectual de terceiros e espera que seus usuários façam o mesmo. Esta política descreve nosso procedimento para notificações de violação de direitos autorais conforme a Lei de Direitos Autorais do Milênio Digital (DMCA).
                 </p>
               </div>
             </div>
@@ -36,7 +36,7 @@ const DMCA = () => {
                 1. Natureza do Serviço
               </h2>
               <p>
-                O ClipSave é uma plataforma de utilidades digitais que fornece ferramentas para acessar conteúdos publicamente disponíveis na internet. <strong>Não hospedamos, armazenamos ou distribuímos qualquer conteúdo de mídia em nossos servidores.</strong> Nossa plataforma atua exclusivamente como uma interface técnica que processa URLs fornecidas pelos usuários.
+                O sos01 é uma plataforma de utilidades digitais que fornece ferramentas para acessar conteúdos publicamente disponíveis na internet. <strong>Não hospedamos, armazenamos ou distribuímos qualquer conteúdo de mídia em nossos servidores.</strong> Nossa plataforma atua exclusivamente como uma interface técnica que processa URLs fornecidas pelos usuários.
               </p>
             </section>
 
@@ -66,7 +66,7 @@ const DMCA = () => {
               </p>
               <div className="bg-muted/50 rounded-lg p-4 mt-3">
                 <p className="font-medium text-foreground">
-                  Email: <a href="mailto:contatoclipsave@gmail.com" className="text-primary hover:underline">contatoclipsave@gmail.com</a>
+                  Email: <a href="mailto:contatosos01@gmail.com" className="text-primary hover:underline">contatosos01@gmail.com</a>
                 </p>
                 <p className="text-sm mt-2">Assunto: Notificação DMCA - [Descrição breve]</p>
               </div>
@@ -128,14 +128,14 @@ const DMCA = () => {
                 7. Isenção de Responsabilidade
               </h2>
               <p>
-                O ClipSave não se responsabiliza pelo uso que os usuários fazem dos conteúdos acessados através de nossa plataforma. Todo conteúdo permanece de propriedade de seus respectivos criadores e detentores de direitos.
+                O sos01 não se responsabiliza pelo uso que os usuários fazem dos conteúdos acessados através de nossa plataforma. Todo conteúdo permanece de propriedade de seus respectivos criadores e detentores de direitos.
               </p>
             </section>
 
             <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-6 mt-8">
               <h3 className="font-semibold text-foreground mb-2">Aviso Importante</h3>
               <p className="text-sm">
-                O ClipSave não hospeda, armazena ou distribui conteúdo. A plataforma apenas oferece ferramentas para acesso a conteúdos publicamente disponíveis na internet. O usuário é o único responsável por garantir que possui os direitos necessários sobre qualquer conteúdo utilizado.
+                O sos01 não hospeda, armazena ou distribui conteúdo. A plataforma apenas oferece ferramentas para acesso a conteúdos publicamente disponíveis na internet. O usuário é o único responsável por garantir que possui os direitos necessários sobre qualquer conteúdo utilizado.
               </p>
             </div>
           </div>

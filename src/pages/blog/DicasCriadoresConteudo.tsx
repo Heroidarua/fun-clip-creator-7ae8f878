@@ -180,7 +180,7 @@ const DicasCriadoresConteudo = () => {
                 <p className="text-sm">Use o TikTok Creator Fund e Analytics para entender sua audiência e performance.</p>
               </div>
               <div className="bg-background border border-border rounded-lg p-4">
-                <h4 className="font-semibold text-foreground mb-2">🎵 ClipSave para research</h4>
+                <h4 className="font-semibold text-foreground mb-2">🎵 sos01 para research</h4>
                 <p className="text-sm">Baixe vídeos virais para estudar técnicas de edição e encontrar inspiração.</p>
               </div>
               <div className="bg-background border border-border rounded-lg p-4">

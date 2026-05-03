@@ -51,7 +51,7 @@ const Header = () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "ClipSave - Plataforma de Utilidades Digitais",
+          title: "sos01 - Plataforma de Utilidades Digitais",
           text: "Ferramentas digitais, entretenimento e jogos clássicos - tudo em um só lugar!",
           url: window.location.origin,
         });

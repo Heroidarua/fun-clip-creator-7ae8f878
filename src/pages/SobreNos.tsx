@@ -13,14 +13,14 @@ const SobreNos = () => {
           <div className="flex items-center gap-3 mb-6">
             <Users className="w-8 h-8 text-primary" />
             <h1 className="text-3xl font-bold text-foreground font-inter">
-              Sobre o ClipSave
+              Sobre o sos01
             </h1>
           </div>
           
           <div className="prose prose-lg max-w-none text-muted-foreground space-y-6">
             <div className="bg-primary/5 border border-primary/20 rounded-lg p-6 my-6">
               <p className="text-base leading-relaxed text-foreground font-medium">
-                O ClipSave é uma plataforma brasileira <strong>100% gratuita</strong> de utilidades digitais, desenvolvida para oferecer ferramentas práticas e acessíveis para o dia a dia na internet. Nenhum cadastro ou pagamento é necessário.
+                O sos01 é uma plataforma brasileira <strong>100% gratuita</strong> de utilidades digitais, desenvolvida para oferecer ferramentas práticas e acessíveis para o dia a dia na internet. Nenhum cadastro ou pagamento é necessário.
               </p>
             </div>
 
@@ -118,7 +118,7 @@ const SobreNos = () => {
                 Compromisso Legal
               </h2>
               <p>
-                O ClipSave opera em estrita conformidade com as leis brasileiras e internacionais de direitos autorais. Nossa plataforma:
+                O sos01 opera em estrita conformidade com as leis brasileiras e internacionais de direitos autorais. Nossa plataforma:
               </p>
               <ul className="list-disc ml-6 space-y-2 mt-3">
                 <li>Não hospeda, armazena ou distribui conteúdo protegido por direitos autorais</li>
@@ -143,7 +143,7 @@ const SobreNos = () => {
                   <h3 className="font-semibold text-foreground">Matheus Marinho</h3>
                   <p className="text-sm text-muted-foreground">Fundador & Desenvolvedor</p>
                   <p className="text-sm mt-1">
-                    Desenvolvedor web brasileiro, criador do ClipSave — uma plataforma 100% gratuita que reúne ferramentas de download, utilitários com IA, jogos retrô e quadrinhos. Apaixonado por tecnologia, nostalgia gamer e por criar soluções que facilitam o dia a dia dos usuários.
+                    Desenvolvedor web brasileiro, criador do sos01 — uma plataforma 100% gratuita que reúne ferramentas de download, utilitários com IA, jogos retrô e quadrinhos. Apaixonado por tecnologia, nostalgia gamer e por criar soluções que facilitam o dia a dia dos usuários.
                   </p>
                 </div>
               </div>
@@ -152,7 +152,7 @@ const SobreNos = () => {
             <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-6 mt-8">
               <h3 className="font-semibold text-foreground mb-2">Aviso Legal</h3>
               <p className="text-sm">
-                O ClipSave não hospeda, armazena ou distribui conteúdo. A plataforma apenas oferece ferramentas para acesso a conteúdos publicamente disponíveis na internet. O usuário é o único responsável por garantir que possui os direitos necessários sobre qualquer conteúdo utilizado.
+                O sos01 não hospeda, armazena ou distribui conteúdo. A plataforma apenas oferece ferramentas para acesso a conteúdos publicamente disponíveis na internet. O usuário é o único responsável por garantir que possui os direitos necessários sobre qualquer conteúdo utilizado.
               </p>
             </div>
 
@@ -163,8 +163,8 @@ const SobreNos = () => {
               </p>
               <p className="mt-2">
                 <strong>Email:</strong>{" "}
-                <a href="mailto:contatoclipsave@gmail.com" className="text-primary hover:underline">
-                  contatoclipsave@gmail.com
+                <a href="mailto:contatosos01@gmail.com" className="text-primary hover:underline">
+                  contatosos01@gmail.com
                 </a>
               </p>
             </section>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
-const STORAGE_KEY = 'clipsave-favorite-games';
+const STORAGE_KEY = 'sos01-favorite-games';
 
 export function useFavoriteGames() {
   const [favorites, setFavorites] = useState<number[]>(() => {

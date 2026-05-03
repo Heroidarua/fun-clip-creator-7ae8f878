@@ -11,7 +11,7 @@ const ComoUsar = () => {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-foreground mb-4 font-inter">
-              Como Usar o ClipSave
+              Como Usar o sos01
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Aprenda como baixar vídeos do TikTok e Instagram sem marca d'água em 4 passos simples
@@ -55,10 +55,10 @@ const ComoUsar = () => {
                 <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
                   <div className="flex items-center mb-4">
                     <Smartphone className="w-6 h-6 text-accent mr-3" />
-                    <h3 className="text-xl font-semibold text-foreground">Cole o link na caixa do ClipSave</h3>
+                    <h3 className="text-xl font-semibold text-foreground">Cole o link na caixa do sos01</h3>
                   </div>
                   <p className="text-muted-foreground mb-4">
-                    Volte ao ClipSave e cole o link que você copiou na caixa de texto principal. Você pode usar o botão "Colar" ou simplesmente clicar na caixa e usar Ctrl+V (ou Cmd+V no Mac).
+                    Volte ao sos01 e cole o link que você copiou na caixa de texto principal. Você pode usar o botão "Colar" ou simplesmente clicar na caixa e usar Ctrl+V (ou Cmd+V no Mac).
                   </p>
                   <div className="bg-background border border-border rounded-lg p-4">
                     <p className="text-sm text-muted-foreground">
@@ -132,7 +132,7 @@ const ComoUsar = () => {
             </h2>
             <div className="grid md:grid-cols-2 gap-6">
               <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
-                <h3 className="font-semibold text-foreground mb-2">É seguro usar o ClipSave?</h3>
+                <h3 className="font-semibold text-foreground mb-2">É seguro usar o sos01?</h3>
                 <p className="text-sm text-muted-foreground">
                   Sim! Não armazenamos seus dados nem os vídeos baixados. Todo o processo é anônimo e seguro.
                 </p>
@@ -140,7 +140,7 @@ const ComoUsar = () => {
               <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
                 <h3 className="font-semibold text-foreground mb-2">Preciso pagar para usar?</h3>
                 <p className="text-sm text-muted-foreground">
-                  Não! O ClipSave é 100% gratuito e sempre será. Sem taxas ocultas ou limitações.
+                  Não! O sos01 é 100% gratuito e sempre será. Sem taxas ocultas ou limitações.
                 </p>
               </div>
               <div className="bg-card border border-border rounded-xl p-6 shadow-sm">

@@ -13,7 +13,7 @@ const Footer = () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "ClipSave - Plataforma de Utilidades Digitais",
+          title: "sos01 - Plataforma de Utilidades Digitais",
           text: "Ferramentas digitais, entretenimento e jogos clássicos - tudo em um só lugar!",
           url: window.location.origin,
         });
@@ -28,7 +28,7 @@ const Footer = () => {
 
   const faqItems = [
     {
-      question: "O ClipSave é seguro?",
+      question: "O sos01 é seguro?",
       answer: "Sim! Não armazenamos dados pessoais nem conteúdos de mídia. Sua navegação é privada e anônima."
     },
     {
@@ -41,7 +41,7 @@ const Footer = () => {
     },
     {
       question: "Vocês armazenam conteúdo?",
-      answer: "Não. O ClipSave não hospeda ou armazena qualquer conteúdo de terceiros. Apenas fornecemos ferramentas técnicas."
+      answer: "Não. O sos01 não hospeda ou armazena qualquer conteúdo de terceiros. Apenas fornecemos ferramentas técnicas."
     }
   ];
 
@@ -66,7 +66,7 @@ const Footer = () => {
           <div className="flex items-start gap-3">
             <AlertTriangle className="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" />
             <p className="text-xs sm:text-sm text-muted-foreground font-orbitron leading-relaxed">
-              <strong className="text-foreground">Aviso Legal:</strong> O ClipSave não hospeda, armazena ou distribui conteúdo. A plataforma oferece ferramentas para acesso a conteúdos publicamente disponíveis na internet. O usuário é o único responsável por garantir que possui os direitos necessários sobre qualquer conteúdo utilizado.
+              <strong className="text-foreground">Aviso Legal:</strong> O sos01 não hospeda, armazena ou distribui conteúdo. A plataforma oferece ferramentas para acesso a conteúdos publicamente disponíveis na internet. O usuário é o único responsável por garantir que possui os direitos necessários sobre qualquer conteúdo utilizado.
             </p>
           </div>
         </div>
@@ -168,7 +168,7 @@ const Footer = () => {
         <div className="border-t-2 border-primary/20 mt-8 pt-8">
           <div className="flex flex-col items-center">
             <p className="text-muted-foreground text-sm font-orbitron">
-              © 2025 ClipSave. Todos os direitos reservados.
+              © 2025 sos01. Todos os direitos reservados.
             </p>
             <p className="text-muted-foreground/60 text-xs mt-2 font-orbitron text-center max-w-2xl">
               Plataforma de utilidades digitais. Todo conteúdo acessado permanece de propriedade de seus respectivos criadores.

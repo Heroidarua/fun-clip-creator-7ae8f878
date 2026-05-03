@@ -21,11 +21,11 @@ const FerramentasGratuitas = () => {
           </div>
           
           <h1 className="text-3xl font-bold text-foreground mb-4">
-            Todas as Ferramentas Gratuitas do ClipSave em 2025
+            Todas as Ferramentas Gratuitas do sos01 em 2025
           </h1>
           
           <p className="text-muted-foreground mb-8">
-            O ClipSave oferece uma coleção completa de ferramentas digitais <strong>100% gratuitas</strong>. Neste guia, você vai conhecer cada uma delas e aprender a usar.
+            O sos01 oferece uma coleção completa de ferramentas digitais <strong>100% gratuitas</strong>. Neste guia, você vai conhecer cada uma delas e aprender a usar.
           </p>
 
           <div className="bg-primary/5 border border-primary/20 rounded-lg p-6 mb-8">

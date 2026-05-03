@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "clipsave2025";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "sos012025";
 
 export const Route = createFileRoute("/api/manage-announcements")({
   server: {

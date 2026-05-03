@@ -25,7 +25,7 @@ const PoliticaDePrivacidade = () => {
               <div className="flex items-start gap-3">
                 <Lock className="w-5 h-5 text-green-500 mt-1 flex-shrink-0" />
                 <p className="text-base leading-relaxed">
-                  O ClipSave está comprometido com a proteção da sua privacidade. Esta política descreve como tratamos (ou não tratamos) suas informações pessoais em conformidade com a Lei Geral de Proteção de Dados (LGPD - Lei nº 13.709/2018).
+                  O sos01 está comprometido com a proteção da sua privacidade. Esta política descreve como tratamos (ou não tratamos) suas informações pessoais em conformidade com a Lei Geral de Proteção de Dados (LGPD - Lei nº 13.709/2018).
                 </p>
               </div>
             </div>
@@ -36,7 +36,7 @@ const PoliticaDePrivacidade = () => {
                 1. Dados Coletados
               </h2>
               <p>
-                O ClipSave foi projetado com privacidade em mente. <strong>Não coletamos dados pessoais identificáveis</strong> durante o uso regular de nossas ferramentas de mídia. Especificamente:
+                O sos01 foi projetado com privacidade em mente. <strong>Não coletamos dados pessoais identificáveis</strong> durante o uso regular de nossas ferramentas de mídia. Especificamente:
               </p>
               <ul className="list-disc ml-6 space-y-2 mt-3">
                 <li>Não registramos URLs processadas após a conclusão do serviço</li>
@@ -45,7 +45,7 @@ const PoliticaDePrivacidade = () => {
                 <li>Não compartilhamos informações com terceiros para fins publicitários</li>
               </ul>
               <p className="mt-4">
-                <strong>Nota:</strong> O ClipSave é uma plataforma 100% gratuita e não requer cadastro para utilização das ferramentas.
+                <strong>Nota:</strong> O sos01 é uma plataforma 100% gratuita e não requer cadastro para utilização das ferramentas.
               </p>
             </section>
 
@@ -145,7 +145,7 @@ const PoliticaDePrivacidade = () => {
                 8. Menores de Idade
               </h2>
               <p>
-                O ClipSave não é direcionado a menores de 13 anos. Não coletamos intencionalmente informações de crianças. Se tomarmos conhecimento de coleta inadvertida, excluiremos os dados imediatamente.
+                O sos01 não é direcionado a menores de 13 anos. Não coletamos intencionalmente informações de crianças. Se tomarmos conhecimento de coleta inadvertida, excluiremos os dados imediatamente.
               </p>
             </section>
 
@@ -168,8 +168,8 @@ const PoliticaDePrivacidade = () => {
               </p>
               <div className="bg-muted/50 rounded-lg p-4 mt-3">
                 <p><strong>Email:</strong>{" "}
-                  <a href="mailto:contatoclipsave@gmail.com" className="text-primary hover:underline">
-                    contatoclipsave@gmail.com
+                  <a href="mailto:contatosos01@gmail.com" className="text-primary hover:underline">
+                    contatosos01@gmail.com
                   </a>
                 </p>
                 <p className="text-sm mt-2">Assunto: Privacidade - [Sua solicitação]</p>
@@ -182,7 +182,7 @@ const PoliticaDePrivacidade = () => {
             <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-6 mt-8">
               <h3 className="font-semibold text-foreground mb-2">Aviso Legal</h3>
               <p className="text-sm">
-                O ClipSave não hospeda, armazena ou distribui conteúdo. A plataforma apenas oferece ferramentas para acesso a conteúdos publicamente disponíveis na internet. O usuário é o único responsável por garantir que possui os direitos necessários sobre qualquer conteúdo utilizado.
+                O sos01 não hospeda, armazena ou distribui conteúdo. A plataforma apenas oferece ferramentas para acesso a conteúdos publicamente disponíveis na internet. O usuário é o único responsável por garantir que possui os direitos necessários sobre qualquer conteúdo utilizado.
               </p>
             </div>
           </div>

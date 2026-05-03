@@ -29,7 +29,7 @@ const ComoUsarDownloaders = () => {
           </h1>
           
           <p className="text-muted-foreground mb-8">
-            Guia completo para usar os downloaders do ClipSave. Baixe vídeos em HD, sem marca d'água, ou extraia apenas o áudio em MP3. <strong>100% gratuito!</strong>
+            Guia completo para usar os downloaders do sos01. Baixe vídeos em HD, sem marca d'água, ou extraia apenas o áudio em MP3. <strong>100% gratuito!</strong>
           </p>
 
           <div className="bg-primary/5 border border-primary/20 rounded-lg p-6 mb-8">
@@ -73,7 +73,7 @@ const ComoUsarDownloaders = () => {
             <li className="flex items-start gap-3">
               <span className="bg-primary text-primary-foreground w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">2</span>
               <div>
-                <strong className="text-foreground">Cole no ClipSave</strong>
+                <strong className="text-foreground">Cole no sos01</strong>
                 <p className="text-sm mt-1">Na página inicial, localize a aba da plataforma correta (TikTok, Instagram, Kwai ou YouTube) e cole o link no campo.</p>
               </div>
             </li>
@@ -170,7 +170,7 @@ const ComoUsarDownloaders = () => {
               ⚠️ Uso Responsável
             </h3>
             <p className="text-sm text-muted-foreground m-0">
-              Respeite os direitos autorais. Use os downloads apenas para conteúdos públicos e sempre dê crédito aos criadores originais. O ClipSave não incentiva a violação de direitos autorais.
+              Respeite os direitos autorais. Use os downloads apenas para conteúdos públicos e sempre dê crédito aos criadores originais. O sos01 não incentiva a violação de direitos autorais.
             </p>
           </div>
 

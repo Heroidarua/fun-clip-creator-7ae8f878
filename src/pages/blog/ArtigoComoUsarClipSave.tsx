@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-const ArtigoComoUsarClipSave = () => {
+const ArtigoComoUsarsos01 = () => {
   return (
     <div className="bg-background min-h-screen">
       <Header />
@@ -11,10 +11,10 @@ const ArtigoComoUsarClipSave = () => {
       <article className="max-w-4xl mx-auto px-4 py-16">
         <header className="mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
-            Como Baixar Vídeos do TikTok sem Marca d'Água: Guia Completo do ClipSave 2025
+            Como Baixar Vídeos do TikTok sem Marca d'Água: Guia Completo do sos01 2025
           </h1>
           <p className="text-xl text-muted-foreground mb-6">
-            Aprenda a usar o ClipSave para baixar vídeos e áudios do TikTok de forma rápida, segura e sem complicações
+            Aprenda a usar o sos01 para baixar vídeos e áudios do TikTok de forma rápida, segura e sem complicações
           </p>
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <span>📅 Publicado em: junho 2025</span>
@@ -42,15 +42,15 @@ const ArtigoComoUsarClipSave = () => {
           </ul>
 
           <p className="mb-8">
-            O problema é que o TikTok não oferece uma opção nativa de download, e quando oferece, os vídeos vêm com marca d'água. É aí que entra o <strong>ClipSave</strong>, uma ferramenta gratuita que resolve essa questão de forma simples e eficiente.
+            O problema é que o TikTok não oferece uma opção nativa de download, e quando oferece, os vídeos vêm com marca d'água. É aí que entra o <strong>sos01</strong>, uma ferramenta gratuita que resolve essa questão de forma simples e eficiente.
           </p>
 
           <h2 className="text-2xl font-bold text-white mt-12 mb-6">
-            Como Usar o ClipSave: Passo a Passo Completo
+            Como Usar o sos01: Passo a Passo Completo
           </h2>
 
           <p className="mb-4">
-            Baixar vídeos do TikTok com o ClipSave é um processo simples que leva apenas alguns segundos. Siga este guia detalhado:
+            Baixar vídeos do TikTok com o sos01 é um processo simples que leva apenas alguns segundos. Siga este guia detalhado:
           </p>
 
           <h3 className="text-xl font-semibold text-white mt-8 mb-4">
@@ -65,13 +65,13 @@ const ArtigoComoUsarClipSave = () => {
           </ol>
 
           <h3 className="text-xl font-semibold text-white mt-8 mb-4">
-            💻 Passo 2: Acesse o ClipSave
+            💻 Passo 2: Acesse o sos01
           </h3>
 
           <ol className="list-decimal pl-6 mb-6 space-y-2">
             <li>Abra seu navegador (Chrome, Firefox, Safari, etc.)</li>
-            <li>Acesse <Link to="/" className="text-accent hover:underline">clipsave.netlify.app</Link></li>
-            <li>Você verá a interface limpa e intuitiva do ClipSave</li>
+            <li>Acesse <Link to="/" className="text-accent hover:underline">sos01.netlify.app</Link></li>
+            <li>Você verá a interface limpa e intuitiva do sos01</li>
           </ol>
 
           <h3 className="text-xl font-semibold text-white mt-8 mb-4">
@@ -88,7 +88,7 @@ const ArtigoComoUsarClipSave = () => {
 
           <div className="bg-accent/10 border-l-4 border-accent p-4 my-8">
             <p className="text-sm">
-              <strong>💡 Dica Pro:</strong> O ClipSave funciona perfeitamente em qualquer dispositivo - celular, tablet, computador - e não requer instalação de aplicativos.
+              <strong>💡 Dica Pro:</strong> O sos01 funciona perfeitamente em qualquer dispositivo - celular, tablet, computador - e não requer instalação de aplicativos.
             </p>
           </div>
 
@@ -124,11 +124,11 @@ const ArtigoComoUsarClipSave = () => {
           </ul>
 
           <h2 className="text-2xl font-bold text-white mt-12 mb-6">
-            Por que Escolher o ClipSave?
+            Por que Escolher o sos01?
           </h2>
 
           <p className="mb-4">
-            O ClipSave se destaca entre as ferramentas de download por oferecer uma experiência superior:
+            O sos01 se destaca entre as ferramentas de download por oferecer uma experiência superior:
           </p>
 
           <div className="grid md:grid-cols-2 gap-6 my-8">
@@ -168,7 +168,7 @@ const ArtigoComoUsarClipSave = () => {
           <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-6 mb-8">
             <h3 className="text-lg font-semibold text-white mb-3">🔒 Responsabilidade do Usuário</h3>
             <p className="mb-4">
-              O ClipSave é uma ferramenta técnica que facilita o download de conteúdo público. No entanto, <strong>você é totalmente responsável</strong> pelo uso que faz do conteúdo baixado.
+              O sos01 é uma ferramenta técnica que facilita o download de conteúdo público. No entanto, <strong>você é totalmente responsável</strong> pelo uso que faz do conteúdo baixado.
             </p>
             <ul className="list-disc pl-6 space-y-2 text-sm">
               <li>Respeite sempre os direitos autorais dos criadores</li>
@@ -187,7 +187,7 @@ const ArtigoComoUsarClipSave = () => {
           </h3>
 
           <p className="mb-4">
-            Uma das funcionalidades mais interessantes do ClipSave é a extração de áudio. Você pode:
+            Uma das funcionalidades mais interessantes do sos01 é a extração de áudio. Você pode:
           </p>
 
           <ol className="list-decimal pl-6 mb-6 space-y-2">
@@ -225,7 +225,7 @@ const ArtigoComoUsarClipSave = () => {
 
           <div className="space-y-6">
             <div className="glass-card p-6 rounded-xl">
-              <h3 className="font-semibold text-white mb-2">❓ O ClipSave é seguro de usar?</h3>
+              <h3 className="font-semibold text-white mb-2">❓ O sos01 é seguro de usar?</h3>
               <p className="text-sm text-muted-foreground">
                 Sim, completamente seguro. Não armazenamos seus dados, não instalamos nada no seu dispositivo e não coletamos informações pessoais.
               </p>
@@ -241,7 +241,7 @@ const ArtigoComoUsarClipSave = () => {
             <div className="glass-card p-6 rounded-xl">
               <h3 className="font-semibold text-white mb-2">❓ Funciona com vídeos privados?</h3>
               <p className="text-sm text-muted-foreground">
-                O ClipSave só funciona com vídeos públicos do TikTok. Vídeos privados não podem ser baixados.
+                O sos01 só funciona com vídeos públicos do TikTok. Vídeos privados não podem ser baixados.
               </p>
             </div>
 
@@ -258,7 +258,7 @@ const ArtigoComoUsarClipSave = () => {
           </h2>
 
           <p className="mb-4">
-            O ClipSave representa a solução definitiva para quem precisa baixar vídeos do TikTok de forma rápida, segura e sem complicações. Nossa ferramenta foi desenvolvida pensando na experiência do usuário, oferecendo:
+            O sos01 representa a solução definitiva para quem precisa baixar vídeos do TikTok de forma rápida, segura e sem complicações. Nossa ferramenta foi desenvolvida pensando na experiência do usuário, oferecendo:
           </p>
 
           <ul className="list-disc pl-6 mb-6 space-y-2">
@@ -279,7 +279,7 @@ const ArtigoComoUsarClipSave = () => {
               🚀 Pronto para Experimentar?
             </h3>
             <p className="text-muted-foreground mb-6">
-              Junte-se a milhares de usuários que já descobriram a facilidade do ClipSave
+              Junte-se a milhares de usuários que já descobriram a facilidade do sos01
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link 
@@ -307,4 +307,4 @@ const ArtigoComoUsarClipSave = () => {
   );
 };
 
-export default ArtigoComoUsarClipSave;
+export default ArtigoComoUsarsos01;

@@ -975,7 +975,7 @@ const HeroSection = () => {
                 </Button>
 
                 <p className="font-retro text-lg text-center mt-4 text-muted-foreground">
-                  OBRIGADO POR USAR CLIPSAVE!
+                  OBRIGADO POR USAR sos01!
                 </p>
               </div>
             </div>
@@ -1156,7 +1156,7 @@ const HeroSection = () => {
                   </Button>
 
                   <p className="font-retro text-lg text-center mt-4 text-muted-foreground">
-                    OBRIGADO POR USAR CLIPSAVE!
+                    OBRIGADO POR USAR sos01!
                   </p>
                 </div>
               </div>
@@ -1285,7 +1285,7 @@ const HeroSection = () => {
                   </Button>
 
                   <p className="font-retro text-lg text-center mt-4 text-muted-foreground">
-                    OBRIGADO POR USAR CLIPSAVE!
+                    OBRIGADO POR USAR sos01!
                   </p>
                 </div>
               </div>
@@ -1454,7 +1454,7 @@ const HeroSection = () => {
                   </Button>
 
                   <p className="font-retro text-lg text-center mt-4 text-muted-foreground">
-                    OBRIGADO POR USAR CLIPSAVE!
+                    OBRIGADO POR USAR sos01!
                   </p>
                 </div>
               </div>

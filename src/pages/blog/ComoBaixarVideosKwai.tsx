@@ -29,7 +29,7 @@ const ComoBaixarVideosKwai = () => {
 
           <p className="text-foreground mb-6">
             O Kwai é uma das plataformas de vídeos curtos que mais cresce no Brasil. 
-            Com o ClipSave, você pode baixar seus vídeos favoritos do Kwai de forma 
+            Com o sos01, você pode baixar seus vídeos favoritos do Kwai de forma 
             rápida e gratuita, sem marcas d'água e em alta qualidade.
           </p>
 
@@ -62,7 +62,7 @@ const ComoBaixarVideosKwai = () => {
               </li>
               <li className="flex items-start gap-2">
                 <span className="font-semibold text-primary">3.</span>
-                <span>Acesse o ClipSave e clique na aba "Kwai"</span>
+                <span>Acesse o sos01 e clique na aba "Kwai"</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="font-semibold text-primary">4.</span>
@@ -90,7 +90,7 @@ const ComoBaixarVideosKwai = () => {
 
           <h2 className="text-2xl font-semibold mt-8 mb-4 text-foreground flex items-center gap-2">
             <CheckCircle className="w-6 h-6 text-primary" />
-            Por que usar o ClipSave para Kwai?
+            Por que usar o sos01 para Kwai?
           </h2>
           
           <div className="grid gap-4 mb-6">
@@ -125,7 +125,7 @@ const ComoBaixarVideosKwai = () => {
               💡 Dica
             </h3>
             <p className="text-foreground text-sm">
-              O ClipSave também suporta downloads do TikTok, Instagram e YouTube! 
+              O sos01 também suporta downloads do TikTok, Instagram e YouTube! 
               Use a mesma ferramenta para todas as suas plataformas favoritas.
             </p>
           </div>
@@ -135,13 +135,13 @@ const ComoBaixarVideosKwai = () => {
               Comece a Baixar Agora!
             </h3>
             <p className="text-foreground mb-4">
-              Acesse o ClipSave e baixe seus vídeos favoritos do Kwai em segundos.
+              Acesse o sos01 e baixe seus vídeos favoritos do Kwai em segundos.
             </p>
             <Link
               to="/"
               className="inline-flex items-center bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors"
             >
-              Ir para o ClipSave
+              Ir para o sos01
             </Link>
           </div>
         </article>

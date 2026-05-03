@@ -9,21 +9,21 @@ const Blog = () => {
       <Header />
       
       <div className="max-w-3xl mx-auto px-4 py-10 text-base leading-relaxed">
-        <h1 className="text-3xl font-bold mb-4 text-foreground">Blog ClipSave</h1>
+        <h1 className="text-3xl font-bold mb-4 text-foreground">Blog sos01</h1>
         <p className="text-muted-foreground mb-8">
-          Guias, tutoriais e dicas para aproveitar ao máximo todas as ferramentas gratuitas do ClipSave.
+          Guias, tutoriais e dicas para aproveitar ao máximo todas as ferramentas gratuitas do sos01.
         </p>
 
         <div className="space-y-6">
           {/* História - Destaque especial */}
           <div className="bg-gradient-to-r from-red-500/10 via-primary/10 to-red-500/10 border border-red-500/30 rounded-xl p-6 shadow-sm">
             <span className="inline-block bg-red-500 text-white text-xs font-bold px-2 py-1 rounded mb-3">❤️ HISTÓRIA</span>
-            <h2 className="text-xl font-semibold text-foreground mb-3">🚀 Como Nasceu o ClipSave</h2>
+            <h2 className="text-xl font-semibold text-foreground mb-3">🚀 Como Nasceu o sos01</h2>
             <p className="text-muted-foreground mb-4">
               A história de Matheus Marinho e como uma frustração virou uma plataforma usada por milhares de pessoas. 100% gratuita, sem pegadinhas.
             </p>
             <Link
-              to="/blog/como-nasceu-clipsave"
+              to="/blog/como-nasceu-sos01"
               className="inline-flex items-center text-primary hover:text-primary/80 font-medium transition-colors"
             >
               Ler a história completa →
@@ -33,12 +33,12 @@ const Blog = () => {
           {/* Guia Completo - Destaque */}
           <div className="bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/30 rounded-xl p-6 shadow-sm">
             <span className="inline-block bg-primary text-primary-foreground text-xs font-bold px-2 py-1 rounded mb-3">DESTAQUE</span>
-            <h2 className="text-xl font-semibold text-foreground mb-3">📚 Guia Completo do ClipSave 2025</h2>
+            <h2 className="text-xl font-semibold text-foreground mb-3">📚 Guia Completo do sos01 2025</h2>
             <p className="text-muted-foreground mb-4">
               Conheça todas as funcionalidades: downloads, ferramentas com IA, jogos retrô e quadrinhos. Tudo 100% gratuito!
             </p>
             <Link
-              to="/blog/guia-completo-clipsave"
+              to="/blog/guia-completo-sos01"
               className="inline-flex items-center text-primary hover:text-primary/80 font-medium transition-colors"
             >
               Ler guia completo →
