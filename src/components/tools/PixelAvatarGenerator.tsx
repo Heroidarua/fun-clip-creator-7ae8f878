@@ -453,10 +453,8 @@ const PixelAvatarGenerator = ({ onSuccess }: PixelAvatarGeneratorProps) => {
 
     try {
       const selectedSize = sizes.find(s => s.value === size) || sizes[2];
-      const resp = await fetch("/api/public/generate-avatar", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      const { data, error } = await supabase.functions.invoke("generate-avatar", {
+        body: {
           style,
           color,
           accessories,
@@ -469,13 +467,14 @@ const PixelAvatarGenerator = ({ onSuccess }: PixelAvatarGeneratorProps) => {
           outfit,
           hairStyle,
           customPrompt: customPrompt.trim(),
-        }),
+        },
       });
 
-      const data = await resp.json();
-
-      if (!resp.ok || data.error) {
-        throw new Error(data.error || "Erro ao gerar avatar");
+      if (error) {
+        throw new Error(error.message || "Erro ao gerar avatar");
+      }
+      if (data?.error) {
+        throw new Error(data.error);
       }
 
       if (data.imageUrl) {
