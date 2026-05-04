@@ -452,7 +452,7 @@ const PixelAvatarGenerator = ({ onSuccess }: PixelAvatarGeneratorProps) => {
 
     try {
       const selectedSize = sizes.find(s => s.value === size) || sizes[2];
-      const resp = await fetch("/api/generate-avatar", {
+      const resp = await fetch("/api/public/generate-avatar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
