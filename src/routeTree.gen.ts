@@ -45,6 +45,7 @@ import { Route as ApiDownloadTiktokRouteImport } from './routes/api.download-tik
 import { Route as ApiDownloadKwaiRouteImport } from './routes/api.download-kwai'
 import { Route as ApiDownloadInstagramRouteImport } from './routes/api.download-instagram'
 import { Route as ApiAiTextRouteImport } from './routes/api.ai-text'
+import { Route as ApiPublicGenerateAvatarRouteImport } from './routes/api.public.generate-avatar'
 
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
@@ -234,6 +235,11 @@ const ApiAiTextRoute = ApiAiTextRouteImport.update({
   path: '/api/ai-text',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicGenerateAvatarRoute = ApiPublicGenerateAvatarRouteImport.update({
+  id: '/api/public/generate-avatar',
+  path: '/api/public/generate-avatar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -272,6 +278,7 @@ export interface FileRoutesByFullPath {
   '/blog/guia-completo-clipsave': typeof BlogGuiaCompletoClipsaveRoute
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/blog/': typeof BlogIndexRoute
+  '/api/public/generate-avatar': typeof ApiPublicGenerateAvatarRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -309,6 +316,7 @@ export interface FileRoutesByTo {
   '/blog/guia-completo-clipsave': typeof BlogGuiaCompletoClipsaveRoute
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/blog': typeof BlogIndexRoute
+  '/api/public/generate-avatar': typeof ApiPublicGenerateAvatarRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -348,6 +356,7 @@ export interface FileRoutesById {
   '/blog/guia-completo-clipsave': typeof BlogGuiaCompletoClipsaveRoute
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/blog/': typeof BlogIndexRoute
+  '/api/public/generate-avatar': typeof ApiPublicGenerateAvatarRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -388,6 +397,7 @@ export interface FileRouteTypes {
     | '/blog/guia-completo-clipsave'
     | '/blog/jogos-retro-gratis'
     | '/blog/'
+    | '/api/public/generate-avatar'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -425,6 +435,7 @@ export interface FileRouteTypes {
     | '/blog/guia-completo-clipsave'
     | '/blog/jogos-retro-gratis'
     | '/blog'
+    | '/api/public/generate-avatar'
   id:
     | '__root__'
     | '/'
@@ -463,6 +474,7 @@ export interface FileRouteTypes {
     | '/blog/guia-completo-clipsave'
     | '/blog/jogos-retro-gratis'
     | '/blog/'
+    | '/api/public/generate-avatar'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -490,6 +502,7 @@ export interface RootRouteChildren {
   ApiGenerateAvatarRoute: typeof ApiGenerateAvatarRoute
   ApiManageAnnouncementsRoute: typeof ApiManageAnnouncementsRoute
   ApiRemoveBackgroundRoute: typeof ApiRemoveBackgroundRoute
+  ApiPublicGenerateAvatarRoute: typeof ApiPublicGenerateAvatarRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -746,6 +759,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAiTextRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/generate-avatar': {
+      id: '/api/public/generate-avatar'
+      path: '/api/public/generate-avatar'
+      fullPath: '/api/public/generate-avatar'
+      preLoaderRoute: typeof ApiPublicGenerateAvatarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -807,6 +827,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiGenerateAvatarRoute: ApiGenerateAvatarRoute,
   ApiManageAnnouncementsRoute: ApiManageAnnouncementsRoute,
   ApiRemoveBackgroundRoute: ApiRemoveBackgroundRoute,
+  ApiPublicGenerateAvatarRoute: ApiPublicGenerateAvatarRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
