@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 const LOVABLE_AI_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
-export const Route = createFileRoute("/api/generate-avatar")({
+export const Route = createFileRoute("/api/public/generate-avatar")({
   server: {
     handlers: {
       OPTIONS: async () => {
