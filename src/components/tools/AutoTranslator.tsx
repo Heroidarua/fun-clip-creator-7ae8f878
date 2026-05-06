@@ -39,9 +39,12 @@ const AutoTranslator = ({ onSuccess }: AutoTranslatorProps) => {
     setResult("");
 
     try {
-      const resp = await fetch("/api/ai-text", {
+      const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-text`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
         body: JSON.stringify({ action: "translate", text: text.trim(), targetLanguage }),
       });
 
