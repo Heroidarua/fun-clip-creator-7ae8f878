@@ -1394,6 +1394,130 @@ body {
   animation: letterWalk 6s ease-in-out infinite alternate;
 }
 
+/* ============================================
+   Utility Tools Section — Special FX
+   ============================================ */
+.tools-fx-section {
+  isolation: isolate;
+}
+
+.tools-fx-bg {
+  background:
+    radial-gradient(ellipse at top, hsl(var(--primary) / 0.08), transparent 60%),
+    radial-gradient(ellipse at bottom, hsl(280 100% 60% / 0.08), transparent 60%);
+}
+
+.tools-fx-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(hsl(var(--primary) / 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--primary) / 0.07) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  animation: toolsFxGridPan 18s linear infinite;
+}
+
+@keyframes toolsFxGridPan {
+  0% { background-position: 0 0, 0 0; }
+  100% { background-position: 40px 40px, 40px 40px; }
+}
+
+.tools-fx-orb {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 9999px;
+  filter: blur(80px);
+  opacity: 0.45;
+  mix-blend-mode: screen;
+  animation: toolsFxFloat 14s ease-in-out infinite alternate;
+}
+.tools-fx-orb-1 {
+  background: hsl(280 100% 60% / 0.55);
+  top: -80px;
+  left: -60px;
+}
+.tools-fx-orb-2 {
+  background: hsl(var(--primary) / 0.55);
+  bottom: -100px;
+  right: -60px;
+  animation-delay: -4s;
+  animation-duration: 18s;
+}
+.tools-fx-orb-3 {
+  background: hsl(190 100% 50% / 0.4);
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 240px;
+  height: 240px;
+  animation-delay: -8s;
+  animation-duration: 22s;
+}
+
+@keyframes toolsFxFloat {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(30px, -20px) scale(1.1); }
+  100% { transform: translate(-20px, 30px) scale(0.95); }
+}
+
+.tools-fx-scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 3px,
+    hsl(var(--primary) / 0.04) 3px,
+    hsl(var(--primary) / 0.04) 4px
+  );
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.tools-fx-particles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.tools-fx-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: hsl(var(--primary));
+  border-radius: 9999px;
+  box-shadow: 0 0 8px hsl(var(--primary)), 0 0 16px hsl(var(--primary) / 0.6);
+  left: calc((var(--i) * 53) % 100 * 1%);
+  top: 110%;
+  opacity: 0;
+  animation: toolsFxRise calc(8s + (var(--i) * 0.4s)) linear infinite;
+  animation-delay: calc(var(--i) * -0.6s);
+}
+
+.tools-fx-particle:nth-child(3n) {
+  background: hsl(280 100% 65%);
+  box-shadow: 0 0 8px hsl(280 100% 65%), 0 0 16px hsl(280 100% 65% / 0.6);
+}
+.tools-fx-particle:nth-child(3n+1) {
+  background: hsl(190 100% 55%);
+  box-shadow: 0 0 8px hsl(190 100% 55%), 0 0 16px hsl(190 100% 55% / 0.6);
+}
+
+@keyframes toolsFxRise {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-110vh) translateX(20px); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tools-fx-grid,
+  .tools-fx-orb,
+  .tools-fx-particle { animation: none; }
+}
 
 @layer base {
   * {
