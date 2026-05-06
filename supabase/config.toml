@@ -2,3 +2,9 @@ project_id = "sofewnyrrevybnbhhsuh"
 
 [functions.generate-avatar]
 verify_jwt = false
+
+[functions.ai-text]
+verify_jwt = false
+
+[functions.remove-background]
+verify_jwt = false

@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import ImageCompareSlider from "./ImageCompareSlider";
 import BackgroundSelector from "./BackgroundSelector";
 import BackgroundAdjustmentsPanel, { BackgroundAdjustments, DEFAULT_ADJUSTMENTS } from "./BackgroundAdjustments";
+import { supabase } from "@/integrations/supabase/client";
 
 interface BackgroundRemoverProps {
   onSuccess?: () => void;
@@ -157,12 +158,9 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
   const fetchCredits = async () => {
     setLoadingCredits(true);
     try {
-      const resp = await fetch('/api/remove-background', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'check-credits' }),
+      const { data } = await supabase.functions.invoke('remove-background', {
+        body: { action: 'check-credits' },
       });
-      const data = await resp.json();
 
       if (data?.success) {
         setCredits(data.credits);
@@ -226,20 +224,13 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
     try {
       const base64 = preview.split(',')[1];
 
-      const resp = await fetch('/api/remove-background', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          image: base64,
-          filename: file.name,
-        }),
+      const { data, error } = await supabase.functions.invoke('remove-background', {
+        body: { image: base64, filename: file.name },
       });
-
-      const data = await resp.json();
       clearInterval(progressInterval);
 
-      if (!resp.ok || !data.success) {
-        throw new Error(data.error || "Erro ao processar imagem");
+      if (error || !data?.success) {
+        throw new Error(data?.error || error?.message || "Erro ao processar imagem");
       }
 
       if (data.result) {
