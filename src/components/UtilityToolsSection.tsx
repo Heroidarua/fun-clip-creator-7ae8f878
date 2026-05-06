@@ -163,8 +163,21 @@ const UtilityToolsSection = () => {
   ];
 
   return (
-    <section className="py-12 sm:py-16 px-4">
-      <div className="container mx-auto max-w-4xl">
+    <section className="py-12 sm:py-16 px-4 relative overflow-hidden tools-fx-section">
+      {/* Special FX background — only behind utility tools */}
+      <div className="tools-fx-bg pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+        <div className="tools-fx-grid" />
+        <div className="tools-fx-orb tools-fx-orb-1" />
+        <div className="tools-fx-orb tools-fx-orb-2" />
+        <div className="tools-fx-orb tools-fx-orb-3" />
+        <div className="tools-fx-scanlines" />
+        <div className="tools-fx-particles">
+          {Array.from({ length: 20 }).map((_, i) => (
+            <span key={i} className="tools-fx-particle" style={{ ['--i' as any]: i }} />
+          ))}
+        </div>
+      </div>
+      <div className="container mx-auto max-w-4xl relative">
         {/* Section Header */}
         <ScrollReveal>
           <div className="text-center mb-10">
