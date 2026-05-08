@@ -15,7 +15,7 @@ import ClipyAssistant from "@/components/ClipyAssistant";
 
 const Index = () => {
   return (
-    <div className="bg-background font-orbitron w-full overflow-x-hidden">
+    <div className="bg-background font-inter w-full overflow-x-hidden">
       <Header />
       <AnnouncementBanner />
       <HeroSection />
