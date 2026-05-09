@@ -13,12 +13,14 @@ import { Route as TermosRouteImport } from './routes/termos'
 import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
+import { Route as PrecosRouteImport } from './routes/precos'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as JogosJavaRouteImport } from './routes/jogos-java'
 import { Route as JogosRouteImport } from './routes/jogos'
 import { Route as HubRouteImport } from './routes/hub'
 import { Route as FerramentasRouteImport } from './routes/ferramentas'
 import { Route as DmcaRouteImport } from './routes/dmca'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContatoRouteImport } from './routes/contato'
 import { Route as ComoUsarRouteImport } from './routes/como-usar'
 import { Route as BlogRouteImport } from './routes/blog'
@@ -63,6 +65,11 @@ const PrivacidadeRoute = PrivacidadeRouteImport.update({
   path: '/privacidade',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrecosRoute = PrecosRouteImport.update({
+  id: '/precos',
+  path: '/precos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PerfilRoute = PerfilRouteImport.update({
   id: '/perfil',
   path: '/perfil',
@@ -91,6 +98,11 @@ const FerramentasRoute = FerramentasRouteImport.update({
 const DmcaRoute = DmcaRouteImport.update({
   id: '/dmca',
   path: '/dmca',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContatoRoute = ContatoRouteImport.update({
@@ -224,12 +236,14 @@ export interface FileRoutesByFullPath {
   '/blog': typeof BlogRouteWithChildren
   '/como-usar': typeof ComoUsarRoute
   '/contato': typeof ContatoRoute
+  '/dashboard': typeof DashboardRoute
   '/dmca': typeof DmcaRoute
   '/ferramentas': typeof FerramentasRoute
   '/hub': typeof HubRoute
   '/jogos': typeof JogosRoute
   '/jogos-java': typeof JogosJavaRoute
   '/perfil': typeof PerfilRoute
+  '/precos': typeof PrecosRoute
   '/privacidade': typeof PrivacidadeRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
@@ -258,12 +272,14 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/como-usar': typeof ComoUsarRoute
   '/contato': typeof ContatoRoute
+  '/dashboard': typeof DashboardRoute
   '/dmca': typeof DmcaRoute
   '/ferramentas': typeof FerramentasRoute
   '/hub': typeof HubRoute
   '/jogos': typeof JogosRoute
   '/jogos-java': typeof JogosJavaRoute
   '/perfil': typeof PerfilRoute
+  '/precos': typeof PrecosRoute
   '/privacidade': typeof PrivacidadeRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
@@ -294,12 +310,14 @@ export interface FileRoutesById {
   '/blog': typeof BlogRouteWithChildren
   '/como-usar': typeof ComoUsarRoute
   '/contato': typeof ContatoRoute
+  '/dashboard': typeof DashboardRoute
   '/dmca': typeof DmcaRoute
   '/ferramentas': typeof FerramentasRoute
   '/hub': typeof HubRoute
   '/jogos': typeof JogosRoute
   '/jogos-java': typeof JogosJavaRoute
   '/perfil': typeof PerfilRoute
+  '/precos': typeof PrecosRoute
   '/privacidade': typeof PrivacidadeRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
@@ -331,12 +349,14 @@ export interface FileRouteTypes {
     | '/blog'
     | '/como-usar'
     | '/contato'
+    | '/dashboard'
     | '/dmca'
     | '/ferramentas'
     | '/hub'
     | '/jogos'
     | '/jogos-java'
     | '/perfil'
+    | '/precos'
     | '/privacidade'
     | '/sitemap.xml'
     | '/sobre'
@@ -365,12 +385,14 @@ export interface FileRouteTypes {
     | '/auth'
     | '/como-usar'
     | '/contato'
+    | '/dashboard'
     | '/dmca'
     | '/ferramentas'
     | '/hub'
     | '/jogos'
     | '/jogos-java'
     | '/perfil'
+    | '/precos'
     | '/privacidade'
     | '/sitemap.xml'
     | '/sobre'
@@ -400,12 +422,14 @@ export interface FileRouteTypes {
     | '/blog'
     | '/como-usar'
     | '/contato'
+    | '/dashboard'
     | '/dmca'
     | '/ferramentas'
     | '/hub'
     | '/jogos'
     | '/jogos-java'
     | '/perfil'
+    | '/precos'
     | '/privacidade'
     | '/sitemap.xml'
     | '/sobre'
@@ -436,12 +460,14 @@ export interface RootRouteChildren {
   BlogRoute: typeof BlogRouteWithChildren
   ComoUsarRoute: typeof ComoUsarRoute
   ContatoRoute: typeof ContatoRoute
+  DashboardRoute: typeof DashboardRoute
   DmcaRoute: typeof DmcaRoute
   FerramentasRoute: typeof FerramentasRoute
   HubRoute: typeof HubRoute
   JogosRoute: typeof JogosRoute
   JogosJavaRoute: typeof JogosJavaRoute
   PerfilRoute: typeof PerfilRoute
+  PrecosRoute: typeof PrecosRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SobreRoute: typeof SobreRoute
@@ -481,6 +507,13 @@ declare module '@tanstack/react-router' {
       path: '/privacidade'
       fullPath: '/privacidade'
       preLoaderRoute: typeof PrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/precos': {
+      id: '/precos'
+      path: '/precos'
+      fullPath: '/precos'
+      preLoaderRoute: typeof PrecosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/perfil': {
@@ -523,6 +556,13 @@ declare module '@tanstack/react-router' {
       path: '/dmca'
       fullPath: '/dmca'
       preLoaderRoute: typeof DmcaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contato': {
@@ -729,12 +769,14 @@ const rootRouteChildren: RootRouteChildren = {
   BlogRoute: BlogRouteWithChildren,
   ComoUsarRoute: ComoUsarRoute,
   ContatoRoute: ContatoRoute,
+  DashboardRoute: DashboardRoute,
   DmcaRoute: DmcaRoute,
   FerramentasRoute: FerramentasRoute,
   HubRoute: HubRoute,
   JogosRoute: JogosRoute,
   JogosJavaRoute: JogosJavaRoute,
   PerfilRoute: PerfilRoute,
+  PrecosRoute: PrecosRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SobreRoute: SobreRoute,

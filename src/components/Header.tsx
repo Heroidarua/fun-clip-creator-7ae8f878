@@ -1,4 +1,4 @@
-import { Gamepad2, Joystick, Share2, Sparkles } from "lucide-react";
+import { Gamepad2, Joystick, Share2, Sparkles, LayoutDashboard, LogIn, Tag } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import spidermanWeb from "@/assets/spiderman-web.gif";
@@ -12,6 +12,7 @@ import BrightnessControl from "@/components/BrightnessControl";
 import NotificationBell from "@/components/NotificationBell";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useUserStats } from "@/hooks/useUserStats";
 
 
 const RetroClock = () => {
@@ -46,6 +47,7 @@ const RetroClock = () => {
 
 const Header = () => {
   const { toast } = useToast();
+  const { isAuthenticated } = useUserStats();
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -136,6 +138,23 @@ const Header = () => {
                 <span className="font-pixel text-[7px] sm:text-[10px] text-accent-foreground tracking-wider">JAVA</span>
               </Link>
             </div>
+            <Link
+              to="/precos"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-md bg-card/60 backdrop-blur border border-border hover:border-primary/40 text-foreground text-xs font-medium transition-colors"
+            >
+              <Tag className="w-3.5 h-3.5 text-primary" />
+              Preços
+            </Link>
+            <Link
+              to={isAuthenticated ? "/dashboard" : "/auth"}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md bg-primary text-primary-foreground text-xs font-medium shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.6)] hover:bg-[hsl(var(--primary)/0.92)] transition-colors"
+            >
+              {isAuthenticated ? (
+                <><LayoutDashboard className="w-3.5 h-3.5" /> Dashboard</>
+              ) : (
+                <><LogIn className="w-3.5 h-3.5" /> Entrar</>
+              )}
+            </Link>
             <NotificationBell />
             <BrightnessControl />
             <ThemeToggle />
