@@ -20,6 +20,7 @@ import { Route as JogosRouteImport } from './routes/jogos'
 import { Route as HubRouteImport } from './routes/hub'
 import { Route as FerramentasRouteImport } from './routes/ferramentas'
 import { Route as DmcaRouteImport } from './routes/dmca'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContatoRouteImport } from './routes/contato'
 import { Route as ComoUsarRouteImport } from './routes/como-usar'
 import { Route as BlogRouteImport } from './routes/blog'
@@ -97,6 +98,11 @@ const FerramentasRoute = FerramentasRouteImport.update({
 const DmcaRoute = DmcaRouteImport.update({
   id: '/dmca',
   path: '/dmca',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContatoRoute = ContatoRouteImport.update({
@@ -230,6 +236,7 @@ export interface FileRoutesByFullPath {
   '/blog': typeof BlogRouteWithChildren
   '/como-usar': typeof ComoUsarRoute
   '/contato': typeof ContatoRoute
+  '/dashboard': typeof DashboardRoute
   '/dmca': typeof DmcaRoute
   '/ferramentas': typeof FerramentasRoute
   '/hub': typeof HubRoute
@@ -265,6 +272,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/como-usar': typeof ComoUsarRoute
   '/contato': typeof ContatoRoute
+  '/dashboard': typeof DashboardRoute
   '/dmca': typeof DmcaRoute
   '/ferramentas': typeof FerramentasRoute
   '/hub': typeof HubRoute
@@ -302,6 +310,7 @@ export interface FileRoutesById {
   '/blog': typeof BlogRouteWithChildren
   '/como-usar': typeof ComoUsarRoute
   '/contato': typeof ContatoRoute
+  '/dashboard': typeof DashboardRoute
   '/dmca': typeof DmcaRoute
   '/ferramentas': typeof FerramentasRoute
   '/hub': typeof HubRoute
@@ -340,6 +349,7 @@ export interface FileRouteTypes {
     | '/blog'
     | '/como-usar'
     | '/contato'
+    | '/dashboard'
     | '/dmca'
     | '/ferramentas'
     | '/hub'
@@ -375,6 +385,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/como-usar'
     | '/contato'
+    | '/dashboard'
     | '/dmca'
     | '/ferramentas'
     | '/hub'
@@ -411,6 +422,7 @@ export interface FileRouteTypes {
     | '/blog'
     | '/como-usar'
     | '/contato'
+    | '/dashboard'
     | '/dmca'
     | '/ferramentas'
     | '/hub'
@@ -448,6 +460,7 @@ export interface RootRouteChildren {
   BlogRoute: typeof BlogRouteWithChildren
   ComoUsarRoute: typeof ComoUsarRoute
   ContatoRoute: typeof ContatoRoute
+  DashboardRoute: typeof DashboardRoute
   DmcaRoute: typeof DmcaRoute
   FerramentasRoute: typeof FerramentasRoute
   HubRoute: typeof HubRoute
@@ -543,6 +556,13 @@ declare module '@tanstack/react-router' {
       path: '/dmca'
       fullPath: '/dmca'
       preLoaderRoute: typeof DmcaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contato': {
@@ -749,6 +769,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlogRoute: BlogRouteWithChildren,
   ComoUsarRoute: ComoUsarRoute,
   ContatoRoute: ContatoRoute,
+  DashboardRoute: DashboardRoute,
   DmcaRoute: DmcaRoute,
   FerramentasRoute: FerramentasRoute,
   HubRoute: HubRoute,
