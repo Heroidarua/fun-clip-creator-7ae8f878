@@ -13,6 +13,7 @@ import { Route as TermosRouteImport } from './routes/termos'
 import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
+import { Route as PrecosRouteImport } from './routes/precos'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as JogosJavaRouteImport } from './routes/jogos-java'
 import { Route as JogosRouteImport } from './routes/jogos'
@@ -61,6 +62,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const PrivacidadeRoute = PrivacidadeRouteImport.update({
   id: '/privacidade',
   path: '/privacidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrecosRoute = PrecosRouteImport.update({
+  id: '/precos',
+  path: '/precos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PerfilRoute = PerfilRouteImport.update({
@@ -230,6 +236,7 @@ export interface FileRoutesByFullPath {
   '/jogos': typeof JogosRoute
   '/jogos-java': typeof JogosJavaRoute
   '/perfil': typeof PerfilRoute
+  '/precos': typeof PrecosRoute
   '/privacidade': typeof PrivacidadeRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
@@ -264,6 +271,7 @@ export interface FileRoutesByTo {
   '/jogos': typeof JogosRoute
   '/jogos-java': typeof JogosJavaRoute
   '/perfil': typeof PerfilRoute
+  '/precos': typeof PrecosRoute
   '/privacidade': typeof PrivacidadeRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
@@ -300,6 +308,7 @@ export interface FileRoutesById {
   '/jogos': typeof JogosRoute
   '/jogos-java': typeof JogosJavaRoute
   '/perfil': typeof PerfilRoute
+  '/precos': typeof PrecosRoute
   '/privacidade': typeof PrivacidadeRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
@@ -337,6 +346,7 @@ export interface FileRouteTypes {
     | '/jogos'
     | '/jogos-java'
     | '/perfil'
+    | '/precos'
     | '/privacidade'
     | '/sitemap.xml'
     | '/sobre'
@@ -371,6 +381,7 @@ export interface FileRouteTypes {
     | '/jogos'
     | '/jogos-java'
     | '/perfil'
+    | '/precos'
     | '/privacidade'
     | '/sitemap.xml'
     | '/sobre'
@@ -406,6 +417,7 @@ export interface FileRouteTypes {
     | '/jogos'
     | '/jogos-java'
     | '/perfil'
+    | '/precos'
     | '/privacidade'
     | '/sitemap.xml'
     | '/sobre'
@@ -442,6 +454,7 @@ export interface RootRouteChildren {
   JogosRoute: typeof JogosRoute
   JogosJavaRoute: typeof JogosJavaRoute
   PerfilRoute: typeof PerfilRoute
+  PrecosRoute: typeof PrecosRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SobreRoute: typeof SobreRoute
@@ -481,6 +494,13 @@ declare module '@tanstack/react-router' {
       path: '/privacidade'
       fullPath: '/privacidade'
       preLoaderRoute: typeof PrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/precos': {
+      id: '/precos'
+      path: '/precos'
+      fullPath: '/precos'
+      preLoaderRoute: typeof PrecosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/perfil': {
@@ -735,6 +755,7 @@ const rootRouteChildren: RootRouteChildren = {
   JogosRoute: JogosRoute,
   JogosJavaRoute: JogosJavaRoute,
   PerfilRoute: PerfilRoute,
+  PrecosRoute: PrecosRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SobreRoute: SobreRoute,
