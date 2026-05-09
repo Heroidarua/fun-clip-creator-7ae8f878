@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_usage_log: {
+        Row: {
+          id: string
+          tool: string
+          used_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          tool: string
+          used_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          tool?: string
+          used_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       announcements: {
         Row: {
           active: boolean
@@ -133,6 +154,8 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
+          plan: Database["public"]["Enums"]["subscription_plan"]
+          plan_updated_at: string
           profile_theme: string
           referral_code: string | null
           referral_count: number
@@ -147,6 +170,8 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          plan?: Database["public"]["Enums"]["subscription_plan"]
+          plan_updated_at?: string
           profile_theme?: string
           referral_code?: string | null
           referral_count?: number
@@ -161,6 +186,8 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          plan?: Database["public"]["Enums"]["subscription_plan"]
+          plan_updated_at?: string
           profile_theme?: string
           referral_code?: string | null
           referral_count?: number
@@ -238,10 +265,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      check_and_log_ai_usage: { Args: { _tool: string }; Returns: Json }
+      get_ai_usage_today: { Args: never; Returns: Json }
     }
     Enums: {
-      [_ in never]: never
+      subscription_plan: "free" | "pro"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -368,6 +396,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      subscription_plan: ["free", "pro"],
+    },
   },
 } as const
