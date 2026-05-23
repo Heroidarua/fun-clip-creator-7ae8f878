@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;600;700;800&family=Press+Start+2P&family=VT323&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Orbitron:wght@500;600;700;800&family=Press+Start+2P&family=VT323&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -48,7 +48,9 @@
   --font-pixel: 'Press Start 2P', monospace;
   --font-vt323: 'VT323', monospace;
   --font-orbitron: 'Orbitron', sans-serif;
-  --font-inter: 'Inter', sans-serif;
+  --font-inter: 'Manrope', 'Inter', sans-serif;
+  --font-sora: 'Sora', 'Inter', sans-serif;
+  --font-manrope: 'Manrope', 'Inter', sans-serif;
 }
 
 @layer base {
