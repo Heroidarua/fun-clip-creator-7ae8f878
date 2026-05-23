@@ -22,9 +22,9 @@ const themes: Theme[] = ["dark", "light", "sepia", "ocean", "forest"];
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setThemeState] = useState<Theme>(() => {
-    if (typeof window === "undefined") return "dark";
+    if (typeof window === "undefined") return "light";
     const stored = localStorage.getItem("sos01-theme");
-    return (stored as Theme) || "dark";
+    return (stored as Theme) || "light";
   });
 
   useEffect(() => {

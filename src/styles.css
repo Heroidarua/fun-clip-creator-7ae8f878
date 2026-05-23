@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;600;700;800&family=Press+Start+2P&family=VT323&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Orbitron:wght@500;600;700;800&family=Press+Start+2P&family=VT323&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -48,7 +48,9 @@
   --font-pixel: 'Press Start 2P', monospace;
   --font-vt323: 'VT323', monospace;
   --font-orbitron: 'Orbitron', sans-serif;
-  --font-inter: 'Inter', sans-serif;
+  --font-inter: 'Manrope', 'Inter', sans-serif;
+  --font-sora: 'Sora', 'Inter', sans-serif;
+  --font-manrope: 'Manrope', 'Inter', sans-serif;
 }
 
 @layer base {
@@ -131,69 +133,69 @@
 
   /* Light Theme - Retro Arcade Light Mode */
   .light {
-    --background: 220 10% 85%;
-    --foreground: 220 20% 8%;
+  /* Light Theme - Cloud White SaaS (clean, airy, welcoming) */
+  .light {
+    /* Soft off-white with a hint of blue */
+    --background: 210 33% 99%;
+    --foreground: 222 35% 12%;
 
-    --card: 220 8% 80%;
-    --card-foreground: 220 20% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 35% 12%;
 
-    --popover: 220 8% 82%;
-    --popover-foreground: 220 20% 8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 35% 12%;
 
-    /* Primary: Vermelho arcade clássico - mais saturado */
-    --primary: 0 90% 38%;
+    /* Friendly modern blue */
+    --primary: 217 91% 55%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary: Roxo retrô (SNES vibes) */
-    --secondary: 280 40% 75%;
-    --secondary-foreground: 280 70% 18%;
+    --secondary: 215 28% 95%;
+    --secondary-foreground: 222 35% 18%;
 
-    --muted: 220 8% 75%;
-    --muted-foreground: 220 15% 25%;
+    --muted: 215 25% 96%;
+    --muted-foreground: 215 16% 42%;
 
-    /* Accent: Verde neon arcade - mais escuro */
-    --accent: 120 75% 28%;
+    /* Soft purple accent */
+    --accent: 262 70% 60%;
     --accent-foreground: 0 0% 100%;
 
-    /* Cores extras retro - ajustadas para melhor contraste */
-    --retro-cyan: 180 85% 32%;
-    --retro-yellow: 45 95% 38%;
-    --retro-magenta: 300 85% 38%;
-    --retro-orange: 25 95% 42%;
-    --retro-blue: 220 95% 42%;
+    /* Soft tonal helpers */
+    --retro-cyan: 199 89% 48%;
+    --retro-yellow: 38 92% 55%;
+    --retro-magenta: 322 82% 58%;
+    --retro-orange: 22 95% 58%;
+    --retro-blue: 217 91% 55%;
 
-    --destructive: 0 80% 42%;
+    --destructive: 0 72% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 10% 65%;
-    --input: 220 8% 78%;
-    --ring: 0 90% 38%;
+    --border: 215 25% 90%;
+    --input: 215 25% 95%;
+    --ring: 217 91% 55%;
 
-    /* Retro Gradients - Light */
-    --gradient-hero: linear-gradient(180deg, hsl(220 10% 85%) 0%, hsl(220 8% 80%) 50%, hsl(220 10% 85%) 100%);
-    --gradient-header: linear-gradient(90deg, hsl(220 8% 82%) 0%, hsl(280 15% 80%) 50%, hsl(220 8% 82%) 100%);
-    --gradient-card: linear-gradient(135deg, hsl(220 8% 82%) 0%, hsl(280 10% 80%) 100%);
-    --gradient-button: linear-gradient(135deg, hsl(0 90% 35%) 0%, hsl(0 95% 45%) 100%);
-    --gradient-arcade: linear-gradient(180deg, hsl(280 20% 80%) 0%, hsl(220 10% 82%) 100%);
-    
-    /* Pixel glass effect - Light */
-    --glass-bg: hsla(220 10% 85% / 0.95);
-    --glass-border: hsla(0 90% 38% / 0.4);
-    
-    /* Retro shadows - Light - mais definidas */
-    --shadow-elegant: 0 4px 0 hsla(0 0% 0% / 0.2), 0 8px 20px hsla(0 90% 38% / 0.2);
-    --shadow-glass: 0 0 20px hsla(0 90% 38% / 0.15), 0 0 40px hsla(280 60% 50% / 0.08);
-    --shadow-pixel: 4px 4px 0 hsla(0 0% 0% / 0.25);
-    --shadow-neon: 0 0 10px currentColor, 0 0 20px currentColor;
+    /* Clean gradients */
+    --gradient-hero: radial-gradient(80% 60% at 50% 0%, hsl(217 91% 55% / 0.10) 0%, transparent 60%), linear-gradient(180deg, hsl(210 40% 99%) 0%, hsl(210 33% 97%) 100%);
+    --gradient-header: linear-gradient(180deg, hsl(0 0% 100% / 0.85) 0%, hsl(0 0% 100% / 0.65) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(210 33% 98%) 100%);
+    --gradient-button: linear-gradient(135deg, hsl(217 91% 55%) 0%, hsl(262 70% 60%) 100%);
+    --gradient-arcade: linear-gradient(180deg, hsl(262 70% 60% / 0.08) 0%, hsl(210 40% 99%) 100%);
 
-    --sidebar-background: 220 8% 82%;
-    --sidebar-foreground: 220 20% 12%;
-    --sidebar-primary: 0 90% 38%;
+    --glass-bg: hsla(0 0% 100% / 0.75);
+    --glass-border: hsla(217 91% 55% / 0.15);
+
+    --shadow-elegant: 0 10px 30px -12px hsla(217 60% 30% / 0.18), 0 4px 12px -4px hsla(217 91% 55% / 0.12);
+    --shadow-glass: 0 8px 32px hsla(217 60% 30% / 0.10), 0 1px 0 hsla(255 255 255 / 0.6) inset;
+    --shadow-pixel: 0 1px 0 hsla(0 0% 100% / 0.8) inset, 0 8px 24px -8px hsla(217 60% 30% / 0.18);
+    --shadow-neon: 0 0 0 1px hsla(217 91% 55% / 0.35), 0 8px 28px hsla(217 91% 55% / 0.25);
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 35% 18%;
+    --sidebar-primary: 217 91% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 8% 78%;
-    --sidebar-accent-foreground: 220 20% 12%;
-    --sidebar-border: 220 10% 68%;
-    --sidebar-ring: 0 90% 38%;
+    --sidebar-accent: 215 25% 96%;
+    --sidebar-accent-foreground: 222 35% 18%;
+    --sidebar-border: 215 25% 90%;
+    --sidebar-ring: 217 91% 55%;
   }
 
   .dark {
