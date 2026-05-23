@@ -62,7 +62,7 @@ const Precos = () => {
               ))}
             </ul>
             <Button asChild className="w-full" size="lg">
-              <Link to="/auth">
+              <Link to="/dashboard">
                 <Zap className="w-4 h-4" />
                 Começar agora
               </Link>

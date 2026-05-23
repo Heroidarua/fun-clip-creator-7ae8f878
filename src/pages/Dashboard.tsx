@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { useUserStats } from "@/hooks/useUserStats";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -15,24 +14,8 @@ const quickActions = [
 ] as const;
 
 const Dashboard = () => {
-  const { user, profile, loading, isAuthenticated } = useUserStats();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      navigate({ to: "/auth" });
-    }
-  }, [loading, isAuthenticated, navigate]);
-
-  if (loading || !user) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-pulse text-muted-foreground">Carregando…</div>
-      </div>
-    );
-  }
-
-  const name = profile?.display_name || user.email?.split("@")[0] || "amigo";
+  const { user, profile, isAuthenticated } = useUserStats();
+  const name = profile?.display_name || user?.email?.split("@")[0] || "visitante";
 
   return (
     <div className="min-h-screen bg-background font-inter">
@@ -41,12 +24,16 @@ const Dashboard = () => {
         {/* Welcome */}
         <div className="mb-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-medium mb-3">
-            <Heart className="w-3 h-3" /> Plano Free Forever ativo
+            <Heart className="w-3 h-3" /> {isAuthenticated ? "Plano Free Forever ativo" : "Acesso livre"}
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
             Olá, <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{name}</span> 👋
           </h1>
-          <p className="text-muted-foreground mt-2">Tudo que o SOS/01 oferece está liberado pra você. Sem limites.</p>
+          <p className="text-muted-foreground mt-2">
+            {isAuthenticated
+              ? "Tudo que o SOS/01 oferece está liberado pra você. Sem limites."
+              : "Entre no painel e acesse rapidamente ferramentas, jogos e conteúdos do SOS/01."}
+          </p>
         </div>
 
         {/* Stats */}
@@ -94,8 +81,8 @@ const Dashboard = () => {
         {/* Account */}
         <Card className="bg-card/50 backdrop-blur">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2"><User className="w-4 h-4" /> Sua conta</CardTitle>
-            <CardDescription>{user.email}</CardDescription>
+            <CardTitle className="flex items-center gap-2"><User className="w-4 h-4" /> Seu acesso</CardTitle>
+            <CardDescription>{user?.email ?? "Sem login obrigatório"}</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-3">
             <Button asChild variant="outline"><Link to="/perfil">Editar perfil</Link></Button>
