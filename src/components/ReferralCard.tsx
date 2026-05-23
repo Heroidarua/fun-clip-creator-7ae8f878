@@ -20,7 +20,7 @@ const ReferralCard = ({ referralCode, referralCount }: ReferralCardProps) => {
   const [copied, setCopied] = useState(false);
 
   const referralLink = referralCode 
-    ? `${window.location.origin}/auth?ref=${referralCode}`
+    ? `${window.location.origin}/dashboard?ref=${referralCode}`
     : null;
 
   const handleCopyLink = async () => {

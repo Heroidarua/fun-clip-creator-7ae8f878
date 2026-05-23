@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Sparkles, Zap, LogIn, Pencil, X, Check } from "lucide-react";
+import { Sparkles, Zap, Pencil, X, Check } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -190,10 +190,10 @@ const Perfil = () => {
                 <h1 className="font-pixel text-2xl md:text-3xl text-foreground mb-2">Seu Perfil</h1>
 
                 {!isAuthenticated && (
-                  <Link to="/auth">
+                  <Link to="/dashboard">
                     <Button size="sm" variant="outline" className="mb-4 gap-2">
-                      <LogIn className="w-4 h-4" />
-                      Faça login para personalizar
+                      <Zap className="w-4 h-4" />
+                      Explorar dashboard
                     </Button>
                   </Link>
                 )}
