@@ -1,4 +1,5 @@
 import path from "path";
+import fs from "fs";
 import { defineConfig, loadEnv } from "vite";
 import tsConfigPaths from "vite-tsconfig-paths";
 import { cloudflare } from "@cloudflare/vite-plugin";
@@ -98,6 +99,26 @@ function devClientErrorLogger() {
 
       if (normalizedId.includes("routes/__root")) {
         return `import "${VIRTUAL_ID}";\n${code}`;
+      }
+    },
+  };
+}
+
+function serverJsBridge() {
+  return {
+    name: "server-js-bridge",
+    apply: "build" as const,
+    closeBundle() {
+      const serverDir = path.resolve(__dirname, "dist/server");
+      const indexPath = path.join(serverDir, "index.js");
+      const serverPath = path.join(serverDir, "server.js");
+      if (fs.existsSync(indexPath) && !fs.existsSync(serverPath)) {
+        fs.writeFileSync(
+          serverPath,
+          `export * from "./index.js";\nexport { default } from "./index.js";\n`,
+          "utf8"
+        );
+        console.log("[server-js-bridge] Created dist/server/server.js -> index.js");
       }
     },
   };
@@ -224,6 +245,7 @@ export default defineConfig(({ command, mode }) => {
         ],
       }),
       viteReact(),
+      serverJsBridge(),
       mode === "development" && componentTagger(),
     ].filter(Boolean),
   };
