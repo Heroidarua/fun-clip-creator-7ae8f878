@@ -245,6 +245,7 @@ export default defineConfig(({ command, mode }) => {
         ],
       }),
       viteReact(),
+      serverJsBridge(),
       mode === "development" && componentTagger(),
     ].filter(Boolean),
   };
