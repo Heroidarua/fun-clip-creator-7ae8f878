@@ -1,22 +1,34 @@
-import { Sparkles, LayoutDashboard, Gamepad2, Share2, Menu, X } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import {
+  Sparkles,
+  LayoutDashboard,
+  Gamepad2,
+  Wrench,
+  BookOpen,
+  Tag,
+  Share2,
+  Menu,
+  X,
+  ArrowRight,
+} from "lucide-react";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import ThemeToggle from "@/components/ThemeToggle";
 import NotificationBell from "@/components/NotificationBell";
 import { useToast } from "@/hooks/use-toast";
 
 const NAV = [
-  { to: "/hub", label: "AI Hub" },
-  { to: "/ferramentas", label: "Ferramentas" },
-  { to: "/jogos", label: "Jogos" },
-  { to: "/blog", label: "Blog" },
-  { to: "/precos", label: "Preços" },
+  { to: "/hub", label: "AI Hub", icon: Sparkles, desc: "Assistente inteligente" },
+  { to: "/ferramentas", label: "Ferramentas", icon: Wrench, desc: "QR, PDF, áudio, imagens" },
+  { to: "/jogos", label: "Jogos", icon: Gamepad2, desc: "Clássicos retrô grátis" },
+  { to: "/blog", label: "Blog", icon: BookOpen, desc: "Guias e novidades" },
+  { to: "/precos", label: "Preços", icon: Tag, desc: "Planos e benefícios" },
 ] as const;
 
 const Header = () => {
   const { toast } = useToast();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -24,6 +36,18 @@ const Header = () => {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  const isActive = (to: string) =>
+    to === "/" ? pathname === "/" : pathname === to || pathname.startsWith(to + "/");
 
   const handleShare = async () => {
     if (typeof navigator !== "undefined" && navigator.share) {
@@ -44,14 +68,14 @@ const Header = () => {
     <header
       className={`sticky top-0 z-50 w-full transition-all duration-300 ${
         scrolled
-          ? "backdrop-blur-xl bg-[hsl(var(--background)/0.78)] border-b border-border/70"
-          : "bg-transparent border-b border-transparent"
+          ? "backdrop-blur-xl bg-[hsl(var(--background)/0.85)] border-b border-border/70 shadow-[0_1px_0_0_hsl(var(--border)/0.4)]"
+          : "backdrop-blur-sm bg-[hsl(var(--background)/0.6)] border-b border-transparent"
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6 max-w-7xl">
-        <div className="flex items-center justify-between h-16 sm:h-20">
+        <div className="flex items-center justify-between h-16 sm:h-[68px]">
           {/* Logo — editorial mark */}
-          <Link to="/" className="flex items-center gap-3 group">
+          <Link to="/" className="flex items-center gap-3 group shrink-0" aria-label="Ir para a página inicial">
             <div className="relative w-10 h-10 rounded-xl bg-foreground text-background flex items-center justify-center shadow-[var(--shadow-elegant)] transition-transform group-hover:-rotate-3">
               <span className="font-display italic text-lg leading-none">s</span>
               <span className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full bg-accent border-2 border-background" />
@@ -67,17 +91,26 @@ const Header = () => {
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-1">
-            {NAV.map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
-                className="relative px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors group"
-              >
-                {item.label}
-                <span className="absolute left-4 right-4 -bottom-0.5 h-px bg-accent scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
-              </Link>
-            ))}
+          <nav className="hidden lg:flex items-center gap-0.5 p-1 rounded-full border border-border/60 bg-card/50">
+            {NAV.map((item) => {
+              const active = isActive(item.to);
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  aria-current={active ? "page" : undefined}
+                  className={`relative inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                    active
+                      ? "bg-foreground text-background"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  {item.label}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Actions */}
@@ -86,6 +119,7 @@ const Header = () => {
               onClick={handleShare}
               className="hidden md:inline-flex items-center justify-center w-9 h-9 rounded-full border border-border hover:border-foreground/40 text-muted-foreground hover:text-foreground transition-colors"
               aria-label="Compartilhar"
+              title="Compartilhar"
             >
               <Share2 className="w-4 h-4" />
             </button>
@@ -93,15 +127,16 @@ const Header = () => {
             <ThemeToggle />
             <Link
               to="/dashboard"
-              className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-full bg-foreground text-background text-sm font-medium hover:bg-foreground/90 transition-colors"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-gradient-to-r from-primary to-accent text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity shadow-[var(--shadow-elegant)]"
             >
               <LayoutDashboard className="w-4 h-4" />
-              Dashboard
+              <span>Painel</span>
             </Link>
             <button
               onClick={() => setOpen((v) => !v)}
-              className="lg:hidden inline-flex items-center justify-center w-10 h-10 rounded-full border border-border text-foreground"
-              aria-label="Menu"
+              className="lg:hidden inline-flex items-center justify-center w-10 h-10 rounded-full border border-border text-foreground hover:bg-muted transition-colors"
+              aria-label={open ? "Fechar menu" : "Abrir menu"}
+              aria-expanded={open}
             >
               {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -111,38 +146,79 @@ const Header = () => {
 
       {/* Mobile nav */}
       {open && (
-        <div className="lg:hidden border-t border-border bg-[hsl(var(--background)/0.95)] backdrop-blur-xl">
-          <div className="container mx-auto px-4 py-4 max-w-7xl flex flex-col gap-1">
-            {NAV.map((item) => (
+        <>
+          {/* Backdrop */}
+          <button
+            type="button"
+            aria-label="Fechar menu"
+            onClick={() => setOpen(false)}
+            className="lg:hidden fixed inset-0 top-16 z-40 bg-foreground/20 backdrop-blur-[2px] animate-in fade-in"
+          />
+          {/* Drawer */}
+          <div className="lg:hidden absolute left-0 right-0 top-full z-50 border-t border-border bg-background shadow-xl animate-in slide-in-from-top-2">
+            <div className="container mx-auto px-4 py-5 max-w-7xl flex flex-col gap-1.5">
+              <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground px-2 pb-1">
+                Navegação
+              </p>
+              {NAV.map((item) => {
+                const active = isActive(item.to);
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    onClick={() => setOpen(false)}
+                    aria-current={active ? "page" : undefined}
+                    className={`group flex items-center gap-3 px-3 py-3 rounded-xl border transition-colors ${
+                      active
+                        ? "border-foreground/20 bg-muted/60"
+                        : "border-transparent hover:bg-muted/50"
+                    }`}
+                  >
+                    <span
+                      className={`flex items-center justify-center w-10 h-10 rounded-lg ${
+                        active ? "bg-foreground text-background" : "bg-muted text-foreground"
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                    </span>
+                    <span className="flex-1 min-w-0">
+                      <span className="block text-base font-medium text-foreground leading-tight">
+                        {item.label}
+                      </span>
+                      <span className="block text-xs text-muted-foreground truncate">
+                        {item.desc}
+                      </span>
+                    </span>
+                    <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
+                  </Link>
+                );
+              })}
+
+              <div className="h-px bg-border my-3" />
+
               <Link
-                key={item.to}
-                to={item.to}
+                to="/dashboard"
                 onClick={() => setOpen(false)}
-                className="px-3 py-3 text-base font-medium text-foreground hover:bg-muted rounded-lg transition-colors"
+                className="flex items-center justify-center gap-2 px-4 py-3 rounded-full bg-gradient-to-r from-primary to-accent text-primary-foreground text-sm font-semibold shadow-[var(--shadow-elegant)]"
               >
-                {item.label}
+                <LayoutDashboard className="w-4 h-4" />
+                Abrir meu painel
               </Link>
-            ))}
-            <div className="h-px bg-border my-2" />
-            <Link
-              to="/dashboard"
-              onClick={() => setOpen(false)}
-              className="flex items-center justify-center gap-2 px-4 py-3 rounded-full bg-foreground text-background text-sm font-medium"
-            >
-              <LayoutDashboard className="w-4 h-4" />
-              Abrir Dashboard
-            </Link>
-            <div className="flex items-center justify-center gap-3 pt-2">
-              <Link to="/hub" onClick={() => setOpen(false)} className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-                <Sparkles className="w-3.5 h-3.5 text-accent" /> AI Hub
-              </Link>
-              <span className="text-border">·</span>
-              <Link to="/jogos" onClick={() => setOpen(false)} className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-                <Gamepad2 className="w-3.5 h-3.5 text-accent" /> Jogos
-              </Link>
+
+              <button
+                onClick={() => {
+                  setOpen(false);
+                  handleShare();
+                }}
+                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-full border border-border text-sm text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors"
+              >
+                <Share2 className="w-4 h-4" />
+                Compartilhar o site
+              </button>
             </div>
           </div>
-        </div>
+        </>
       )}
     </header>
   );
