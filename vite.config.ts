@@ -182,21 +182,10 @@ function devServerFnErrorLogger() {
 }
 
 export default defineConfig(({ command, mode }) => {
-  // Deploy target selection.
-  // - TARGET=netlify  -> build for Netlify (SSR via Netlify Functions)
-  // - default         -> Cloudflare Workers (Lovable-managed deploy)
-  const target = (process.env.TARGET || "").toLowerCase();
-  const isNetlify = target === "netlify" || !!process.env.NETLIFY;
-
-  // Use Cloudflare Workers plugin for builds (produces worker output)
-  // Skip for dev server (command=serve) since workerd runtime isn't available
-  // Skip when targeting Netlify
-  const useCloudflare = command === "build" && !isNetlify;
-
-  if (isNetlify) {
-    // Tell Nitro (used by TanStack Start) to emit a Netlify function build.
-    process.env.NITRO_PRESET = process.env.NITRO_PRESET || "netlify";
-  }
+  // Deploy target: Cloudflare Workers.
+  // The Cloudflare Vite plugin only runs during `vite build` (workerd is not
+  // available in the dev server runtime).
+  const useCloudflare = command === "build";
 
   const env = loadEnv(mode, process.cwd(), "VITE_");
   const envDefine: Record<string, string> = {};
