@@ -104,6 +104,26 @@ function devClientErrorLogger() {
   };
 }
 
+function serverJsBridge() {
+  return {
+    name: "server-js-bridge",
+    apply: "build" as const,
+    closeBundle() {
+      const serverDir = path.resolve(__dirname, "dist/server");
+      const indexPath = path.join(serverDir, "index.js");
+      const serverPath = path.join(serverDir, "server.js");
+      if (fs.existsSync(indexPath) && !fs.existsSync(serverPath)) {
+        fs.writeFileSync(
+          serverPath,
+          `export * from "./index.js";\nexport { default } from "./index.js";\n`,
+          "utf8"
+        );
+        console.log("[server-js-bridge] Created dist/server/server.js -> index.js");
+      }
+    },
+  };
+}
+
 function devServerFnErrorLogger() {
   const HMR_SEND_KEY = "__TANSTACK_SERVER_FN_HMR_SEND__";
 
