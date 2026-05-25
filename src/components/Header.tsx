@@ -15,6 +15,12 @@ import { useEffect, useState } from "react";
 import ThemeToggle from "@/components/ThemeToggle";
 import NotificationBell from "@/components/NotificationBell";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const NAV = [
   { to: "/hub", label: "AI Hub", icon: Sparkles, desc: "Assistente inteligente" },
@@ -91,32 +97,40 @@ const Header = () => {
           </Link>
 
           {/* Desktop nav */}
-          <nav
-            aria-label="Navegação principal"
-            className="hidden lg:flex items-center gap-0.5 p-1 rounded-full border border-border/60 bg-card/50"
-          >
-            {NAV.map((item) => {
-              const active = isActive(item.to);
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  aria-current={active ? "page" : undefined}
-                  aria-label={`${item.label} — ${item.desc}`}
-                  title={item.desc}
-                  className={`relative inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
-                    active
-                      ? "bg-foreground text-background"
-                      : "text-foreground/80 hover:text-foreground hover:bg-muted"
-                  }`}
-                >
-                  <Icon className="w-3.5 h-3.5" aria-hidden="true" />
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
+          <TooltipProvider delayDuration={200}>
+            <nav
+              aria-label="Navegação principal"
+              className="hidden lg:flex items-center gap-0.5 p-1 rounded-full border border-border/60 bg-card/50"
+            >
+              {NAV.map((item) => {
+                const active = isActive(item.to);
+                const Icon = item.icon;
+                return (
+                  <Tooltip key={item.to}>
+                    <TooltipTrigger asChild>
+                      <Link
+                        to={item.to}
+                        aria-current={active ? "page" : undefined}
+                        aria-label={`${item.label} — ${item.desc}`}
+                        className={`relative inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+                          active
+                            ? "bg-foreground text-background"
+                            : "text-foreground/80 hover:text-foreground hover:bg-muted"
+                        }`}
+                      >
+                        <Icon className="w-3.5 h-3.5" aria-hidden="true" />
+                        {item.label}
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" sideOffset={6}>
+                      <span className="font-medium">{item.label}</span>
+                      <span className="block text-[10px] opacity-80">{item.desc}</span>
+                    </TooltipContent>
+                  </Tooltip>
+                );
+              })}
+            </nav>
+          </TooltipProvider>
 
           {/* Actions */}
           <div className="flex items-center gap-1.5 sm:gap-2">
