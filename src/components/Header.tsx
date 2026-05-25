@@ -91,7 +91,10 @@ const Header = () => {
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-0.5 p-1 rounded-full border border-border/60 bg-card/50">
+          <nav
+            aria-label="Navegação principal"
+            className="hidden lg:flex items-center gap-0.5 p-1 rounded-full border border-border/60 bg-card/50"
+          >
             {NAV.map((item) => {
               const active = isActive(item.to);
               const Icon = item.icon;
@@ -100,13 +103,15 @@ const Header = () => {
                   key={item.to}
                   to={item.to}
                   aria-current={active ? "page" : undefined}
-                  className={`relative inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                  aria-label={`${item.label} — ${item.desc}`}
+                  title={item.desc}
+                  className={`relative inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
                     active
                       ? "bg-foreground text-background"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                      : "text-foreground/80 hover:text-foreground hover:bg-muted"
                   }`}
                 >
-                  <Icon className="w-3.5 h-3.5" />
+                  <Icon className="w-3.5 h-3.5" aria-hidden="true" />
                   {item.label}
                 </Link>
               );
@@ -117,28 +122,31 @@ const Header = () => {
           <div className="flex items-center gap-1.5 sm:gap-2">
             <button
               onClick={handleShare}
-              className="hidden md:inline-flex items-center justify-center w-9 h-9 rounded-full border border-border hover:border-foreground/40 text-muted-foreground hover:text-foreground transition-colors"
+              className="hidden md:inline-flex items-center justify-center w-10 h-10 rounded-full border border-border hover:border-foreground/40 text-foreground/80 hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               aria-label="Compartilhar"
               title="Compartilhar"
             >
-              <Share2 className="w-4 h-4" />
+              <Share2 className="w-4 h-4" aria-hidden="true" />
             </button>
             <div className="hidden sm:block"><NotificationBell /></div>
             <ThemeToggle />
             <Link
               to="/dashboard"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-gradient-to-r from-primary to-accent text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity shadow-[var(--shadow-elegant)]"
+              aria-label="Abrir meu painel"
+              title="Abrir meu painel"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-gradient-to-r from-primary to-accent text-primary-foreground text-sm font-semibold hover:opacity-90 transition-opacity shadow-[var(--shadow-elegant)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
-              <LayoutDashboard className="w-4 h-4" />
+              <LayoutDashboard className="w-4 h-4" aria-hidden="true" />
               <span>Painel</span>
             </Link>
             <button
               onClick={() => setOpen((v) => !v)}
-              className="lg:hidden inline-flex items-center justify-center w-10 h-10 rounded-full border border-border text-foreground hover:bg-muted transition-colors"
+              className="lg:hidden inline-flex items-center justify-center w-11 h-11 rounded-full border border-border text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               aria-label={open ? "Fechar menu" : "Abrir menu"}
               aria-expanded={open}
+              aria-controls="mobile-nav"
             >
-              {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {open ? <X className="w-5 h-5" aria-hidden="true" /> : <Menu className="w-5 h-5" aria-hidden="true" />}
             </button>
           </div>
         </div>
@@ -155,8 +163,14 @@ const Header = () => {
             className="lg:hidden fixed inset-0 top-16 z-40 bg-foreground/20 backdrop-blur-[2px] animate-in fade-in"
           />
           {/* Drawer */}
-          <div className="lg:hidden absolute left-0 right-0 top-full z-50 border-t border-border bg-background shadow-xl animate-in slide-in-from-top-2">
-            <div className="container mx-auto px-4 py-5 max-w-7xl flex flex-col gap-1.5">
+          <div
+            id="mobile-nav"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menu de navegação"
+            className="lg:hidden absolute left-0 right-0 top-full z-50 border-t border-border bg-background shadow-xl animate-in slide-in-from-top-2"
+          >
+            <nav aria-label="Navegação móvel" className="container mx-auto px-4 py-5 max-w-7xl flex flex-col gap-1.5">
               <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground px-2 pb-1">
                 Navegação
               </p>
@@ -169,28 +183,30 @@ const Header = () => {
                     to={item.to}
                     onClick={() => setOpen(false)}
                     aria-current={active ? "page" : undefined}
-                    className={`group flex items-center gap-3 px-3 py-3 rounded-xl border transition-colors ${
+                    aria-label={`${item.label} — ${item.desc}`}
+                    className={`group flex items-center gap-3 px-3 py-3 min-h-11 rounded-xl border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
                       active
-                        ? "border-foreground/20 bg-muted/60"
-                        : "border-transparent hover:bg-muted/50"
+                        ? "border-foreground/20 bg-muted"
+                        : "border-transparent hover:bg-muted/60"
                     }`}
                   >
                     <span
                       className={`flex items-center justify-center w-10 h-10 rounded-lg ${
                         active ? "bg-foreground text-background" : "bg-muted text-foreground"
                       }`}
+                      aria-hidden="true"
                     >
-                      <Icon className="w-4 h-4" />
+                      <Icon className="w-4 h-4" aria-hidden="true" />
                     </span>
                     <span className="flex-1 min-w-0">
                       <span className="block text-base font-medium text-foreground leading-tight">
                         {item.label}
                       </span>
-                      <span className="block text-xs text-muted-foreground truncate">
+                      <span className="block text-xs text-foreground/70 truncate">
                         {item.desc}
                       </span>
                     </span>
-                    <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
+                    <ArrowRight className="w-4 h-4 text-foreground/60 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
                   </Link>
                 );
               })}
@@ -200,9 +216,10 @@ const Header = () => {
               <Link
                 to="/dashboard"
                 onClick={() => setOpen(false)}
-                className="flex items-center justify-center gap-2 px-4 py-3 rounded-full bg-gradient-to-r from-primary to-accent text-primary-foreground text-sm font-semibold shadow-[var(--shadow-elegant)]"
+                aria-label="Abrir meu painel"
+                className="flex items-center justify-center gap-2 px-4 py-3 min-h-11 rounded-full bg-gradient-to-r from-primary to-accent text-primary-foreground text-sm font-semibold shadow-[var(--shadow-elegant)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
-                <LayoutDashboard className="w-4 h-4" />
+                <LayoutDashboard className="w-4 h-4" aria-hidden="true" />
                 Abrir meu painel
               </Link>
 
@@ -211,12 +228,13 @@ const Header = () => {
                   setOpen(false);
                   handleShare();
                 }}
-                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-full border border-border text-sm text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors"
+                aria-label="Compartilhar o site"
+                className="flex items-center justify-center gap-2 px-4 py-2.5 min-h-11 rounded-full border border-border text-sm text-foreground/80 hover:text-foreground hover:border-foreground/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
-                <Share2 className="w-4 h-4" />
+                <Share2 className="w-4 h-4" aria-hidden="true" />
                 Compartilhar o site
               </button>
-            </div>
+            </nav>
           </div>
         </>
       )}
