@@ -97,7 +97,7 @@ const Header = () => {
           </Link>
 
           {/* Desktop nav */}
-          <TooltipProvider delayDuration={200}>
+          <TooltipProvider delayDuration={0} disableHoverableContent>
             <nav
               aria-label="Navegação principal"
               className="hidden lg:flex items-center gap-0.5 p-1 rounded-full border border-border/60 bg-card/50"
@@ -122,7 +122,12 @@ const Header = () => {
                         {item.label}
                       </Link>
                     </TooltipTrigger>
-                    <TooltipContent side="bottom" sideOffset={6}>
+                    <TooltipContent
+                      side="bottom"
+                      sideOffset={10}
+                      collisionPadding={12}
+                      className="pointer-events-none"
+                    >
                       <span className="font-medium">{item.label}</span>
                       <span className="block text-[10px] opacity-80">{item.desc}</span>
                     </TooltipContent>
