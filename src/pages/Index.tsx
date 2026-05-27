@@ -5,6 +5,7 @@ import UtilityToolsSection from "@/components/UtilityToolsSection";
 import ComicsSection from "@/components/ComicsSection";
 import SocialProof from "@/components/SocialProof";
 import GamesCarousel from "@/components/GamesCarousel";
+import RandomGamePicker from "@/components/RandomGamePicker";
 import AdvantagesSection from "@/components/AdvantagesSection";
 import HowToUse from "@/components/HowToUse";
 import AboutSection from "@/components/AboutSection";
@@ -38,6 +39,7 @@ const Index = () => {
 
         {/* 4. Entretenimento — mantém o usuário navegando */}
         <SectionDivider />
+        <RandomGamePicker />
         <GamesCarousel />
         <ComicsSection />
 
