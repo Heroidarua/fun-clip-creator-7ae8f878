@@ -37,7 +37,7 @@ function GameCard({ game, isFavorite, onToggleFavorite }: { game: Game; isFavori
 
                 <img
                   src={game.img}
-                  alt={game.title}
+                  alt={`Capa do jogo ${game.title}`}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   draggable={false}
                   loading="lazy"

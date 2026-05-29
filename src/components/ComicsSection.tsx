@@ -119,7 +119,7 @@ const ComicsSection = () => {
                   <div className="relative aspect-[2/3] overflow-hidden bg-muted">
                     <img 
                       src={comic.cover}
-                      alt={comic.title}
+                      alt={`Capa do quadrinho ${comic.title}`}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />
                     {/* Overlay */}
@@ -226,21 +226,21 @@ const ComicsSection = () => {
             {/* Batman GIF */}
             <img 
               src={batmanGif} 
-              alt="Batman" 
+              alt="Animação pixelada do Batman caminhando" 
               className="absolute left-0 sm:left-2 -top-12 sm:-top-14 md:-top-16 w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 z-20 drop-shadow-[0_0_10px_rgba(255,255,0,0.5)]"
               style={{ imageRendering: 'pixelated' }}
             />
             {/* Superman GIF */}
             <img 
               src={supermanGif} 
-              alt="Superman" 
+              alt="Animação pixelada do Superman voando" 
               className="absolute right-0 sm:right-2 -top-12 sm:-top-14 md:-top-16 w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 z-20 drop-shadow-[0_0_10px_rgba(0,100,255,0.5)]"
               style={{ imageRendering: 'pixelated' }}
             />
             <div className="relative rounded-lg overflow-hidden border-4 border-primary/50 hover:border-primary transition-colors cursor-pointer group" onClick={openLibrary}>
               <img 
                 src={comicsBanner} 
-                alt="Banner de Quadrinhos" 
+                alt="Banner ilustrado da biblioteca de quadrinhos" 
                 className="w-full h-48 sm:h-64 md:h-80 object-cover transition-all duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
