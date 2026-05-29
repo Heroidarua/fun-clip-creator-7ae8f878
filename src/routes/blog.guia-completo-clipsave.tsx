@@ -3,4 +3,22 @@ import GuiaCompletoClipSave from "@/pages/blog/GuiaCompletoClipSave";
 
 export const Route = createFileRoute("/blog/guia-completo-clipsave")({
   component: GuiaCompletoClipSave,
+  head: () => {
+    const url = "https://fun-clip-creator.lovable.app/blog/guia-completo-clipsave";
+    const title = "Guia completo do SOS/01 (ClipSave) — Tudo o que dá pra fazer";
+    const description = "Um tour completo por todas as ferramentas, jogos, IA e utilitários gratuitos disponíveis no SOS/01.";
+    return {
+      meta: [
+        { title }, { name: "description", content: description },
+        { property: "og:title", content: title }, { property: "og:description", content: description },
+        { property: "og:url", content: url }, { property: "og:type", content: "article" },
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: [{ type: "application/ld+json", children: JSON.stringify({
+        "@context": "https://schema.org", "@type": "Article", headline: title,
+        description, author: { "@type": "Organization", name: "SOS/01" },
+        publisher: { "@type": "Organization", name: "SOS/01" }, mainEntityOfPage: url,
+      }) }],
+    };
+  },
 });
