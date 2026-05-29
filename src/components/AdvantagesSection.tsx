@@ -65,9 +65,9 @@ const AdvantagesSection = () => {
               <div className={`flex justify-center mb-3 sm:mb-4 ${advantage.color} group-hover:scale-110 transition-transform`}>
                 {advantage.icon}
               </div>
-              <h3 className={`font-pixel text-[10px] sm:text-xs ${advantage.color} mb-2`}>
+              <h2 className={`font-pixel text-[10px] sm:text-xs ${advantage.color} mb-2`}>
                 {advantage.title}
-              </h3>
+              </h2>
               <p className="text-xs sm:text-sm text-muted-foreground font-orbitron">
                 {advantage.description}
               </p>
