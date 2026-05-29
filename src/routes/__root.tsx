@@ -56,6 +56,28 @@ export const Route = createRootRoute({
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "dns-prefetch", href: "https://sofewnyrrevybnbhhsuh.supabase.co" },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "SOS/01",
+          url: "https://fun-clip-creator.lovable.app",
+          logo: "https://fun-clip-creator.lovable.app/favicon.ico",
+          description: "Plataforma 100% gratuita de utilidades digitais: downloaders, ferramentas com IA, jogos retrô e biblioteca de quadrinhos.",
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "SOS/01",
+          url: "https://fun-clip-creator.lovable.app",
+        }),
+      },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
