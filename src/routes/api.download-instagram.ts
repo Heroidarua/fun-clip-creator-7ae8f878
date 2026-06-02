@@ -41,7 +41,7 @@ const USER_AGENTS = [
 const pick = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
 function getIgHeaders(): Record<string, string> {
-  return {
+  const headers: Record<string, string> = {
     "User-Agent": pick(USER_AGENTS),
     Accept: "*/*",
     "Accept-Language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7",
@@ -52,6 +52,11 @@ function getIgHeaders(): Record<string, string> {
     "X-IG-App-ID": "936619743392459",
     "X-Requested-With": "XMLHttpRequest",
   };
+  const cookie = process.env.IG_SESSION_COOKIE;
+  if (cookie && cookie.trim()) {
+    headers.Cookie = cookie.trim();
+  }
+  return headers;
 }
 
 function getInstagramId(url: string): string | null {
