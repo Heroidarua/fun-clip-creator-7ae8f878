@@ -80,6 +80,47 @@ async function tryTiklydown(url: string): Promise<TikTokData | null> {
   }
 }
 
+// Method 4: ssstik.io scrape (robust fallback)
+async function trySsstik(url: string): Promise<TikTokData | null> {
+  try {
+    const resp = await fetch("https://ssstik.io/abc?url=dl", {
+      method: "POST",
+      headers: {
+        "User-Agent": UA,
+        Accept: "*/*",
+        "Content-Type": "application/x-www-form-urlencoded",
+        Origin: "https://ssstik.io",
+        Referer: "https://ssstik.io/en",
+      },
+      body: `id=${encodeURIComponent(url)}&locale=en&tt=XXX`,
+    });
+    if (!resp.ok) return null;
+    const html = await resp.text();
+    const links = Array.from(
+      html.matchAll(/https:\/\/tikcdn\.io\/[^"\s)]+/g),
+    ).map((m) => m[0]);
+    const videoUrl = links.find((l) => /\/ssstik\/\d+\?/.test(l));
+    if (!videoUrl) return null;
+    const audioUrl = links.find((l) => /\/ssstik\/m\//.test(l)) || "";
+    const coverUrl = links.find((l) => /\/ssstik\/p\//.test(l)) || "";
+    const titleMatch = html.match(
+      /<p class="maintext">([\s\S]*?)<\/p>/,
+    );
+    const authorMatch = html.match(/<h2>([\s\S]*?)<\/h2>/);
+    return {
+      video_urls: { hd: videoUrl, sd: videoUrl, watermark: "" },
+      audio_url: audioUrl,
+      title: (titleMatch?.[1] || "TikTok Video").trim(),
+      author: (authorMatch?.[1] || "Unknown").trim(),
+      duration: 0,
+      thumbnail: coverUrl,
+    };
+  } catch (e) {
+    console.error("[ssstik]", e);
+    return null;
+  }
+}
+
 function mapTikwm(d: any): TikTokData {
   const tikwmBase = "https://www.tikwm.com";
   const prefixUrl = (path: string) =>
@@ -122,6 +163,7 @@ export const Route = createFileRoute("/api/download-tiktok")({
           const methods: Array<() => Promise<TikTokData | null>> = [
             () => tryTikwmPost(url),
             () => tryTikwmGet(url),
+            () => trySsstik(url),
             () => tryTiklydown(url),
           ];
 
