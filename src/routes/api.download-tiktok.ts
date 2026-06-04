@@ -10,6 +10,9 @@ interface TikTokData {
   author: string;
   duration: number;
   thumbnail: string;
+  proxy_video_url?: string;
+  proxy_audio_url?: string;
+  proxy_thumbnail_url?: string;
 }
 
 // Method 1: tikwm GET
@@ -139,6 +142,70 @@ function mapTikwm(d: any): TikTokData {
   };
 }
 
+function addProxyUrls(data: TikTokData, routePath: string): TikTokData {
+  const baseUrl = routePath.startsWith("/") ? routePath : `/${routePath}`;
+
+  data.proxy_video_url = `${baseUrl}?action=proxy&media_url=${encodeURIComponent(data.video_urls.hd || data.video_urls.sd)}&type=video`;
+
+  if (data.thumbnail) {
+    data.proxy_thumbnail_url = `${baseUrl}?action=proxy&media_url=${encodeURIComponent(data.thumbnail)}&type=image`;
+  }
+
+  if (data.audio_url) {
+    data.proxy_audio_url = `${baseUrl}?action=proxy&media_url=${encodeURIComponent(data.audio_url)}&type=audio`;
+  }
+
+  return data;
+}
+
+async function handleProxy(request: Request, mediaUrl: string, mediaType: string): Promise<Response> {
+  try {
+    const range = request.headers.get("range");
+    const response = await fetch(mediaUrl, {
+      method: "GET",
+      headers: {
+        "User-Agent": UA,
+        Accept: "*/*",
+        Referer: "https://www.tiktok.com/",
+        ...(range ? { Range: range } : {}),
+      },
+    });
+
+    if (!response.ok) {
+      return new Response(JSON.stringify({ success: false, error: "Falha ao baixar mídia" }), {
+        status: 200,
+        headers: { ...corsHeaders(), "Content-Type": "application/json" },
+      });
+    }
+
+    const contentType = response.headers.get("content-type") ||
+      (mediaType === "audio" ? "audio/mpeg" : "video/mp4");
+    const headers = new Headers({
+      ...corsHeaders(),
+      "Content-Type": contentType,
+      "Cache-Control": "no-cache",
+      "Accept-Ranges": response.headers.get("accept-ranges") || "bytes",
+      "Content-Disposition": "inline",
+    });
+
+    const contentLength = response.headers.get("content-length");
+    const contentRange = response.headers.get("content-range");
+    if (contentLength) headers.set("Content-Length", contentLength);
+    if (contentRange) headers.set("Content-Range", contentRange);
+
+    return new Response(response.body, {
+      status: response.status === 206 ? 206 : 200,
+      headers,
+    });
+  } catch (error) {
+    console.error("TikTok proxy error:", error);
+    return new Response(JSON.stringify({ success: false, error: "Erro ao fazer proxy da mídia" }), {
+      status: 200,
+      headers: { ...corsHeaders(), "Content-Type": "application/json" },
+    });
+  }
+}
+
 export const Route = createFileRoute("/api/download-tiktok")({
   server: {
     handlers: {
@@ -148,8 +215,39 @@ export const Route = createFileRoute("/api/download-tiktok")({
           headers: corsHeaders(),
         });
       },
+      GET: async ({ request }) => {
+        try {
+          const requestUrl = new URL(request.url);
+          const action = requestUrl.searchParams.get("action");
+
+          if (action === "proxy") {
+            const mediaUrl = requestUrl.searchParams.get("media_url");
+            const mediaType = requestUrl.searchParams.get("type") || "video";
+
+            if (!mediaUrl) {
+              return Response.json(
+                { success: false, error: "media_url é obrigatória" },
+                { status: 200, headers: corsHeaders() },
+              );
+            }
+
+            return handleProxy(request, mediaUrl, mediaType);
+          }
+
+          return Response.json(
+            { success: false, error: "Ação inválida" },
+            { status: 200, headers: corsHeaders() },
+          );
+        } catch (error: any) {
+          return Response.json(
+            { success: false, error: error.message || "Erro ao processar requisição" },
+            { status: 200, headers: corsHeaders() },
+          );
+        }
+      },
       POST: async ({ request }) => {
         try {
+          const requestUrl = new URL(request.url);
           const body = await request.json();
           const url = body?.url?.trim();
 
@@ -170,8 +268,9 @@ export const Route = createFileRoute("/api/download-tiktok")({
           for (const method of methods) {
             const result = await method();
             if (result && result.video_urls.hd) {
+              const data = addProxyUrls(result, requestUrl.pathname);
               return Response.json(
-                { success: true, data: result },
+                { success: true, data },
                 { headers: corsHeaders() }
               );
             }
@@ -204,7 +303,7 @@ function corsHeaders(): Record<string, string> {
   return {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
   };
 }
