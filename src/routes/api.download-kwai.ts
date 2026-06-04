@@ -14,6 +14,7 @@ interface MediaData {
   author: string;
   duration?: number;
   proxy_url?: string;
+  proxy_thumbnail_url?: string;
   // Compat com componentes antigos do Kwai
   video_url?: string;
 }
@@ -190,13 +191,14 @@ async function tryGraphQL(url: string): Promise<MediaResponse | null> {
   }
 }
 
-function addProxyUrls(data: MediaData, functionUrl: string): MediaData {
-  const baseUrl = functionUrl.startsWith("http://")
-    ? functionUrl.replace("http://", "https://")
-    : functionUrl;
+function addProxyUrls(data: MediaData, routePath: string): MediaData {
+  const baseUrl = routePath.startsWith("/") ? routePath : `/${routePath}`;
 
   const proxy = `${baseUrl}?action=proxy&media_url=${encodeURIComponent(data.media_url)}&type=${data.media_type}`;
   data.proxy_url = proxy;
+  data.proxy_thumbnail_url = data.thumbnail
+    ? `${baseUrl}?action=proxy&media_url=${encodeURIComponent(data.thumbnail)}&type=image`
+    : undefined;
   // Mantém compat com UIs que esperam `video_url`
   data.video_url = proxy;
   return data;
@@ -231,14 +233,16 @@ async function downloadKwaiMedia(rawUrl: string, functionUrl: string): Promise<M
   };
 }
 
-async function handleProxy(mediaUrl: string, mediaType: string): Promise<Response> {
+async function handleProxy(request: Request, mediaUrl: string, mediaType: string): Promise<Response> {
   try {
+    const range = request.headers.get("range");
     const response = await fetch(mediaUrl, {
       method: "GET",
       headers: {
         "User-Agent": pick(USER_AGENTS),
         Accept: "*/*",
         Referer: "https://www.kwai.com/",
+        ...(range ? { Range: range } : {}),
       },
     });
 
@@ -252,17 +256,22 @@ async function handleProxy(mediaUrl: string, mediaType: string): Promise<Respons
     const contentType =
       response.headers.get("content-type") ||
       (mediaType === "video" ? "video/mp4" : "image/jpeg");
-    const extension = mediaType === "video" ? "mp4" : "jpg";
-    const filename = `kwai_media_${Date.now()}.${extension}`;
+    const headers = new Headers({
+      ...corsHeaders,
+      "Content-Type": contentType,
+      "Cache-Control": "no-cache",
+      "Accept-Ranges": response.headers.get("accept-ranges") || "bytes",
+      "Content-Disposition": mediaType === "video" ? "inline" : `attachment; filename="kwai_media_${Date.now()}.jpg"`,
+    });
+
+    const contentLength = response.headers.get("content-length");
+    const contentRange = response.headers.get("content-range");
+    if (contentLength) headers.set("Content-Length", contentLength);
+    if (contentRange) headers.set("Content-Range", contentRange);
 
     return new Response(response.body, {
-      status: 200,
-      headers: {
-        ...corsHeaders,
-        "Content-Type": contentType,
-        "Content-Disposition": `attachment; filename="${filename}"`,
-        "Cache-Control": "no-cache",
-      },
+      status: response.status === 206 ? 206 : 200,
+      headers,
     });
   } catch (error) {
     console.error("❌ [Kwai proxy] erro:", error);
@@ -296,7 +305,7 @@ export const Route = createFileRoute("/api/download-kwai")({
                 { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
               );
             }
-            return handleProxy(mediaUrl, mediaType);
+            return handleProxy(request, mediaUrl, mediaType);
           }
 
           const url = requestUrl.searchParams.get("url") || "";
@@ -313,8 +322,7 @@ export const Route = createFileRoute("/api/download-kwai")({
             );
           }
 
-          const functionUrl = `${requestUrl.origin}${requestUrl.pathname}`;
-          const result = await downloadKwaiMedia(url, functionUrl);
+          const result = await downloadKwaiMedia(url, requestUrl.pathname);
           return new Response(JSON.stringify(result), {
             status: 200,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -347,8 +355,7 @@ export const Route = createFileRoute("/api/download-kwai")({
             );
           }
 
-          const functionUrl = `${requestUrl.origin}${requestUrl.pathname}`;
-          const result = await downloadKwaiMedia(url, functionUrl);
+          const result = await downloadKwaiMedia(url, requestUrl.pathname);
           return new Response(JSON.stringify(result), {
             status: 200,
             headers: { ...corsHeaders, "Content-Type": "application/json" },

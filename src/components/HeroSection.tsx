@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Clipboard, Search, Download, Headphones, Gamepad2, Book, Music, Camera, CheckCircle, AlertTriangle } from "lucide-react";
+import { Clipboard, Search, Download, Headphones, Gamepad2, Book, Music, Camera, CheckCircle, AlertTriangle, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -48,6 +48,30 @@ const MaintenanceWarning = () => (
   </div>
 );
 
+const MediaPreviewOverlay = ({
+  title,
+  author,
+  duration,
+}: {
+  title: string;
+  author: string;
+  duration?: number;
+}) => (
+  <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-background via-background/85 to-transparent p-4 text-left">
+    <div className="mb-3 flex justify-center">
+      <div className="flex h-12 w-12 items-center justify-center rounded-full border border-primary/50 bg-background/85 text-primary shadow-[0_0_20px_hsl(var(--primary)/0.2)]">
+        <Play className="ml-0.5 h-5 w-5 fill-current" />
+      </div>
+    </div>
+    <p className="font-pixel text-[10px] text-primary">PRÉVIA PRONTA</p>
+    <p className="mt-2 line-clamp-2 font-orbitron text-sm text-foreground">{title}</p>
+    <div className="mt-2 flex items-center justify-between gap-3 font-retro text-xs text-muted-foreground">
+      <span className="truncate">@{author}</span>
+      {typeof duration === 'number' && duration > 0 ? <span>{Math.round(duration)}s</span> : null}
+    </div>
+  </div>
+);
+
 
 interface VideoData {
   video_urls: {
@@ -60,6 +84,9 @@ interface VideoData {
   author: string;
   duration: number;
   thumbnail: string;
+  proxy_video_url?: string;
+  proxy_audio_url?: string;
+  proxy_thumbnail_url?: string;
 }
 
 interface CarouselItem {
@@ -68,6 +95,7 @@ interface CarouselItem {
   media_type: 'video' | 'image';
   thumbnail: string;
   proxy_url?: string;
+  proxy_thumbnail_url?: string;
 }
 
 interface InstagramData {
@@ -78,12 +106,15 @@ interface InstagramData {
   author: string;
   duration?: number;
   proxy_url?: string;
+  proxy_thumbnail_url?: string;
   is_carousel?: boolean;
   carousel_items?: CarouselItem[];
 }
 
 interface KwaiData {
   video_url: string;
+  proxy_url?: string;
+  proxy_thumbnail_url?: string;
   thumbnail: string;
   title: string;
   author: string;
@@ -146,6 +177,23 @@ const HeroSection = () => {
     return null;
   };
 
+  const fetchJsonWithRetry = async (input: RequestInfo | URL, init?: RequestInit, retries = 2, delay = 700) => {
+    let lastError: unknown;
+
+    for (let attempt = 0; attempt <= retries; attempt++) {
+      try {
+        const response = await fetch(input, init);
+        return await response.json();
+      } catch (error) {
+        lastError = error;
+        if (attempt === retries) break;
+        await new Promise((resolve) => setTimeout(resolve, delay * (attempt + 1)));
+      }
+    }
+
+    throw lastError instanceof Error ? lastError : new Error('Falha temporária ao buscar a mídia.');
+  };
+
   const handlePaste = async () => {
     setClickedButton("paste");
     setTimeout(() => setClickedButton(null), 300);
@@ -183,7 +231,6 @@ const HeroSection = () => {
 
     setLoading(true);
     setProgress(0);
-    setVideoData(null);
 
     const progressInterval = setInterval(() => {
       setProgress(prev => {
@@ -195,12 +242,11 @@ const HeroSection = () => {
     try {
       console.log("Chamando API TikTok com URL:", url.trim());
       
-      const resp = await fetch('/api/download-tiktok', {
+      const data = await fetchJsonWithRetry('/api/download-tiktok', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: url.trim() }),
       });
-      const data = await resp.json();
 
       setProgress(100);
       clearInterval(progressInterval);
@@ -249,9 +295,9 @@ const HeroSection = () => {
     
     if (!videoData) return;
 
-    const downloadUrl = downloadType === "video" 
-      ? videoData.video_urls?.hd 
-      : videoData.audio_url;
+    const downloadUrl = downloadType === "video"
+      ? (videoData.proxy_video_url || videoData.video_urls?.hd)
+      : (videoData.proxy_audio_url || videoData.audio_url);
     
     if (!downloadUrl) {
       toast({
@@ -326,7 +372,6 @@ const HeroSection = () => {
 
     setInstagramLoading(true);
     setInstagramProgress(0);
-    setInstagramData(null);
     setSelectedCarouselIndex(0);
 
     const progressInterval = setInterval(() => {
@@ -339,12 +384,11 @@ const HeroSection = () => {
     try {
       console.log("Chamando API Instagram com URL:", instagramUrl.trim());
       
-      const resp = await fetch('/api/download-instagram', {
+      const data = await fetchJsonWithRetry('/api/download-instagram', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: instagramUrl.trim() }),
       });
-      const data = await resp.json();
 
       setInstagramProgress(100);
       clearInterval(progressInterval);
@@ -484,7 +528,6 @@ const HeroSection = () => {
 
     setKwaiLoading(true);
     setKwaiProgress(0);
-    setKwaiData(null);
 
     const progressInterval = setInterval(() => {
       setKwaiProgress(prev => {
@@ -496,12 +539,11 @@ const HeroSection = () => {
     try {
       console.log("Chamando API Kwai com URL:", kwaiUrl.trim());
       
-      const resp = await fetch('/api/download-kwai', {
+      const data = await fetchJsonWithRetry('/api/download-kwai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: kwaiUrl.trim() }),
       });
-      const data = await resp.json();
 
       setKwaiProgress(100);
       clearInterval(progressInterval);
@@ -551,7 +593,7 @@ const HeroSection = () => {
     if (!kwaiData) return;
 
     try {
-      const response = await fetch(kwaiData.video_url);
+      const response = await fetch(kwaiData.proxy_url || kwaiData.video_url);
       const blob = await response.blob();
       const downloadBlobUrl = URL.createObjectURL(blob);
       
@@ -921,17 +963,23 @@ const HeroSection = () => {
                 </div>
                 
                 {/* Video preview */}
-                <div className="w-full mb-4 border-2 border-primary/30 bg-background/50">
-                  <video 
-                    src={videoData.video_urls.hd || videoData.video_urls.sd}
-                    poster={videoData.thumbnail}
-                    controls
-                    className="w-full max-h-[400px] object-contain"
-                    preload="metadata"
+                  <div
+                    className="relative w-full mb-4 border-2 border-primary/30 bg-background/50 overflow-hidden min-h-[320px] bg-center bg-no-repeat bg-contain"
+                    style={{ backgroundImage: `url(${videoData.proxy_thumbnail_url || videoData.thumbnail})` }}
+                    aria-label={`Capa do vídeo ${videoData.title}`}
                   >
-                    Seu navegador não suporta a tag de vídeo.
-                  </video>
-                </div>
+                    <div className="absolute inset-0 bg-background/10 backdrop-blur-[1px]" />
+                    <img
+                      src={videoData.proxy_thumbnail_url || videoData.thumbnail}
+                      alt={`Capa do vídeo ${videoData.title}`}
+                      className="w-full h-[320px] object-contain opacity-0 pointer-events-none"
+                    />
+                    <MediaPreviewOverlay
+                      title={videoData.title}
+                      author={videoData.author}
+                      duration={videoData.duration}
+                    />
+                  </div>
 
                 {/* Download type selector */}
                 <div className="mb-4">
@@ -1118,25 +1166,45 @@ const HeroSection = () => {
                   {/* Media Preview */}
                   <div className="w-full mb-4 border-2 border-[hsl(var(--retro-magenta))]/30 bg-background/50">
                     {(() => {
-                      const currentItem = instagramData.is_carousel && instagramData.carousel_items 
+                      const currentItem: {
+                        media_url: string;
+                        media_type: 'video' | 'image';
+                        thumbnail: string;
+                        proxy_url?: string;
+                        proxy_thumbnail_url?: string;
+                      } = instagramData.is_carousel && instagramData.carousel_items
                         ? instagramData.carousel_items[selectedCarouselIndex]
-                        : { media_url: instagramData.media_url, media_type: instagramData.media_type, thumbnail: instagramData.thumbnail };
+                        : {
+                            media_url: instagramData.media_url,
+                            media_type: instagramData.media_type,
+                            thumbnail: instagramData.thumbnail,
+                            proxy_url: instagramData.proxy_url,
+                            proxy_thumbnail_url: instagramData.proxy_thumbnail_url,
+                          };
                       
                       return currentItem.media_type === 'video' ? (
-                        <video 
+                        <div
                           key={selectedCarouselIndex}
-                          src={currentItem.media_url}
-                          poster={currentItem.thumbnail}
-                          controls
-                          className="w-full max-h-[400px] object-contain"
-                          preload="metadata"
+                          className="relative w-full min-h-[320px] bg-center bg-no-repeat bg-contain"
+                          style={{ backgroundImage: `url(${currentItem.proxy_thumbnail_url || currentItem.thumbnail})` }}
+                          aria-label="Preview do vídeo do Instagram"
                         >
-                          Seu navegador não suporta a tag de vídeo.
-                        </video>
+                          <div className="absolute inset-0 bg-background/10 backdrop-blur-[1px]" />
+                          <img
+                            src={currentItem.proxy_thumbnail_url || currentItem.thumbnail}
+                            alt="Preview do vídeo do Instagram"
+                            className="w-full h-[320px] object-contain opacity-0 pointer-events-none"
+                          />
+                          <MediaPreviewOverlay
+                            title={instagramData.title}
+                            author={instagramData.author}
+                            duration={instagramData.duration}
+                          />
+                        </div>
                       ) : (
                         <img 
                           key={selectedCarouselIndex}
-                          src={currentItem.media_url}
+                          src={currentItem.proxy_url || currentItem.media_url}
                           alt="Preview da foto"
                           className="w-full max-h-[400px] object-contain"
                         />
@@ -1262,16 +1330,22 @@ const HeroSection = () => {
                   </div>
                   
                   {/* Video Preview */}
-                  <div className="w-full mb-4 border-2 border-[hsl(var(--retro-orange))]/30 bg-background/50">
-                    <video 
-                      src={kwaiData.video_url}
-                      poster={kwaiData.thumbnail}
-                      controls
-                      className="w-full max-h-[400px] object-contain"
-                      preload="metadata"
-                    >
-                      Seu navegador não suporta a tag de vídeo.
-                    </video>
+                  <div
+                    className="relative w-full mb-4 border-2 border-[hsl(var(--retro-orange))]/30 bg-background/50 overflow-hidden min-h-[320px] bg-center bg-no-repeat bg-contain"
+                    style={{ backgroundImage: `url(${kwaiData.proxy_thumbnail_url || kwaiData.thumbnail})` }}
+                    aria-label={`Capa do vídeo ${kwaiData.title}`}
+                  >
+                    <div className="absolute inset-0 bg-background/10 backdrop-blur-[1px]" />
+                    <img
+                      src={kwaiData.proxy_thumbnail_url || kwaiData.thumbnail}
+                      alt={`Capa do vídeo ${kwaiData.title}`}
+                      className="w-full h-[320px] object-contain opacity-0 pointer-events-none"
+                    />
+                    <MediaPreviewOverlay
+                      title={kwaiData.title}
+                      author={kwaiData.author}
+                      duration={kwaiData.duration}
+                    />
                   </div>
 
                   <Button
