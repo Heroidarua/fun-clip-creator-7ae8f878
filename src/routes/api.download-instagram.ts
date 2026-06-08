@@ -92,7 +92,8 @@ async function fetchViaRapidApi(url: string): Promise<MediaResponse | null> {
     }
     const data = await response.json();
 
-    // Response shape: array of items, each with "urls" array of { url, ... }
+    // Response shape from instagram120: array of items, each with
+    // { urls: [{url, extension, quality, ...}], meta: {title, username, ...}, pictureUrl }
     const items: any[] = Array.isArray(data) ? data : data?.result || [];
     if (!items.length) return null;
 
@@ -100,32 +101,29 @@ async function fetchViaRapidApi(url: string): Promise<MediaResponse | null> {
     const extracted: Extracted[] = [];
     for (const item of items) {
       const urls = Array.isArray(item?.urls) ? item.urls : [];
-      const videoEntry = urls.find((u: any) => /\.mp4|video/i.test(u?.url || "") || u?.type === "video");
-      const imageEntry = urls.find((u: any) => !/\.mp4/i.test(u?.url || "")) || urls[0];
-      if (videoEntry?.url) {
-        extracted.push({
-          media_url: videoEntry.url,
-          media_type: "video",
-          thumbnail: imageEntry?.url || item?.thumbnail || "",
-        });
-      } else if (imageEntry?.url) {
-        extracted.push({
-          media_url: imageEntry.url,
-          media_type: "image",
-          thumbnail: imageEntry.url,
-        });
-      }
+      // Pick the highest-quality entry
+      const sorted = [...urls].sort((a: any, b: any) => (b?.quality || 0) - (a?.quality || 0));
+      const best = sorted[0];
+      if (!best?.url) continue;
+      const ext = String(best.extension || "").toLowerCase();
+      const isVideo = ext === "mp4" || /\.mp4/i.test(best.url);
+      extracted.push({
+        media_url: best.url,
+        media_type: isVideo ? "video" : "image",
+        thumbnail: item?.pictureUrl || (isVideo ? "" : best.url),
+      });
     }
 
     if (!extracted.length) return null;
 
     const first = extracted[0];
+    const meta = items[0]?.meta || {};
     const mediaData: MediaData = {
       media_url: first.media_url,
       media_type: first.media_type,
       thumbnail: first.thumbnail,
-      title: items[0]?.caption || "Instagram Media",
-      author: items[0]?.user?.username || items[0]?.username || "Usuário",
+      title: meta.title || "Instagram Media",
+      author: meta.username || "Usuário",
       is_carousel: extracted.length > 1,
     };
 
