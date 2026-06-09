@@ -108,10 +108,10 @@ serve(async (req) => {
       JSON.stringify({ imageUrl }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error("Avatar generation error:", error);
     return new Response(
-      JSON.stringify({ error: error?.message || "Erro interno" }),
+      JSON.stringify({ error: "Erro interno ao gerar avatar" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
