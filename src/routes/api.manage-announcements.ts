@@ -1,7 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "sos012025";
-
 export const Route = createFileRoute("/api/manage-announcements")({
   server: {
     handlers: {
@@ -13,6 +11,14 @@ export const Route = createFileRoute("/api/manage-announcements")({
       },
       POST: async ({ request }) => {
         try {
+          const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+          if (!ADMIN_PASSWORD) {
+            console.error("ADMIN_PASSWORD env var is not configured");
+            return Response.json(
+              { error: "Servidor mal configurado" },
+              { status: 500, headers: corsHeaders() }
+            );
+          }
           const body = await request.json();
           const { action, password, data: payload } = body;
 
