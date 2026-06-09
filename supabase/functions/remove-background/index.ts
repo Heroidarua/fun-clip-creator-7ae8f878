@@ -108,9 +108,8 @@ serve(async (req) => {
     );
   } catch (error) {
     console.error("Background removal error:", error);
-    const message = error instanceof Error ? error.message : "Erro interno";
     return new Response(
-      JSON.stringify({ error: message }),
+      JSON.stringify({ error: "Erro interno ao remover fundo" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

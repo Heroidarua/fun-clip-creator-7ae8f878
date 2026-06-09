@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { isSafeProxyUrl } from "@/lib/proxy-url-guard";
 
 const UA =
   "Mozilla/5.0 (Linux; Android 13; SM-G991B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36";
@@ -228,6 +229,13 @@ export const Route = createFileRoute("/api/download-tiktok")({
               return Response.json(
                 { success: false, error: "media_url é obrigatória" },
                 { status: 200, headers: corsHeaders() },
+              );
+            }
+
+            if (!isSafeProxyUrl(mediaUrl)) {
+              return Response.json(
+                { success: false, error: "media_url não permitida" },
+                { status: 400, headers: corsHeaders() },
               );
             }
 

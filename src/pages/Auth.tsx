@@ -21,7 +21,11 @@ const Auth = () => {
   const searchParams = useSearch({ strict: false }) as Record<string, string>;
 
   const referralCode = searchParams?.ref || null;
-  const redirectTo = (searchParams?.redirect as string) || "/dashboard";
+  const rawRedirect = (searchParams?.redirect as string) || "";
+  // Open-redirect guard: only same-origin relative paths are allowed.
+  const isSafeRedirect = (v: string) =>
+    typeof v === "string" && v.startsWith("/") && !v.startsWith("//") && !v.startsWith("/\\");
+  const redirectTo = isSafeRedirect(rawRedirect) ? rawRedirect : "/dashboard";
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {

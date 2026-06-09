@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { isSafeProxyUrl } from "@/lib/proxy-url-guard";
 
 const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -287,6 +288,12 @@ export const Route = createFileRoute("/api/download-instagram")({
               status: 400,
               headers: { ...corsHeaders, "Content-Type": "application/json" },
             });
+          if (!isSafeProxyUrl(mediaUrl)) {
+            return new Response(JSON.stringify({ error: "media_url não permitida" }), {
+              status: 400,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
           return handleProxy(request, mediaUrl, type);
         }
 
