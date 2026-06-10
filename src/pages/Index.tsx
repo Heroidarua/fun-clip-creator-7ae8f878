@@ -15,7 +15,7 @@ import Footer from "@/components/Footer";
 import ClipyAssistant from "@/components/ClipyAssistant";
 
 const SectionDivider = () => (
-  <div aria-hidden className="relative h-px w-full max-w-6xl mx-auto my-2 sm:my-4">
+  <div aria-hidden className="relative h-px w-full max-w-5xl mx-auto my-6 sm:my-10 px-4 sm:px-6">
     <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
   </div>
 );
