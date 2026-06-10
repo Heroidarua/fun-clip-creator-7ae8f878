@@ -48,11 +48,12 @@
   --font-pixel: 'Press Start 2P', monospace;
   --font-vt323: 'VT323', monospace;
   --font-orbitron: 'Orbitron', sans-serif;
-  --font-inter: 'Manrope', 'Inter', sans-serif;
-  --font-sora: 'Sora', 'Inter', sans-serif;
-  --font-manrope: 'Manrope', 'Inter', sans-serif;
-  --font-display: 'Fraunces', 'Instrument Serif', Georgia, serif;
-  --font-serif: 'Instrument Serif', 'Fraunces', Georgia, serif;
+  --font-inter: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-sora: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-manrope: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --font-display: 'Libre Baskerville', Georgia, serif;
+  --font-serif: 'Libre Baskerville', Georgia, serif;
 }
 
 @layer base {
