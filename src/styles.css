@@ -450,6 +450,51 @@ body {
     letter-spacing: -0.015em;
   }
 
+  /* ===== Global layout rhythm =====
+     Aplica espaçamento, gutters e largura consistente em todas as páginas
+     sem precisar tocar componente por componente. */
+
+  /* Container: largura máxima editorial, gutters generosos */
+  .container {
+    max-width: 1200px;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+  @media (min-width: 640px) {
+    .container { padding-left: 1.5rem; padding-right: 1.5rem; }
+  }
+  @media (min-width: 1024px) {
+    .container { padding-left: 2rem; padding-right: 2rem; }
+  }
+
+  /* Section breathing room — base mínima sem sobrescrever paddings explícitos */
+  main > section {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+  @media (min-width: 640px) {
+    main > section {
+      padding-left: max(1.5rem, env(safe-area-inset-left));
+      padding-right: max(1.5rem, env(safe-area-inset-right));
+    }
+  }
+
+  /* Conteúdo interno alinhado e centralizado em todas as páginas */
+  main > section > .container,
+  main > section > div:not(.absolute):not(.fixed) {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Tipografia editorial — títulos com peso, leitura mais arejada */
+  h1 { line-height: 1.08; }
+  h2 { line-height: 1.15; }
+  h3 { line-height: 1.25; }
+  p  { line-height: 1.65; }
+
+  /* Cards e bordas mais discretos */
+  .glass-card { border-radius: var(--radius); }
+
   /* Premium scrollbar */
   ::-webkit-scrollbar { width: 10px; height: 10px; }
   ::-webkit-scrollbar-track { background: hsl(var(--background)); }
