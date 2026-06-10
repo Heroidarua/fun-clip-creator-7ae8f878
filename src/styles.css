@@ -442,7 +442,12 @@ body {
     font-feature-settings: "rlig" 1, "calt" 1, "ss01", "cv11";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.005em;
+  }
+
+  h1, h2, h3, h4, h5, h6, .font-display, .font-serif {
+    font-family: 'Libre Baskerville', Georgia, serif;
+    letter-spacing: -0.015em;
   }
 
   /* Premium scrollbar */
