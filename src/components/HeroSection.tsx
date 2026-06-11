@@ -243,7 +243,7 @@ const HeroSection = () => {
     try {
       console.log("Chamando API TikTok com URL:", url.trim());
       
-      const data = await fetchJsonWithRetry('/api/download-tiktok', {
+      const data = await fetchJsonWithRetry(apiUrl('/api/download-tiktok'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: url.trim() }),
@@ -253,7 +253,7 @@ const HeroSection = () => {
       clearInterval(progressInterval);
 
       if (data && data.success) {
-        setVideoData(data.data);
+        setVideoData(rewriteProxy(data.data));
         toast({
           title: "Vídeo encontrado!",
           description: "Pronto para download.",
@@ -385,7 +385,7 @@ const HeroSection = () => {
     try {
       console.log("Chamando API Instagram com URL:", instagramUrl.trim());
       
-      const data = await fetchJsonWithRetry('/api/download-instagram', {
+      const data = await fetchJsonWithRetry(apiUrl('/api/download-instagram'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: instagramUrl.trim() }),
@@ -395,7 +395,7 @@ const HeroSection = () => {
       clearInterval(progressInterval);
 
       if (data && data.success) {
-        setInstagramData(data.data);
+        setInstagramData(rewriteProxy(data.data));
         setSelectedCarouselIndex(0);
         const isCarousel = data.data.is_carousel && data.data.carousel_items?.length > 1;
         const mediaTypeText = isCarousel 
@@ -540,7 +540,7 @@ const HeroSection = () => {
     try {
       console.log("Chamando API Kwai com URL:", kwaiUrl.trim());
       
-      const data = await fetchJsonWithRetry('/api/download-kwai', {
+      const data = await fetchJsonWithRetry(apiUrl('/api/download-kwai'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: kwaiUrl.trim() }),
@@ -550,7 +550,7 @@ const HeroSection = () => {
       clearInterval(progressInterval);
 
       if (data && data.success) {
-        setKwaiData(data.data);
+        setKwaiData(rewriteProxy(data.data));
         toast({
           title: "Vídeo encontrado!",
           description: "Pronto para download.",
@@ -668,7 +668,7 @@ const HeroSection = () => {
     try {
       console.log("Chamando API YouTube com URL:", youtubeUrl.trim());
       
-      const resp = await fetch('/api/download-youtube', {
+      const resp = await fetch(apiUrl('/api/download-youtube'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: youtubeUrl.trim() }),
@@ -732,7 +732,7 @@ const HeroSection = () => {
       });
 
       // Request the Edge Function to download the file directly (handles tunnel URLs)
-      const freshResp = await fetch('/api/download-youtube', {
+      const freshResp = await fetch(apiUrl('/api/download-youtube'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: youtubeUrl.trim(), download: true }),
