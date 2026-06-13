@@ -12,10 +12,19 @@ a[href*="lovable.dev"][target="_blank"] {
 
 /* ===== Contrast fix for Brutalist Pop palette =====
    In this theme --background is white, so legacy `text-background`
-   utilities render white-on-light and become invisible. Force readable
-   ink color on those chips/buttons without touching component code. */
+   becomes white-on-light and disappears. Force ink color on those
+   chips/buttons without touching component code. */
 .text-background { color: hsl(var(--foreground)) !important; }
-.text-white { color: hsl(var(--foreground)) !important; }
+
+/* Inputs sometimes inherit transparent backgrounds inside cards — ensure
+   typed text stays readable against the brutalist white surface. */
+input, textarea, select {
+  color: hsl(var(--foreground));
+}
+input::placeholder, textarea::placeholder {
+  color: hsl(var(--muted-foreground));
+  opacity: 1;
+}
 
 @custom-variant dark (&:is(.dark *));
 
