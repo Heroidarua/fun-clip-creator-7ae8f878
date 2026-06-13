@@ -114,6 +114,9 @@ input::placeholder, textarea::placeholder {
     --retro-magenta: 210 75% 55%;        /* azul royal */
     --retro-orange: 200 76% 49%;         /* azul Telegram */
     --retro-blue: 205 90% 38%;           /* azul profundo */
+    --retro-green: 195 70% 50%;          /* ciano Telegram (harmonizado) */
+    --retro-pink: 210 75% 55%;           /* azul royal (harmonizado) */
+    --retro-purple: 215 60% 45%;         /* azul navy (harmonizado) */
 
     --destructive: 0 72% 52%;
     --destructive-foreground: 0 0% 100%;
