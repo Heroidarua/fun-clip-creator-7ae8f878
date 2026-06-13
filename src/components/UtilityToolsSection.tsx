@@ -1,19 +1,29 @@
-import { useState } from "react";
-import { Music, Eraser, Image, QrCode, Link2, Wrench, Stamp, KeyRound, UserSquare2, ChevronDown, Sparkles, FileImage, PenTool, Languages, FileText } from "lucide-react";
+import { useState, lazy, Suspense, ComponentType } from "react";
+import { Music, Eraser, Image, QrCode, Link2, Wrench, Stamp, KeyRound, UserSquare2, ChevronDown, Sparkles, FileImage, PenTool, Languages, FileText, Loader2 } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
-import MP4ToMP3Converter from "@/components/tools/MP4ToMP3Converter";
-import BackgroundRemover from "@/components/tools/BackgroundRemover";
-import ThumbnailGenerator from "@/components/tools/ThumbnailGenerator";
-import QRCodeGenerator from "@/components/tools/QRCodeGenerator";
-import UrlShortener from "@/components/tools/UrlShortener";
-import WatermarkTool from "@/components/tools/WatermarkTool";
-import PasswordGenerator from "@/components/tools/PasswordGenerator";
-import PixelAvatarGenerator from "@/components/tools/PixelAvatarGenerator";
-import ImageToPdfConverter from "@/components/tools/ImageToPdfConverter";
-import AITextGenerator from "@/components/tools/AITextGenerator";
-import AutoTranslator from "@/components/tools/AutoTranslator";
-import TextSummarizer from "@/components/tools/TextSummarizer";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+
+// Lazy-load each tool — they only download/parse when the user opens its accordion.
+// Cuts initial bundle by ~5k lines of tool code on the home page.
+const MP4ToMP3Converter   = lazy(() => import("@/components/tools/MP4ToMP3Converter"));
+const BackgroundRemover   = lazy(() => import("@/components/tools/BackgroundRemover"));
+const ThumbnailGenerator  = lazy(() => import("@/components/tools/ThumbnailGenerator"));
+const QRCodeGenerator     = lazy(() => import("@/components/tools/QRCodeGenerator"));
+const UrlShortener        = lazy(() => import("@/components/tools/UrlShortener"));
+const WatermarkTool       = lazy(() => import("@/components/tools/WatermarkTool"));
+const PasswordGenerator   = lazy(() => import("@/components/tools/PasswordGenerator"));
+const PixelAvatarGenerator = lazy(() => import("@/components/tools/PixelAvatarGenerator"));
+const ImageToPdfConverter = lazy(() => import("@/components/tools/ImageToPdfConverter"));
+const AITextGenerator     = lazy(() => import("@/components/tools/AITextGenerator"));
+const AutoTranslator      = lazy(() => import("@/components/tools/AutoTranslator"));
+const TextSummarizer      = lazy(() => import("@/components/tools/TextSummarizer"));
+
+const ToolFallback = () => (
+  <div className="flex items-center justify-center gap-2 py-10 text-muted-foreground">
+    <Loader2 className="w-4 h-4 animate-spin" />
+    <span className="text-xs font-pixel">CARREGANDO...</span>
+  </div>
+);
 
 interface Tool {
   id: string;
@@ -23,7 +33,8 @@ interface Tool {
   color: string;
   borderColor: string;
   bgColor: string;
-  component: React.ReactNode;
+  Component: ComponentType<{ onSuccess?: () => void }>;
+  trackKey: string;
   featured?: boolean;
 }
 
@@ -44,7 +55,8 @@ const UtilityToolsSection = () => {
       color: "hsl(280, 100%, 60%)",
       borderColor: "hsl(280 100% 60% / 0.8)",
       bgColor: "hsl(280, 100%, 60%, 0.2)",
-      component: <PixelAvatarGenerator onSuccess={() => trackToolUsage('avatar')} />,
+      Component: PixelAvatarGenerator,
+      trackKey: "avatar",
       featured: true,
     },
     {
@@ -55,7 +67,8 @@ const UtilityToolsSection = () => {
       color: "hsl(var(--primary))",
       borderColor: "hsl(var(--primary) / 0.5)",
       bgColor: "hsl(var(--primary) / 0.2)",
-      component: <MP4ToMP3Converter onSuccess={() => trackToolUsage('audio')} />,
+      Component: MP4ToMP3Converter,
+      trackKey: "audio",
     },
     {
       id: "url-shortener",
@@ -65,7 +78,8 @@ const UtilityToolsSection = () => {
       color: "hsl(200, 100%, 50%)",
       borderColor: "hsl(200 100% 50% / 0.5)",
       bgColor: "hsl(200, 100%, 50%, 0.2)",
-      component: <UrlShortener onSuccess={() => trackToolUsage('url')} />,
+      Component: UrlShortener,
+      trackKey: "url",
     },
     {
       id: "background-remover",
@@ -75,7 +89,8 @@ const UtilityToolsSection = () => {
       color: "hsl(280, 100%, 60%)",
       borderColor: "hsl(280 100% 60% / 0.5)",
       bgColor: "hsl(280, 100%, 60%, 0.2)",
-      component: <BackgroundRemover onSuccess={() => trackToolUsage('background')} />,
+      Component: BackgroundRemover,
+      trackKey: "background",
     },
     {
       id: "thumbnail-generator",
@@ -85,7 +100,8 @@ const UtilityToolsSection = () => {
       color: "hsl(45, 100%, 50%)",
       borderColor: "hsl(45 100% 50% / 0.5)",
       bgColor: "hsl(45, 100%, 50%, 0.2)",
-      component: <ThumbnailGenerator onSuccess={() => trackToolUsage('thumbnail')} />,
+      Component: ThumbnailGenerator,
+      trackKey: "thumbnail",
     },
     {
       id: "qr-code-generator",
@@ -95,7 +111,8 @@ const UtilityToolsSection = () => {
       color: "hsl(160, 100%, 40%)",
       borderColor: "hsl(160 100% 40% / 0.5)",
       bgColor: "hsl(160, 100%, 40%, 0.2)",
-      component: <QRCodeGenerator onSuccess={() => trackToolUsage('qr')} />,
+      Component: QRCodeGenerator,
+      trackKey: "qr",
     },
     {
       id: "watermark-tool",
@@ -105,7 +122,8 @@ const UtilityToolsSection = () => {
       color: "hsl(320, 100%, 50%)",
       borderColor: "hsl(320 100% 50% / 0.5)",
       bgColor: "hsl(320, 100%, 50%, 0.2)",
-      component: <WatermarkTool onSuccess={() => trackToolUsage('watermark')} />,
+      Component: WatermarkTool,
+      trackKey: "watermark",
     },
     {
       id: "password-generator",
@@ -115,7 +133,8 @@ const UtilityToolsSection = () => {
       color: "hsl(140, 100%, 40%)",
       borderColor: "hsl(140 100% 40% / 0.5)",
       bgColor: "hsl(140, 100%, 40%, 0.2)",
-      component: <PasswordGenerator onSuccess={() => trackToolUsage('password')} />,
+      Component: PasswordGenerator,
+      trackKey: "password",
     },
     {
       id: "image-to-pdf",
@@ -125,7 +144,8 @@ const UtilityToolsSection = () => {
       color: "hsl(10, 100%, 55%)",
       borderColor: "hsl(10 100% 55% / 0.5)",
       bgColor: "hsl(10, 100%, 55%, 0.2)",
-      component: <ImageToPdfConverter onSuccess={() => trackToolUsage('other')} />,
+      Component: ImageToPdfConverter,
+      trackKey: "other",
     },
     {
       id: "ai-text-generator",
@@ -135,7 +155,8 @@ const UtilityToolsSection = () => {
       color: "hsl(250, 100%, 65%)",
       borderColor: "hsl(250 100% 65% / 0.8)",
       bgColor: "hsl(250, 100%, 65%, 0.2)",
-      component: <AITextGenerator onSuccess={() => trackToolUsage('other')} />,
+      Component: AITextGenerator,
+      trackKey: "other",
       featured: true,
     },
     {
@@ -146,7 +167,8 @@ const UtilityToolsSection = () => {
       color: "hsl(190, 100%, 45%)",
       borderColor: "hsl(190 100% 45% / 0.8)",
       bgColor: "hsl(190, 100%, 45%, 0.2)",
-      component: <AutoTranslator onSuccess={() => trackToolUsage('other')} />,
+      Component: AutoTranslator,
+      trackKey: "other",
       featured: true,
     },
     {
@@ -157,7 +179,8 @@ const UtilityToolsSection = () => {
       color: "hsl(30, 100%, 50%)",
       borderColor: "hsl(30 100% 50% / 0.8)",
       bgColor: "hsl(30, 100%, 50%, 0.2)",
-      component: <TextSummarizer onSuccess={() => trackToolUsage('other')} />,
+      Component: TextSummarizer,
+      trackKey: "other",
       featured: true,
     },
   ];
@@ -266,7 +289,11 @@ const UtilityToolsSection = () => {
                   {/* Tool Content - Collapsible */}
                   <CollapsibleContent>
                     <div className="p-4 sm:p-5 pt-0 border-t border-border/30">
-                      {tool.component}
+                      {openTool === tool.id ? (
+                        <Suspense fallback={<ToolFallback />}>
+                          <tool.Component onSuccess={() => trackToolUsage(tool.trackKey)} />
+                        </Suspense>
+                      ) : null}
                     </div>
                   </CollapsibleContent>
                 </div>
