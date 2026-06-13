@@ -10,6 +10,13 @@ a[href*="lovable.dev"][target="_blank"] {
   display: none !important;
 }
 
+/* ===== Contrast fix for Brutalist Pop palette =====
+   In this theme --background is white, so legacy `text-background`
+   utilities render white-on-light and become invisible. Force readable
+   ink color on those chips/buttons without touching component code. */
+.text-background { color: hsl(var(--foreground)) !important; }
+.text-white { color: hsl(var(--foreground)) !important; }
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
