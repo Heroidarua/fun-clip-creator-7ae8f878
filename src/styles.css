@@ -81,63 +81,63 @@ input::placeholder, textarea::placeholder {
 
 @layer base {
   :root {
-    /* ===== Unified Sunset palette =====
-       Paleta única em degradê: creme → âmbar → laranja → magenta suave.
-       Tons quentes e harmônicos, agradáveis de ler em sequência. */
-    --background: 36 40% 98%;            /* creme quase branco */
-    --foreground: 24 25% 12%;            /* marrom-tinta */
+    /* ===== Unified Telegram palette =====
+       Azul Telegram (#2AABEE / #229ED9 / #0088CC) com superfícies claras
+       e tinta navy. Degradê elegante em toda a aplicação. */
+    --background: 210 40% 98%;           /* branco-azulado */
+    --foreground: 215 45% 12%;           /* navy escuro */
 
     --card: 0 0% 100%;
-    --card-foreground: 24 25% 12%;
+    --card-foreground: 215 45% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 24 25% 12%;
+    --popover-foreground: 215 45% 12%;
 
-    /* Laranja quente (primário) */
-    --primary: 18 92% 55%;
+    /* Azul Telegram principal #229ED9 */
+    --primary: 200 76% 49%;
     --primary-foreground: 0 0% 100%;
 
-    /* Marrom-tinta (secundário) */
-    --secondary: 24 25% 14%;
-    --secondary-foreground: 36 40% 98%;
+    /* Navy profundo (secundário) */
+    --secondary: 215 45% 16%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 32 30% 94%;
-    --muted-foreground: 24 12% 38%;
+    --muted: 210 30% 95%;
+    --muted-foreground: 215 18% 42%;
 
-    /* Âmbar dourado (accent) */
-    --accent: 38 95% 58%;
-    --accent-foreground: 24 25% 12%;
+    /* Azul claro #2AABEE (accent) */
+    --accent: 199 84% 55%;
+    --accent-foreground: 0 0% 100%;
 
-    /* Tonal accents — degradê unificado */
-    --retro-cyan: 12 90% 60%;            /* coral */
-    --retro-yellow: 38 95% 58%;          /* âmbar */
-    --retro-magenta: 340 75% 58%;        /* rosa quente */
-    --retro-orange: 18 92% 55%;          /* laranja */
-    --retro-blue: 24 25% 14%;            /* tinta */
+    /* Tonal accents — toda a família azul Telegram */
+    --retro-cyan: 199 84% 55%;           /* azul claro */
+    --retro-yellow: 195 80% 60%;         /* ciano suave */
+    --retro-magenta: 210 75% 55%;        /* azul royal */
+    --retro-orange: 200 76% 49%;         /* azul Telegram */
+    --retro-blue: 205 90% 38%;           /* azul profundo */
 
-    --destructive: 0 78% 52%;
+    --destructive: 0 72% 52%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 28 25% 86%;
+    --border: 210 25% 88%;
     --input: 0 0% 100%;
-    --ring: 18 92% 55%;
+    --ring: 200 76% 49%;
 
-    /* Gradientes harmônicos — fluem na mesma família quente */
-    --gradient-hero: linear-gradient(180deg, hsl(36 60% 97%) 0%, hsl(38 95% 88%) 45%, hsl(18 92% 82%) 100%);
-    --gradient-header: linear-gradient(180deg, hsl(36 60% 98% / 0.95) 0%, hsl(36 40% 98% / 0.85) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(36 40% 98%) 100%);
-    --gradient-button: linear-gradient(135deg, hsl(38 95% 58%) 0%, hsl(18 92% 55%) 55%, hsl(340 75% 58%) 100%);
-    --gradient-arcade: linear-gradient(180deg, hsl(38 95% 85%) 0%, hsl(36 60% 97%) 100%);
-    --gradient-sunset: linear-gradient(135deg, hsl(48 100% 70%) 0%, hsl(28 95% 62%) 35%, hsl(8 85% 58%) 70%, hsl(340 75% 55%) 100%);
+    /* Gradientes Telegram — fluem entre cyan claro e azul profundo */
+    --gradient-hero: linear-gradient(180deg, hsl(210 60% 99%) 0%, hsl(199 90% 92%) 50%, hsl(200 76% 85%) 100%);
+    --gradient-header: linear-gradient(180deg, hsl(210 60% 99% / 0.95) 0%, hsl(210 40% 98% / 0.85) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(210 40% 98%) 100%);
+    --gradient-button: linear-gradient(135deg, hsl(199 84% 60%) 0%, hsl(200 76% 49%) 55%, hsl(205 90% 38%) 100%);
+    --gradient-arcade: linear-gradient(180deg, hsl(199 90% 92%) 0%, hsl(210 60% 99%) 100%);
+    --gradient-sunset: linear-gradient(135deg, hsl(195 90% 70%) 0%, hsl(199 84% 55%) 35%, hsl(200 76% 49%) 70%, hsl(210 80% 40%) 100%);
 
-    --glass-bg: hsla(36 40% 98% / 0.85);
-    --glass-border: hsla(24 20% 70% / 0.4);
+    --glass-bg: hsla(210 40% 98% / 0.85);
+    --glass-border: hsla(200 30% 70% / 0.4);
 
-    /* Sombras suaves coloridas */
-    --shadow-elegant: 0 20px 50px -20px hsl(18 92% 45% / 0.35);
-    --shadow-glass: 0 8px 24px -8px hsl(24 25% 12% / 0.18);
-    --shadow-pixel: 0 4px 14px -4px hsl(24 25% 12% / 0.2);
-    --shadow-neon: 0 16px 40px -12px hsl(18 92% 55% / 0.5);
+    /* Sombras azuladas suaves */
+    --shadow-elegant: 0 20px 50px -20px hsl(200 76% 40% / 0.35);
+    --shadow-glass: 0 8px 24px -8px hsl(215 45% 15% / 0.18);
+    --shadow-pixel: 0 4px 14px -4px hsl(215 45% 15% / 0.2);
+    --shadow-neon: 0 16px 40px -12px hsl(199 84% 55% / 0.5);
 
     --radius: 0.75rem;
 
