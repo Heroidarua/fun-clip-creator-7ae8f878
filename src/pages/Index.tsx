@@ -1,18 +1,21 @@
+import { lazy, Suspense } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
-import UtilityToolsSection from "@/components/UtilityToolsSection";
-import ComicsSection from "@/components/ComicsSection";
-import SocialProof from "@/components/SocialProof";
-import GamesCarousel from "@/components/GamesCarousel";
-import RandomGamePicker from "@/components/RandomGamePicker";
 import AdvantagesSection from "@/components/AdvantagesSection";
-import HowToUse from "@/components/HowToUse";
-import AboutSection from "@/components/AboutSection";
-import TechnicalInfoSection from "@/components/TechnicalInfoSection";
-import FAQ from "@/components/FAQ";
+import UtilityToolsSection from "@/components/UtilityToolsSection";
 import Footer from "@/components/Footer";
-import ClipyAssistant from "@/components/ClipyAssistant";
+
+// Below-the-fold sections — split into chunks loaded after the hero paints.
+const ComicsSection         = lazy(() => import("@/components/ComicsSection"));
+const SocialProof           = lazy(() => import("@/components/SocialProof"));
+const GamesCarousel         = lazy(() => import("@/components/GamesCarousel"));
+const RandomGamePicker      = lazy(() => import("@/components/RandomGamePicker"));
+const HowToUse              = lazy(() => import("@/components/HowToUse"));
+const AboutSection          = lazy(() => import("@/components/AboutSection"));
+const TechnicalInfoSection  = lazy(() => import("@/components/TechnicalInfoSection"));
+const FAQ                   = lazy(() => import("@/components/FAQ"));
+const ClipyAssistant        = lazy(() => import("@/components/ClipyAssistant"));
 
 const SectionDivider = () => (
   <div aria-hidden className="relative h-px w-full max-w-5xl mx-auto my-6 sm:my-10 px-4 sm:px-6">
@@ -37,28 +40,32 @@ const Index = () => {
         <SectionDivider />
         <UtilityToolsSection />
 
-        {/* 4. Entretenimento — mantém o usuário navegando */}
-        <SectionDivider />
-        <RandomGamePicker />
-        <GamesCarousel />
-        <ComicsSection />
+        <Suspense fallback={null}>
+          {/* 4. Entretenimento — mantém o usuário navegando */}
+          <SectionDivider />
+          <RandomGamePicker />
+          <GamesCarousel />
+          <ComicsSection />
 
-        {/* 5. Prova social — reforça a decisão */}
-        <SectionDivider />
-        <SocialProof />
+          {/* 5. Prova social — reforça a decisão */}
+          <SectionDivider />
+          <SocialProof />
 
-        {/* 6. Como usar e sobre — educa */}
-        <SectionDivider />
-        <HowToUse />
-        <AboutSection />
+          {/* 6. Como usar e sobre — educa */}
+          <SectionDivider />
+          <HowToUse />
+          <AboutSection />
 
-        {/* 7. Suporte / informações finais */}
-        <SectionDivider />
-        <FAQ />
-        <TechnicalInfoSection />
+          {/* 7. Suporte / informações finais */}
+          <SectionDivider />
+          <FAQ />
+          <TechnicalInfoSection />
+        </Suspense>
       </main>
       <Footer />
-      <ClipyAssistant />
+      <Suspense fallback={null}>
+        <ClipyAssistant />
+      </Suspense>
     </div>
   );
 };
