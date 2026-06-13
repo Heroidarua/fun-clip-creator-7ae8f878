@@ -81,61 +81,65 @@ input::placeholder, textarea::placeholder {
 
 @layer base {
   :root {
-    /* Brutalist Pop — pure white paper, ink black, hot orange + electric yellow. */
-    --background: 0 0% 100%;
-    --foreground: 0 0% 4%;
+    /* ===== Unified Sunset palette =====
+       Paleta única em degradê: creme → âmbar → laranja → magenta suave.
+       Tons quentes e harmônicos, agradáveis de ler em sequência. */
+    --background: 36 40% 98%;            /* creme quase branco */
+    --foreground: 24 25% 12%;            /* marrom-tinta */
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 4%;
+    --card-foreground: 24 25% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 4%;
+    --popover-foreground: 24 25% 12%;
 
-    /* Hot orange */
-    --primary: 14 100% 57%;
-    --primary-foreground: 0 0% 4%;
+    /* Laranja quente (primário) */
+    --primary: 18 92% 55%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 4%;
-    --secondary-foreground: 0 0% 100%;
+    /* Marrom-tinta (secundário) */
+    --secondary: 24 25% 14%;
+    --secondary-foreground: 36 40% 98%;
 
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 32%;
+    --muted: 32 30% 94%;
+    --muted-foreground: 24 12% 38%;
 
-    /* Electric yellow */
-    --accent: 53 100% 55%;
-    --accent-foreground: 0 0% 4%;
+    /* Âmbar dourado (accent) */
+    --accent: 38 95% 58%;
+    --accent-foreground: 24 25% 12%;
 
-    /* Tonal accents */
-    --retro-cyan: 14 100% 57%;
-    --retro-yellow: 53 100% 55%;
-    --retro-magenta: 14 100% 57%;
-    --retro-orange: 14 100% 57%;
-    --retro-blue: 0 0% 4%;
+    /* Tonal accents — degradê unificado */
+    --retro-cyan: 12 90% 60%;            /* coral */
+    --retro-yellow: 38 95% 58%;          /* âmbar */
+    --retro-magenta: 340 75% 58%;        /* rosa quente */
+    --retro-orange: 18 92% 55%;          /* laranja */
+    --retro-blue: 24 25% 14%;            /* tinta */
 
-    --destructive: 0 85% 50%;
+    --destructive: 0 78% 52%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 4%;
+    --border: 28 25% 86%;
     --input: 0 0% 100%;
-    --ring: 14 100% 57%;
+    --ring: 18 92% 55%;
 
-    /* Flat brutalist surfaces — no decorative gradients */
-    --gradient-hero: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(53 100% 55% / 0.18) 100%);
-    --gradient-header: linear-gradient(180deg, hsl(0 0% 100% / 0.96) 0%, hsl(0 0% 100% / 0.88) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(0 0% 100%) 100%);
-    --gradient-button: linear-gradient(180deg, hsl(14 100% 57%) 0%, hsl(14 100% 50%) 100%);
-    --gradient-arcade: linear-gradient(180deg, hsl(53 100% 55% / 0.25) 0%, hsl(0 0% 100%) 100%);
+    /* Gradientes harmônicos — fluem na mesma família quente */
+    --gradient-hero: linear-gradient(180deg, hsl(36 60% 97%) 0%, hsl(38 95% 88%) 45%, hsl(18 92% 82%) 100%);
+    --gradient-header: linear-gradient(180deg, hsl(36 60% 98% / 0.95) 0%, hsl(36 40% 98% / 0.85) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(36 40% 98%) 100%);
+    --gradient-button: linear-gradient(135deg, hsl(38 95% 58%) 0%, hsl(18 92% 55%) 55%, hsl(340 75% 58%) 100%);
+    --gradient-arcade: linear-gradient(180deg, hsl(38 95% 85%) 0%, hsl(36 60% 97%) 100%);
+    --gradient-sunset: linear-gradient(135deg, hsl(48 100% 70%) 0%, hsl(28 95% 62%) 35%, hsl(8 85% 58%) 70%, hsl(340 75% 55%) 100%);
 
-    --glass-bg: hsla(0 0% 100% / 0.9);
-    --glass-border: hsla(0 0% 4% / 1);
+    --glass-bg: hsla(36 40% 98% / 0.85);
+    --glass-border: hsla(24 20% 70% / 0.4);
 
-    /* Hard offset brutalist shadows */
-    --shadow-elegant: 6px 6px 0 0 hsl(0 0% 4%);
-    --shadow-glass: 4px 4px 0 0 hsl(0 0% 4%);
-    --shadow-pixel: 4px 4px 0 0 hsl(0 0% 4%);
-    --shadow-neon: 6px 6px 0 0 hsl(14 100% 57%);
+    /* Sombras suaves coloridas */
+    --shadow-elegant: 0 20px 50px -20px hsl(18 92% 45% / 0.35);
+    --shadow-glass: 0 8px 24px -8px hsl(24 25% 12% / 0.18);
+    --shadow-pixel: 0 4px 14px -4px hsl(24 25% 12% / 0.2);
+    --shadow-neon: 0 16px 40px -12px hsl(18 92% 55% / 0.5);
 
-    --radius: 0rem;
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -156,63 +160,7 @@ input::placeholder, textarea::placeholder {
 
   /* Light Theme — Paper & Ink */
   .light {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 4%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 4%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 4%;
-
-    --primary: 14 100% 57%;
-    --primary-foreground: 0 0% 4%;
-
-    --secondary: 0 0% 4%;
-    --secondary-foreground: 0 0% 100%;
-
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 32%;
-
-    --accent: 53 100% 55%;
-    --accent-foreground: 0 0% 4%;
-
-    /* Soft tonal helpers */
-    --retro-cyan: 14 100% 57%;
-    --retro-yellow: 53 100% 55%;
-    --retro-magenta: 14 100% 57%;
-    --retro-orange: 14 100% 57%;
-    --retro-blue: 0 0% 4%;
-
-    --destructive: 0 85% 50%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 0 0% 4%;
-    --input: 0 0% 100%;
-    --ring: 14 100% 57%;
-
-    --gradient-hero: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(53 100% 55% / 0.18) 100%);
-    --gradient-header: linear-gradient(180deg, hsl(0 0% 100% / 0.96) 0%, hsl(0 0% 100% / 0.88) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(0 0% 100%) 100%);
-    --gradient-button: linear-gradient(180deg, hsl(14 100% 57%) 0%, hsl(14 100% 50%) 100%);
-    --gradient-arcade: linear-gradient(180deg, hsl(53 100% 55% / 0.25) 0%, hsl(0 0% 100%) 100%);
-
-    --glass-bg: hsla(0 0% 100% / 0.9);
-    --glass-border: hsla(0 0% 4% / 1);
-
-    --shadow-elegant: 6px 6px 0 0 hsl(0 0% 4%);
-    --shadow-glass: 4px 4px 0 0 hsl(0 0% 4%);
-    --shadow-pixel: 4px 4px 0 0 hsl(0 0% 4%);
-    --shadow-neon: 6px 6px 0 0 hsl(14 100% 57%);
-
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 0 0% 12%;
-    --sidebar-primary: 0 0% 9%;
-    --sidebar-primary-foreground: 41 22% 96%;
-    --sidebar-accent: 41 18% 92%;
-    --sidebar-accent-foreground: 0 0% 12%;
-    --sidebar-border: 38 14% 84%;
-    --sidebar-ring: 0 0% 9%;
+    /* mesma paleta unificada do :root */
   }
 
   /* ===== Unified palette =====
@@ -220,49 +168,7 @@ input::placeholder, textarea::placeholder {
      site stays visually consistent regardless of which theme the
      user toggled. Edit the `:root` / `.light` block above to retune. */
   .dark, .sepia, .ocean, .forest {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 4%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 4%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 4%;
-    --primary: 14 100% 57%;
-    --primary-foreground: 0 0% 4%;
-    --secondary: 0 0% 4%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 32%;
-    --accent: 53 100% 55%;
-    --accent-foreground: 0 0% 4%;
-    --retro-cyan: 14 100% 57%;
-    --retro-yellow: 53 100% 55%;
-    --retro-magenta: 14 100% 57%;
-    --retro-orange: 14 100% 57%;
-    --retro-blue: 0 0% 4%;
-    --destructive: 0 85% 50%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 4%;
-    --input: 0 0% 100%;
-    --ring: 14 100% 57%;
-    --gradient-hero: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(53 100% 55% / 0.18) 100%);
-    --gradient-header: linear-gradient(180deg, hsl(0 0% 100% / 0.96) 0%, hsl(0 0% 100% / 0.88) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(0 0% 100%) 100%);
-    --gradient-button: linear-gradient(180deg, hsl(14 100% 57%) 0%, hsl(14 100% 50%) 100%);
-    --gradient-arcade: linear-gradient(180deg, hsl(53 100% 55% / 0.25) 0%, hsl(0 0% 100%) 100%);
-    --glass-bg: hsla(0 0% 100% / 0.9);
-    --glass-border: hsla(0 0% 4% / 1);
-    --shadow-elegant: 6px 6px 0 0 hsl(0 0% 4%);
-    --shadow-glass: 4px 4px 0 0 hsl(0 0% 4%);
-    --shadow-pixel: 4px 4px 0 0 hsl(0 0% 4%);
-    --shadow-neon: 6px 6px 0 0 hsl(14 100% 57%);
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 0 0% 4%;
-    --sidebar-primary: 14 100% 57%;
-    --sidebar-primary-foreground: 0 0% 4%;
-    --sidebar-accent: 53 100% 55%;
-    --sidebar-accent-foreground: 0 0% 4%;
-    --sidebar-border: 0 0% 4%;
-    --sidebar-ring: 14 100% 57%;
+    /* todas variantes herdam a paleta unificada do :root */
   }
 }
 
