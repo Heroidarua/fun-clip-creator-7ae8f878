@@ -330,6 +330,10 @@ export const Route = createFileRoute("/api/download-kwai")({
           }
 
           const result = await downloadKwaiMedia(url, requestUrl.pathname);
+          try {
+            const { reportDownloaderResult } = await import("@/lib/downloader-status.server");
+            reportDownloaderResult("kwai", !!result.success);
+          } catch {}
           return new Response(JSON.stringify(result), {
             status: 200,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
