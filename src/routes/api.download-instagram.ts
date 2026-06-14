@@ -57,8 +57,8 @@ async function resolveUsernameFromEmbed(shortcode: string): Promise<string | nul
   }
 }
 
-async function fetchViaRapidApi(url: string): Promise<MediaResponse | null> {
-  const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY || "";
+async function fetchViaRapidApi(url: string, rapidApiKey: string): Promise<MediaResponse | null> {
+  const RAPIDAPI_KEY = rapidApiKey.trim();
   if (!RAPIDAPI_KEY) {
     console.warn("⚠️ RAPIDAPI_KEY não configurada.");
     return null;
@@ -211,10 +211,10 @@ function addProxyUrls(data: MediaData, routePath: string): MediaData {
   return data;
 }
 
-async function downloadInstagramMedia(url: string, functionUrl: string): Promise<MediaResponse> {
+async function downloadInstagramMedia(url: string, functionUrl: string, rapidApiKey: string): Promise<MediaResponse> {
   console.log("🚀 Iniciando processo para:", url);
 
-  const rapidResult = await fetchViaRapidApi(url);
+  const rapidResult = await fetchViaRapidApi(url, rapidApiKey);
   if (rapidResult?.success && rapidResult.data) {
     rapidResult.data = addProxyUrls(rapidResult.data, functionUrl);
     return rapidResult;
@@ -305,7 +305,8 @@ export const Route = createFileRoute("/api/download-instagram")({
           });
         }
 
-        const result = await downloadInstagramMedia(url, requestUrl.pathname);
+        const rapidApiKey = process.env.RAPIDAPI_KEY || "";
+        const result = await downloadInstagramMedia(url, requestUrl.pathname, rapidApiKey);
         return new Response(JSON.stringify(result), {
           status: result.success ? 200 : 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -328,7 +329,8 @@ export const Route = createFileRoute("/api/download-instagram")({
           });
         }
 
-        const result = await downloadInstagramMedia(url, new URL(request.url).pathname);
+        const rapidApiKey = process.env.RAPIDAPI_KEY || "";
+        const result = await downloadInstagramMedia(url, new URL(request.url).pathname, rapidApiKey);
         try {
           const { reportDownloaderResult } = await import("@/lib/downloader-status.server");
           reportDownloaderResult("instagram", !!result.success);
