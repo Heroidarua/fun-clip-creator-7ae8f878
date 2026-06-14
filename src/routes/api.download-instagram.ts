@@ -329,6 +329,10 @@ export const Route = createFileRoute("/api/download-instagram")({
         }
 
         const result = await downloadInstagramMedia(url, new URL(request.url).pathname);
+        try {
+          const { reportDownloaderResult } = await import("@/lib/downloader-status.server");
+          reportDownloaderResult("instagram", !!result.success);
+        } catch {}
         return new Response(JSON.stringify(result), {
           status: result.success ? 200 : 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
