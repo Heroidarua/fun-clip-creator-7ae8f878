@@ -62,6 +62,8 @@ export const Route = createFileRoute("/api/download-youtube")({
                 // Get video info from oEmbed
                 const info = await getYouTubeInfo(videoId);
 
+                const { reportDownloaderResult } = await import("@/lib/downloader-status.server");
+                reportDownloaderResult("youtube", true);
                 return Response.json(
                   {
                     success: true,
@@ -102,6 +104,8 @@ export const Route = createFileRoute("/api/download-youtube")({
                   (f: any) => f.qualityLabel?.includes("720")
                 ) || fbData.formats[0];
 
+              const { reportDownloaderResult } = await import("@/lib/downloader-status.server");
+              reportDownloaderResult("youtube", true);
               return Response.json(
                 {
                   success: true,
@@ -120,6 +124,10 @@ export const Route = createFileRoute("/api/download-youtube")({
           }
 
           // Return info-only response
+          {
+            const { reportDownloaderResult } = await import("@/lib/downloader-status.server");
+            reportDownloaderResult("youtube", false);
+          }
           return Response.json(
             {
               success: true,
