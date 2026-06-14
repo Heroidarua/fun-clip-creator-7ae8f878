@@ -34,7 +34,7 @@ const USER_AGENTS = [
 
 const pick = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
-function getKwHeaders(): Record<string, string> {
+function getKwHeaders(sessionCookie = ""): Record<string, string> {
   const headers: Record<string, string> = {
     "User-Agent": pick(USER_AGENTS),
     Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
@@ -44,7 +44,7 @@ function getKwHeaders(): Record<string, string> {
     Referer: "https://www.kwai.com/",
     Origin: "https://www.kwai.com",
   };
-  const cookie = process.env.KWAI_SESSION_COOKIE;
+  const cookie = sessionCookie;
   if (cookie && cookie.trim()) {
     headers.Cookie = cookie.trim();
   }
@@ -68,13 +68,13 @@ function extractMeta(html: string, property: string): string {
   return (m?.[1] || m?.[2] || "").replace(/&amp;/g, "&");
 }
 
-async function expandShortUrl(url: string): Promise<string> {
+async function expandShortUrl(url: string, sessionCookie = ""): Promise<string> {
   if (!/kw\.ai|s\.kwai\.com/.test(url)) return url;
   try {
     const r = await fetch(url, {
       method: "GET",
       redirect: "follow",
-      headers: getKwHeaders(),
+        headers: getKwHeaders(sessionCookie),
     });
     return r.url || url;
   } catch {
@@ -83,10 +83,10 @@ async function expandShortUrl(url: string): Promise<string> {
 }
 
 // Method 1: scrape the page HTML (og:video + JSON blobs)
-async function tryPageScrape(url: string): Promise<MediaResponse | null> {
+async function tryPageScrape(url: string, sessionCookie = ""): Promise<MediaResponse | null> {
   try {
     console.log("🔍 [Kwai page] Buscando HTML...");
-    const r = await fetch(url, { headers: getKwHeaders(), redirect: "follow" });
+    const r = await fetch(url, { headers: getKwHeaders(sessionCookie), redirect: "follow" });
     if (!r.ok) {
       console.warn("⚠️ [Kwai page] status", r.status);
       return null;
@@ -130,14 +130,14 @@ async function tryPageScrape(url: string): Promise<MediaResponse | null> {
 }
 
 // Method 2: mobile m.kwai.com — often serves SSR HTML with metadata
-async function tryMobile(url: string): Promise<MediaResponse | null> {
+async function tryMobile(url: string, sessionCookie = ""): Promise<MediaResponse | null> {
   try {
     const mobileUrl = url
       .replace("://www.kwai.com", "://m.kwai.com")
       .replace("://kwai.com", "://m.kwai.com");
     if (mobileUrl === url) return null;
     console.log("🔍 [Kwai mobile] tentando", mobileUrl);
-    return await tryPageScrape(mobileUrl);
+    return await tryPageScrape(mobileUrl, sessionCookie);
   } catch (e) {
     console.error("❌ [Kwai mobile] erro:", e);
     return null;
@@ -145,7 +145,7 @@ async function tryMobile(url: string): Promise<MediaResponse | null> {
 }
 
 // Method 3: GraphQL visionVideoDetail (best-effort, requires photoId)
-async function tryGraphQL(url: string): Promise<MediaResponse | null> {
+async function tryGraphQL(url: string, sessionCookie = ""): Promise<MediaResponse | null> {
   try {
     const m = url.match(/(?:\/video\/|\/p\/|photoId=)([A-Za-z0-9_-]+)/);
     const photoId = m?.[1];
@@ -155,7 +155,7 @@ async function tryGraphQL(url: string): Promise<MediaResponse | null> {
     const r = await fetch("https://www.kwai.com/graphql", {
       method: "POST",
       headers: {
-        ...getKwHeaders(),
+          ...getKwHeaders(sessionCookie),
         "Content-Type": "application/json",
         Accept: "*/*",
       },
@@ -205,14 +205,14 @@ function addProxyUrls(data: MediaData, routePath: string): MediaData {
   return data;
 }
 
-async function downloadKwaiMedia(rawUrl: string, functionUrl: string): Promise<MediaResponse> {
+async function downloadKwaiMedia(rawUrl: string, functionUrl: string, sessionCookie = ""): Promise<MediaResponse> {
   console.log("🚀 [Kwai] download para:", rawUrl);
-  const url = await expandShortUrl(rawUrl);
+  const url = await expandShortUrl(rawUrl, sessionCookie);
 
   const methods = [
-    () => tryPageScrape(url),
-    () => tryMobile(url),
-    () => tryGraphQL(url),
+    () => tryPageScrape(url, sessionCookie),
+    () => tryMobile(url, sessionCookie),
+    () => tryGraphQL(url, sessionCookie),
   ];
 
   for (let i = 0; i < methods.length; i++) {
@@ -329,7 +329,8 @@ export const Route = createFileRoute("/api/download-kwai")({
             );
           }
 
-          const result = await downloadKwaiMedia(url, requestUrl.pathname);
+          const sessionCookie = process.env.KWAI_SESSION_COOKIE || "";
+          const result = await downloadKwaiMedia(url, requestUrl.pathname, sessionCookie);
           try {
             const { reportDownloaderResult } = await import("@/lib/downloader-status.server");
             reportDownloaderResult("kwai", !!result.success);
@@ -366,7 +367,8 @@ export const Route = createFileRoute("/api/download-kwai")({
             );
           }
 
-          const result = await downloadKwaiMedia(url, requestUrl.pathname);
+          const sessionCookie = process.env.KWAI_SESSION_COOKIE || "";
+          const result = await downloadKwaiMedia(url, requestUrl.pathname, sessionCookie);
           return new Response(JSON.stringify(result), {
             status: 200,
             headers: { ...corsHeaders, "Content-Type": "application/json" },

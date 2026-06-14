@@ -2,8 +2,6 @@
 // based on real success/failure of each download attempt. Fire-and-forget
 // from route handlers; failures are swallowed so they never break a response.
 
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
-
 type Platform = "tiktok" | "instagram" | "kwai" | "youtube";
 
 // In-memory throttle: avoid hammering the DB on every request.
@@ -21,6 +19,7 @@ export function reportDownloaderResult(platform: Platform, success: boolean): vo
   // fire-and-forget
   (async () => {
     try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       await supabaseAdmin
         .from("downloader_status" as never)
         .update({ status: desired, last_checked: new Date().toISOString() } as never)

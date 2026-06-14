@@ -21,11 +21,14 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 const themes: Theme[] = ["dark", "light", "sepia", "ocean", "forest"];
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    if (typeof window === "undefined") return "light";
-    const stored = localStorage.getItem("sos01-theme");
-    return (stored as Theme) || "light";
-  });
+  const [theme, setThemeState] = useState<Theme>("light");
+
+  useEffect(() => {
+    const stored = localStorage.getItem("sos01-theme") as Theme | null;
+    if (stored && themes.includes(stored)) {
+      setThemeState(stored);
+    }
+  }, []);
 
   useEffect(() => {
     localStorage.setItem("sos01-theme", theme);

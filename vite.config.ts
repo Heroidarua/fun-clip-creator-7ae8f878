@@ -216,7 +216,7 @@ export default defineConfig(({ command, mode }) => {
       tanstackStart({
         prerender: {
           enabled: true,
-          crawlLinks: true,
+          crawlLinks: false,
           retryCount: 2,
         },
         pages: [
