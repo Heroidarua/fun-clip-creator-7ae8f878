@@ -277,6 +277,8 @@ export const Route = createFileRoute("/api/download-tiktok")({
             const result = await method();
             if (result && result.video_urls.hd) {
               const data = addProxyUrls(result, requestUrl.pathname);
+              const { reportDownloaderResult } = await import("@/lib/downloader-status.server");
+              reportDownloaderResult("tiktok", true);
               return Response.json(
                 { success: true, data },
                 { headers: corsHeaders() }
@@ -284,6 +286,10 @@ export const Route = createFileRoute("/api/download-tiktok")({
             }
           }
 
+          {
+            const { reportDownloaderResult } = await import("@/lib/downloader-status.server");
+            reportDownloaderResult("tiktok", false);
+          }
           return Response.json(
             {
               success: false,
