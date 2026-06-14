@@ -8,7 +8,11 @@ const EXCLUDE_PREFIXES = ["/api/", "/api."];
 
 function discoverRoutes(): string[] {
   // Vite faz a varredura no build — qualquer arquivo novo em src/routes/ entra automaticamente
-  const files = import.meta.glob("/src/routes/**/*.{ts,tsx}", { eager: false });
+  const files = import.meta.glob("/src/routes/**/*.{ts,tsx}", {
+    eager: false,
+    // Exclude API routes and special files — sitemap only needs page routes
+    import: "default",
+  });
 
   const paths = new Set<string>(["/"]);
 
