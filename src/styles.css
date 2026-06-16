@@ -1406,6 +1406,94 @@ body {
   .tools-fx-particle { animation: none; }
 }
 
+/* ============================================================
+   VINTAGE GAMER RETRÔ — utilitários cartucho 3D + neon
+   ============================================================ */
+
+@utility cartridge {
+  background: hsl(var(--card));
+  border: 2px solid hsl(var(--secondary));
+  border-radius: 14px;
+  box-shadow: var(--shadow-cartridge);
+  transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-cartridge-lg), var(--shadow-neon);
+    border-color: hsl(var(--primary));
+  }
+}
+
+@utility btn-3d {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: 'Silkscreen', 'VT323', monospace;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.75rem 1.25rem;
+  min-height: 44px;
+  border-radius: 12px;
+  border: 2px solid hsl(var(--secondary));
+  background: var(--gradient-button);
+  color: hsl(var(--primary-foreground));
+  box-shadow: 0 4px 0 hsl(var(--secondary)), 0 6px 14px hsl(var(--primary) / 0.35);
+  transition: transform .08s ease, box-shadow .12s ease, filter .15s ease;
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(1.08);
+    box-shadow: 0 4px 0 hsl(var(--secondary)),
+                0 0 14px hsl(var(--primary) / 0.7),
+                0 6px 18px hsl(var(--primary) / 0.45);
+  }
+
+  &:active {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 hsl(var(--secondary)), 0 0 8px hsl(var(--primary) / 0.5);
+  }
+}
+
+@utility shadow-cartridge { box-shadow: var(--shadow-cartridge); }
+@utility shadow-cartridge-lg { box-shadow: var(--shadow-cartridge-lg); }
+@utility shadow-neon-blue { box-shadow: var(--shadow-neon); }
+@utility shadow-neon-purple { box-shadow: var(--shadow-neon-purple); }
+
+/* LED "ativo" pixel */
+@utility led-active {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: hsl(var(--retro-green));
+  box-shadow: 0 0 6px hsl(var(--retro-green)),
+              inset 0 0 2px hsl(0 0% 100% / 0.6);
+  animation: led-blink 1.6s ease-in-out infinite;
+}
+
+@keyframes led-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+/* Neon pulse para badges/CTAs */
+@keyframes neon-pulse {
+  0%, 100% { box-shadow: 0 0 8px hsl(var(--primary) / 0.5), 0 0 16px hsl(var(--primary) / 0.25); }
+  50%      { box-shadow: 0 0 16px hsl(var(--primary) / 0.85), 0 0 32px hsl(var(--primary) / 0.45); }
+}
+@utility animate-neon-pulse { animation: neon-pulse 2s ease-in-out infinite; }
+
+/* Tipografia auxiliar */
+@utility font-silkscreen { font-family: 'Silkscreen', 'VT323', monospace; letter-spacing: 0.05em; }
+@utility font-vt { font-family: 'VT323', monospace; }
+
+/* Safe area + espaço para barra inferior mobile */
+@media (max-width: 767px) {
+  body { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
