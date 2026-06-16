@@ -3,6 +3,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/hooks/useTheme";
+import MobileBottomNav from "@/components/MobileBottomNav";
+import BackToTop from "@/components/BackToTop";
 
 import appCss from "../styles.css?url";
 
@@ -57,7 +59,7 @@ export const Route = createRootRoute({
       { rel: "dns-prefetch", href: "https://sofewnyrrevybnbhhsuh.supabase.co" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Archivo+Black&family=Hind:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Orbitron:wght@500;600;700;800&family=Press+Start+2P&family=VT323&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Archivo+Black&family=Hind:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&family=Orbitron:wght@500;600;700;800&family=Press+Start+2P&family=Silkscreen:wght@400;700&family=VT323&display=swap",
       },
     ],
     scripts: [
@@ -109,6 +111,8 @@ function RootComponent() {
         <Toaster />
         <Sonner />
         <Outlet />
+        <MobileBottomNav />
+        <BackToTop />
       </TooltipProvider>
     </ThemeProvider>
   );
