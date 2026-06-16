@@ -194,9 +194,10 @@ body {
   }
 
   h1, h2, h3, h4, h5, h6, .font-display, .font-serif {
-    font-family: 'Archivo Black', 'Hind', sans-serif;
-    letter-spacing: -0.02em;
+    font-family: 'VT323', 'Press Start 2P', monospace;
+    letter-spacing: 0.02em;
     text-transform: uppercase;
+    font-weight: 400;
   }
 
   /* ===== Global layout rhythm =====
@@ -236,9 +237,9 @@ body {
   }
 
   /* Tipografia editorial — títulos com peso, leitura mais arejada */
-  h1 { line-height: 1.08; }
-  h2 { line-height: 1.15; }
-  h3 { line-height: 1.25; }
+  h1 { line-height: 1.0;  font-size: clamp(2rem, 6vw, 4rem); }
+  h2 { line-height: 1.05; font-size: clamp(1.5rem, 4vw, 2.5rem); }
+  h3 { line-height: 1.1;  font-size: clamp(1.25rem, 3vw, 1.75rem); }
   p  { line-height: 1.65; }
 
   /* Cards e bordas mais discretos */
@@ -273,7 +274,7 @@ body {
     transform: translateY(-2px);
   }
 
-  /* Ambient backdrop — subtle grid + spotlight for premium SaaS feel */
+  /* Ambient backdrop — grid retrô arcade */
   body::before {
     content: "";
     position: fixed;
@@ -281,11 +282,11 @@ body {
     pointer-events: none;
     z-index: 0;
     background-image:
-      radial-gradient(60% 50% at 50% 0%, hsl(var(--primary) / 0.10) 0%, transparent 60%),
-      radial-gradient(40% 40% at 90% 10%, hsl(var(--accent) / 0.08) 0%, transparent 60%),
-      linear-gradient(to right, hsl(var(--border) / 0.35) 1px, transparent 1px),
-      linear-gradient(to bottom, hsl(var(--border) / 0.35) 1px, transparent 1px);
-    background-size: auto, auto, 56px 56px, 56px 56px;
+      radial-gradient(60% 50% at 50% 0%, hsl(var(--primary) / 0.12) 0%, transparent 60%),
+      radial-gradient(40% 40% at 90% 10%, hsl(var(--accent) / 0.10) 0%, transparent 60%),
+      linear-gradient(to right, hsl(var(--primary) / 0.10) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--primary) / 0.10) 1px, transparent 1px);
+    background-size: auto, auto, 32px 32px, 32px 32px;
     mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 80%);
     -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 80%);
   }
