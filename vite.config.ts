@@ -8,6 +8,14 @@ import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { componentTagger } from "lovable-tagger";
 
+const stdin = process.stdin as NodeJS.ReadStream & {
+  off?: NodeJS.ReadStream["removeListener"];
+};
+
+if (typeof stdin.off !== "function") {
+  stdin.off = stdin.removeListener.bind(stdin);
+}
+
 function devClientErrorLogger() {
   const VIRTUAL_ID = "virtual:dev-client-error-handler";
   const RESOLVED_ID = "\0" + VIRTUAL_ID;
