@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build",
-    "build:dev": "vite build --mode development",
+    "build": "CI=true vite build",
+    "build:dev": "CI=true vite build --mode development",
     "preview": "vite preview",
-    "deploy": "vite build && wrangler deploy",
+    "deploy": "CI=true vite build && wrangler deploy",
     "cf-typegen": "wrangler types",
     "lint": "eslint ."
   },
