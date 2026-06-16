@@ -71,78 +71,82 @@ input::placeholder, textarea::placeholder {
   --font-pixel: 'Press Start 2P', monospace;
   --font-vt323: 'VT323', monospace;
   --font-orbitron: 'Orbitron', sans-serif;
-  --font-inter: 'Hind', system-ui, sans-serif;
-  --font-sora: 'Hind', system-ui, sans-serif;
-  --font-manrope: 'Hind', system-ui, sans-serif;
+  --font-inter: 'Manrope', 'Hind', system-ui, sans-serif;
+  --font-sora: 'Manrope', 'Hind', system-ui, sans-serif;
+  --font-manrope: 'Manrope', 'Hind', system-ui, sans-serif;
+  --font-silkscreen: 'Silkscreen', 'VT323', monospace;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
-  --font-display: 'Archivo Black', 'Hind', sans-serif;
-  --font-serif: 'Archivo Black', 'Hind', sans-serif;
+  --font-display: 'VT323', 'Press Start 2P', monospace;
+  --font-serif: 'VT323', 'Press Start 2P', monospace;
 }
 
 @layer base {
   :root {
-    /* ===== Unified Telegram palette =====
-       Azul Telegram (#2AABEE / #229ED9 / #0088CC) com superfícies claras
-       e tinta navy. Degradê elegante em toda a aplicação. */
-    --background: 210 40% 98%;           /* branco-azulado */
-    --foreground: 215 45% 12%;           /* navy escuro */
+    /* ===== Vintage Gamer Retrô (80s/90s) =====
+       Azul Neon #28B6FF · Azul Escuro #0E4A7B · Branco Gelo #F5F9FF
+       Roxo Neon #B66DFF · Amarelo Pixel #FFD93D */
+    --background: 216 100% 98%;          /* #F5F9FF Branco Gelo */
+    --foreground: 207 80% 18%;           /* navy retrô legível */
 
     --card: 0 0% 100%;
-    --card-foreground: 215 45% 12%;
+    --card-foreground: 207 80% 18%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 45% 12%;
+    --popover-foreground: 207 80% 18%;
 
-    /* Azul Telegram principal #229ED9 */
-    --primary: 200 76% 49%;
+    /* Azul Neon #28B6FF */
+    --primary: 200 100% 58%;
     --primary-foreground: 0 0% 100%;
 
-    /* Navy profundo (secundário) */
-    --secondary: 215 45% 16%;
-    --secondary-foreground: 210 40% 98%;
+    /* Azul Escuro #0E4A7B */
+    --secondary: 207 80% 27%;
+    --secondary-foreground: 216 100% 98%;
 
-    --muted: 210 30% 95%;
-    --muted-foreground: 215 18% 42%;
+    --muted: 212 33% 93%;                /* #E8EEF5 Cinza Claro */
+    --muted-foreground: 207 35% 35%;
 
-    /* Azul claro #2AABEE (accent) */
-    --accent: 199 84% 55%;
+    /* Roxo Neon #B66DFF */
+    --accent: 269 100% 71%;
     --accent-foreground: 0 0% 100%;
 
-    /* Tonal accents — toda a família azul Telegram */
-    --retro-cyan: 199 84% 55%;           /* azul claro */
-    --retro-yellow: 195 80% 60%;         /* ciano suave */
-    --retro-magenta: 210 75% 55%;        /* azul royal */
-    --retro-orange: 200 76% 49%;         /* azul Telegram */
-    --retro-blue: 205 90% 38%;           /* azul profundo */
-    --retro-green: 195 70% 50%;          /* ciano Telegram (harmonizado) */
-    --retro-pink: 210 75% 55%;           /* azul royal (harmonizado) */
-    --retro-purple: 215 60% 45%;         /* azul navy (harmonizado) */
+    /* Família retrô (mantém aliases para componentes existentes) */
+    --retro-cyan: 200 100% 58%;          /* azul neon */
+    --retro-yellow: 48 100% 62%;         /* amarelo pixel */
+    --retro-magenta: 269 100% 71%;       /* roxo neon */
+    --retro-orange: 48 100% 62%;
+    --retro-blue: 207 80% 27%;
+    --retro-green: 140 75% 50%;          /* LED verde "ativo" */
+    --retro-pink: 269 100% 71%;
+    --retro-purple: 269 100% 71%;
 
     --destructive: 0 72% 52%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 25% 88%;
+    --border: 207 50% 80%;
     --input: 0 0% 100%;
-    --ring: 200 76% 49%;
+    --ring: 200 100% 58%;
 
-    /* Gradientes Telegram — fluem entre cyan claro e azul profundo */
-    --gradient-hero: linear-gradient(180deg, hsl(210 60% 99%) 0%, hsl(199 90% 92%) 50%, hsl(200 76% 85%) 100%);
-    --gradient-header: linear-gradient(180deg, hsl(210 60% 99% / 0.95) 0%, hsl(210 40% 98% / 0.85) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(210 40% 98%) 100%);
-    --gradient-button: linear-gradient(135deg, hsl(199 84% 60%) 0%, hsl(200 76% 49%) 55%, hsl(205 90% 38%) 100%);
-    --gradient-arcade: linear-gradient(180deg, hsl(199 90% 92%) 0%, hsl(210 60% 99%) 100%);
-    --gradient-sunset: linear-gradient(135deg, hsl(195 90% 70%) 0%, hsl(199 84% 55%) 35%, hsl(200 76% 49%) 70%, hsl(210 80% 40%) 100%);
+    /* Gradientes arcade */
+    --gradient-hero: linear-gradient(180deg, hsl(216 100% 99%) 0%, hsl(200 100% 92%) 60%, hsl(269 100% 92%) 100%);
+    --gradient-header: linear-gradient(180deg, hsl(216 100% 99% / 0.95) 0%, hsl(216 100% 98% / 0.85) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(216 100% 98%) 100%);
+    --gradient-button: linear-gradient(180deg, hsl(200 100% 64%) 0%, hsl(200 100% 58%) 50%, hsl(207 80% 40%) 100%);
+    --gradient-arcade: linear-gradient(180deg, hsl(200 100% 92%) 0%, hsl(216 100% 99%) 100%);
+    --gradient-sunset: linear-gradient(135deg, hsl(48 100% 62%) 0%, hsl(269 100% 71%) 50%, hsl(200 100% 58%) 100%);
 
-    --glass-bg: hsla(210 40% 98% / 0.85);
-    --glass-border: hsla(200 30% 70% / 0.4);
+    --glass-bg: hsla(216 100% 98% / 0.85);
+    --glass-border: hsla(200 100% 58% / 0.4);
 
-    /* Sombras azuladas suaves */
-    --shadow-elegant: 0 20px 50px -20px hsl(200 76% 40% / 0.35);
-    --shadow-glass: 0 8px 24px -8px hsl(215 45% 15% / 0.18);
-    --shadow-pixel: 0 4px 14px -4px hsl(215 45% 15% / 0.2);
-    --shadow-neon: 0 16px 40px -12px hsl(199 84% 55% / 0.5);
+    /* Sombras "cartucho 3D" — offset sólido + glow neon */
+    --shadow-cartridge: 0 4px 0 hsl(207 80% 27%), 0 8px 20px hsl(207 80% 20% / 0.25);
+    --shadow-cartridge-lg: 0 6px 0 hsl(207 80% 27%), 0 14px 30px hsl(207 80% 20% / 0.3);
+    --shadow-elegant: 0 4px 0 hsl(207 80% 27%), 0 12px 30px -8px hsl(200 100% 50% / 0.35);
+    --shadow-glass: 0 8px 24px -8px hsl(207 80% 15% / 0.2);
+    --shadow-pixel: 0 4px 0 hsl(207 80% 27%);
+    --shadow-neon: 0 0 12px hsl(200 100% 58% / 0.6), 0 0 28px hsl(200 100% 58% / 0.35);
+    --shadow-neon-purple: 0 0 12px hsl(269 100% 71% / 0.6), 0 0 28px hsl(269 100% 71% / 0.35);
 
-    --radius: 0.75rem;
+    --radius: 0.625rem;
 
     --sidebar-background: 0 0% 98%;
 
