@@ -1,7 +1,7 @@
 import { useState, lazy, Suspense, ComponentType } from "react";
-import { Music, Eraser, Image, QrCode, Link2, Wrench, Stamp, KeyRound, UserSquare2, ChevronDown, Sparkles, FileImage, PenTool, Languages, FileText, Loader2 } from "lucide-react";
+import { Music, Eraser, Image, QrCode, Link2, Wrench, Stamp, KeyRound, UserSquare2, Sparkles, FileImage, PenTool, Languages, FileText, Loader2, Brain, Image as ImageIcon, Settings2, Play } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 // Lazy-load each tool — they only download/parse when the user opens its accordion.
 // Cuts initial bundle by ~5k lines of tool code on the home page.
@@ -36,15 +36,13 @@ interface Tool {
   Component: ComponentType<{ onSuccess?: () => void }>;
   trackKey: string;
   featured?: boolean;
+  category: "ia" | "midia" | "imagem" | "utilidades";
 }
 
 const UtilityToolsSection = () => {
   const [openTool, setOpenTool] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<"all" | Tool["category"]>("all");
   const trackToolUsage = (_: string) => {};
-
-  const handleToggle = (toolId: string) => {
-    setOpenTool(openTool === toolId ? null : toolId);
-  };
 
   const tools: Tool[] = [
     {
@@ -58,6 +56,7 @@ const UtilityToolsSection = () => {
       Component: PixelAvatarGenerator,
       trackKey: "avatar",
       featured: true,
+      category: "ia",
     },
     {
       id: "mp4-to-mp3",
@@ -69,6 +68,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(var(--primary) / 0.2)",
       Component: MP4ToMP3Converter,
       trackKey: "audio",
+      category: "midia",
     },
     {
       id: "url-shortener",
@@ -80,6 +80,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(200, 100%, 50%, 0.2)",
       Component: UrlShortener,
       trackKey: "url",
+      category: "utilidades",
     },
     {
       id: "background-remover",
@@ -91,6 +92,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(280, 100%, 60%, 0.2)",
       Component: BackgroundRemover,
       trackKey: "background",
+      category: "imagem",
     },
     {
       id: "thumbnail-generator",
@@ -102,6 +104,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(45, 100%, 50%, 0.2)",
       Component: ThumbnailGenerator,
       trackKey: "thumbnail",
+      category: "imagem",
     },
     {
       id: "qr-code-generator",
@@ -113,6 +116,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(160, 100%, 40%, 0.2)",
       Component: QRCodeGenerator,
       trackKey: "qr",
+      category: "utilidades",
     },
     {
       id: "watermark-tool",
@@ -124,6 +128,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(320, 100%, 50%, 0.2)",
       Component: WatermarkTool,
       trackKey: "watermark",
+      category: "imagem",
     },
     {
       id: "password-generator",
@@ -135,6 +140,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(140, 100%, 40%, 0.2)",
       Component: PasswordGenerator,
       trackKey: "password",
+      category: "utilidades",
     },
     {
       id: "image-to-pdf",
@@ -146,6 +152,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(10, 100%, 55%, 0.2)",
       Component: ImageToPdfConverter,
       trackKey: "other",
+      category: "imagem",
     },
     {
       id: "ai-text-generator",
@@ -158,6 +165,7 @@ const UtilityToolsSection = () => {
       Component: AITextGenerator,
       trackKey: "other",
       featured: true,
+      category: "ia",
     },
     {
       id: "auto-translator",
@@ -170,6 +178,7 @@ const UtilityToolsSection = () => {
       Component: AutoTranslator,
       trackKey: "other",
       featured: true,
+      category: "ia",
     },
     {
       id: "text-summarizer",
@@ -182,8 +191,23 @@ const UtilityToolsSection = () => {
       Component: TextSummarizer,
       trackKey: "other",
       featured: true,
+      category: "ia",
     },
   ];
+
+  const categories: { id: "all" | Tool["category"]; label: string; icon: React.ReactNode }[] = [
+    { id: "all", label: "TODAS", icon: <Wrench className="w-4 h-4" /> },
+    { id: "ia", label: "IA", icon: <Brain className="w-4 h-4" /> },
+    { id: "midia", label: "MÍDIA", icon: <Music className="w-4 h-4" /> },
+    { id: "imagem", label: "IMAGEM", icon: <ImageIcon className="w-4 h-4" /> },
+    { id: "utilidades", label: "UTILIDADES", icon: <Settings2 className="w-4 h-4" /> },
+  ];
+
+  const filteredTools = activeCategory === "all"
+    ? tools
+    : tools.filter((t) => t.category === activeCategory);
+
+  const activeTool = tools.find((t) => t.id === openTool) ?? null;
 
   return (
     <section className="py-12 sm:py-16 px-4 relative overflow-hidden tools-fx-section">
@@ -200,7 +224,7 @@ const UtilityToolsSection = () => {
           ))}
         </div>
       </div>
-      <div className="container mx-auto max-w-4xl relative">
+      <div className="container mx-auto max-w-6xl relative">
         {/* Section Header */}
         <ScrollReveal>
           <div className="text-center mb-10">
@@ -218,89 +242,121 @@ const UtilityToolsSection = () => {
           </div>
         </ScrollReveal>
 
-        {/* Tools Accordion */}
-        <div className="space-y-4">
-          {tools.map((tool, index) => (
-            <ScrollReveal key={tool.id} delay={0.1 + index * 0.05}>
-              <Collapsible
-                open={openTool === tool.id}
-                onOpenChange={() => handleToggle(tool.id)}
-              >
-                <div
-                  className={`pixel-card rounded-sm overflow-hidden transition-all duration-300 ${
-                    tool.featured ? "ring-2 ring-offset-2 ring-offset-background" : ""
+        {/* Category filter tabs (cartridge style) */}
+        <ScrollReveal>
+          <div className="mb-8 flex flex-wrap justify-center gap-2 sm:gap-3">
+            {categories.map((cat) => {
+              const active = activeCategory === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveCategory(cat.id)}
+                  className={`font-pixel inline-flex items-center gap-2 rounded-sm border-2 px-3 py-2 text-[10px] sm:text-xs transition-all ${
+                    active
+                      ? "bg-primary text-primary-foreground border-foreground/30 shadow-cartridge translate-y-0"
+                      : "bg-card text-foreground/80 border-border hover:border-primary/60 hover:-translate-y-0.5"
                   }`}
-                  style={{ 
-                    borderColor: tool.borderColor,
-                    ...(tool.featured && { ringColor: tool.color })
+                >
+                  {cat.icon}
+                  {cat.label}
+                </button>
+              );
+            })}
+          </div>
+        </ScrollReveal>
+
+        {/* Tools grid — large pixel-art cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+          {filteredTools.map((tool, index) => (
+            <ScrollReveal key={tool.id} delay={0.05 + index * 0.04}>
+              <button
+                type="button"
+                onClick={() => setOpenTool(tool.id)}
+                className="group relative w-full text-left cartridge rounded-sm bg-card p-5 sm:p-6 transition-transform hover:-translate-y-1 active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-primary/60"
+                style={{ borderColor: tool.borderColor }}
+              >
+                {/* Pixel-art icon block */}
+                <div className="flex items-start justify-between gap-3 mb-4">
+                  <div
+                    className="relative w-16 h-16 sm:w-20 sm:h-20 grid place-items-center rounded-sm border-2"
+                    style={{
+                      backgroundColor: tool.bgColor,
+                      borderColor: tool.color,
+                      color: tool.color,
+                      boxShadow: `4px 4px 0 ${tool.color}`,
+                      imageRendering: "pixelated",
+                    }}
+                  >
+                    {/* scanline overlay for pixel feel */}
+                    <div
+                      aria-hidden
+                      className="absolute inset-0 pointer-events-none opacity-30"
+                      style={{
+                        backgroundImage:
+                          "repeating-linear-gradient(0deg, rgba(0,0,0,0.25) 0 2px, transparent 2px 4px)",
+                      }}
+                    />
+                    <div className="scale-[1.6] sm:scale-[1.9]">{tool.icon}</div>
+                  </div>
+                  {tool.featured && (
+                    <span className="font-pixel inline-flex items-center gap-1 rounded-sm border border-foreground/20 bg-gradient-to-r from-purple-500 to-pink-500 px-2 py-1 text-[9px] text-white shadow-cartridge">
+                      <Sparkles className="w-3 h-3" /> IA
+                    </span>
+                  )}
+                </div>
+
+                <h3 className="font-pixel text-xs sm:text-sm leading-snug mb-2" style={{ color: tool.color }}>
+                  {tool.title}
+                </h3>
+                <p className="text-xs sm:text-sm text-muted-foreground mb-4 min-h-[2.5rem]">
+                  {tool.subtitle}
+                </p>
+
+                <div
+                  className="font-pixel inline-flex items-center gap-2 rounded-sm border-2 px-3 py-2 text-[10px] transition-colors"
+                  style={{
+                    borderColor: tool.color,
+                    color: tool.color,
+                    backgroundColor: tool.bgColor,
                   }}
                 >
-                  {/* Tool Header - Always Visible */}
-                  <CollapsibleTrigger className="w-full">
-                    <div 
-                      className={`flex items-center justify-between p-4 sm:p-5 cursor-pointer hover:bg-card/50 transition-colors ${
-                        tool.featured ? "bg-gradient-to-r from-purple-500/10 to-pink-500/10" : ""
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div 
-                          className={`w-10 h-10 rounded-sm flex items-center justify-center border-2 ${
-                            tool.featured ? "animate-pulse" : ""
-                          }`}
-                          style={{ 
-                            backgroundColor: tool.bgColor,
-                            borderColor: tool.borderColor,
-                            color: tool.color
-                          }}
-                        >
-                          {tool.icon}
-                        </div>
-                        <div className="text-left">
-                          <div className="flex items-center gap-2">
-                            <h3 
-                              className="font-pixel text-xs sm:text-sm"
-                              style={{ color: tool.color }}
-                            >
-                              {tool.title}
-                            </h3>
-                            {tool.featured && (
-                              <span 
-                                className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-purple-500 to-pink-500 text-white animate-pulse"
-                              >
-                                <Sparkles className="w-3 h-3" />
-                                IA
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-xs text-muted-foreground">
-                            {tool.subtitle}
-                          </p>
-                        </div>
-                      </div>
-                      <ChevronDown 
-                        className={`w-5 h-5 transition-transform duration-300 ${
-                          openTool === tool.id ? "rotate-180" : ""
-                        }`}
-                        style={{ color: tool.color }}
-                      />
-                    </div>
-                  </CollapsibleTrigger>
-
-                  {/* Tool Content - Collapsible */}
-                  <CollapsibleContent>
-                    <div className="p-4 sm:p-5 pt-0 border-t border-border/30">
-                      {openTool === tool.id ? (
-                        <Suspense fallback={<ToolFallback />}>
-                          <tool.Component onSuccess={() => trackToolUsage(tool.trackKey)} />
-                        </Suspense>
-                      ) : null}
-                    </div>
-                  </CollapsibleContent>
+                  <Play className="w-3 h-3" />
+                  ABRIR
                 </div>
-              </Collapsible>
+              </button>
             </ScrollReveal>
           ))}
         </div>
+
+        {/* Modal — opened tool */}
+        <Dialog open={!!openTool} onOpenChange={(o) => !o && setOpenTool(null)}>
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto cartridge rounded-sm bg-card">
+            {activeTool && (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="font-pixel text-sm sm:text-base flex items-center gap-3" style={{ color: activeTool.color }}>
+                    <span
+                      className="w-10 h-10 grid place-items-center rounded-sm border-2"
+                      style={{
+                        backgroundColor: activeTool.bgColor,
+                        borderColor: activeTool.color,
+                        color: activeTool.color,
+                      }}
+                    >
+                      {activeTool.icon}
+                    </span>
+                    {activeTool.title}
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="pt-4">
+                  <Suspense fallback={<ToolFallback />}>
+                    <activeTool.Component onSuccess={() => trackToolUsage(activeTool.trackKey)} />
+                  </Suspense>
+                </div>
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </section>
   );
