@@ -643,7 +643,7 @@ const HeroSection = () => {
 
   const handleYoutubeSearch = async () => {
     setClickedYoutubeButton("search");
-    setTimeout(() => setClickedYoutubeButton(null), 300);
+    setTimeout(() => setClickedYoutubeButton(null), 200);
     
     if (!youtubeUrl.trim()) {
       toast({
@@ -718,7 +718,7 @@ const HeroSection = () => {
 
   const handleYoutubeDownload = async () => {
     setClickedYoutubeButton("download");
-    setTimeout(() => setClickedYoutubeButton(null), 300);
+    setTimeout(() => setClickedYoutubeButton(null), 200);
     
     if (!youtubeData) return;
 
