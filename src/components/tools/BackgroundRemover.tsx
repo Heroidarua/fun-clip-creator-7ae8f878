@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import ImageCompareSlider from "./ImageCompareSlider";
 import BackgroundSelector from "./BackgroundSelector";
 import BackgroundAdjustmentsPanel, { BackgroundAdjustments, DEFAULT_ADJUSTMENTS } from "./BackgroundAdjustments";
-import { supabase } from "@/integrations/supabase/client";
+import { removeBackground as imglyRemoveBackground } from "@imgly/background-removal";
 
 interface BackgroundRemoverProps {
   onSuccess?: () => void;
@@ -20,8 +20,6 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
   const [progress, setProgress] = useState(0);
   const [resultUrl, setResultUrl] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
-  const [credits, setCredits] = useState<number | null>(null);
-  const [loadingCredits, setLoadingCredits] = useState(true);
   const [showCompare, setShowCompare] = useState(false);
   const [selectedBackground, setSelectedBackground] = useState<string | null>(null);
   const [compositeImage, setCompositeImage] = useState<string | null>(null);
@@ -30,10 +28,6 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { toast } = useToast();
-
-  useEffect(() => {
-    fetchCredits();
-  }, []);
 
   // Create composite image when background, result, or adjustments change
   useEffect(() => {
@@ -155,23 +149,6 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
     foregroundImg.src = resultUrl;
   }, [resultUrl, selectedBackground, bgAdjustments]);
 
-  const fetchCredits = async () => {
-    setLoadingCredits(true);
-    try {
-      const { data } = await supabase.functions.invoke('remove-background', {
-        body: { action: 'check-credits' },
-      });
-
-      if (data?.success) {
-        setCredits(data.credits);
-      }
-    } catch (err) {
-      console.error('Error fetching credits:', err);
-    } finally {
-      setLoadingCredits(false);
-    }
-  };
-
   const handleFileSelect = (selectedFile: File) => {
     if (!selectedFile.type.includes("image/")) {
       toast({
@@ -222,34 +199,28 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
     }, 500);
 
     try {
-      const base64 = preview.split(',')[1];
-
-      const { data, error } = await supabase.functions.invoke('remove-background', {
-        body: { image: base64, filename: file.name },
+      // Processamento 100% no navegador via @imgly/background-removal (modelo ONNX)
+      const blob = await imglyRemoveBackground(file, {
+        progress: (_key, current, total) => {
+          const pct = Math.min(95, Math.round((current / total) * 90));
+          setProgress(pct);
+        },
       });
       clearInterval(progressInterval);
 
-      if (error || !data?.success) {
-        throw new Error(data?.error || error?.message || "Erro ao processar imagem");
-      }
-
-      if (data.result) {
-        setResultUrl(data.result);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setResultUrl(reader.result as string);
         setProgress(100);
         setShowCompare(true);
         setShowBackgroundSelector(true);
-
-        if (data.creditsRemaining !== undefined) {
-          setCredits(data.creditsRemaining);
-        }
-
         onSuccess?.();
-
         toast({
           title: "✅ Fundo removido!",
-          description: "Processado com IA",
+          description: "Processado localmente no seu navegador",
         });
-      }
+      };
+      reader.readAsDataURL(blob);
     } catch (error: any) {
       console.error("Background removal error:", error);
       toast({
