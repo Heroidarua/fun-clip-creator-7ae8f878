@@ -10,22 +10,22 @@ interface AutoTranslatorProps {
 }
 
 const LANGUAGES = [
-  { value: "Inglês", label: "🇺🇸 Inglês" },
-  { value: "Espanhol", label: "🇪🇸 Espanhol" },
-  { value: "Francês", label: "🇫🇷 Francês" },
-  { value: "Alemão", label: "🇩🇪 Alemão" },
-  { value: "Italiano", label: "🇮🇹 Italiano" },
-  { value: "Japonês", label: "🇯🇵 Japonês" },
-  { value: "Coreano", label: "🇰🇷 Coreano" },
-  { value: "Chinês", label: "🇨🇳 Chinês" },
-  { value: "Português", label: "🇧🇷 Português" },
-  { value: "Russo", label: "🇷🇺 Russo" },
-  { value: "Árabe", label: "🇸🇦 Árabe" },
+  { value: "en", label: "🇺🇸 Inglês" },
+  { value: "es", label: "🇪🇸 Espanhol" },
+  { value: "fr", label: "🇫🇷 Francês" },
+  { value: "de", label: "🇩🇪 Alemão" },
+  { value: "it", label: "🇮🇹 Italiano" },
+  { value: "ja", label: "🇯🇵 Japonês" },
+  { value: "ko", label: "🇰🇷 Coreano" },
+  { value: "zh-CN", label: "🇨🇳 Chinês" },
+  { value: "pt", label: "🇧🇷 Português" },
+  { value: "ru", label: "🇷🇺 Russo" },
+  { value: "ar", label: "🇸🇦 Árabe" },
 ];
 
 const AutoTranslator = ({ onSuccess }: AutoTranslatorProps) => {
   const [text, setText] = useState("");
-  const [targetLanguage, setTargetLanguage] = useState("Inglês");
+  const [targetLanguage, setTargetLanguage] = useState("en");
   const [result, setResult] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -39,51 +39,14 @@ const AutoTranslator = ({ onSuccess }: AutoTranslatorProps) => {
     setResult("");
 
     try {
-      const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-text`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-        },
-        body: JSON.stringify({ action: "translate", text: text.trim(), targetLanguage }),
-      });
-
-      if (!resp.ok) {
-        const err = await resp.json();
-        throw new Error(err.error || "Erro ao traduzir");
-      }
-
-      const reader = resp.body?.getReader();
-      if (!reader) throw new Error("Stream não disponível");
-
-      const decoder = new TextDecoder();
-      let buffer = "";
-      let fullText = "";
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-
-        let idx: number;
-        while ((idx = buffer.indexOf("\n")) !== -1) {
-          let line = buffer.slice(0, idx);
-          buffer = buffer.slice(idx + 1);
-          if (line.endsWith("\r")) line = line.slice(0, -1);
-          if (!line.startsWith("data: ")) continue;
-          const json = line.slice(6).trim();
-          if (json === "[DONE]") break;
-          try {
-            const parsed = JSON.parse(json);
-            const content = parsed.choices?.[0]?.delta?.content;
-            if (content) {
-              fullText += content;
-              setResult(fullText);
-            }
-          } catch {}
-        }
-      }
-
+      // Free Google Translate public endpoint - no API key needed
+      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${encodeURIComponent(targetLanguage)}&dt=t&q=${encodeURIComponent(text.trim())}`;
+      const resp = await fetch(url);
+      if (!resp.ok) throw new Error("Falha ao conectar com o serviço de tradução");
+      const data = await resp.json();
+      const translated = (data?.[0] || []).map((seg: any[]) => seg?.[0] || "").join("");
+      if (!translated) throw new Error("Tradução vazia");
+      setResult(translated);
       onSuccess?.();
       toast.success("Texto traduzido!");
     } catch (e: any) {
