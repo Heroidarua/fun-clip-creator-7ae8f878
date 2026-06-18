@@ -302,7 +302,7 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
           </p>
           <div className="mt-3 flex items-center justify-center gap-2 text-xs text-[hsl(280,100%,60%)]">
             <Sparkles className="w-3 h-3" />
-            <span>Powered by AI + remove.bg</span>
+            <span>Grátis · roda no seu navegador</span>
           </div>
           <input
             ref={fileInputRef}
