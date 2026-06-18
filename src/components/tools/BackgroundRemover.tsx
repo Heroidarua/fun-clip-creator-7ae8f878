@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Upload, Download, Loader2, X, CheckCircle, Image as ImageIcon, Eraser, Sparkles, Coins, SlidersHorizontal } from "lucide-react";
+import { Upload, Download, Loader2, X, CheckCircle, Image as ImageIcon, Eraser, Sparkles, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import ImageCompareSlider from "./ImageCompareSlider";
 import BackgroundSelector from "./BackgroundSelector";
 import BackgroundAdjustmentsPanel, { BackgroundAdjustments, DEFAULT_ADJUSTMENTS } from "./BackgroundAdjustments";
-import { supabase } from "@/integrations/supabase/client";
+import { removeBackground as imglyRemoveBackground } from "@imgly/background-removal";
 
 interface BackgroundRemoverProps {
   onSuccess?: () => void;
@@ -20,8 +20,6 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
   const [progress, setProgress] = useState(0);
   const [resultUrl, setResultUrl] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
-  const [credits, setCredits] = useState<number | null>(null);
-  const [loadingCredits, setLoadingCredits] = useState(true);
   const [showCompare, setShowCompare] = useState(false);
   const [selectedBackground, setSelectedBackground] = useState<string | null>(null);
   const [compositeImage, setCompositeImage] = useState<string | null>(null);
@@ -30,10 +28,6 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { toast } = useToast();
-
-  useEffect(() => {
-    fetchCredits();
-  }, []);
 
   // Create composite image when background, result, or adjustments change
   useEffect(() => {
@@ -155,23 +149,6 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
     foregroundImg.src = resultUrl;
   }, [resultUrl, selectedBackground, bgAdjustments]);
 
-  const fetchCredits = async () => {
-    setLoadingCredits(true);
-    try {
-      const { data } = await supabase.functions.invoke('remove-background', {
-        body: { action: 'check-credits' },
-      });
-
-      if (data?.success) {
-        setCredits(data.credits);
-      }
-    } catch (err) {
-      console.error('Error fetching credits:', err);
-    } finally {
-      setLoadingCredits(false);
-    }
-  };
-
   const handleFileSelect = (selectedFile: File) => {
     if (!selectedFile.type.includes("image/")) {
       toast({
@@ -222,34 +199,28 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
     }, 500);
 
     try {
-      const base64 = preview.split(',')[1];
-
-      const { data, error } = await supabase.functions.invoke('remove-background', {
-        body: { image: base64, filename: file.name },
+      // Processamento 100% no navegador via @imgly/background-removal (modelo ONNX)
+      const blob = await imglyRemoveBackground(file, {
+        progress: (_key, current, total) => {
+          const pct = Math.min(95, Math.round((current / total) * 90));
+          setProgress(pct);
+        },
       });
       clearInterval(progressInterval);
 
-      if (error || !data?.success) {
-        throw new Error(data?.error || error?.message || "Erro ao processar imagem");
-      }
-
-      if (data.result) {
-        setResultUrl(data.result);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setResultUrl(reader.result as string);
         setProgress(100);
         setShowCompare(true);
         setShowBackgroundSelector(true);
-
-        if (data.creditsRemaining !== undefined) {
-          setCredits(data.creditsRemaining);
-        }
-
         onSuccess?.();
-
         toast({
           title: "✅ Fundo removido!",
-          description: "Processado com IA",
+          description: "Processado localmente no seu navegador",
         });
-      }
+      };
+      reader.readAsDataURL(blob);
     } catch (error: any) {
       console.error("Background removal error:", error);
       toast({
@@ -302,25 +273,11 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
       {/* Hidden canvas for compositing */}
       <canvas ref={canvasRef} className="hidden" />
 
-      {/* Credits indicator */}
+      {/* Info indicator */}
       <div className="flex items-center justify-between p-3 bg-muted/30 rounded-sm border border-border/50">
         <div className="flex items-center gap-2">
-          <Coins className="w-4 h-4 text-yellow-500" />
-          <span className="text-xs text-muted-foreground">Créditos remove.bg:</span>
-        </div>
-        <div className="flex items-center gap-2">
-          {loadingCredits ? (
-            <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />
-          ) : credits !== null ? (
-            <span className={`font-pixel text-xs ${credits > 10 ? 'text-green-500' : credits > 0 ? 'text-yellow-500' : 'text-red-500'}`}>
-              {credits} restantes
-            </span>
-          ) : (
-            <span className="text-xs text-muted-foreground">--</span>
-          )}
-          {credits !== null && credits <= 0 && (
-            <span className="text-[10px] text-muted-foreground">(IA ativa)</span>
-          )}
+          <Sparkles className="w-4 h-4 text-green-500" />
+          <span className="text-xs text-muted-foreground">100% gratuito · processado no seu navegador</span>
         </div>
       </div>
 
@@ -345,7 +302,7 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
           </p>
           <div className="mt-3 flex items-center justify-center gap-2 text-xs text-[hsl(280,100%,60%)]">
             <Sparkles className="w-3 h-3" />
-            <span>Powered by AI + remove.bg</span>
+            <span>Grátis · roda no seu navegador</span>
           </div>
           <input
             ref={fileInputRef}
@@ -435,10 +392,7 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
             <div className="space-y-2">
               <Progress value={progress} className="h-2" />
               <p className="text-xs text-center text-muted-foreground">
-                {credits !== null && credits > 0 
-                  ? "Processando com remove.bg..." 
-                  : "Processando com IA..."
-                } {progress}%
+                Removendo fundo localmente... {progress}%
               </p>
             </div>
           )}
