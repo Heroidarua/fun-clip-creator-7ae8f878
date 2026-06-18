@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Upload, Download, Loader2, X, CheckCircle, Image as ImageIcon, Eraser, Sparkles, Coins, SlidersHorizontal } from "lucide-react";
+import { Upload, Download, Loader2, X, CheckCircle, Image as ImageIcon, Eraser, Sparkles, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
@@ -273,25 +273,11 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
       {/* Hidden canvas for compositing */}
       <canvas ref={canvasRef} className="hidden" />
 
-      {/* Credits indicator */}
+      {/* Info indicator */}
       <div className="flex items-center justify-between p-3 bg-muted/30 rounded-sm border border-border/50">
         <div className="flex items-center gap-2">
-          <Coins className="w-4 h-4 text-yellow-500" />
-          <span className="text-xs text-muted-foreground">Créditos remove.bg:</span>
-        </div>
-        <div className="flex items-center gap-2">
-          {loadingCredits ? (
-            <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />
-          ) : credits !== null ? (
-            <span className={`font-pixel text-xs ${credits > 10 ? 'text-green-500' : credits > 0 ? 'text-yellow-500' : 'text-red-500'}`}>
-              {credits} restantes
-            </span>
-          ) : (
-            <span className="text-xs text-muted-foreground">--</span>
-          )}
-          {credits !== null && credits <= 0 && (
-            <span className="text-[10px] text-muted-foreground">(IA ativa)</span>
-          )}
+          <Sparkles className="w-4 h-4 text-green-500" />
+          <span className="text-xs text-muted-foreground">100% gratuito · processado no seu navegador</span>
         </div>
       </div>
 
@@ -406,10 +392,7 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
             <div className="space-y-2">
               <Progress value={progress} className="h-2" />
               <p className="text-xs text-center text-muted-foreground">
-                {credits !== null && credits > 0 
-                  ? "Processando com remove.bg..." 
-                  : "Processando com IA..."
-                } {progress}%
+                Removendo fundo localmente... {progress}%
               </p>
             </div>
           )}
