@@ -263,7 +263,7 @@ const ComicsSection = () => {
               className="inline-flex items-center gap-3 px-8 py-4 bg-primary text-primary-foreground font-pixel text-[10px] sm:text-xs border-4 border-primary hover:bg-primary/80 transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(255,0,0,0.5)]"
             >
               <Book className="w-5 h-5" />
-              ACESSAR BIBLIOTECA GRÁTIS
+              EM MANUTENÇÃO 🚫
               <ExternalLink className="w-4 h-4" />
             </button>
           </div>
