@@ -782,14 +782,39 @@ const HeroSection = () => {
           description: `O ${youtubeDownloadType === "video" ? "vídeo" : "áudio"} foi baixado com sucesso.`,
         });
       } else {
-        // Direct URL - try to open it
-        window.open(videoUrl, '_blank');
-        
-        // YouTube tracking removed - service in maintenance
-        toast({
-          title: "✅ Download iniciado!",
-          description: "O download foi iniciado em uma nova aba.",
-        });
+        // Direct URL - fetch as blob and force download
+        try {
+          const fileResp = await fetch(videoUrl);
+          if (!fileResp.ok) throw new Error('Falha ao baixar arquivo');
+          const blob = await fileResp.blob();
+          if (blob.size === 0) throw new Error('Arquivo vazio recebido');
+          const blobUrl = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = blobUrl;
+          link.download = `${filename}.${extension}`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+          toast({
+            title: "✅ Download concluído!",
+            description: `O ${youtubeDownloadType === "video" ? "vídeo" : "áudio"} foi baixado com sucesso.`,
+          });
+        } catch (e) {
+          // Fallback: open in new tab (user can save manually)
+          const link = document.createElement('a');
+          link.href = videoUrl;
+          link.download = `${filename}.${extension}`;
+          link.target = '_blank';
+          link.rel = 'noopener noreferrer';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          toast({
+            title: "✅ Download iniciado!",
+            description: "Se o download não começar, clique com o botão direito no vídeo e selecione 'Salvar como'.",
+          });
+        }
       }
 
     } catch (error) {
