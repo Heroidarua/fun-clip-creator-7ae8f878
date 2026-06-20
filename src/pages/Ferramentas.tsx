@@ -12,6 +12,7 @@ import UrlShortener from "@/components/tools/UrlShortener";
 import AITextGenerator from "@/components/tools/AITextGenerator";
 import AutoTranslator from "@/components/tools/AutoTranslator";
 import TextSummarizer from "@/components/tools/TextSummarizer";
+import FeatureGate from "@/components/FeatureGate";
 import { Wrench, Music, Eraser, Image, QrCode, Stamp, KeyRound, UserSquare2, Link2, Sparkles, PenTool, Languages, FileText } from "lucide-react";
 
 const Ferramentas = () => {
@@ -56,7 +57,7 @@ const Ferramentas = () => {
                   <p className="text-xs text-muted-foreground">Crie avatares retrô com inteligência artificial</p>
                 </div>
               </div>
-              <PixelAvatarGenerator />
+              <FeatureGate featureKey="pixel-avatar" label="Avatar Pixelado"><PixelAvatarGenerator /></FeatureGate>
             </div>
           </div>
         </ScrollReveal>
@@ -75,7 +76,7 @@ const Ferramentas = () => {
                   <p className="text-xs text-muted-foreground">Extraia áudio de vídeos</p>
                 </div>
               </div>
-              <MP4ToMP3Converter />
+              <FeatureGate featureKey="mp4-to-mp3" label="Conversor MP4→MP3"><MP4ToMP3Converter /></FeatureGate>
             </div>
           </ScrollReveal>
 
@@ -91,7 +92,7 @@ const Ferramentas = () => {
                   <p className="text-xs text-muted-foreground">Crie links curtos e fáceis</p>
                 </div>
               </div>
-              <UrlShortener />
+              <FeatureGate featureKey="url-shortener" label="Encurtador de URL"><UrlShortener /></FeatureGate>
             </div>
           </ScrollReveal>
 
@@ -108,7 +109,7 @@ const Ferramentas = () => {
                   <p className="text-xs text-muted-foreground">Remova fundos de imagens com IA</p>
                 </div>
               </div>
-              <BackgroundRemover />
+              <FeatureGate featureKey="background-remover" label="Removedor de Fundo"><BackgroundRemover /></FeatureGate>
             </div>
           </ScrollReveal>
 
@@ -124,7 +125,7 @@ const Ferramentas = () => {
                   <p className="text-xs text-muted-foreground">Crie miniaturas para vídeos</p>
                 </div>
               </div>
-              <ThumbnailGenerator />
+              <FeatureGate featureKey="thumbnail" label="Gerador de Thumbnails"><ThumbnailGenerator /></FeatureGate>
             </div>
           </ScrollReveal>
 
@@ -140,7 +141,7 @@ const Ferramentas = () => {
                   <p className="text-xs text-muted-foreground">Crie QR Codes personalizados</p>
                 </div>
               </div>
-              <QRCodeGenerator />
+              <FeatureGate featureKey="qr-code" label="Gerador de QR Code"><QRCodeGenerator /></FeatureGate>
             </div>
           </ScrollReveal>
 
@@ -156,7 +157,7 @@ const Ferramentas = () => {
                   <p className="text-xs text-muted-foreground">Adicione texto ou logo em imagens</p>
                 </div>
               </div>
-              <WatermarkTool />
+              <FeatureGate featureKey="watermark" label="Marca d'água"><WatermarkTool /></FeatureGate>
             </div>
           </ScrollReveal>
 
@@ -172,7 +173,7 @@ const Ferramentas = () => {
                   <p className="text-xs text-muted-foreground">Crie senhas fortes e seguras</p>
                 </div>
               </div>
-              <PasswordGenerator />
+              <FeatureGate featureKey="password" label="Gerador de Senhas"><PasswordGenerator /></FeatureGate>
             </div>
           </ScrollReveal>
 
@@ -194,7 +195,7 @@ const Ferramentas = () => {
                   <p className="text-xs text-muted-foreground">Crie textos com inteligência artificial</p>
                 </div>
               </div>
-              <AITextGenerator />
+              <FeatureGate featureKey="ai-text" label="Gerador de Texto IA"><AITextGenerator /></FeatureGate>
             </div>
           </ScrollReveal>
 
@@ -216,7 +217,7 @@ const Ferramentas = () => {
                   <p className="text-xs text-muted-foreground">Traduza textos para vários idiomas</p>
                 </div>
               </div>
-              <AutoTranslator />
+              <FeatureGate featureKey="translator" label="Tradutor Automático"><AutoTranslator /></FeatureGate>
             </div>
           </ScrollReveal>
 
@@ -238,7 +239,7 @@ const Ferramentas = () => {
                   <p className="text-xs text-muted-foreground">Resuma textos longos com IA</p>
                 </div>
               </div>
-              <TextSummarizer />
+              <FeatureGate featureKey="summarizer" label="Resumidor de Texto"><TextSummarizer /></FeatureGate>
             </div>
           </ScrollReveal>
         </div>

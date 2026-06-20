@@ -2,6 +2,7 @@ import { useState, lazy, Suspense, ComponentType } from "react";
 import { Music, Eraser, Image, QrCode, Link2, Wrench, Stamp, KeyRound, UserSquare2, Sparkles, FileImage, PenTool, Languages, FileText, Loader2, Brain, Image as ImageIcon, Settings2, Play } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import FeatureGate from "@/components/FeatureGate";
 
 // Lazy-load each tool — they only download/parse when the user opens its accordion.
 // Cuts initial bundle by ~5k lines of tool code on the home page.
@@ -35,6 +36,7 @@ interface Tool {
   bgColor: string;
   Component: ComponentType<{ onSuccess?: () => void }>;
   trackKey: string;
+  featureKey: string;
   featured?: boolean;
   category: "ia" | "midia" | "imagem" | "utilidades";
 }
@@ -55,6 +57,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(280, 100%, 60%, 0.2)",
       Component: PixelAvatarGenerator,
       trackKey: "avatar",
+      featureKey: "pixel-avatar",
       featured: true,
       category: "ia",
     },
@@ -68,6 +71,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(var(--primary) / 0.2)",
       Component: MP4ToMP3Converter,
       trackKey: "audio",
+      featureKey: "mp4-to-mp3",
       category: "midia",
     },
     {
@@ -80,6 +84,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(200, 100%, 50%, 0.2)",
       Component: UrlShortener,
       trackKey: "url",
+      featureKey: "url-shortener",
       category: "utilidades",
     },
     {
@@ -92,6 +97,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(280, 100%, 60%, 0.2)",
       Component: BackgroundRemover,
       trackKey: "background",
+      featureKey: "background-remover",
       category: "imagem",
     },
     {
@@ -104,6 +110,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(45, 100%, 50%, 0.2)",
       Component: ThumbnailGenerator,
       trackKey: "thumbnail",
+      featureKey: "thumbnail",
       category: "imagem",
     },
     {
@@ -116,6 +123,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(160, 100%, 40%, 0.2)",
       Component: QRCodeGenerator,
       trackKey: "qr",
+      featureKey: "qr-code",
       category: "utilidades",
     },
     {
@@ -128,6 +136,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(320, 100%, 50%, 0.2)",
       Component: WatermarkTool,
       trackKey: "watermark",
+      featureKey: "watermark",
       category: "imagem",
     },
     {
@@ -140,6 +149,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(140, 100%, 40%, 0.2)",
       Component: PasswordGenerator,
       trackKey: "password",
+      featureKey: "password",
       category: "utilidades",
     },
     {
@@ -152,6 +162,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(10, 100%, 55%, 0.2)",
       Component: ImageToPdfConverter,
       trackKey: "other",
+      featureKey: "image-to-pdf",
       category: "imagem",
     },
     {
@@ -164,6 +175,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(250, 100%, 65%, 0.2)",
       Component: AITextGenerator,
       trackKey: "other",
+      featureKey: "ai-text",
       featured: true,
       category: "ia",
     },
@@ -177,6 +189,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(190, 100%, 45%, 0.2)",
       Component: AutoTranslator,
       trackKey: "other",
+      featureKey: "translator",
       featured: true,
       category: "ia",
     },
@@ -190,6 +203,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(30, 100%, 50%, 0.2)",
       Component: TextSummarizer,
       trackKey: "other",
+      featureKey: "summarizer",
       featured: true,
       category: "ia",
     },
@@ -350,7 +364,12 @@ const UtilityToolsSection = () => {
                 </DialogHeader>
                 <div className="pt-4">
                   <Suspense fallback={<ToolFallback />}>
-                    <activeTool.Component onSuccess={() => trackToolUsage(activeTool.trackKey)} />
+                    <FeatureGate
+                      featureKey={activeTool.featureKey}
+                      label={activeTool.title}
+                    >
+                      <activeTool.Component onSuccess={() => trackToolUsage(activeTool.trackKey)} />
+                    </FeatureGate>
                   </Suspense>
                 </div>
               </>

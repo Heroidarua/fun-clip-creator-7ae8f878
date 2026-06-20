@@ -22,6 +22,8 @@ type DownloaderStatus = {
   platform: string;
   status: string;
   last_checked: string;
+  category?: string | null;
+  label?: string | null;
 };
 
 export default function Admin() {
@@ -49,13 +51,14 @@ export default function Admin() {
   const fetchDownloaderStatuses = async () => {
     const { data, error } = await fromTable("downloader_status")
       .select("*")
-      .order("platform");
+      .order("category", { ascending: true })
+      .order("platform", { ascending: true });
     
     if (!error && data) {
       setDownloaderStatuses(data as DownloaderStatus[]);
     } else if (error) {
       console.error("Error fetching downloader statuses:", error);
-      toast({ title: "Erro ao carregar status dos downloaders", variant: "destructive" });
+      toast({ title: "Erro ao carregar status das ferramentas", variant: "destructive" });
     }
   };
 
@@ -70,8 +73,9 @@ export default function Admin() {
     if (error) {
       toast({ title: "Erro ao atualizar status", variant: "destructive" });
     } else {
+      const name = downloader.label || downloader.platform;
       toast({ 
-        title: `${downloader.platform} ${newStatus === "active" ? "ativado" : "em manutenção"}!`,
+        title: `${name} ${newStatus === "active" ? "ativado" : "em manutenção"}!`,
         description: newStatus === "active" ? "O serviço está ativo." : "O serviço está em manutenção."
       });
       fetchDownloaderStatuses();
@@ -200,59 +204,94 @@ export default function Admin() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold flex items-center gap-2">
               <RefreshCw size={18} />
-              Status dos Downloaders
+              Status das Ferramentas
             </h2>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={fetchDownloaderStatuses}
+              className="gap-2"
+            >
+              <RefreshCw size={14} /> Atualizar
+            </Button>
           </div>
           <p className="text-sm text-muted-foreground mb-4">
-            Ative ou desative cada serviço de download.
+            Ative ou coloque em manutenção cada ferramenta do site. Quando em
+            manutenção, os usuários veem um aviso no lugar da ferramenta.
           </p>
           {downloaderStatuses.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <RefreshCw className="w-8 h-8 mx-auto mb-2 animate-spin" />
-              <p>Carregando status dos downloaders...</p>
+              <p>Carregando ferramentas...</p>
             </div>
           ) : (
-            <div className="grid gap-3">
-              {downloaderStatuses.map((downloader) => {
-                const isActive = downloader.status === "active";
-                return (
-                  <div
-                    key={downloader.id}
-                    className={`flex items-center justify-between p-4 rounded-lg border ${
-                      isActive
-                        ? "bg-green-500/5 border-green-500/30" 
-                        : "bg-yellow-500/5 border-yellow-500/30"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={`w-3 h-3 rounded-full ${
-                        isActive ? "bg-green-500" : "bg-yellow-500 animate-pulse"
-                      }`} />
-                      <div>
-                        <span className="font-medium">{downloader.platform}</span>
-                        <span className={`ml-2 text-xs px-2 py-0.5 rounded ${
-                          isActive
-                            ? "bg-green-500/20 text-green-400" 
-                            : "bg-yellow-500/20 text-yellow-400"
-                        }`}>
-                          {isActive ? "ATIVO" : "MANUTENÇÃO"}
-                        </span>
+            (() => {
+              const groups: Record<string, { title: string; items: DownloaderStatus[] }> = {
+                downloader: { title: "📥 Downloaders", items: [] },
+                ai:         { title: "🤖 Ferramentas com IA", items: [] },
+                utility:    { title: "🛠️ Utilitários", items: [] },
+                other:      { title: "Outros", items: [] },
+              };
+              downloaderStatuses.forEach((d) => {
+                const key = (d.category || "other") in groups ? (d.category as string) : "other";
+                groups[key].items.push(d);
+              });
+              return (
+                <div className="space-y-6">
+                  {Object.entries(groups).map(([key, group]) =>
+                    group.items.length === 0 ? null : (
+                      <div key={key}>
+                        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                          {group.title}
+                        </h3>
+                        <div className="grid gap-2">
+                          {group.items.map((downloader) => {
+                            const isActive = downloader.status === "active";
+                            const name = downloader.label || downloader.platform;
+                            return (
+                              <div
+                                key={downloader.id}
+                                className={`flex items-center justify-between p-3 rounded-lg border ${
+                                  isActive
+                                    ? "bg-green-500/5 border-green-500/30"
+                                    : "bg-yellow-500/5 border-yellow-500/30"
+                                }`}
+                              >
+                                <div className="flex items-center gap-3 min-w-0">
+                                  <div className={`w-3 h-3 shrink-0 rounded-full ${
+                                    isActive ? "bg-green-500" : "bg-yellow-500 animate-pulse"
+                                  }`} />
+                                  <div className="min-w-0">
+                                    <div className="font-medium truncate">{name}</div>
+                                    <div className="flex items-center gap-2 mt-0.5">
+                                      <span className="text-[10px] text-muted-foreground/70 font-mono">
+                                        {downloader.platform}
+                                      </span>
+                                      <span className={`text-[10px] px-1.5 py-0.5 rounded ${
+                                        isActive
+                                          ? "bg-green-500/20 text-green-400"
+                                          : "bg-yellow-500/20 text-yellow-400"
+                                      }`}>
+                                        {isActive ? "ATIVO" : "MANUTENÇÃO"}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                                <Switch
+                                  checked={isActive}
+                                  onCheckedChange={() => toggleDownloaderStatus(downloader)}
+                                  disabled={statusLoading === downloader.id}
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-muted-foreground mr-2">
-                        {isActive ? "Desativar" : "Ativar"}
-                      </span>
-                      <Switch
-                        checked={isActive}
-                        onCheckedChange={() => toggleDownloaderStatus(downloader)}
-                        disabled={statusLoading === downloader.id}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                    )
+                  )}
+                </div>
+              );
+            })()
           )}
         </div>
 
