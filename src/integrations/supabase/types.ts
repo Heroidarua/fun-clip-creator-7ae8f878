@@ -70,22 +70,28 @@ export type Database = {
       }
       downloader_status: {
         Row: {
+          category: string
           created_at: string
           id: string
+          label: string | null
           last_checked: string
           platform: string
           status: string
         }
         Insert: {
+          category?: string
           created_at?: string
           id?: string
+          label?: string | null
           last_checked?: string
           platform: string
           status?: string
         }
         Update: {
+          category?: string
           created_at?: string
           id?: string
+          label?: string | null
           last_checked?: string
           platform?: string
           status?: string
