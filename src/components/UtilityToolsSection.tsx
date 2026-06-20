@@ -364,7 +364,12 @@ const UtilityToolsSection = () => {
                 </DialogHeader>
                 <div className="pt-4">
                   <Suspense fallback={<ToolFallback />}>
-                    <activeTool.Component onSuccess={() => trackToolUsage(activeTool.trackKey)} />
+                    <FeatureGate
+                      featureKey={activeTool.featureKey}
+                      label={activeTool.title}
+                    >
+                      <activeTool.Component onSuccess={() => trackToolUsage(activeTool.trackKey)} />
+                    </FeatureGate>
                   </Suspense>
                 </div>
               </>
