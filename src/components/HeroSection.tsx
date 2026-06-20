@@ -749,7 +749,10 @@ const HeroSection = () => {
       const freshResp = await fetch(apiUrl('/api/download-youtube'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: youtubeUrl.trim(), download: true }),
+        body: JSON.stringify({
+          url: parseYouTubeUrl(youtubeUrl)?.canonicalUrl || youtubeUrl.trim(),
+          download: true,
+        }),
       });
       const freshData = await freshResp.json();
 
