@@ -2,6 +2,7 @@ import { useState, lazy, Suspense, ComponentType } from "react";
 import { Music, Eraser, Image, QrCode, Link2, Wrench, Stamp, KeyRound, UserSquare2, Sparkles, FileImage, PenTool, Languages, FileText, Loader2, Brain, Image as ImageIcon, Settings2, Play } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import FeatureGate from "@/components/FeatureGate";
 
 // Lazy-load each tool — they only download/parse when the user opens its accordion.
 // Cuts initial bundle by ~5k lines of tool code on the home page.
@@ -35,6 +36,7 @@ interface Tool {
   bgColor: string;
   Component: ComponentType<{ onSuccess?: () => void }>;
   trackKey: string;
+  featureKey: string;
   featured?: boolean;
   category: "ia" | "midia" | "imagem" | "utilidades";
 }
