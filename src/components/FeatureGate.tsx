@@ -18,7 +18,7 @@ export function FeatureGate({ featureKey, label, children }: FeatureGateProps) {
   if (loading) return <>{children}</>;
   if (isActive(featureKey)) return <>{children}</>;
 
-  rturn (
+  return (
     <div className="rounded-sm border-2 border-yellow-500/40 bg-yellow-500/10 p-6 text-center">
       <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full border-2 border-yellow-500/40 bg-yellow-500/20">
         <Wrench className="h-6 w-6 text-yellow-400" />
@@ -37,4 +37,4 @@ export function FeatureGate({ featureKey, label, children }: FeatureGateProps) {
   );
 }
 
-export dfault FeatureGate;
+export default FeatureGate;
