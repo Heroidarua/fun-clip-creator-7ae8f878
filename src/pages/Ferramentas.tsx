@@ -12,6 +12,7 @@ import UrlShortener from "@/components/tools/UrlShortener";
 import AITextGenerator from "@/components/tools/AITextGenerator";
 import AutoTranslator from "@/components/tools/AutoTranslator";
 import TextSummarizer from "@/components/tools/TextSummarizer";
+import FeatureGate from "@/components/FeatureGate";
 import { Wrench, Music, Eraser, Image, QrCode, Stamp, KeyRound, UserSquare2, Link2, Sparkles, PenTool, Languages, FileText } from "lucide-react";
 
 const Ferramentas = () => {
