@@ -7,10 +7,13 @@ interface DownloaderStatus {
   status: string;
   last_checked: string;
   created_at: string;
+  category?: string | null;
+  label?: string | null;
 }
 
 export const useDownloaderStatus = () => {
   const [statuses, setStatuses] = useState<Record<string, boolean>>({});
+  const [items, setItems] = useState<DownloaderStatus[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchStatuses = async () => {
@@ -20,10 +23,12 @@ export const useDownloaderStatus = () => {
       if (error) throw error;
 
       const statusMap: Record<string, boolean> = {};
-      (data as DownloaderStatus[] || []).forEach((item) => {
+      const rows = (data as DownloaderStatus[]) || [];
+      rows.forEach((item) => {
         statusMap[item.platform] = item.status === "active";
       });
       setStatuses(statusMap);
+      setItems(rows);
     } catch (error) {
       console.error("Error fetching downloader statuses:", error);
     } finally {
@@ -35,9 +40,9 @@ export const useDownloaderStatus = () => {
     fetchStatuses();
   }, []);
 
-  const isActive = (downloaderId: string): boolean => {
-    return statuses[downloaderId] ?? true;
+  const isActive = (featureKey: string): boolean => {
+    return statuses[featureKey] ?? true;
   };
 
-  return { statuses, loading, isActive, refetch: fetchStatuses };
+  return { statuses, items, loading, isActive, refetch: fetchStatuses };
 };
