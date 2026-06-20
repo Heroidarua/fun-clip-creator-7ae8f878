@@ -655,6 +655,19 @@ const HeroSection = () => {
       return;
     }
 
+    const validationError = youtubeValidationError(youtubeUrl);
+    const parsed = parseYouTubeUrl(youtubeUrl);
+    if (validationError || !parsed) {
+      toast({
+        title: "URL inválida",
+        description: validationError || "Cole um link de vídeo do YouTube.",
+        variant: "destructive",
+      });
+      return;
+    }
+    const normalizedUrl = parsed.canonicalUrl;
+    setYoutubeUrl(normalizedUrl);
+
     setYoutubeLoading(true);
     setYoutubeProgress(0);
     setYoutubeData(null);
@@ -667,12 +680,12 @@ const HeroSection = () => {
     }, 200);
 
     try {
-      console.log("Chamando API YouTube com URL:", youtubeUrl.trim());
+      console.log("Chamando API YouTube com URL:", normalizedUrl);
       
       const resp = await fetch(apiUrl('/api/download-youtube'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: youtubeUrl.trim() }),
+        body: JSON.stringify({ url: normalizedUrl }),
       });
       const data = await resp.json();
 
