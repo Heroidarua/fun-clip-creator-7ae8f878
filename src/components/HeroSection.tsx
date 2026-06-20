@@ -8,6 +8,7 @@ import { useDownloaderStatus } from "@/hooks/useDownloaderStatus";
 
 import ScrollReveal from "./ScrollReveal";
 import { apiUrl, rewriteProxy } from "@/lib/api-base";
+import { parseYouTubeUrl, youtubeValidationError } from "@/lib/youtube-url";
 import tiktokIcon from "@/assets/tiktok-icon.png";
 import instagramIcon from "@/assets/instagram-icon.png";
 import kwaiIcon from "@/assets/kwai-icon.png";
