@@ -65,22 +65,28 @@ export default function Admin() {
   const toggleDownloaderStatus = async (downloader: DownloaderStatus) => {
     setStatusLoading(downloader.id);
     const newStatus = downloader.status === "active" ? "maintenance" : "active";
-    
-    const { error } = await fromTable("downloader_status")
-      .update({ status: newStatus, last_checked: new Date().toISOString() })
-      .eq("id", downloader.id);
-    
-    if (error) {
-      toast({ title: "Erro ao atualizar status", variant: "destructive" });
-    } else {
+
+    try {
+      const resp = await fetch("/api/manage-feature-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password, id: downloader.id, status: newStatus }),
+      });
+      const data = await resp.json();
+      if (!resp.ok) throw new Error(data.error || "Erro");
       const name = downloader.label || downloader.platform;
-      toast({ 
+      toast({
         title: `${name} ${newStatus === "active" ? "ativado" : "em manutenção"}!`,
-        description: newStatus === "active" ? "O serviço está ativo." : "O serviço está em manutenção."
+        description:
+          newStatus === "active"
+            ? "O serviço está ativo."
+            : "O serviço está em manutenção.",
       });
       fetchDownloaderStatuses();
+    } catch {
+      toast({ title: "Erro ao atualizar status", variant: "destructive" });
     }
-    
+
     setStatusLoading(null);
   };
 

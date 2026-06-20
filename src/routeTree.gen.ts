@@ -39,6 +39,7 @@ import { Route as BlogComoBaixarVideosYoutubeRouteImport } from './routes/blog.c
 import { Route as BlogComoBaixarVideosTiktokSemMarcaRouteImport } from './routes/blog.como-baixar-videos-tiktok-sem-marca'
 import { Route as BlogComoBaixarVideosKwaiRouteImport } from './routes/blog.como-baixar-videos-kwai'
 import { Route as BlogBibliotecaQuadrinhosRouteImport } from './routes/blog.biblioteca-quadrinhos'
+import { Route as ApiManageFeatureStatusRouteImport } from './routes/api.manage-feature-status'
 import { Route as ApiManageAnnouncementsRouteImport } from './routes/api.manage-announcements'
 import { Route as ApiDownloadYoutubeRouteImport } from './routes/api.download-youtube'
 import { Route as ApiDownloadTiktokRouteImport } from './routes/api.download-tiktok'
@@ -203,6 +204,11 @@ const BlogBibliotecaQuadrinhosRoute =
     path: '/biblioteca-quadrinhos',
     getParentRoute: () => BlogRoute,
   } as any)
+const ApiManageFeatureStatusRoute = ApiManageFeatureStatusRouteImport.update({
+  id: '/api/manage-feature-status',
+  path: '/api/manage-feature-status',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiManageAnnouncementsRoute = ApiManageAnnouncementsRouteImport.update({
   id: '/api/manage-announcements',
   path: '/api/manage-announcements',
@@ -253,6 +259,7 @@ export interface FileRoutesByFullPath {
   '/api/download-tiktok': typeof ApiDownloadTiktokRoute
   '/api/download-youtube': typeof ApiDownloadYoutubeRoute
   '/api/manage-announcements': typeof ApiManageAnnouncementsRoute
+  '/api/manage-feature-status': typeof ApiManageFeatureStatusRoute
   '/blog/biblioteca-quadrinhos': typeof BlogBibliotecaQuadrinhosRoute
   '/blog/como-baixar-videos-kwai': typeof BlogComoBaixarVideosKwaiRoute
   '/blog/como-baixar-videos-tiktok-sem-marca': typeof BlogComoBaixarVideosTiktokSemMarcaRoute
@@ -289,6 +296,7 @@ export interface FileRoutesByTo {
   '/api/download-tiktok': typeof ApiDownloadTiktokRoute
   '/api/download-youtube': typeof ApiDownloadYoutubeRoute
   '/api/manage-announcements': typeof ApiManageAnnouncementsRoute
+  '/api/manage-feature-status': typeof ApiManageFeatureStatusRoute
   '/blog/biblioteca-quadrinhos': typeof BlogBibliotecaQuadrinhosRoute
   '/blog/como-baixar-videos-kwai': typeof BlogComoBaixarVideosKwaiRoute
   '/blog/como-baixar-videos-tiktok-sem-marca': typeof BlogComoBaixarVideosTiktokSemMarcaRoute
@@ -327,6 +335,7 @@ export interface FileRoutesById {
   '/api/download-tiktok': typeof ApiDownloadTiktokRoute
   '/api/download-youtube': typeof ApiDownloadYoutubeRoute
   '/api/manage-announcements': typeof ApiManageAnnouncementsRoute
+  '/api/manage-feature-status': typeof ApiManageFeatureStatusRoute
   '/blog/biblioteca-quadrinhos': typeof BlogBibliotecaQuadrinhosRoute
   '/blog/como-baixar-videos-kwai': typeof BlogComoBaixarVideosKwaiRoute
   '/blog/como-baixar-videos-tiktok-sem-marca': typeof BlogComoBaixarVideosTiktokSemMarcaRoute
@@ -366,6 +375,7 @@ export interface FileRouteTypes {
     | '/api/download-tiktok'
     | '/api/download-youtube'
     | '/api/manage-announcements'
+    | '/api/manage-feature-status'
     | '/blog/biblioteca-quadrinhos'
     | '/blog/como-baixar-videos-kwai'
     | '/blog/como-baixar-videos-tiktok-sem-marca'
@@ -402,6 +412,7 @@ export interface FileRouteTypes {
     | '/api/download-tiktok'
     | '/api/download-youtube'
     | '/api/manage-announcements'
+    | '/api/manage-feature-status'
     | '/blog/biblioteca-quadrinhos'
     | '/blog/como-baixar-videos-kwai'
     | '/blog/como-baixar-videos-tiktok-sem-marca'
@@ -439,6 +450,7 @@ export interface FileRouteTypes {
     | '/api/download-tiktok'
     | '/api/download-youtube'
     | '/api/manage-announcements'
+    | '/api/manage-feature-status'
     | '/blog/biblioteca-quadrinhos'
     | '/blog/como-baixar-videos-kwai'
     | '/blog/como-baixar-videos-tiktok-sem-marca'
@@ -477,6 +489,7 @@ export interface RootRouteChildren {
   ApiDownloadTiktokRoute: typeof ApiDownloadTiktokRoute
   ApiDownloadYoutubeRoute: typeof ApiDownloadYoutubeRoute
   ApiManageAnnouncementsRoute: typeof ApiManageAnnouncementsRoute
+  ApiManageFeatureStatusRoute: typeof ApiManageFeatureStatusRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -691,6 +704,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogBibliotecaQuadrinhosRouteImport
       parentRoute: typeof BlogRoute
     }
+    '/api/manage-feature-status': {
+      id: '/api/manage-feature-status'
+      path: '/api/manage-feature-status'
+      fullPath: '/api/manage-feature-status'
+      preLoaderRoute: typeof ApiManageFeatureStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/manage-announcements': {
       id: '/api/manage-announcements'
       path: '/api/manage-announcements'
@@ -786,6 +806,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiDownloadTiktokRoute: ApiDownloadTiktokRoute,
   ApiDownloadYoutubeRoute: ApiDownloadYoutubeRoute,
   ApiManageAnnouncementsRoute: ApiManageAnnouncementsRoute,
+  ApiManageFeatureStatusRoute: ApiManageFeatureStatusRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
