@@ -57,6 +57,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(280, 100%, 60%, 0.2)",
       Component: PixelAvatarGenerator,
       trackKey: "avatar",
+      featureKey: "pixel-avatar",
       featured: true,
       category: "ia",
     },
@@ -70,6 +71,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(var(--primary) / 0.2)",
       Component: MP4ToMP3Converter,
       trackKey: "audio",
+      featureKey: "mp4-to-mp3",
       category: "midia",
     },
     {
@@ -82,6 +84,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(200, 100%, 50%, 0.2)",
       Component: UrlShortener,
       trackKey: "url",
+      featureKey: "url-shortener",
       category: "utilidades",
     },
     {
@@ -94,6 +97,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(280, 100%, 60%, 0.2)",
       Component: BackgroundRemover,
       trackKey: "background",
+      featureKey: "background-remover",
       category: "imagem",
     },
     {
@@ -106,6 +110,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(45, 100%, 50%, 0.2)",
       Component: ThumbnailGenerator,
       trackKey: "thumbnail",
+      featureKey: "thumbnail",
       category: "imagem",
     },
     {
@@ -118,6 +123,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(160, 100%, 40%, 0.2)",
       Component: QRCodeGenerator,
       trackKey: "qr",
+      featureKey: "qr-code",
       category: "utilidades",
     },
     {
@@ -130,6 +136,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(320, 100%, 50%, 0.2)",
       Component: WatermarkTool,
       trackKey: "watermark",
+      featureKey: "watermark",
       category: "imagem",
     },
     {
@@ -142,6 +149,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(140, 100%, 40%, 0.2)",
       Component: PasswordGenerator,
       trackKey: "password",
+      featureKey: "password",
       category: "utilidades",
     },
     {
@@ -154,6 +162,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(10, 100%, 55%, 0.2)",
       Component: ImageToPdfConverter,
       trackKey: "other",
+      featureKey: "image-to-pdf",
       category: "imagem",
     },
     {
@@ -166,6 +175,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(250, 100%, 65%, 0.2)",
       Component: AITextGenerator,
       trackKey: "other",
+      featureKey: "ai-text",
       featured: true,
       category: "ia",
     },
@@ -179,6 +189,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(190, 100%, 45%, 0.2)",
       Component: AutoTranslator,
       trackKey: "other",
+      featureKey: "translator",
       featured: true,
       category: "ia",
     },
@@ -192,6 +203,7 @@ const UtilityToolsSection = () => {
       bgColor: "hsl(30, 100%, 50%, 0.2)",
       Component: TextSummarizer,
       trackKey: "other",
+      featureKey: "summarizer",
       featured: true,
       category: "ia",
     },
