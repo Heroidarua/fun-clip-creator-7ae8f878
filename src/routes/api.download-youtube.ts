@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { parseYouTubeUrl } from "@/lib/youtube-url";
 
 export const Route = createFileRoute("/api/download-youtube")({
   server: {
@@ -12,40 +13,35 @@ export const Route = createFileRoute("/api/download-youtube")({
       POST: async ({ request }) => {
         try {
           const body = await request.json();
-          const url = body?.url?.trim();
-          const downloadMode = body?.download === true;
-
-          if (
-            !url ||
-            (!url.includes("youtube.com") &&
-              !url.includes("youtu.be"))
-          ) {
+          const rawUrl =
+            typeof body?.url === "string" ? body.url.trim() : "";
+          if (!rawUrl || rawUrl.length > 2048) {
             return Response.json(
-              { success: false, error: "URL do YouTube inválida" },
+              { success: false, error: "URL ausente ou muito longa." },
               { status: 400, headers: corsHeaders() }
             );
           }
 
-          // Extract video ID
-          let videoId = "";
-          const longMatch = url.match(
-            /[?&]v=([a-zA-Z0-9_-]{11})/
-          );
-          const shortMatch = url.match(
-            /youtu\.be\/([a-zA-Z0-9_-]{11})/
-          );
-          const shortsMatch = url.match(/shorts\/([a-zA-Z0-9_-]{11})/);
-          const embedMatch = url.match(/embed\/([a-zA-Z0-9_-]{11})/);
-          videoId =
-            longMatch?.[1] ||
-            shortMatch?.[1] ||
-            shortsMatch?.[1] ||
-            embedMatch?.[1] ||
-            "";
-
-          if (!videoId) {
-            throw new Error("ID do vídeo não encontrado na URL");
+          const parsed = parseYouTubeUrl(rawUrl);
+          if (!parsed) {
+            return Response.json(
+              { success: false, error: "URL do YouTube inválida." },
+              { status: 400, headers: corsHeaders() }
+            );
           }
+          if (parsed.kind !== "video" && parsed.kind !== "shorts") {
+            return Response.json(
+              {
+                success: false,
+                error:
+                  parsed.kind === "channel"
+                    ? "Esse link é de um canal. Cole o link de um vídeo ou shorts."
+                    : "Esse link é de uma playlist. Cole o link de um vídeo específico.",
+              },
+              { status: 400, headers: corsHeaders() }
+            );
+          }
+          const videoId = parsed.videoId!;
 
           const rapidKey = process.env.RAPIDAPI_KEY;
           if (!rapidKey) {
