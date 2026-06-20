@@ -22,6 +22,8 @@ type DownloaderStatus = {
   platform: string;
   status: string;
   last_checked: string;
+  category?: string | null;
+  label?: string | null;
 };
 
 export default function Admin() {
@@ -49,13 +51,14 @@ export default function Admin() {
   const fetchDownloaderStatuses = async () => {
     const { data, error } = await fromTable("downloader_status")
       .select("*")
-      .order("platform");
+      .order("category", { ascending: true })
+      .order("platform", { ascending: true });
     
     if (!error && data) {
       setDownloaderStatuses(data as DownloaderStatus[]);
     } else if (error) {
       console.error("Error fetching downloader statuses:", error);
-      toast({ title: "Erro ao carregar status dos downloaders", variant: "destructive" });
+      toast({ title: "Erro ao carregar status das ferramentas", variant: "destructive" });
     }
   };
 
@@ -70,8 +73,9 @@ export default function Admin() {
     if (error) {
       toast({ title: "Erro ao atualizar status", variant: "destructive" });
     } else {
+      const name = downloader.label || downloader.platform;
       toast({ 
-        title: `${downloader.platform} ${newStatus === "active" ? "ativado" : "em manutenção"}!`,
+        title: `${name} ${newStatus === "active" ? "ativado" : "em manutenção"}!`,
         description: newStatus === "active" ? "O serviço está ativo." : "O serviço está em manutenção."
       });
       fetchDownloaderStatuses();
