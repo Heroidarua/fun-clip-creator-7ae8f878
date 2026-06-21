@@ -84,6 +84,12 @@ export const Route = createFileRoute("/api/download-youtube")({
 
           const data: any = await apiResp.json();
 
+          // Debug mode: return raw provider payload for inspection
+          const url = new URL(request.url);
+          if (url.searchParams.get("debug") === "1") {
+            return Response.json({ raw: data }, { headers: corsHeaders() });
+          }
+
           if (data.errorId && data.errorId !== "Success") {
             const { reportDownloaderResult } = await import(
               "@/lib/downloader-status.server"
