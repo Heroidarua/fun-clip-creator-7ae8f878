@@ -80,9 +80,26 @@ const Header = () => {
         <div className="flex items-center justify-between h-16 sm:h-[68px]">
           {/* Logo — editorial mark */}
           <Link to="/" className="flex items-center gap-3 group shrink-0" aria-label="Ir para a página inicial">
-            <div className="relative w-10 h-10 rounded-xl bg-foreground text-background flex items-center justify-center shadow-[var(--shadow-elegant)] transition-transform group-hover:-rotate-3">
-              <span className="font-display italic text-lg leading-none">s</span>
-              <span className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full bg-accent border-2 border-background" />
+            <div
+              className="relative w-11 h-11 rounded-xl overflow-hidden"
+              style={{ perspective: '600px' }}
+            >
+              <img
+                src="/favicon.png"
+                alt="sos01"
+                className="w-full h-full object-cover transition-all duration-300 group-hover:scale-110"
+                style={{
+                  transformStyle: 'preserve-3d',
+                  boxShadow: 'var(--shadow-cartridge)',
+                  transform: 'rotateY(-8deg) rotateX(4deg)',
+                }}
+              />
+              <div
+                className="absolute inset-0 rounded-xl pointer-events-none transition-opacity duration-300 opacity-60 group-hover:opacity-40"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(255,255,255,0.35) 0%, transparent 50%, rgba(0,0,0,0.15) 100%)',
+                }}
+              />
             </div>
             <div className="hidden sm:flex flex-col leading-none">
               <span className="font-display text-xl tracking-tight text-foreground">
