@@ -78,28 +78,29 @@ const Header = () => {
     >
       <div className="container mx-auto px-4 sm:px-6 max-w-7xl">
         <div className="flex items-center justify-between h-16 sm:h-[68px]">
-          {/* Logo — editorial mark */}
+          {/* Logo — 3D icon */}
           <Link to="/" className="flex items-center gap-3 group shrink-0" aria-label="Ir para a página inicial">
-            <div
-              className="relative w-11 h-11 rounded-xl overflow-hidden"
-              style={{ perspective: '600px' }}
-            >
-              <img
-                src="/favicon.png"
-                alt="sos01"
-                className="w-full h-full object-cover transition-all duration-300 group-hover:scale-110"
+            <div className="relative" style={{ perspective: '800px' }}>
+              <div
+                className="relative w-12 h-12 rounded-2xl transition-transform duration-500 ease-out group-hover:[transform:rotateY(22deg)_rotateX(8deg)_scale(1.06)]"
                 style={{
                   transformStyle: 'preserve-3d',
+                  transform: 'rotateY(-12deg) rotateX(6deg)',
                   boxShadow: 'var(--shadow-cartridge)',
-                  transform: 'rotateY(-8deg) rotateX(4deg)',
                 }}
-              />
-              <div
-                className="absolute inset-0 rounded-xl pointer-events-none transition-opacity duration-300 opacity-60 group-hover:opacity-40"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(255,255,255,0.35) 0%, transparent 50%, rgba(0,0,0,0.15) 100%)',
-                }}
-              />
+              >
+                <img
+                  src="/favicon.png"
+                  alt="sos01"
+                  className="w-full h-full object-cover rounded-2xl"
+                />
+                <div
+                  className="absolute inset-0 rounded-2xl pointer-events-none"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 45%, rgba(0,0,0,0.12) 100%)',
+                  }}
+                />
+              </div>
             </div>
             <div className="hidden sm:flex flex-col leading-none">
               <span className="font-display text-xl tracking-tight text-foreground">
