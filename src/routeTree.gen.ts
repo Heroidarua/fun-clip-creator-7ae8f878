@@ -17,7 +17,6 @@ import { Route as PrecosRouteImport } from './routes/precos'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as JogosJavaRouteImport } from './routes/jogos-java'
 import { Route as JogosRouteImport } from './routes/jogos'
-import { Route as HubRouteImport } from './routes/hub'
 import { Route as FerramentasRouteImport } from './routes/ferramentas'
 import { Route as DmcaRouteImport } from './routes/dmca'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -84,11 +83,6 @@ const JogosJavaRoute = JogosJavaRouteImport.update({
 const JogosRoute = JogosRouteImport.update({
   id: '/jogos',
   path: '/jogos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HubRoute = HubRouteImport.update({
-  id: '/hub',
-  path: '/hub',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FerramentasRoute = FerramentasRouteImport.update({
@@ -245,7 +239,6 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/dmca': typeof DmcaRoute
   '/ferramentas': typeof FerramentasRoute
-  '/hub': typeof HubRoute
   '/jogos': typeof JogosRoute
   '/jogos-java': typeof JogosJavaRoute
   '/perfil': typeof PerfilRoute
@@ -282,7 +275,6 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/dmca': typeof DmcaRoute
   '/ferramentas': typeof FerramentasRoute
-  '/hub': typeof HubRoute
   '/jogos': typeof JogosRoute
   '/jogos-java': typeof JogosJavaRoute
   '/perfil': typeof PerfilRoute
@@ -321,7 +313,6 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/dmca': typeof DmcaRoute
   '/ferramentas': typeof FerramentasRoute
-  '/hub': typeof HubRoute
   '/jogos': typeof JogosRoute
   '/jogos-java': typeof JogosJavaRoute
   '/perfil': typeof PerfilRoute
@@ -361,7 +352,6 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dmca'
     | '/ferramentas'
-    | '/hub'
     | '/jogos'
     | '/jogos-java'
     | '/perfil'
@@ -398,7 +388,6 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dmca'
     | '/ferramentas'
-    | '/hub'
     | '/jogos'
     | '/jogos-java'
     | '/perfil'
@@ -436,7 +425,6 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dmca'
     | '/ferramentas'
-    | '/hub'
     | '/jogos'
     | '/jogos-java'
     | '/perfil'
@@ -475,7 +463,6 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   DmcaRoute: typeof DmcaRoute
   FerramentasRoute: typeof FerramentasRoute
-  HubRoute: typeof HubRoute
   JogosRoute: typeof JogosRoute
   JogosJavaRoute: typeof JogosJavaRoute
   PerfilRoute: typeof PerfilRoute
@@ -548,13 +535,6 @@ declare module '@tanstack/react-router' {
       path: '/jogos'
       fullPath: '/jogos'
       preLoaderRoute: typeof JogosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/hub': {
-      id: '/hub'
-      path: '/hub'
-      fullPath: '/hub'
-      preLoaderRoute: typeof HubRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ferramentas': {
@@ -792,7 +772,6 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   DmcaRoute: DmcaRoute,
   FerramentasRoute: FerramentasRoute,
-  HubRoute: HubRoute,
   JogosRoute: JogosRoute,
   JogosJavaRoute: JogosJavaRoute,
   PerfilRoute: PerfilRoute,
