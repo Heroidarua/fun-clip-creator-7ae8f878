@@ -164,7 +164,6 @@ const Header = () => {
               <Share2 className="w-4 h-4" aria-hidden="true" />
             </button>
             <div className="hidden sm:block"><NotificationBell /></div>
-            <ThemeToggle />
             <Link
               to="/dashboard"
               aria-label="Abrir meu painel"
