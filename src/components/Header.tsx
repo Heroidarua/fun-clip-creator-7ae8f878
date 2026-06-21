@@ -78,11 +78,29 @@ const Header = () => {
     >
       <div className="container mx-auto px-4 sm:px-6 max-w-7xl">
         <div className="flex items-center justify-between h-16 sm:h-[68px]">
-          {/* Logo — editorial mark */}
+          {/* Logo — 3D icon */}
           <Link to="/" className="flex items-center gap-3 group shrink-0" aria-label="Ir para a página inicial">
-            <div className="relative w-10 h-10 rounded-xl bg-foreground text-background flex items-center justify-center shadow-[var(--shadow-elegant)] transition-transform group-hover:-rotate-3">
-              <span className="font-display italic text-lg leading-none">s</span>
-              <span className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full bg-accent border-2 border-background" />
+            <div className="relative" style={{ perspective: '800px' }}>
+              <div
+                className="relative w-12 h-12 rounded-2xl transition-transform duration-500 ease-out group-hover:[transform:rotateY(22deg)_rotateX(8deg)_scale(1.06)]"
+                style={{
+                  transformStyle: 'preserve-3d',
+                  transform: 'rotateY(-12deg) rotateX(6deg)',
+                  boxShadow: 'var(--shadow-cartridge)',
+                }}
+              >
+                <img
+                  src="/favicon.png"
+                  alt="sos01"
+                  className="w-full h-full object-cover rounded-2xl"
+                />
+                <div
+                  className="absolute inset-0 rounded-2xl pointer-events-none"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 45%, rgba(0,0,0,0.12) 100%)',
+                  }}
+                />
+              </div>
             </div>
             <div className="hidden sm:flex flex-col leading-none">
               <span className="font-display text-xl tracking-tight text-foreground">
