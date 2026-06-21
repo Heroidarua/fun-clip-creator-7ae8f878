@@ -48,6 +48,11 @@ export const Route = createRootRoute({
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e1aa244a-b439-4f7d-91af-a263dcba24f8/id-preview-6c3e2208--d6700be4-d0f2-493a-8e6b-6a05da855195.lovable.app-1775700491383.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e1aa244a-b439-4f7d-91af-a263dcba24f8/id-preview-6c3e2208--d6700be4-d0f2-493a-8e6b-6a05da855195.lovable.app-1775700491383.png" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "theme-color", content: "#0E4A7B" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      { name: "apple-mobile-web-app-title", content: "SOS/01" },
+      { name: "mobile-web-app-capable", content: "yes" },
     ],
     links: [
       {
@@ -56,6 +61,7 @@ export const Route = createRootRoute({
       },
       { rel: "icon", type: "image/png", href: "/favicon.png" },
       { rel: "apple-touch-icon", href: "/favicon.png" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "dns-prefetch", href: "https://sofewnyrrevybnbhhsuh.supabase.co" },
