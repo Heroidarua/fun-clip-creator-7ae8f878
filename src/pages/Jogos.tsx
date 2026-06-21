@@ -1,374 +1,513 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Gamepad2, X, Search, Joystick, Play, Grid3X3, LayoutGrid, Zap, Trophy, Star, Heart } from "lucide-react";
-import { useState, useRef, useMemo, useEffect } from "react";
+import {
+  Gamepad2, X, Search, Play, Heart, Shuffle, Clock,
+  Flame, Sparkles, Star, Filter, Trophy,
+} from "lucide-react";
+import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { games, Game } from "@/data/games";
 import { useFavoriteGames } from "@/hooks/useFavoriteGames";
 
-function GameCard({ game, onPlay, isFavorite, onToggleFavorite }: { game: Game; onPlay: () => void; isFavorite: boolean; onToggleFavorite: () => void }) {
-  const cardRef = useRef<HTMLDivElement | null>(null);
+// ---------- helpers ----------
+type Category = "Todos" | "Luta" | "Plataforma" | "Corrida" | "Ação" | "Tiro" | "Arcade";
 
-  function handleMove(e: React.MouseEvent) {
-    const el = cardRef.current;
-    if (!el) return;
+const CATEGORIES: { id: Category; label: string; icon: string }[] = [
+  { id: "Todos", label: "Todos", icon: "✨" },
+  { id: "Luta", label: "Luta", icon: "🥊" },
+  { id: "Plataforma", label: "Plataforma", icon: "🍄" },
+  { id: "Corrida", label: "Corrida", icon: "🏁" },
+  { id: "Ação", label: "Ação", icon: "💥" },
+  { id: "Tiro", label: "Tiro", icon: "🎯" },
+  { id: "Arcade", label: "Arcade", icon: "🕹️" },
+];
 
-    const rect = el.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const midX = rect.width / 2;
-    const midY = rect.height / 2;
+function categoryOf(g: Game): Category {
+  const t = g.title.toLowerCase();
+  if (/(kombat|fighter|tekken|smash|vs\.|vs |kof|jojo|chaos)/.test(t)) return "Luta";
+  if (/(mario|sonic|kong|bomberman|kidd|mickey|donald|dizzy|picapau|monica|pocahontas|luigi|yoshi|rockman)/.test(t)) return "Plataforma";
+  if (/(kart|top gear|gp rider|rider)/.test(t)) return "Corrida";
+  if (/(1941|asteroids|duck hunt|battle city|popeye)/.test(t)) return "Tiro";
+  if (/(metal slug|spider|mask|power rangers|x-men|simpsons|alien|justice|dragonball|flintstones|saga|gta|theft)/.test(t)) return "Ação";
+  return "Arcade";
+}
 
-    const rotateY = ((x - midX) / midX) * 10;
-    const rotateX = -((y - midY) / midY) * 10;
+// deterministic pseudo-rating 4.2 – 5.0
+function ratingOf(g: Game): number {
+  const r = 4.2 + ((g.id * 37) % 9) / 10;
+  return Math.min(5, Math.round(r * 10) / 10);
+}
 
-    el.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
-  }
+const POPULAR_IDS = [1, 2, 6, 20, 7, 23, 22, 17, 14, 33, 50, 4];
+const COMMUNITY_IDS = [3, 5, 15, 21, 26, 44, 56, 27, 25, 13, 11, 36];
 
-  function handleLeave() {
-    const el = cardRef.current;
-    if (!el) return;
-    el.style.transform = "";
-  }
+const RECENT_KEY = "sos01-recent-games";
+function readRecent(): number[] {
+  try { return JSON.parse(localStorage.getItem(RECENT_KEY) || "[]"); } catch { return []; }
+}
+function pushRecent(id: number) {
+  try {
+    const cur = readRecent().filter((x) => x !== id);
+    cur.unshift(id);
+    localStorage.setItem(RECENT_KEY, JSON.stringify(cur.slice(0, 12)));
+  } catch {}
+}
+
+// ---------- Card ----------
+function GameCard({
+  game, onPlay, isFavorite, onToggleFavorite, size = "md",
+}: {
+  game: Game; onPlay: () => void; isFavorite: boolean;
+  onToggleFavorite: () => void; size?: "sm" | "md" | "lg";
+}) {
+  const rating = ratingOf(game);
+  const category = categoryOf(game);
 
   return (
-    <div
-      ref={cardRef}
-      onMouseMove={handleMove}
-      onMouseLeave={handleLeave}
-      onClick={onPlay}
-      className="group relative cursor-pointer transition-all duration-300"
-      style={{ transformStyle: "preserve-3d" }}
-    >
-      {/* Pixel border glow */}
-      <div className="absolute -inset-1 bg-gradient-to-r from-retro-red via-retro-yellow to-retro-cyan opacity-0 group-hover:opacity-100 transition-opacity duration-300" 
-           style={{ clipPath: "polygon(0 4px, 4px 4px, 4px 0, calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 4px calc(100% - 4px), 0 calc(100% - 4px))" }} />
-      
-      {/* Card content */}
-      <div className="relative bg-retro-dark overflow-hidden transition-colors duration-300"
-           style={{ 
-             clipPath: "polygon(0 4px, 4px 4px, 4px 0, calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 4px calc(100% - 4px), 0 calc(100% - 4px))",
-             boxShadow: "inset 0 0 0 2px hsl(var(--retro-purple))"
-           }}>
-        {/* Image container */}
-        <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-retro-purple/20 via-background/50 to-retro-cyan/20">
+    <div className="group relative">
+      {/* neon ring on hover */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        style={{
+          background:
+            "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%)",
+          filter: "blur(10px)",
+        }}
+      />
+      <button
+        onClick={onPlay}
+        className="relative w-full text-left rounded-2xl overflow-hidden bg-[hsl(var(--card))] border border-[hsl(var(--border))] shadow-[0_4px_0_hsl(var(--secondary)/0.25),0_10px_24px_-12px_hsl(var(--secondary)/0.4)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_0_hsl(var(--secondary)/0.3),0_20px_40px_-12px_hsl(var(--primary)/0.45)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--primary))]"
+        aria-label={`Jogar ${game.title}`}
+      >
+        {/* Cover */}
+        <div className="relative aspect-[3/4] overflow-hidden bg-gradient-to-br from-[hsl(var(--muted))] to-[hsl(var(--primary)/0.1)]">
           <img
-            src={game.img || `https://placehold.co/400x300/1a1a2e/ffffff?text=${encodeURIComponent(game.title)}`}
+            src={game.img || `https://placehold.co/400x533/0E4A7B/F5F9FF?text=${encodeURIComponent(game.title)}`}
             alt={game.title}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-            draggable={false}
             loading="lazy"
+            draggable={false}
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.onerror = null;
-              target.src = `https://placehold.co/400x300/1a1a2e/ffffff?text=${encodeURIComponent(game.title)}`;
+              const img = e.target as HTMLImageElement;
+              img.onerror = null;
+              img.src = `https://placehold.co/400x533/0E4A7B/F5F9FF?text=${encodeURIComponent(game.title)}`;
             }}
           />
-          
-          {/* Scanline overlay */}
-          <div className="absolute inset-0 scanlines opacity-30 pointer-events-none" />
-          
-          {/* Overlay gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-retro-dark via-transparent to-transparent opacity-80" />
-          
-          {/* Play button overlay */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-            <div className="w-16 h-16 bg-retro-red flex items-center justify-center transform scale-75 group-hover:scale-100 transition-transform duration-300"
-                 style={{ 
-                   clipPath: "polygon(0 4px, 4px 4px, 4px 0, calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 4px calc(100% - 4px), 0 calc(100% - 4px))",
-                   boxShadow: "4px 4px 0 hsl(var(--retro-dark))"
-                 }}>
-              <Play className="w-7 h-7 text-white ml-1" fill="currentColor" />
+
+          {/* Bottom gradient for text legibility */}
+          <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
+
+          {/* Top row: category chip + favorite */}
+          <div className="absolute top-2 left-2 right-2 flex items-start justify-between gap-2">
+            <span className="px-2 py-1 rounded-md bg-black/55 backdrop-blur-md text-[10px] font-silkscreen tracking-wider text-white border border-white/15">
+              {category.toUpperCase()}
+            </span>
+            <button
+              type="button"
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleFavorite(); }}
+              className={`shrink-0 grid place-items-center w-9 h-9 rounded-full backdrop-blur-md transition-all duration-200 border ${
+                isFavorite
+                  ? "bg-[hsl(var(--accent))] text-white border-[hsl(var(--accent))] scale-105"
+                  : "bg-black/45 text-white border-white/20 hover:bg-[hsl(var(--accent))] hover:border-[hsl(var(--accent))]"
+              }`}
+              aria-label={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+            >
+              <Heart className="w-4 h-4" fill={isFavorite ? "currentColor" : "none"} />
+            </button>
+          </div>
+
+          {/* Hover play overlay */}
+          <div className="absolute inset-0 grid place-items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="w-16 h-16 rounded-full bg-[hsl(var(--primary))] grid place-items-center text-white shadow-[0_0_24px_hsl(var(--primary)/0.7)] scale-90 group-hover:scale-100 transition-transform">
+              <Play className="w-7 h-7 ml-0.5" fill="currentColor" />
             </div>
           </div>
 
-          {/* Game number badge - arcade style */}
-          <div className="absolute top-2 left-2 px-2 py-1 bg-retro-purple font-pixel text-[10px] text-white"
-               style={{ boxShadow: "2px 2px 0 hsl(var(--retro-dark))" }}>
-            #{game.id}
+          {/* Bottom overlay info */}
+          <div className="absolute inset-x-0 bottom-0 p-3 text-white">
+            <h3 className="font-display text-base sm:text-lg leading-tight line-clamp-2 drop-shadow">
+              {game.title}
+            </h3>
+            <div className="mt-1.5 flex items-center justify-between text-[11px]">
+              <span className="flex items-center gap-1 text-[hsl(var(--retro-yellow))]">
+                <Star className="w-3 h-3" fill="currentColor" />
+                <span className="font-silkscreen">{rating.toFixed(1)}</span>
+              </span>
+              <span className="font-silkscreen tracking-wider text-white/80">RETRO</span>
+            </div>
           </div>
-          
-          {/* Favorite button */}
-          <button
-            onClick={(e) => { e.stopPropagation(); onToggleFavorite(); }}
-            className={`absolute top-2 right-2 w-8 h-8 flex items-center justify-center transition-all duration-200 ${
-              isFavorite 
-                ? 'bg-retro-red text-white' 
-                : 'bg-retro-dark/80 text-retro-gray hover:text-retro-red hover:bg-retro-dark'
-            }`}
-            style={{ 
-              clipPath: "polygon(0 4px, 4px 4px, 4px 0, calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 4px calc(100% - 4px), 0 calc(100% - 4px))",
-              boxShadow: "2px 2px 0 hsl(var(--retro-dark))" 
-            }}
-          >
-            <Heart className="w-4 h-4" fill={isFavorite ? "currentColor" : "none"} />
-          </button>
         </div>
 
-        {/* Title and Button */}
-        <div className="p-3 space-y-3 bg-gradient-to-b from-retro-dark to-retro-darker">
-          <h3 className="font-retro text-sm text-white line-clamp-1 group-hover:text-retro-cyan transition-colors duration-300">
-            {game.title}
-          </h3>
-          <Button 
-            size="sm" 
-            className="w-full gap-2 bg-retro-red hover:bg-retro-red/90 text-white font-pixel text-[10px] rounded-none transition-all duration-200"
-            style={{ boxShadow: "3px 3px 0 hsl(var(--retro-dark))" }}
-          >
-            <Joystick className="w-4 h-4" />
+        {/* Play CTA strip (mobile-friendly tap area) */}
+        <div className="flex items-center justify-between gap-2 px-3 py-2.5 bg-[hsl(var(--card))]">
+          <span className="text-[11px] font-silkscreen tracking-wider text-[hsl(var(--muted-foreground))]">
+            #{String(game.id).padStart(2, "0")}
+          </span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[11px] font-silkscreen tracking-wider bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] shadow-[0_2px_0_hsl(var(--secondary))]">
+            <Play className="w-3.5 h-3.5" fill="currentColor" />
             JOGAR
-          </Button>
+          </span>
         </div>
-      </div>
+      </button>
     </div>
   );
 }
 
+// ---------- Section row ----------
+function GameRow({
+  title, icon, badge, games: list, onPlay, isFavorite, toggleFavorite,
+}: {
+  title: string;
+  icon: React.ReactNode;
+  badge?: string;
+  games: Game[];
+  onPlay: (g: Game) => void;
+  isFavorite: (id: number) => boolean;
+  toggleFavorite: (id: number) => void;
+}) {
+  if (!list.length) return null;
+  return (
+    <section className="mb-10">
+      <div className="flex items-end justify-between mb-4 px-1">
+        <div className="flex items-center gap-2.5">
+          <span className="grid place-items-center w-9 h-9 rounded-lg bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))]">
+            {icon}
+          </span>
+          <h2 className="font-display text-2xl sm:text-3xl text-[hsl(var(--foreground))] leading-none">
+            {title}
+          </h2>
+          {badge && (
+            <span className="font-silkscreen text-[10px] tracking-wider px-2 py-1 rounded bg-[hsl(var(--accent)/0.15)] text-[hsl(var(--accent))]">
+              {badge}
+            </span>
+          )}
+        </div>
+      </div>
+      <div className="grid gap-3 sm:gap-4 grid-cols-2 sm:grid-cols-4 lg:grid-cols-6">
+        {list.map((g, i) => (
+          <div key={g.id} className="animate-fade-in" style={{ animationDelay: `${Math.min(i * 30, 240)}ms` }}>
+            <GameCard
+              game={g}
+              onPlay={() => onPlay(g)}
+              isFavorite={isFavorite(g.id)}
+              onToggleFavorite={() => toggleFavorite(g.id)}
+            />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// ---------- Page ----------
 export default function Jogos() {
   const [fullscreenGame, setFullscreenGame] = useState<Game | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [gridSize, setGridSize] = useState<"small" | "large">("large");
-  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [category, setCategory] = useState<Category>("Todos");
+  const [recentIds, setRecentIds] = useState<number[]>([]);
+  const [searchFocused, setSearchFocused] = useState(false);
   const { favorites, toggleFavorite, isFavorite } = useFavoriteGames();
-  const trackGamePlayed = () => {};
+  const searchRef = useRef<HTMLInputElement>(null);
 
-  // Track game when fullscreen game changes
-  useEffect(() => {
-    if (fullscreenGame) {
-      trackGamePlayed();
-    }
-  }, [fullscreenGame, trackGamePlayed]);
+  useEffect(() => { setRecentIds(readRecent()); }, []);
 
-  const filteredGames = useMemo(() => {
-    let result = games;
-    
-    if (showFavoritesOnly) {
-      result = result.filter((game) => favorites.includes(game.id));
-    }
-    
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter((game) => game.title.toLowerCase().includes(query));
-    }
-    
-    return result;
-  }, [searchQuery, showFavoritesOnly, favorites]);
+  const playGame = useCallback((g: Game) => {
+    pushRecent(g.id);
+    setRecentIds(readRecent());
+    setFullscreenGame(g);
+  }, []);
+
+  const byId = useMemo(() => new Map(games.map((g) => [g.id, g])), []);
+  const recent = useMemo(
+    () => recentIds.map((id) => byId.get(id)).filter(Boolean).slice(0, 6) as Game[],
+    [recentIds, byId]
+  );
+  const popular = useMemo(
+    () => POPULAR_IDS.map((id) => byId.get(id)).filter(Boolean) as Game[],
+    [byId]
+  );
+  const community = useMemo(
+    () => COMMUNITY_IDS.map((id) => byId.get(id)).filter(Boolean) as Game[],
+    [byId]
+  );
+  const latest = useMemo(
+    () => [...games].sort((a, b) => b.id - a.id).slice(0, 12),
+    []
+  );
+
+  // Filtered "all games" grid
+  const filtered = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    return games.filter((g) => {
+      if (category !== "Todos" && categoryOf(g) !== category) return false;
+      if (q && !g.title.toLowerCase().includes(q)) return false;
+      return true;
+    });
+  }, [searchQuery, category]);
+
+  const handleRandom = () => {
+    const pool = filtered.length ? filtered : games;
+    playGame(pool[Math.floor(Math.random() * pool.length)]);
+  };
+
+  const handleContinue = () => {
+    if (recent[0]) playGame(recent[0]);
+    else handleRandom();
+  };
 
   return (
     <>
       <Header />
 
-      <main className="min-h-screen pt-24 pb-20 bg-retro-darker">
-        {/* Hero Section */}
-        <section className="relative py-12 overflow-hidden">
-          {/* Retro background effects */}
-          <div className="absolute inset-0 bg-gradient-to-b from-retro-purple/10 via-transparent to-transparent" />
-          
-          {/* Pixel grid pattern */}
-          <div className="absolute inset-0 opacity-10"
-               style={{
-                 backgroundImage: `linear-gradient(hsl(var(--retro-purple)) 1px, transparent 1px),
-                                   linear-gradient(90deg, hsl(var(--retro-purple)) 1px, transparent 1px)`,
-                 backgroundSize: '20px 20px'
-               }} />
-          
-          {/* Arcade glow spots */}
-          <div className="absolute top-0 left-1/4 w-64 h-64 bg-retro-red/20 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-0 right-1/4 w-48 h-48 bg-retro-cyan/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-          <div className="absolute top-1/2 right-10 w-32 h-32 bg-retro-yellow/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '0.5s' }} />
-          
-          <div className="container mx-auto px-4 relative z-10">
-            {/* Title */}
-            <div className="text-center mb-10">
-              {/* Arcade badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-retro-purple font-pixel text-xs text-white mb-6"
-                   style={{ boxShadow: "4px 4px 0 hsl(var(--retro-dark))" }}>
-                <Joystick className="w-4 h-4 text-retro-yellow" />
-                ARCADE ZONE
-              </div>
-              
-              <h1 className="font-pixel text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-4 leading-relaxed">
-                <span className="text-white">JOGOS</span>
-                <span className="text-retro-cyan neon-text"> CLÁSSICOS</span>
-              </h1>
-              
-              <p className="font-retro text-retro-gray text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
-                Reviva a nostalgia com nossa coleção de {games.length} jogos retrô. 
-                Jogue direto no navegador, sem downloads.
-              </p>
-              
-              {/* Stats badges */}
-              <div className="flex flex-wrap justify-center gap-4 mt-6">
-                <div className="flex items-center gap-2 px-3 py-2 bg-retro-dark border-2 border-retro-red"
-                     style={{ boxShadow: "3px 3px 0 hsl(var(--retro-red) / 0.3)" }}>
-                  <Gamepad2 className="w-4 h-4 text-retro-red" />
-                  <span className="font-pixel text-[10px] text-white">{games.length} JOGOS</span>
-                </div>
-                <button 
-                  onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
-                  className={`flex items-center gap-2 px-3 py-2 border-2 transition-all duration-200 ${
-                    showFavoritesOnly 
-                      ? 'bg-retro-red border-retro-red' 
-                      : 'bg-retro-dark border-retro-red/50 hover:border-retro-red'
-                  }`}
-                  style={{ boxShadow: "3px 3px 0 hsl(var(--retro-red) / 0.3)" }}
-                >
-                  <Heart className="w-4 h-4 text-white" fill={showFavoritesOnly ? "currentColor" : "none"} />
-                  <span className="font-pixel text-[10px] text-white">{favorites.length} FAVORITOS</span>
-                </button>
-                <div className="flex items-center gap-2 px-3 py-2 bg-retro-dark border-2 border-retro-cyan"
-                     style={{ boxShadow: "3px 3px 0 hsl(var(--retro-cyan) / 0.3)" }}>
-                  <Zap className="w-4 h-4 text-retro-cyan" />
-                  <span className="font-pixel text-[10px] text-white">GRÁTIS</span>
-                </div>
-                <div className="flex items-center gap-2 px-3 py-2 bg-retro-dark border-2 border-retro-yellow"
-                     style={{ boxShadow: "3px 3px 0 hsl(var(--retro-yellow) / 0.3)" }}>
-                  <Trophy className="w-4 h-4 text-retro-yellow" />
-                  <span className="font-pixel text-[10px] text-white">RETRÔ</span>
-                </div>
-              </div>
+      <main className="min-h-screen bg-[hsl(var(--background))] pt-20 pb-24">
+        {/* ---- Compact Hero ---- */}
+        <section className="relative overflow-hidden">
+          {/* soft neon spots */}
+          <div className="absolute -top-10 -left-10 w-72 h-72 rounded-full bg-[hsl(var(--primary)/0.18)] blur-3xl" />
+          <div className="absolute -top-10 right-0 w-72 h-72 rounded-full bg-[hsl(var(--accent)/0.18)] blur-3xl" />
+          <div
+            className="absolute inset-0 opacity-[0.08]"
+            style={{
+              backgroundImage:
+                "linear-gradient(hsl(var(--primary)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)",
+              backgroundSize: "28px 28px",
+            }}
+          />
+
+          <div className="container relative mx-auto px-4 pt-6 pb-6 sm:pt-8 sm:pb-8">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] font-silkscreen text-[10px] tracking-wider shadow-[0_3px_0_hsl(var(--secondary))]">
+                <Gamepad2 className="w-3.5 h-3.5" /> ARCADE
+              </span>
+              <span className="font-silkscreen text-[10px] tracking-wider text-[hsl(var(--muted-foreground))]">
+                {games.length} JOGOS · 100% GRÁTIS
+              </span>
             </div>
 
-            {/* Search and controls */}
-            <div className="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto mb-8">
-              <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-retro-gray" />
-                <Input
-                  type="text"
-                  placeholder="Encontre jogos ao digitar..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-12 h-12 bg-black border-2 border-retro-purple focus:border-retro-cyan rounded-none font-retro text-white placeholder:text-gray-500"
-                  style={{ boxShadow: "4px 4px 0 hsl(var(--retro-dark))" }}
-                />
+            <div className="grid sm:grid-cols-[1fr_auto] sm:items-end gap-4">
+              <div className="min-w-0">
+                <h1 className="font-display text-4xl sm:text-5xl md:text-6xl leading-[0.95] text-[hsl(var(--foreground))]">
+                  Jogos <span className="text-[hsl(var(--primary))] neon-text">Clássicos</span>
+                </h1>
+                <p className="mt-2 text-sm sm:text-base text-[hsl(var(--muted-foreground))] max-w-xl">
+                  Reviva a era de ouro dos arcades. Pixel art, ação infinita e zero downloads.
+                </p>
               </div>
-              
-              <div className="flex gap-2">
-                <Button
-                  variant={gridSize === "large" ? "default" : "outline"}
-                  size="icon"
-                  className={`h-12 w-12 rounded-none border-2 transition-all ${
-                    gridSize === "large" 
-                      ? "bg-retro-red border-retro-red text-white" 
-                      : "bg-retro-dark border-retro-purple text-retro-gray hover:border-retro-cyan hover:text-retro-cyan"
-                  }`}
-                  style={{ boxShadow: gridSize === "large" ? "3px 3px 0 hsl(var(--retro-dark))" : "none" }}
-                  onClick={() => setGridSize("large")}
-                >
-                  <LayoutGrid className="w-5 h-5" />
-                </Button>
-                <Button
-                  variant={gridSize === "small" ? "default" : "outline"}
-                  size="icon"
-                  className={`h-12 w-12 rounded-none border-2 transition-all ${
-                    gridSize === "small" 
-                      ? "bg-retro-red border-retro-red text-white" 
-                      : "bg-retro-dark border-retro-purple text-retro-gray hover:border-retro-cyan hover:text-retro-cyan"
-                  }`}
-                  style={{ boxShadow: gridSize === "small" ? "3px 3px 0 hsl(var(--retro-dark))" : "none" }}
-                  onClick={() => setGridSize("small")}
-                >
-                  <Grid3X3 className="w-5 h-5" />
-                </Button>
-              </div>
-            </div>
 
-            {/* Results count */}
-            <div className="text-center font-pixel text-xs text-retro-gray mb-8">
-              {filteredGames.length === games.length
-                ? `${games.length} JOGOS DISPONÍVEIS`
-                : `${filteredGames.length} DE ${games.length} JOGOS ENCONTRADOS`}
+              <div className="flex flex-wrap gap-2 sm:justify-end">
+                <Button
+                  onClick={handleContinue}
+                  disabled={!recent.length}
+                  className="font-silkscreen tracking-wider text-xs gap-2 bg-[hsl(var(--secondary))] text-white hover:bg-[hsl(var(--secondary)/0.9)] shadow-[0_4px_0_hsl(var(--secondary)/0.5)] disabled:opacity-50"
+                >
+                  <Clock className="w-4 h-4" />
+                  {recent[0] ? "CONTINUAR" : "SEM HISTÓRICO"}
+                </Button>
+                <Button
+                  onClick={handleRandom}
+                  className="font-silkscreen tracking-wider text-xs gap-2 bg-[hsl(var(--accent))] text-white hover:bg-[hsl(var(--accent)/0.9)] shadow-[0_4px_0_hsl(var(--secondary))]"
+                >
+                  <Shuffle className="w-4 h-4" />
+                  JOGAR ALEATÓRIO
+                </Button>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Games Grid */}
-        <section className="container mx-auto px-4">
-          {filteredGames.length > 0 ? (
-            <div
-              className={`grid gap-5 ${
-                gridSize === "large"
-                  ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-                  : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
-              }`}
-            >
-              {filteredGames.map((game, index) => (
-                <div
-                  key={game.id}
-                  className="animate-fade-in"
-                  style={{ animationDelay: `${Math.min(index * 50, 500)}ms` }}
+        {/* ---- Sticky search + category chips ---- */}
+        <div className="sticky top-16 z-30 bg-[hsl(var(--background))]/85 backdrop-blur-md border-y border-[hsl(var(--border))]">
+          <div className="container mx-auto px-4 py-3 space-y-3">
+            <div className="relative">
+              <Search className={`absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors ${searchFocused ? "text-[hsl(var(--primary))]" : "text-[hsl(var(--muted-foreground))]"}`} />
+              <Input
+                ref={searchRef}
+                type="text"
+                placeholder="Buscar jogo..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setSearchFocused(true)}
+                onBlur={() => setSearchFocused(false)}
+                className={`pl-11 pr-10 h-11 rounded-xl border-2 bg-[hsl(var(--card))] text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))] transition-all ${
+                  searchFocused
+                    ? "border-[hsl(var(--primary))] shadow-[0_0_0_4px_hsl(var(--primary)/0.18),0_0_22px_hsl(var(--primary)/0.35)]"
+                    : "border-[hsl(var(--border))]"
+                }`}
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => { setSearchQuery(""); searchRef.current?.focus(); }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 grid place-items-center w-7 h-7 rounded-full bg-[hsl(var(--muted))] text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--primary)/0.15)] hover:text-[hsl(var(--primary))]"
+                  aria-label="Limpar busca"
                 >
-                  <GameCard 
-                    game={game} 
-                    onPlay={() => setFullscreenGame(game)} 
-                    isFavorite={isFavorite(game.id)}
-                    onToggleFavorite={() => toggleFavorite(game.id)}
-                  />
-                </div>
-              ))}
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
-          ) : (
-            <div className="text-center py-20">
-              <div className="w-20 h-20 mx-auto mb-6 bg-retro-dark flex items-center justify-center"
-                   style={{ 
-                     clipPath: "polygon(0 4px, 4px 4px, 4px 0, calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 4px calc(100% - 4px), 0 calc(100% - 4px))",
-                     boxShadow: "inset 0 0 0 2px hsl(var(--retro-purple))"
-                   }}>
-                <Gamepad2 className="w-10 h-10 text-retro-purple" />
+
+            <div className="-mx-4 px-4 overflow-x-auto scrollbar-thin">
+              <div className="flex items-center gap-2 w-max pb-1">
+                {CATEGORIES.map((c) => {
+                  const active = category === c.id;
+                  return (
+                    <button
+                      key={c.id}
+                      onClick={() => setCategory(c.id)}
+                      className={`shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full font-silkscreen text-[11px] tracking-wider transition-all duration-200 border ${
+                        active
+                          ? "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] border-[hsl(var(--primary))] shadow-[0_4px_0_hsl(var(--secondary))]"
+                          : "bg-[hsl(var(--card))] text-[hsl(var(--foreground))] border-[hsl(var(--border))] hover:border-[hsl(var(--primary))] hover:text-[hsl(var(--primary))]"
+                      }`}
+                    >
+                      <span className="text-sm leading-none">{c.icon}</span>
+                      {c.label.toUpperCase()}
+                    </button>
+                  );
+                })}
+                <button
+                  onClick={() => setCategory("Todos")}
+                  className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-[11px] font-silkscreen tracking-wider text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))]"
+                  aria-label="Limpar filtros"
+                >
+                  <Filter className="w-3.5 h-3.5" />
+                  RESET
+                </button>
               </div>
-              <h3 className="font-pixel text-lg text-white mb-2">
-                GAME NOT FOUND
-              </h3>
-              <p className="font-retro text-retro-gray">
-                Tente buscar por outro nome
-              </p>
             </div>
+          </div>
+        </div>
+
+        {/* ---- Content ---- */}
+        <div className="container mx-auto px-4 pt-6">
+          {/* Continue Playing */}
+          {!searchQuery && category === "Todos" && (
+            <GameRow
+              title="Continuar Jogando"
+              icon={<Clock className="w-4 h-4" />}
+              games={recent}
+              onPlay={playGame}
+              isFavorite={isFavorite}
+              toggleFavorite={toggleFavorite}
+            />
           )}
-        </section>
+
+          {/* Popular */}
+          {!searchQuery && category === "Todos" && (
+            <GameRow
+              title="Jogos Populares"
+              icon={<Flame className="w-4 h-4" />}
+              badge="HOT"
+              games={popular}
+              onPlay={playGame}
+              isFavorite={isFavorite}
+              toggleFavorite={toggleFavorite}
+            />
+          )}
+
+          {/* Community favorites */}
+          {!searchQuery && category === "Todos" && (
+            <GameRow
+              title="Favoritos da Comunidade"
+              icon={<Trophy className="w-4 h-4" />}
+              games={community}
+              onPlay={playGame}
+              isFavorite={isFavorite}
+              toggleFavorite={toggleFavorite}
+            />
+          )}
+
+          {/* Latest */}
+          {!searchQuery && category === "Todos" && (
+            <GameRow
+              title="Últimos Adicionados"
+              icon={<Sparkles className="w-4 h-4" />}
+              badge="NOVO"
+              games={latest}
+              onPlay={playGame}
+              isFavorite={isFavorite}
+              toggleFavorite={toggleFavorite}
+            />
+          )}
+
+          {/* All / filtered */}
+          <section className="mb-10">
+            <div className="flex items-end justify-between mb-4 px-1">
+              <div className="flex items-center gap-2.5">
+                <span className="grid place-items-center w-9 h-9 rounded-lg bg-[hsl(var(--accent)/0.15)] text-[hsl(var(--accent))]">
+                  <Gamepad2 className="w-4 h-4" />
+                </span>
+                <h2 className="font-display text-2xl sm:text-3xl text-[hsl(var(--foreground))] leading-none">
+                  {category === "Todos" ? "Todos os Jogos" : category}
+                </h2>
+              </div>
+              <span className="font-silkscreen text-[10px] tracking-wider text-[hsl(var(--muted-foreground))]">
+                {filtered.length} {filtered.length === 1 ? "JOGO" : "JOGOS"}
+              </span>
+            </div>
+
+            {filtered.length > 0 ? (
+              <div className="grid gap-3 sm:gap-4 grid-cols-2 sm:grid-cols-4 lg:grid-cols-6">
+                {filtered.map((g, i) => (
+                  <div key={g.id} className="animate-fade-in" style={{ animationDelay: `${Math.min(i * 20, 240)}ms` }}>
+                    <GameCard
+                      game={g}
+                      onPlay={() => playGame(g)}
+                      isFavorite={isFavorite(g.id)}
+                      onToggleFavorite={() => toggleFavorite(g.id)}
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-16 rounded-2xl border border-dashed border-[hsl(var(--border))] bg-[hsl(var(--card))]">
+                <div className="mx-auto w-16 h-16 grid place-items-center rounded-2xl bg-[hsl(var(--primary)/0.1)] text-[hsl(var(--primary))] mb-4">
+                  <Gamepad2 className="w-8 h-8" />
+                </div>
+                <h3 className="font-display text-2xl text-[hsl(var(--foreground))] mb-1">Nenhum jogo encontrado</h3>
+                <p className="text-sm text-[hsl(var(--muted-foreground))]">Tente outra busca ou categoria.</p>
+                <Button
+                  onClick={() => { setSearchQuery(""); setCategory("Todos"); }}
+                  className="mt-4 font-silkscreen text-[11px] tracking-wider"
+                >
+                  LIMPAR FILTROS
+                </Button>
+              </div>
+            )}
+          </section>
+        </div>
       </main>
 
-      {/* Fullscreen Player - Retro Style */}
+      {/* ---- Fullscreen player ---- */}
       {fullscreenGame && (
-        <div className="fixed inset-0 z-[100] flex flex-col bg-retro-darker animate-fade-in">
-          {/* Header - Arcade style */}
-          <div className="flex items-center justify-between px-4 py-3 bg-retro-dark border-b-4 border-retro-purple">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-retro-red flex items-center justify-center"
-                   style={{ 
-                     clipPath: "polygon(0 4px, 4px 4px, 4px 0, calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 4px calc(100% - 4px), 0 calc(100% - 4px))"
-                   }}>
-                <Joystick className="w-5 h-5 text-white" />
+        <div className="fixed inset-0 z-[100] flex flex-col bg-[hsl(var(--secondary))] animate-fade-in">
+          <div className="flex items-center justify-between px-4 py-3 bg-[hsl(var(--secondary))] border-b-2 border-[hsl(var(--primary))]">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="grid place-items-center w-10 h-10 rounded-lg bg-[hsl(var(--primary))] text-white shrink-0">
+                <Gamepad2 className="w-5 h-5" />
               </div>
-              <div>
-                <h2 className="font-pixel text-sm text-white line-clamp-1">
-                  {fullscreenGame.title}
-                </h2>
-                <p className="font-retro text-xs text-retro-cyan">NOW PLAYING</p>
+              <div className="min-w-0">
+                <h2 className="font-display text-lg text-white truncate">{fullscreenGame.title}</h2>
+                <p className="font-silkscreen text-[10px] tracking-wider text-[hsl(var(--primary))]">▶ NOW PLAYING</p>
               </div>
             </div>
-
             <Button
-              variant="outline"
               onClick={() => setFullscreenGame(null)}
-              className="gap-2 rounded-none border-2 border-retro-red bg-transparent text-retro-red hover:bg-retro-red hover:text-white font-pixel text-[10px] transition-colors"
-              style={{ boxShadow: "3px 3px 0 hsl(var(--retro-dark))" }}
+              className="gap-2 font-silkscreen text-[11px] tracking-wider bg-[hsl(var(--accent))] hover:bg-[hsl(var(--accent)/0.9)] text-white shrink-0"
             >
               <X className="w-4 h-4" />
               SAIR
             </Button>
           </div>
-
-          {/* Game iframe with scanlines */}
           <div className="flex-1 bg-black relative">
             <iframe
               src={fullscreenGame.src}
               className="w-full h-full"
               allow="autoplay; fullscreen; gamepad; accelerometer; gyroscope"
               sandbox="allow-scripts allow-same-origin allow-pointer-lock"
+              title={fullscreenGame.title}
             />
-            {/* Subtle scanline overlay */}
-            <div className="absolute inset-0 scanlines opacity-10 pointer-events-none" />
           </div>
         </div>
       )}
