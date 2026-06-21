@@ -5,6 +5,7 @@ import AnnouncementBanner from "@/components/AnnouncementBanner";
 import AdvantagesSection from "@/components/AdvantagesSection";
 import UtilityToolsSection from "@/components/UtilityToolsSection";
 import Footer from "@/components/Footer";
+import { useDownloaderStatus } from "@/hooks/useDownloaderStatus";
 
 // Below-the-fold sections — split into chunks loaded after the hero paints.
 const ComicsSection         = lazy(() => import("@/components/ComicsSection"));
@@ -24,6 +25,9 @@ const SectionDivider = () => (
 );
 
 const Index = () => {
+  const { isActive, loading } = useDownloaderStatus();
+  const gamesOn = loading || isActive("games");
+  const comicsOn = loading || isActive("comics");
   return (
     <div className="bg-background font-inter w-full overflow-x-hidden">
       <Header />
@@ -44,8 +48,8 @@ const Index = () => {
           {/* 4. Entretenimento — mantém o usuário navegando */}
           <SectionDivider />
           <RandomGamePicker />
-          <GamesCarousel />
-          <ComicsSection />
+          {gamesOn && <GamesCarousel />}
+          {comicsOn && <ComicsSection />}
 
           {/* 5. Prova social — reforça a decisão */}
           <SectionDivider />
