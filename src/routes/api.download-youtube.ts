@@ -57,7 +57,7 @@ export const Route = createFileRoute("/api/download-youtube")({
 
           // youtube-media-downloader (RapidAPI) — returns direct googlevideo URLs
           const apiResp = await fetch(
-            `https://youtube-media-downloader.p.rapidapi.com/v2/video/details?videoId=${videoId}`,
+            `https://youtube-media-downloader.p.rapidapi.com/v2/video/details?videoId=${videoId}&urlAccess=normal&videos=auto&audios=auto`,
             {
               headers: {
                 "x-rapidapi-host": "youtube-media-downloader.p.rapidapi.com",
@@ -83,12 +83,6 @@ export const Route = createFileRoute("/api/download-youtube")({
           }
 
           const data: any = await apiResp.json();
-
-          // Debug mode: return raw provider payload for inspection
-          const url = new URL(request.url);
-          if (url.searchParams.get("debug") === "1") {
-            return Response.json({ raw: data }, { headers: corsHeaders() });
-          }
 
           if (data.errorId && data.errorId !== "Success") {
             const { reportDownloaderResult } = await import(
