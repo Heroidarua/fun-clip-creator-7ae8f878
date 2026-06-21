@@ -330,7 +330,7 @@ export default function Jogos() {
 
       {/* Fullscreen Player - Retro Style */}
       {fullscreenGame && (
-        <div className="fixed inset-0 z-50 flex flex-col bg-retro-darker animate-fade-in">
+        <div className="fixed inset-0 z-[100] flex flex-col bg-retro-darker animate-fade-in">
           {/* Header - Arcade style */}
           <div className="flex items-center justify-between px-4 py-3 bg-retro-dark border-b-4 border-retro-purple">
             <div className="flex items-center gap-3">
