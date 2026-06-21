@@ -57,11 +57,13 @@ export const Route = createFileRoute("/api/download-youtube")({
 
           // youtube-media-downloader (RapidAPI) — returns direct googlevideo URLs
           const apiResp = await fetch(
-            `https://youtube-media-downloader.p.rapidapi.com/v2/video/details?videoId=${videoId}`,
+            `https://youtube-media-downloader.p.rapidapi.com/v2/video/details?videoId=${videoId}&urlAccess=normal&videos=auto&audios=auto`,
             {
               headers: {
                 "x-rapidapi-host": "youtube-media-downloader.p.rapidapi.com",
                 "x-rapidapi-key": rapidKey,
+                "Accept": "application/json",
+                "User-Agent": "Mozilla/5.0 (sos01-downloader)",
               },
             }
           );
@@ -83,6 +85,14 @@ export const Route = createFileRoute("/api/download-youtube")({
           }
 
           const data: any = await apiResp.json();
+
+          console.log("[youtube] RapidAPI keys:", Object.keys(data || {}));
+          console.log(
+            "[youtube] videos.items:",
+            (data?.videos?.items || []).length,
+            "audios.items:",
+            (data?.audios?.items || []).length
+          );
 
           if (data.errorId && data.errorId !== "Success") {
             const { reportDownloaderResult } = await import(
