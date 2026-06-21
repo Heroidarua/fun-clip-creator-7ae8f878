@@ -1,10 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Sparkles, Wrench, Gamepad2, BookOpen, ArrowUpRight } from "lucide-react";
+import { Wrench, Gamepad2, BookOpen, ArrowUpRight } from "lucide-react";
 
 const items = [
-  { to: "/hub", icon: Sparkles, title: "AI Hub", desc: "Ferramentas com IA em um só lugar" },
   { to: "/ferramentas", icon: Wrench, title: "Ferramentas", desc: "QR, senhas, conversores e mais" },
   { to: "/jogos", icon: Gamepad2, title: "Jogos", desc: "Biblioteca retrô completa" },
   { to: "/blog", icon: BookOpen, title: "Blog", desc: "Tutoriais e artigos" },

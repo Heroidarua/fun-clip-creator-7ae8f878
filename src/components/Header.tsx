@@ -1,5 +1,4 @@
 import {
-  Sparkles,
   LayoutDashboard,
   Gamepad2,
   Wrench,
@@ -23,7 +22,6 @@ import {
 } from "@/components/ui/tooltip";
 
 const NAV = [
-  { to: "/hub", label: "AI Hub", icon: Sparkles, desc: "Assistente inteligente" },
   { to: "/ferramentas", label: "Ferramentas", icon: Wrench, desc: "QR, PDF, áudio, imagens" },
   { to: "/jogos", label: "Jogos", icon: Gamepad2, desc: "Clássicos retrô grátis" },
   { to: "/blog", label: "Blog", icon: BookOpen, desc: "Guias e novidades" },
