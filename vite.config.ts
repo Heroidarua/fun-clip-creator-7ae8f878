@@ -245,6 +245,62 @@ export default defineConfig(({ command, mode }) => {
       viteReact(),
       serverJsBridge(),
       mode === "development" && componentTagger(),
+      VitePWA({
+        registerType: "autoUpdate",
+        injectRegister: null,
+        strategies: "generateSW",
+        filename: "sw.js",
+        manifest: false,
+        devOptions: { enabled: false },
+        workbox: {
+          navigateFallback: "/index.html",
+          navigateFallbackDenylist: [/^\/api\//, /^\/~oauth/],
+          globPatterns: ["**/*.{js,css,html,svg,png,ico,webmanifest,woff2}"],
+          cleanupOutdatedCaches: true,
+          clientsClaim: true,
+          skipWaiting: true,
+          runtimeCaching: [
+            {
+              urlPattern: ({ request, url }) =>
+                request.mode === "navigate" &&
+                !url.pathname.startsWith("/api/") &&
+                !url.pathname.startsWith("/~oauth"),
+              handler: "NetworkFirst",
+              options: {
+                cacheName: "html-nav",
+                networkTimeoutSeconds: 4,
+                expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 * 7 },
+              },
+            },
+            {
+              urlPattern: ({ url, sameOrigin }) =>
+                sameOrigin && /\.(?:js|css|woff2)$/.test(url.pathname),
+              handler: "CacheFirst",
+              options: {
+                cacheName: "static-assets",
+                expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 30 },
+              },
+            },
+            {
+              urlPattern: ({ url, sameOrigin }) =>
+                sameOrigin && /\.(?:png|jpg|jpeg|svg|gif|webp|ico)$/.test(url.pathname),
+              handler: "CacheFirst",
+              options: {
+                cacheName: "images",
+                expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 30 },
+              },
+            },
+            {
+              urlPattern: ({ url }) => url.origin === "https://fonts.gstatic.com",
+              handler: "CacheFirst",
+              options: {
+                cacheName: "google-fonts",
+                expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              },
+            },
+          ],
+        },
+      }),
     ].filter(Boolean),
   };
 });
