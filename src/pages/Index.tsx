@@ -65,9 +65,6 @@ const Index = () => {
         </Suspense>
       </main>
       <Footer />
-      <Suspense fallback={null}>
-        <ClipyAssistant />
-      </Suspense>
     </div>
   );
 };
