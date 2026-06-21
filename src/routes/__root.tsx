@@ -1,10 +1,12 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/hooks/useTheme";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import BackToTop from "@/components/BackToTop";
+import { registerSW } from "@/lib/registerSW";
 
 import appCss from "../styles.css?url";
 
@@ -113,6 +115,9 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
+  useEffect(() => {
+    registerSW();
+  }, []);
   return (
     <ThemeProvider>
       <TooltipProvider>
