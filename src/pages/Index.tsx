@@ -16,8 +16,6 @@ const HowToUse              = lazy(() => import("@/components/HowToUse"));
 const AboutSection          = lazy(() => import("@/components/AboutSection"));
 const TechnicalInfoSection  = lazy(() => import("@/components/TechnicalInfoSection"));
 const FAQ                   = lazy(() => import("@/components/FAQ"));
-const ClipyAssistant        = lazy(() => import("@/components/ClipyAssistant"));
-
 const SectionDivider = () => (
   <div aria-hidden className="relative h-px w-full max-w-5xl mx-auto my-6 sm:my-10 px-4 sm:px-6">
     <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
