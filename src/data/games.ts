@@ -67,5 +67,5 @@ export const games: Game[] = [
   { id: 59, title: "Pocahontas", src: "https://www.retrogames.cc/embed/30419-pocahontas-usa.html", img: "https://i.imgur.com/oBf7g7c.png" },
   { id: 60, title: "Fantastic Adventures of Dizzy", src: "https://www.retrogames.cc/embed/19288-aladdin-fantastic-adventures-of-dizzy-the-usa-unl.html", img: "https://i.imgur.com/NzPmYyl.png" },
   { id: 61, title: "Altered Beast", src: "https://www.retrogames.cc/embed/7762-altered-beast-set-2-mc-8123b-317-0066.html", img: "https://i.imgur.com/92fhOOL.png" },
-  { id: 62, title: "Chrono trigger", src: "https://www.retrogames.cc/embed/17368-chrono-trigger-usa-hack-by-kajar-laboratories-v1-0-chrono-trigger-prophet-s-guile.html", img: "https://i.imgur.com/pS5lb3d.png" },
+  { id: 62, title: "Chrono trigger", src: "https://www.retrogames.cc/embed/22857-chrono-trigger-usa.html", img: "https://i.imgur.com/pS5lb3d.png" },
 ];
