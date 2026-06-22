@@ -20,6 +20,12 @@ const ALLOWED_HOST_PATTERNS: RegExp[] = [
   /(^|\.)kuaishou\.com$/i,
   /(^|\.)kwaicdn\.com$/i,
   /(^|\.)kw\.ai$/i,
+  // Facebook / Meta
+  /(^|\.)facebook\.com$/i,
+  /(^|\.)fb\.com$/i,
+  /(^|\.)fb\.watch$/i,
+  /(^|\.)fbcdn\.net$/i,
+  /(^|\.)fbsbx\.com$/i,
 ];
 
 export function isSafeProxyUrl(raw: string): boolean {
