@@ -2,7 +2,7 @@
 // based on real success/failure of each download attempt. Fire-and-forget
 // from route handlers; failures are swallowed so they never break a response.
 
-type Platform = "tiktok" | "instagram" | "kwai" | "youtube";
+type Platform = "tiktok" | "instagram" | "kwai" | "youtube" | "facebook";
 
 // In-memory throttle: avoid hammering the DB on every request.
 // Only write when the desired status changes OR the last write was >5 min ago.
