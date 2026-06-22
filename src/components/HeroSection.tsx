@@ -862,6 +862,75 @@ const HeroSection = () => {
     }
   };
 
+  // Facebook handlers
+  const handleFacebookPaste = async () => {
+    setClickedFacebookButton("paste");
+    setTimeout(() => setClickedFacebookButton(null), 300);
+    try {
+      const text = await navigator.clipboard.readText();
+      setFacebookUrl(text);
+      toast({ title: "✅ Link colado com sucesso!", description: "Agora clique em 'Buscar' para encontrar o vídeo." });
+    } catch {
+      toast({ title: "❌ Erro ao colar", description: "Não foi possível acessar a área de transferência.", variant: "destructive" });
+    }
+  };
+
+  const handleFacebookSearch = async () => {
+    setClickedFacebookButton("search");
+    setTimeout(() => setClickedFacebookButton(null), 300);
+    if (!facebookUrl.trim()) {
+      toast({ title: "URL obrigatório", description: "Por favor, insira um URL válido do Facebook.", variant: "destructive" });
+      return;
+    }
+    setFacebookLoading(true);
+    setFacebookProgress(0);
+    const progressInterval = setInterval(() => {
+      setFacebookProgress((prev) => (prev >= 90 ? prev : prev + Math.random() * 15));
+    }, 200);
+    try {
+      const data = await fetchJsonWithRetry(apiUrl('/api/download-facebook'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: facebookUrl.trim() }),
+      });
+      setFacebookProgress(100);
+      clearInterval(progressInterval);
+      if (data && data.success) {
+        setFacebookData(rewriteProxy(data.data));
+        toast({ title: "Vídeo encontrado!", description: "Pronto para download." });
+      } else {
+        toast({ title: "Erro ao processar", description: data.error || "Não foi possível processar o vídeo do Facebook.", variant: "destructive" });
+      }
+    } catch (error: any) {
+      clearInterval(progressInterval);
+      toast({ title: "Erro de conexão", description: error?.message || "Tente novamente em alguns momentos.", variant: "destructive" });
+    } finally {
+      setTimeout(() => { setFacebookLoading(false); setFacebookProgress(0); }, 500);
+    }
+  };
+
+  const handleFacebookDownload = async () => {
+    setClickedFacebookButton("download");
+    setTimeout(() => setClickedFacebookButton(null), 300);
+    if (!facebookData) return;
+    try {
+      const response = await fetch(facebookData.proxy_url || facebookData.video_url);
+      const blob = await response.blob();
+      const downloadBlobUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadBlobUrl;
+      link.download = `${facebookData.title.replace(/[^a-zA-Z0-9]/g, '_')}_facebook.mp4`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(downloadBlobUrl);
+      trackDownload('facebook');
+      toast({ title: "Download iniciado!", description: "O vídeo está sendo baixado." });
+    } catch {
+      toast({ title: "Erro no download", description: "Não foi possível baixar o vídeo.", variant: "destructive" });
+    }
+  };
+
   return (
     <section className="relative bg-background text-foreground flex flex-col w-full min-h-[100dvh]">
       {/* Simple Black Background */}
