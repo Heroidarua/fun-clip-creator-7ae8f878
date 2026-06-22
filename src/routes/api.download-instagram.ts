@@ -34,14 +34,14 @@ interface MediaResponse {
   error?: string;
 }
 
-const RAPIDAPI_HOST = "instagram120.p.rapidapi.com";
+const UA =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
 async function resolveUsernameFromEmbed(shortcode: string): Promise<string | null> {
   try {
     const res = await fetch(`https://www.instagram.com/p/${shortcode}/embed/`, {
       headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "User-Agent": UA,
         Accept: "text/html",
       },
     });
@@ -57,91 +57,228 @@ async function resolveUsernameFromEmbed(shortcode: string): Promise<string | nul
   }
 }
 
+// ---- RapidAPI providers (tried in order; first success wins) ----
+
+async function fetchInstagram120(url: string, key: string, shortcode: string): Promise<MediaResponse | null> {
+  let normalizedUrl = url;
+  if (!/instagram\.com\/[a-zA-Z0-9_.]+\/(p|reel|reels|tv)\//.test(url)) {
+    const username = await resolveUsernameFromEmbed(shortcode);
+    if (!username) return null;
+    normalizedUrl = `https://www.instagram.com/${username}/p/${shortcode}/`;
+  }
+  const response = await fetch("https://instagram120.p.rapidapi.com/api/instagram/links", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-RapidAPI-Key": key,
+      "X-RapidAPI-Host": "instagram120.p.rapidapi.com",
+    },
+    body: JSON.stringify({ url: normalizedUrl }),
+  });
+  if (!response.ok) return null;
+  const data = await response.json();
+  const items: any[] = Array.isArray(data) ? data : data?.result || [];
+  if (!items.length) return null;
+
+  type Extracted = { media_url: string; media_type: "video" | "image"; thumbnail: string };
+  const extracted: Extracted[] = [];
+  for (const item of items) {
+    const urls = Array.isArray(item?.urls) ? item.urls : [];
+    const sorted = [...urls].sort((a: any, b: any) => (b?.quality || 0) - (a?.quality || 0));
+    const best = sorted[0];
+    if (!best?.url) continue;
+    const ext = String(best.extension || "").toLowerCase();
+    const isVideo = ext === "mp4" || /\.mp4/i.test(best.url);
+    extracted.push({
+      media_url: best.url,
+      media_type: isVideo ? "video" : "image",
+      thumbnail: item?.pictureUrl || (isVideo ? "" : best.url),
+    });
+  }
+  if (!extracted.length) return null;
+
+  const first = extracted[0];
+  const meta = items[0]?.meta || {};
+  const out: MediaData = {
+    media_url: first.media_url,
+    media_type: first.media_type,
+    thumbnail: first.thumbnail,
+    title: meta.title || "Instagram Media",
+    author: meta.username || "Usuário",
+    is_carousel: extracted.length > 1,
+  };
+  if (extracted.length > 1) {
+    out.carousel_items = extracted.map((e, i) => ({
+      index: i,
+      media_url: e.media_url,
+      media_type: e.media_type,
+      thumbnail: e.thumbnail,
+    }));
+  }
+  return { success: true, data: out };
+}
+
+// social-download-all-in-one.p.rapidapi.com — supports IG/TT/FB/YT
+async function fetchSocialAllInOne(url: string, key: string): Promise<MediaResponse | null> {
+  const r = await fetch("https://social-download-all-in-one.p.rapidapi.com/v1/social/autolink", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-RapidAPI-Key": key,
+      "X-RapidAPI-Host": "social-download-all-in-one.p.rapidapi.com",
+    },
+    body: JSON.stringify({ url }),
+  });
+  if (!r.ok) return null;
+  const j: any = await r.json();
+  const medias: any[] = j?.medias || [];
+  if (!medias.length) return null;
+  const videos = medias.filter((m) => m.type === "video" && m.url);
+  const images = medias.filter((m) => m.type === "image" && m.url);
+  const picked = videos[0] || images[0];
+  if (!picked?.url) return null;
+  const out: MediaData = {
+    media_url: picked.url,
+    media_type: picked.type === "video" ? "video" : "image",
+    thumbnail: j?.thumbnail || picked?.thumbnail || "",
+    title: j?.title || "Instagram Media",
+    author: j?.author || "Usuário",
+    duration: j?.duration ? Number(j.duration) : undefined,
+  };
+  // carousel support
+  const all = [...videos, ...images];
+  if (all.length > 1) {
+    out.is_carousel = true;
+    out.carousel_items = all.map((m, i) => ({
+      index: i,
+      media_url: m.url,
+      media_type: m.type === "video" ? "video" : "image",
+      thumbnail: m.thumbnail || (m.type === "image" ? m.url : j?.thumbnail || ""),
+    }));
+  }
+  return { success: true, data: out };
+}
+
+// auto-download-all-in-one-big.p.rapidapi.com — alternative aggregator
+async function fetchAutoAllInOne(url: string, key: string): Promise<MediaResponse | null> {
+  const r = await fetch("https://auto-download-all-in-one-big.p.rapidapi.com/v1/social/autolink", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-RapidAPI-Key": key,
+      "X-RapidAPI-Host": "auto-download-all-in-one-big.p.rapidapi.com",
+    },
+    body: JSON.stringify({ url }),
+  });
+  if (!r.ok) return null;
+  const j: any = await r.json();
+  const medias: any[] = j?.medias || [];
+  if (!medias.length) return null;
+  const picked = medias.find((m) => m.type === "video" && m.url) || medias.find((m) => m.url);
+  if (!picked?.url) return null;
+  const out: MediaData = {
+    media_url: picked.url,
+    media_type: picked.type === "video" ? "video" : "image",
+    thumbnail: j?.thumbnail || "",
+    title: j?.title || "Instagram Media",
+    author: j?.author || "Usuário",
+  };
+  if (medias.length > 1) {
+    out.is_carousel = true;
+    out.carousel_items = medias.filter((m) => m.url).map((m, i) => ({
+      index: i,
+      media_url: m.url,
+      media_type: m.type === "video" ? "video" : "image",
+      thumbnail: m.thumbnail || (m.type === "image" ? m.url : j?.thumbnail || ""),
+    }));
+  }
+  return { success: true, data: out };
+}
+
+// instagram-scraper-api2.p.rapidapi.com — by-shortcode endpoint
+async function fetchScraperApi2(shortcode: string, key: string): Promise<MediaResponse | null> {
+  const r = await fetch(
+    `https://instagram-scraper-api2.p.rapidapi.com/v1/post_info?code_or_id_or_url=${encodeURIComponent(shortcode)}&include_insights=false`,
+    {
+      headers: {
+        "X-RapidAPI-Key": key,
+        "X-RapidAPI-Host": "instagram-scraper-api2.p.rapidapi.com",
+      },
+    }
+  );
+  if (!r.ok) return null;
+  const j: any = await r.json();
+  const d = j?.data;
+  if (!d) return null;
+  const videoUrl = d?.video_url || d?.video_versions?.[0]?.url;
+  const thumb = d?.thumbnail_url || d?.display_url || d?.image_versions?.items?.[0]?.url || "";
+  const carousel = d?.carousel_media || [];
+  if (carousel.length > 1) {
+    const items = carousel.map((c: any, i: number) => {
+      const v = c?.video_url || c?.video_versions?.[0]?.url;
+      const im = c?.thumbnail_url || c?.display_url || c?.image_versions?.items?.[0]?.url || "";
+      return {
+        index: i,
+        media_url: v || im,
+        media_type: v ? ("video" as const) : ("image" as const),
+        thumbnail: im,
+      };
+    });
+    return {
+      success: true,
+      data: {
+        media_url: items[0].media_url,
+        media_type: items[0].media_type,
+        thumbnail: items[0].thumbnail,
+        title: d?.caption?.text?.slice(0, 100) || "Instagram Media",
+        author: d?.user?.username || d?.owner?.username || "Usuário",
+        is_carousel: true,
+        carousel_items: items,
+      },
+    };
+  }
+  if (!videoUrl && !thumb) return null;
+  return {
+    success: true,
+    data: {
+      media_url: videoUrl || thumb,
+      media_type: videoUrl ? "video" : "image",
+      thumbnail: thumb,
+      title: d?.caption?.text?.slice(0, 100) || "Instagram Media",
+      author: d?.user?.username || d?.owner?.username || "Usuário",
+    },
+  };
+}
+
 async function fetchViaRapidApi(url: string, rapidApiKey: string): Promise<MediaResponse | null> {
   const RAPIDAPI_KEY = rapidApiKey.trim();
   if (!RAPIDAPI_KEY) {
     console.warn("⚠️ RAPIDAPI_KEY não configurada.");
     return null;
   }
+  const shortcode = url.match(/(?:p|reel|reels|tv)\/([A-Za-z0-9-_]+)/)?.[1];
+  if (!shortcode) return null;
 
-  try {
-    const shortcode = url.match(/(?:p|reel|reels|tv)\/([A-Za-z0-9-_]+)/)?.[1];
-    if (!shortcode) return null;
+  const providers: Array<{ name: string; run: () => Promise<MediaResponse | null> }> = [
+    { name: "social-all-in-one", run: () => fetchSocialAllInOne(url, RAPIDAPI_KEY) },
+    { name: "auto-all-in-one", run: () => fetchAutoAllInOne(url, RAPIDAPI_KEY) },
+    { name: "scraper-api2", run: () => fetchScraperApi2(shortcode, RAPIDAPI_KEY) },
+    { name: "instagram120", run: () => fetchInstagram120(url, RAPIDAPI_KEY, shortcode) },
+  ];
 
-    // instagram120 requires URL in the form /{username}/p/{shortcode}/
-    let normalizedUrl = url;
-    if (!/instagram\.com\/[a-zA-Z0-9_.]+\/(p|reel|reels|tv)\//.test(url)) {
-      const username = await resolveUsernameFromEmbed(shortcode);
-      if (!username) return null;
-      normalizedUrl = `https://www.instagram.com/${username}/p/${shortcode}/`;
+  for (const p of providers) {
+    try {
+      const res = await p.run();
+      if (res?.success && res.data?.media_url) {
+        console.log(`✅ Instagram via ${p.name}`);
+        return res;
+      }
+      console.warn(`⚠️ Instagram provider ${p.name} returned no media`);
+    } catch (e) {
+      console.warn(`⚠️ Instagram provider ${p.name} threw:`, (e as Error).message);
     }
-
-    const apiUrl = `https://${RAPIDAPI_HOST}/api/instagram/links`;
-    const response = await fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-RapidAPI-Key": RAPIDAPI_KEY,
-        "X-RapidAPI-Host": RAPIDAPI_HOST,
-      },
-      body: JSON.stringify({ url: normalizedUrl }),
-    });
-
-    if (!response.ok) {
-      console.warn("instagram120 HTTP", response.status);
-      return null;
-    }
-    const data = await response.json();
-
-    // Response shape from instagram120: array of items, each with
-    // { urls: [{url, extension, quality, ...}], meta: {title, username, ...}, pictureUrl }
-    const items: any[] = Array.isArray(data) ? data : data?.result || [];
-    if (!items.length) return null;
-
-    type Extracted = { media_url: string; media_type: "video" | "image"; thumbnail: string };
-    const extracted: Extracted[] = [];
-    for (const item of items) {
-      const urls = Array.isArray(item?.urls) ? item.urls : [];
-      // Pick the highest-quality entry
-      const sorted = [...urls].sort((a: any, b: any) => (b?.quality || 0) - (a?.quality || 0));
-      const best = sorted[0];
-      if (!best?.url) continue;
-      const ext = String(best.extension || "").toLowerCase();
-      const isVideo = ext === "mp4" || /\.mp4/i.test(best.url);
-      extracted.push({
-        media_url: best.url,
-        media_type: isVideo ? "video" : "image",
-        thumbnail: item?.pictureUrl || (isVideo ? "" : best.url),
-      });
-    }
-
-    if (!extracted.length) return null;
-
-    const first = extracted[0];
-    const meta = items[0]?.meta || {};
-    const mediaData: MediaData = {
-      media_url: first.media_url,
-      media_type: first.media_type,
-      thumbnail: first.thumbnail,
-      title: meta.title || "Instagram Media",
-      author: meta.username || "Usuário",
-      is_carousel: extracted.length > 1,
-    };
-
-    if (extracted.length > 1) {
-      mediaData.carousel_items = extracted.map((e, i) => ({
-        index: i,
-        media_url: e.media_url,
-        media_type: e.media_type,
-        thumbnail: e.thumbnail,
-      }));
-    }
-
-    return { success: true, data: mediaData };
-  } catch (error) {
-    console.error("❌ RapidAPI Error:", error);
-    return null;
   }
+  return null;
 }
 
 async function tryDirectScrape(url: string): Promise<MediaResponse | null> {
