@@ -13,6 +13,7 @@ import tiktokIcon from "@/assets/tiktok-icon.png";
 import instagramIcon from "@/assets/instagram-icon.png";
 import kwaiIcon from "@/assets/kwai-icon.png";
 import youtubeIcon from "@/assets/youtube-icon.png";
+import facebookIcon from "@/assets/facebook-icon.png";
 
 // Status Badge Component
 const StatusBadge = ({ isActive }: { isActive: boolean }) => (
@@ -123,6 +124,16 @@ interface KwaiData {
   duration?: number;
 }
 
+interface FacebookData {
+  video_url: string;
+  proxy_url?: string;
+  proxy_thumbnail_url?: string;
+  thumbnail: string;
+  title: string;
+  author: string;
+  duration?: number;
+}
+
 interface YouTubeData {
   video_url: string;
   audio_url?: string;
@@ -167,6 +178,13 @@ const HeroSection = () => {
   const [youtubeData, setYoutubeData] = useState<YouTubeData | null>(null);
   const [youtubeDownloadType, setYoutubeDownloadType] = useState<"video" | "audio">("video");
   const [clickedYoutubeButton, setClickedYoutubeButton] = useState<string | null>(null);
+
+  // Facebook states
+  const [facebookUrl, setFacebookUrl] = useState("");
+  const [facebookLoading, setFacebookLoading] = useState(false);
+  const [facebookProgress, setFacebookProgress] = useState(0);
+  const [facebookData, setFacebookData] = useState<FacebookData | null>(null);
+  const [clickedFacebookButton, setClickedFacebookButton] = useState<string | null>(null);
 
 
   const detectPlatform = (url: string) => {

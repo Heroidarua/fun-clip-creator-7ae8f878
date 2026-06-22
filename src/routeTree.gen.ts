@@ -44,6 +44,7 @@ import { Route as ApiDownloadYoutubeRouteImport } from './routes/api.download-yo
 import { Route as ApiDownloadTiktokRouteImport } from './routes/api.download-tiktok'
 import { Route as ApiDownloadKwaiRouteImport } from './routes/api.download-kwai'
 import { Route as ApiDownloadInstagramRouteImport } from './routes/api.download-instagram'
+import { Route as ApiDownloadFacebookRouteImport } from './routes/api.download-facebook'
 
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
@@ -228,6 +229,11 @@ const ApiDownloadInstagramRoute = ApiDownloadInstagramRouteImport.update({
   path: '/api/download-instagram',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiDownloadFacebookRoute = ApiDownloadFacebookRouteImport.update({
+  id: '/api/download-facebook',
+  path: '/api/download-facebook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -247,6 +253,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
+  '/api/download-facebook': typeof ApiDownloadFacebookRoute
   '/api/download-instagram': typeof ApiDownloadInstagramRoute
   '/api/download-kwai': typeof ApiDownloadKwaiRoute
   '/api/download-tiktok': typeof ApiDownloadTiktokRoute
@@ -283,6 +290,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
+  '/api/download-facebook': typeof ApiDownloadFacebookRoute
   '/api/download-instagram': typeof ApiDownloadInstagramRoute
   '/api/download-kwai': typeof ApiDownloadKwaiRoute
   '/api/download-tiktok': typeof ApiDownloadTiktokRoute
@@ -321,6 +329,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
+  '/api/download-facebook': typeof ApiDownloadFacebookRoute
   '/api/download-instagram': typeof ApiDownloadInstagramRoute
   '/api/download-kwai': typeof ApiDownloadKwaiRoute
   '/api/download-tiktok': typeof ApiDownloadTiktokRoute
@@ -360,6 +369,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/sobre'
     | '/termos'
+    | '/api/download-facebook'
     | '/api/download-instagram'
     | '/api/download-kwai'
     | '/api/download-tiktok'
@@ -396,6 +406,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/sobre'
     | '/termos'
+    | '/api/download-facebook'
     | '/api/download-instagram'
     | '/api/download-kwai'
     | '/api/download-tiktok'
@@ -433,6 +444,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/sobre'
     | '/termos'
+    | '/api/download-facebook'
     | '/api/download-instagram'
     | '/api/download-kwai'
     | '/api/download-tiktok'
@@ -471,6 +483,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SobreRoute: typeof SobreRoute
   TermosRoute: typeof TermosRoute
+  ApiDownloadFacebookRoute: typeof ApiDownloadFacebookRoute
   ApiDownloadInstagramRoute: typeof ApiDownloadInstagramRoute
   ApiDownloadKwaiRoute: typeof ApiDownloadKwaiRoute
   ApiDownloadTiktokRoute: typeof ApiDownloadTiktokRoute
@@ -726,6 +739,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiDownloadInstagramRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/download-facebook': {
+      id: '/api/download-facebook'
+      path: '/api/download-facebook'
+      fullPath: '/api/download-facebook'
+      preLoaderRoute: typeof ApiDownloadFacebookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -780,6 +800,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SobreRoute: SobreRoute,
   TermosRoute: TermosRoute,
+  ApiDownloadFacebookRoute: ApiDownloadFacebookRoute,
   ApiDownloadInstagramRoute: ApiDownloadInstagramRoute,
   ApiDownloadKwaiRoute: ApiDownloadKwaiRoute,
   ApiDownloadTiktokRoute: ApiDownloadTiktokRoute,
