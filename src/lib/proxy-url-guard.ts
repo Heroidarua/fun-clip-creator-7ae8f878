@@ -26,6 +26,9 @@ const ALLOWED_HOST_PATTERNS: RegExp[] = [
   /(^|\.)fb\.watch$/i,
   /(^|\.)fbcdn\.net$/i,
   /(^|\.)fbsbx\.com$/i,
+  // Snapsave CDN (proxied fbcdn for Facebook downloads)
+  /(^|\.)rapidcdn\.app$/i,
+  /(^|\.)snapsave\.app$/i,
 ];
 
 export function isSafeProxyUrl(raw: string): boolean {
