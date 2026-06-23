@@ -20,6 +20,9 @@ const ALLOWED_HOST_PATTERNS: RegExp[] = [
   /(^|\.)kuaishou\.com$/i,
   /(^|\.)kwaicdn\.com$/i,
   /(^|\.)kw\.ai$/i,
+  /(^|\.)kwai\.net$/i,
+  /(^|\.)kuaishouzt\.com$/i,
+  /(^|\.)gifshow\.com$/i,
   // Facebook / Meta
   /(^|\.)facebook\.com$/i,
   /(^|\.)fb\.com$/i,
