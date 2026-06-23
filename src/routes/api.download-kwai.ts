@@ -103,8 +103,18 @@ async function tryPageScrape(url: string, sessionCookie = ""): Promise<MediaResp
 
     let videoUrl = ogVideo;
     if (!videoUrl) {
-      const m = html.match(/"(?:playUrl|mainMvUrl|photoUrl|videoUrl)"\s*:\s*"([^"]+\.mp4[^"]*)"/i);
+      // JSON-LD VideoObject (current Kwai SSR shape)
+      const m = html.match(/"contentUrl"\s*:\s*"([^"]+\.mp4[^"]*)"/i);
       if (m) videoUrl = decodeJsonString(m[1]);
+    }
+    if (!videoUrl) {
+      const m = html.match(/"(?:playUrl|mainMvUrl|photoUrl|videoUrl|srcNoMark|src)"\s*:\s*"([^"]+\.mp4[^"]*)"/i);
+      if (m) videoUrl = decodeJsonString(m[1]);
+    }
+    if (!videoUrl) {
+      // Last resort: any mp4 URL on a Kwai CDN host
+      const m = html.match(/https?:\\?\/\\?\/[^"'\s\\]+\.kwai\.net\\?\/[^"'\s\\]+\.mp4[^"'\s\\]*/i);
+      if (m) videoUrl = decodeJsonString(m[0]).replace(/\\u002F/gi, "/").replace(/\\\//g, "/");
     }
     if (!videoUrl) {
       const m = html.match(/<source[^>]+src=["'](https?:\/\/[^"']+\.mp4[^"']*)["']/i);
@@ -112,7 +122,18 @@ async function tryPageScrape(url: string, sessionCookie = ""): Promise<MediaResp
     }
     if (!videoUrl) return null;
 
-    const authorMatch = ogTitle.match(/^(.*?)\s+(?:on|no|en)\s+Kwai/i) || ogDesc.match(/@([A-Za-z0-9._-]+)/);
+    // Title / thumbnail from JSON-LD when og tags are absent
+    let thumb = ogImage;
+    if (!thumb) {
+      const t = html.match(/"thumbnailUrl"\s*:\s*\[?\s*"([^"]+)"/i);
+      if (t) thumb = decodeJsonString(t[1]);
+    }
+    let title = ogTitle;
+    if (!title || title === "Kwai Video") {
+      const n = html.match(/"name"\s*:\s*"([^"]{4,160})"/);
+      if (n) title = n[1];
+    }
+    const authorMatch = title.match(/^(.*?)\s+\(@/) || title.match(/^(.*?)\s+(?:on|no|en)\s+Kwai/i) || ogDesc.match(/@([A-Za-z0-9._-]+)/);
     const author = authorMatch?.[1] || "Kwai";
 
     return {
@@ -120,8 +141,8 @@ async function tryPageScrape(url: string, sessionCookie = ""): Promise<MediaResp
       data: {
         media_url: videoUrl,
         media_type: "video",
-        thumbnail: ogImage || "",
-        title: (ogTitle || "Kwai Video").substring(0, 100),
+        thumbnail: thumb || "",
+        title: (title || "Kwai Video").substring(0, 100),
         author,
       },
     };
