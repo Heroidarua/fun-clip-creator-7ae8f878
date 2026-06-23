@@ -69,14 +69,16 @@ function extractMeta(html: string, property: string): string {
 }
 
 async function expandShortUrl(url: string, sessionCookie = ""): Promise<string> {
-  if (!/kw\.ai|s\.kwai\.com/.test(url)) return url;
+  // Follow redirects on any short / share link so the canonical /video/<id> URL is used downstream.
+  if (!/kw\.ai|s\.kwai\.com|\/share\/|\/short-video\/|\/p\//i.test(url)) return url;
   try {
     const r = await fetch(url, {
       method: "GET",
       redirect: "follow",
         headers: getKwHeaders(sessionCookie),
     });
-    return r.url || url;
+    const finalUrl = (r.url || url).split("?")[0];
+    return finalUrl;
   } catch {
     return url;
   }
@@ -213,6 +215,8 @@ async function downloadKwaiMedia(rawUrl: string, functionUrl: string, sessionCoo
     () => tryPageScrape(url, sessionCookie),
     () => tryMobile(url, sessionCookie),
     () => tryGraphQL(url, sessionCookie),
+    // Last resort: scrape via savekwai.com (public, no key required)
+    () => trySaveKwai(url),
   ];
 
   for (let i = 0; i < methods.length; i++) {
@@ -232,6 +236,48 @@ async function downloadKwaiMedia(rawUrl: string, functionUrl: string, sessionCoo
     error:
       "Não foi possível processar o vídeo do Kwai. Verifique se o link está correto e se o vídeo é público.",
   };
+}
+
+// Method 4: savekwai.com public scraper (best-effort fallback)
+async function trySaveKwai(url: string): Promise<MediaResponse | null> {
+  try {
+    console.log("🔍 [Kwai savekwai] tentando…");
+    const r = await fetch("https://savekwai.com/api/ajaxSearch", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "User-Agent": pick(USER_AGENTS),
+        Origin: "https://savekwai.com",
+        Referer: "https://savekwai.com/",
+        Accept: "*/*",
+      },
+      body: new URLSearchParams({ q: url, lang: "en" }).toString(),
+    });
+    if (!r.ok) return null;
+    const j: any = await r.json().catch(() => null);
+    const html: string = j?.data || "";
+    if (!html) return null;
+    const mp4 = html.match(/href="(https?:\/\/[^"]+\.mp4[^"]*)"/i)?.[1];
+    if (!mp4) return null;
+    const thumb = html.match(/<img[^>]+src="(https?:\/\/[^"]+)"/i)?.[1] || "";
+    const title =
+      html.match(/<h3[^>]*>([^<]+)<\/h3>/i)?.[1]?.trim() ||
+      html.match(/<p[^>]*>([^<]+)<\/p>/i)?.[1]?.trim() ||
+      "Kwai Video";
+    return {
+      success: true,
+      data: {
+        media_url: mp4,
+        media_type: "video",
+        thumbnail: thumb,
+        title: title.substring(0, 100),
+        author: "Kwai",
+      },
+    };
+  } catch (e) {
+    console.error("❌ [Kwai savekwai] erro:", e);
+    return null;
+  }
 }
 
 async function handleProxy(request: Request, mediaUrl: string, mediaType: string): Promise<Response> {
