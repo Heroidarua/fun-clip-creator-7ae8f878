@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { isSafeProxyUrl } from "@/lib/proxy-url-guard";
+import { callSnapsave } from "@/lib/snapsave.server";
 
 const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -36,6 +37,50 @@ interface MediaResponse {
 
 const UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+
+// Resolve /share/ and other shortened links to canonical /p/ /reel/ /tv/.
+async function resolveInstagramUrl(url: string): Promise<string> {
+  try {
+    if (!/\/share\//i.test(url) && !/instagr\.am/i.test(url)) return url;
+    const r = await fetch(url, {
+      method: "GET",
+      redirect: "follow",
+      headers: { "User-Agent": UA, "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8" },
+    });
+    if (r.url && /instagram\.com\/.*(p|reel|reels|tv)\//i.test(r.url)) {
+      return r.url.split("?")[0];
+    }
+  } catch {}
+  return url;
+}
+
+// Snapsave supports Instagram public posts/reels and decodes without eval.
+async function fetchInstagramSnapsave(url: string): Promise<MediaResponse | null> {
+  const res = await callSnapsave(url);
+  if (!res?.medias?.length) return null;
+  const videos = res.medias.filter((m) => m.type === "video");
+  const images = res.medias.filter((m) => m.type === "image" && !/thumb/i.test(m.url));
+  const picked = videos[0] || images[0];
+  if (!picked) return null;
+  const out: MediaData = {
+    media_url: picked.url,
+    media_type: picked.type,
+    thumbnail: picked.thumbnail || res.thumbnail || "",
+    title: (res.title || "Instagram Media").substring(0, 100),
+    author: "Instagram",
+  };
+  const all = [...videos, ...images];
+  if (all.length > 1) {
+    out.is_carousel = true;
+    out.carousel_items = all.map((m, i) => ({
+      index: i,
+      media_url: m.url,
+      media_type: m.type,
+      thumbnail: m.thumbnail || res.thumbnail || "",
+    }));
+  }
+  return { success: true, data: out };
+}
 
 async function resolveUsernameFromEmbed(shortcode: string): Promise<string | null> {
   try {
@@ -350,6 +395,19 @@ function addProxyUrls(data: MediaData, routePath: string): MediaData {
 
 async function downloadInstagramMedia(url: string, functionUrl: string, rapidApiKey: string): Promise<MediaResponse> {
   console.log("🚀 Iniciando processo para:", url);
+  url = await resolveInstagramUrl(url);
+
+  // Snapsave first — free and currently the most reliable.
+  try {
+    const snap = await fetchInstagramSnapsave(url);
+    if (snap?.success && snap.data?.media_url) {
+      console.log("✅ Instagram via snapsave");
+      snap.data = addProxyUrls(snap.data, functionUrl);
+      return snap;
+    }
+  } catch (e) {
+    console.warn("⚠️ snapsave falhou:", (e as Error).message);
+  }
 
   const rapidResult = await fetchViaRapidApi(url, rapidApiKey);
   if (rapidResult?.success && rapidResult.data) {
@@ -366,7 +424,7 @@ async function downloadInstagramMedia(url: string, functionUrl: string, rapidApi
   return {
     success: false,
     error:
-      "Falha ao baixar. O Instagram bloqueou a requisição direta. Configure uma API Key de proxy (RapidAPI) no backend para funcionar consistentemente.",
+      "Não foi possível processar este post. Verifique se o link está correto e se o conteúdo é público.",
   };
 }
 

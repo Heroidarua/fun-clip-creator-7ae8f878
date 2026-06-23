@@ -29,6 +29,9 @@ const ALLOWED_HOST_PATTERNS: RegExp[] = [
   // Snapsave CDN (proxied fbcdn for Facebook downloads)
   /(^|\.)rapidcdn\.app$/i,
   /(^|\.)snapsave\.app$/i,
+  // SaveKwai fallback
+  /(^|\.)savekwai\.com$/i,
+  /(^|\.)kwai-pro\.com$/i,
 ];
 
 export function isSafeProxyUrl(raw: string): boolean {
