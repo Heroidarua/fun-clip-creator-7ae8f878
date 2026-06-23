@@ -38,8 +38,8 @@ const Nasa = () => {
         }
         .nasa-exit-btn {
           position: fixed;
-          top: calc(var(--nasa-safe-top) + var(--nasa-chrome-offset));
-          right: calc(var(--nasa-safe-right) + var(--nasa-chrome-offset));
+          left: calc(var(--nasa-safe-left) + var(--nasa-chrome-offset));
+          bottom: calc(var(--nasa-safe-bottom) + var(--nasa-chrome-offset));
           z-index: 10000;
           display: inline-flex;
           align-items: center;
@@ -85,23 +85,23 @@ const Nasa = () => {
             opacity: 0.7;
             width: 36px;
             height: 36px;
-            /* On mobile, native browser bars sit at the top — add more breathing room */
-            top: calc(var(--nasa-safe-top) + 18px);
-            right: calc(var(--nasa-safe-right) + 12px);
+            /* On mobile, keep clear of NASA's bottom toolbar by sitting just above safe-area */
+            left: calc(var(--nasa-safe-left) + 12px);
+            bottom: calc(var(--nasa-safe-bottom) + 18px);
           }
         }
         /* Landscape phones: notch on the side, top bar shorter */
         @media (max-width: 900px) and (orientation: landscape) {
           .nasa-exit-btn {
-            top: calc(var(--nasa-safe-top) + 10px);
-            right: calc(var(--nasa-safe-right) + 14px);
+            left: calc(var(--nasa-safe-left) + 14px);
+            bottom: calc(var(--nasa-safe-bottom) + 10px);
           }
         }
         /* PWA / standalone display — no browser chrome, can sit closer to edge */
         @media (display-mode: standalone) {
           .nasa-exit-btn {
-            top: calc(var(--nasa-safe-top) + 8px);
-            right: calc(var(--nasa-safe-right) + 8px);
+            left: calc(var(--nasa-safe-left) + 8px);
+            bottom: calc(var(--nasa-safe-bottom) + 8px);
           }
         }
       `}</style>
