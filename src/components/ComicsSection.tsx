@@ -35,6 +35,7 @@ type Category = typeof CATEGORIES[number];
 const ComicsSection = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [iframeFailed, setIframeFailed] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<Category>("Todos");
 
   const filteredComics = useMemo(() => {
@@ -43,7 +44,15 @@ const ComicsSection = () => {
   }, [selectedCategory]);
 
   const openLibrary = () => {
+    setIframeFailed(false);
     setIsOpen(true);
+    // Abre em nova aba como fallback garantido — alguns navegadores/redes
+    // bloqueiam o iframe do HQFlix (X-Frame-Options / CSP / origin offline).
+    try {
+      window.open(HQFLIX_URL, "_blank", "noopener,noreferrer");
+    } catch {
+      /* ignore */
+    }
   };
 
   const closeLibrary = () => {
@@ -263,7 +272,7 @@ const ComicsSection = () => {
               className="inline-flex items-center gap-3 px-8 py-4 bg-primary text-primary-foreground font-pixel text-[10px] sm:text-xs border-4 border-primary hover:bg-primary/80 transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(255,0,0,0.5)]"
             >
               <Book className="w-5 h-5" />
-              EM MANUTENÇÃO 🚫
+              ABRIR BIBLIOTECA
               <ExternalLink className="w-4 h-4" />
             </button>
           </div>
@@ -309,13 +318,32 @@ const ComicsSection = () => {
             </div>
 
             <div className="flex-1 w-full bg-black/20">
-              <iframe
-                src={HQFLIX_URL}
-                className="w-full h-full border-0"
-                title="Biblioteca de Quadrinhos - HQFlix"
-                allow="fullscreen"
-                loading="lazy"
-              />
+              {iframeFailed ? (
+                <div className="w-full h-full flex flex-col items-center justify-center text-center px-6 gap-4">
+                  <Book className="w-10 h-10 text-primary" />
+                  <p className="font-pixel text-[10px] sm:text-xs text-foreground max-w-md">
+                    O HQFlix não permite ser exibido aqui dentro. Abrimos a biblioteca em uma nova aba.
+                  </p>
+                  <a
+                    href={HQFLIX_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-pixel text-[10px] sm:text-xs border-4 border-primary hover:bg-primary/80 transition-all"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    ABRIR EM NOVA ABA
+                  </a>
+                </div>
+              ) : (
+                <iframe
+                  src={HQFLIX_URL}
+                  className="w-full h-full border-0"
+                  title="Biblioteca de Quadrinhos - HQFlix"
+                  allow="fullscreen"
+                  loading="lazy"
+                  onError={() => setIframeFailed(true)}
+                />
+              )}
             </div>
           </div>
         </DialogContent>
