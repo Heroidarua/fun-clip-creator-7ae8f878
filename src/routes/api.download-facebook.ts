@@ -32,6 +32,123 @@ function isValidFacebookUrl(url: string): boolean {
   return /^https?:\/\/([a-z0-9-]+\.)*(facebook\.com|fb\.com|fb\.watch|m\.facebook\.com)/i.test(url);
 }
 
+// Resolve /share/v/<id>/ and other short links to the canonical /reel/ or /watch/ URL.
+// Many providers reject the short share form.
+async function resolveFacebookUrl(url: string): Promise<string> {
+  try {
+    if (!/\/share\/(v|r|p|video|reel)\//i.test(url) && !/fb\.watch/i.test(url)) {
+      return url;
+    }
+    const r = await fetch(url, {
+      method: "GET",
+      redirect: "follow",
+      headers: {
+        "User-Agent": UA,
+        "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
+      },
+    });
+    if (r.url && /facebook\.com\/(reel|watch|video|.+\/videos)/i.test(r.url)) {
+      return r.url.split("?")[0];
+    }
+  } catch {}
+  return url;
+}
+
+// Provider 0: Snapsave (decodes their obfuscated response without eval — Cloudflare-safe)
+const SNAP_CHARSET =
+  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/";
+function snapConv(d: string, e: number, f: number): string {
+  const src = SNAP_CHARSET.slice(0, e);
+  const dst = SNAP_CHARSET.slice(0, f);
+  let j: number = d
+    .split("")
+    .reverse()
+    .reduce((a: number, b: string, c: number) => {
+      const idx = src.indexOf(b);
+      return idx !== -1 ? a + idx * Math.pow(e, c) : a;
+    }, 0);
+  let k = "";
+  while (j > 0) {
+    k = dst[j % f] + k;
+    j = (j - (j % f)) / f;
+  }
+  return k || "0";
+}
+function decodeSnapsave(src: string): string | null {
+  const m = src.match(
+    /return decodeURIComponent\(escape\(r\)\)\}\("([^"]+)",(\d+),"([^"]+)",(\d+),(\d+),(\d+)\)/,
+  );
+  if (!m) return null;
+  const h = m[1];
+  const n = m[3];
+  const t = +m[4];
+  const e = +m[5];
+  let r = "";
+  const esc: string[] = [];
+  for (let j = 0; j < n.length; j++) esc.push(n[j].replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  for (let i = 0; i < h.length; i++) {
+    let s = "";
+    while (i < h.length && h[i] !== n[e]) {
+      s += h[i];
+      i++;
+    }
+    for (let j = 0; j < n.length; j++) s = s.replace(new RegExp(esc[j], "g"), String(j));
+    r += String.fromCharCode(parseInt(snapConv(s, e, 10), 10) - t);
+  }
+  try {
+    return decodeURIComponent(escape(r));
+  } catch {
+    return r;
+  }
+}
+async function fetchSnapsave(url: string): Promise<MediaResponse | null> {
+  const r = await fetch("https://snapsave.app/action.php?lang=en", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+      "User-Agent": UA,
+      Origin: "https://snapsave.app",
+      Referer: "https://snapsave.app/",
+      Accept: "*/*",
+    },
+    body: new URLSearchParams({ url }).toString(),
+  });
+  if (!r.ok) return null;
+  const body = await r.text();
+  const html = decodeSnapsave(body);
+  if (!html) return null;
+  // Prefer HD; fall back to first available v2 token URL.
+  const allLinks = [...html.matchAll(/https:\/\/d\.rapidcdn\.app\/v2\?token=[A-Za-z0-9._-]+/g)].map(
+    (x) => x[0],
+  );
+  if (!allLinks.length) return null;
+  // Look for the row labeled HD (720p / 1080p) to prefer it; otherwise take the first.
+  const hdIdx = html.search(/720p|1080p|\(HD\)/i);
+  let mediaUrl = allLinks[0];
+  if (hdIdx >= 0) {
+    for (const link of allLinks) {
+      if (html.indexOf(link) > hdIdx - 200 && html.indexOf(link) < hdIdx + 800) {
+        mediaUrl = link;
+        break;
+      }
+    }
+  }
+  const thumb =
+    html.match(/https:\/\/d\.rapidcdn\.app\/thumb\?token=[A-Za-z0-9._-]+/)?.[0] || "";
+  const title =
+    html.match(/<strong>([^<]+)<\/strong>/)?.[1]?.trim() || "Facebook Video";
+  return {
+    success: true,
+    data: {
+      media_url: mediaUrl,
+      media_type: "video",
+      thumbnail: thumb,
+      title: title.substring(0, 100),
+      author: "Facebook",
+    },
+  };
+}
+
 // Provider 1: social-download-all-in-one (covers FB/IG/TT/YT)
 async function fetchSocialAllInOne(url: string, key: string): Promise<MediaResponse | null> {
   const r = await fetch("https://social-download-all-in-one.p.rapidapi.com/v1/social/autolink", {
@@ -133,9 +250,12 @@ function addProxyUrls(data: MediaData, routePath: string): MediaData {
   return data;
 }
 
-async function downloadFacebookMedia(url: string, functionUrl: string, rapidApiKey: string): Promise<MediaResponse> {
+async function downloadFacebookMedia(rawUrl: string, functionUrl: string, rapidApiKey: string): Promise<MediaResponse> {
+  const url = await resolveFacebookUrl(rawUrl);
   const key = rapidApiKey.trim();
   const providers: Array<{ name: string; run: () => Promise<MediaResponse | null> }> = [];
+  // Snapsave is free and currently the most reliable; try it first.
+  providers.push({ name: "snapsave", run: () => fetchSnapsave(url) });
   if (key) {
     providers.push({ name: "social-all-in-one", run: () => fetchSocialAllInOne(url, key) });
     providers.push({ name: "auto-all-in-one", run: () => fetchAutoAllInOne(url, key) });
