@@ -93,7 +93,7 @@ function decodeSnapsave(src: string): string | null {
       i++;
     }
     for (let j = 0; j < n.length; j++) s = s.replace(new RegExp(esc[j], "g"), String(j));
-    r += String.fromCharCode(snapConv(s, e, 10) - t);
+    r += String.fromCharCode(parseInt(snapConv(s, e, 10), 10) - t);
   }
   try {
     return decodeURIComponent(escape(r));
