@@ -60,7 +60,7 @@ const SNAP_CHARSET =
 function snapConv(d: string, e: number, f: number): string {
   const src = SNAP_CHARSET.slice(0, e);
   const dst = SNAP_CHARSET.slice(0, f);
-  let j = d
+  let j: number = d
     .split("")
     .reverse()
     .reduce((a: number, b: string, c: number) => {
