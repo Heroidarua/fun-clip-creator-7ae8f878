@@ -46,13 +46,6 @@ const ComicsSection = () => {
   const openLibrary = () => {
     setIframeFailed(false);
     setIsOpen(true);
-    // Abre em nova aba como fallback garantido — alguns navegadores/redes
-    // bloqueiam o iframe do HQFlix (X-Frame-Options / CSP / origin offline).
-    try {
-      window.open(HQFLIX_URL, "_blank", "noopener,noreferrer");
-    } catch {
-      /* ignore */
-    }
   };
 
   const closeLibrary = () => {
@@ -297,6 +290,16 @@ const ComicsSection = () => {
                 </h3>
               </div>
               <div className="flex items-center gap-2">
+                <a
+                  href={HQFLIX_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hidden sm:inline-flex items-center gap-1 px-2 py-1 bg-primary/20 hover:bg-primary/30 border border-primary/50 rounded font-pixel text-[8px] text-primary transition-colors"
+                  title="Abrir HQFlix em uma nova aba"
+                >
+                  <ExternalLink className="w-3 h-3" />
+                  NOVA ABA
+                </a>
                 <button
                   onClick={() => setIsFullscreen(!isFullscreen)}
                   className="p-2 hover:bg-primary/20 rounded transition-colors"
