@@ -38,7 +38,7 @@ export const Route = createRootRoute({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { title: "SOS/01 - Baixe vídeos sem marca d'água" },
       { name: "description", content: "Baixe vídeos do TikTok, YouTube, Kwai e mais sem marca d'água. Ferramentas gratuitas, jogos retrô e muito mais!" },
       { name: "author", content: "SOS/01" },
