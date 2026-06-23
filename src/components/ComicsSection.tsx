@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Book, ExternalLink, X, Maximize2, Minimize2, Filter } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import ScrollReveal from "./ScrollReveal";
@@ -47,14 +47,6 @@ const ComicsSection = () => {
     setIframeFailed(false);
     setIsOpen(true);
   };
-
-  // Detecta falha do iframe (origin offline / X-Frame-Options / CSP).
-  // Se não carregar em 6s, mostra o fallback com link em nova aba.
-  useEffect(() => {
-    if (!isOpen || iframeFailed) return;
-    const t = window.setTimeout(() => setIframeFailed(true), 6000);
-    return () => window.clearTimeout(t);
-  }, [isOpen, iframeFailed]);
 
   const closeLibrary = () => {
     setIsOpen(false);
@@ -352,7 +344,6 @@ const ComicsSection = () => {
                   title="Biblioteca de Quadrinhos - HQFlix"
                   allow="fullscreen"
                   loading="lazy"
-                  onLoad={() => setIframeFailed(false)}
                   onError={() => setIframeFailed(true)}
                 />
               )}
