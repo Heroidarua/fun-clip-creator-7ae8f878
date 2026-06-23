@@ -28,10 +28,18 @@ const Nasa = () => {
         <span className="nasa-exit-label">Sair · SOS/01</span>
       </Link>
       <style>{`
+        :root {
+          --nasa-safe-top: env(safe-area-inset-top, 0px);
+          --nasa-safe-right: env(safe-area-inset-right, 0px);
+          --nasa-safe-bottom: env(safe-area-inset-bottom, 0px);
+          --nasa-safe-left: env(safe-area-inset-left, 0px);
+          /* Extra offset to clear native browser chrome (URL bar, status bar) */
+          --nasa-chrome-offset: 14px;
+        }
         .nasa-exit-btn {
           position: fixed;
-          top: max(10px, env(safe-area-inset-top));
-          right: max(10px, env(safe-area-inset-right));
+          top: calc(var(--nasa-safe-top) + var(--nasa-chrome-offset));
+          right: calc(var(--nasa-safe-right) + var(--nasa-chrome-offset));
           z-index: 10000;
           display: inline-flex;
           align-items: center;
@@ -73,7 +81,28 @@ const Nasa = () => {
           max-width: 120px;
         }
         @media (max-width: 640px) {
-          .nasa-exit-btn { opacity: 0.7; width: 36px; height: 36px; }
+          .nasa-exit-btn {
+            opacity: 0.7;
+            width: 36px;
+            height: 36px;
+            /* On mobile, native browser bars sit at the top — add more breathing room */
+            top: calc(var(--nasa-safe-top) + 18px);
+            right: calc(var(--nasa-safe-right) + 12px);
+          }
+        }
+        /* Landscape phones: notch on the side, top bar shorter */
+        @media (max-width: 900px) and (orientation: landscape) {
+          .nasa-exit-btn {
+            top: calc(var(--nasa-safe-top) + 10px);
+            right: calc(var(--nasa-safe-right) + 14px);
+          }
+        }
+        /* PWA / standalone display — no browser chrome, can sit closer to edge */
+        @media (display-mode: standalone) {
+          .nasa-exit-btn {
+            top: calc(var(--nasa-safe-top) + 8px);
+            right: calc(var(--nasa-safe-right) + 8px);
+          }
         }
       `}</style>
     </>
