@@ -351,7 +351,7 @@ async function handleProxy(request: Request, mediaUrl: string, mediaType: string
 }
 
 function isValidKwaiUrl(url: string): boolean {
-  return /^https?:\/\/([a-z0-9-]+\.)*(kwai\.com|kw\.ai)/i.test(url);
+  return /^https?:\/\/([a-z0-9-]+\.)*(kwai\.com|kw\.ai|kwai-video\.com|kwai\.net)/i.test(url);
 }
 
 export const Route = createFileRoute("/api/download-kwai")({
