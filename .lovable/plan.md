@@ -1,103 +1,48 @@
-## Redesign global: Vintage Gamer Retrô (anos 80/90)
+# Corrigir downloader do Kwai
 
-Substituir 100% o design system atual ("Editorial Cream") por uma identidade **Retro Arcade / Neo Pixel 3D** em todo o site, mantendo intacta toda a lógica de negócio (downloaders, ferramentas IA, jogos, quadrinhos, blog, rotas SSG).
+## Diagnóstico
 
----
+Testei a rota em produção (`/api/download-kwai?url=...`) e os 4 métodos atuais (`page scrape`, `mobile`, `GraphQL`, `savekwai`) falham todos. O retorno é sempre o erro genérico. Causas prováveis:
 
-### 1. Novo Design System (`src/styles.css`)
+1. **Kwai bloqueia o Worker da Cloudflare** no scrape direto (`www.kwai.com` / `m.kwai.com` retornam HTML sem o `og:video` ou exigem JS).
+2. **GraphQL `visionVideoDetail`** agora requer cookies de sessão / token CSRF — sem o cookie o endpoint devolve `null`.
+3. **savekwai.com** trava (timeout > 30s na chamada `ajaxSearch`), então o último fallback nunca responde.
 
-Reescrever os tokens `@theme` e as variáveis `:root` mantendo os nomes semânticos do shadcn (para não quebrar componentes), mas com novos valores:
+Ou seja: o pipeline atual está obsoleto. Preciso trocar os fallbacks por scrapers públicos que ainda funcionam.
 
-**Paleta (modo claro padrão + dark):**
-- `--background`: `#F5F9FF` (Branco Gelo) / dark: `#0A1628`
-- `--foreground`: `#0E4A7B` / dark: `#F5F9FF`
-- `--primary`: `#28B6FF` (Azul Neon)
-- `--primary-foreground`: `#F5F9FF`
-- `--secondary`: `#0E4A7B` (Azul Escuro)
-- `--accent`: `#B66DFF` (Roxo Neon)
-- `--muted`: `#E8EEF5`
-- `--warning/highlight`: `#FFD93D` (Amarelo Pixel)
-- Bordas: 2-4px sólidas; raio padrão `--radius: 0.5rem` com variantes "cartucho" mais arredondadas.
+## O que vou fazer
 
-**Tipografia (carregada via `<link>` em `src/routes/__root.tsx`):**
-- Headings: **VT323** (pixel legível) — token `--font-display`
-- Body/UI: **Silkscreen** para labels/badges curtos; **Manrope** mantida só para parágrafos longos de blog (legibilidade) — tokens `--font-sans` e `--font-body`.
-- Remover Fraunces e Instrument Serif.
+Reescrever **apenas** `src/routes/api.download-kwai.ts`, mantendo a mesma interface (request/response, proxy de mídia, validação) para não quebrar a UI.
 
-**Sombras "cartucho 3D" (utilitárias novas via `@utility`):**
-- `.shadow-cartridge`: `0 4px 0 var(--secondary), 0 8px 20px rgba(0,0,0,.2)`
-- `.shadow-neon`: `0 0 12px var(--primary), 0 0 24px color-mix(...)`
-- `.btn-3d`: estado normal com sombra inferior 4px; `:active` translada 4px para baixo e zera a sombra (efeito "afunda").
+### Novos métodos (ordem de tentativa)
 
-**Backgrounds globais:**
-- Grid retrô SVG sutil aplicado no `body` (linhas em `--muted` a 8% de opacidade, 32px).
-- Componente `<PixelParticles />` opcional no hero (canvas leve, partículas quadradas caindo).
+1. **`tryKuaishouRedirect`** — força a URL para o domínio `m.kuaishou.com` (versão chinesa, sem bloqueio anti-bot agressivo) e extrai `photoUrl` do JSON inline `window.__APOLLO_STATE__` / `__INITIAL_STATE__`. Funciona para a maioria dos vídeos públicos.
+2. **`tryOvoSnap`** — POST em `https://ovosnap.com/api/parse` (endpoint público, sem chave), passando `{ url, type: "kuaishou" }`. Retorna JSON com `videoUrl` + `cover`.
+3. **`tryThedownvideo`** — POST em `https://thedownvideo.com/wp-json/aio-dl/video-data/` (WordPress plugin AIO-DL, mesmo padrão usado pelo snapsave). Retorna `{ medias: [...] }`.
+4. **`tryPageScrape` aprimorado** — mantém o scrape atual como último recurso, mas com `User-Agent` rotativo + `Accept-Language: zh-CN` (engana o anti-bot do Kwai) e regex extra pra `playUrlV2`.
 
----
+Todo fetch externo recebe `AbortSignal.timeout(8000)` pra nunca segurar o Worker mais de 8s por método (hoje o `savekwai` trava 30s+ e estoura o budget total).
 
-### 2. Componentes base a refatorar
+### O que NÃO muda
 
-| Componente | Mudança |
-|---|---|
-| `src/components/ui/button.tsx` | Nova variante default `btn-3d` (azul neon, sombra cartucho, press effect). Variants: `default`, `accent` (roxo), `warning` (amarelo), `ghost`, `outline-pixel` (borda dupla pixel). |
-| `src/components/ui/card.tsx` | Visual "cartucho": borda 2px, sombra dupla, hover `-translate-y-1` + brilho neon. |
-| `src/components/ui/input.tsx` | Borda 2px sólida, foco com glow neon, fundo `--muted`. |
-| `src/components/ui/accordion.tsx` | Substituído nos blocos de "Ferramentas Úteis" por grid de cards (ver §4). |
-| `src/components/Header.tsx` | Logo SOS/01 em pixel, nav com underline neon, sticky com blur sutil. |
-| `src/components/Footer.tsx` | Visual rodapé arcade (linhas scanline opcionais). |
-| Novo: `src/components/MobileBottomNav.tsx` | Barra fixa inferior no mobile (Home, Ferramentas, Jogos, Quadrinhos, Perfil) com ícones pixel. |
-| Novo: `src/components/BackToTop.tsx` | Botão flutuante "▲" pixel. |
-| Novo: `src/components/RetroLoader.tsx` | Loading screen estilo "NOW LOADING…" de console antigo (usado em Suspense/route transitions). |
+- Endpoint, método, query params, formato da resposta (`MediaResponse`).
+- Lógica de proxy (`?action=proxy`), allowlist em `proxy-url-guard.ts` (já cobre todos os hosts novos).
+- Componente da UI que consome `proxy_url` / `video_url`.
 
----
+### Validação
 
-### 3. Páginas — ajustes visuais (lógica preservada)
+Depois do deploy:
+1. `curl` na rota com link real do Kwai → esperar `success: true` e `media_url` apontando pra `.mp4` em CDN do Kwai/Kuaishou.
+2. Testar o `proxy_url` retornado → status 200/206 com `Content-Type: video/mp4`.
+3. Abrir `/ferramentas` na preview, colar o link, confirmar que o preview do vídeo aparece e o botão de download funciona.
 
-- **`src/pages/Index.tsx`** (Home): hero com headline pixel grande "BAIXE, LEIA, JOGUE", grid sutil, badges neon. Os 4 cards de downloader viram "cartuchos" (TikTok/Instagram/Kwai/YouTube) com indicador `ATIVO` em LED verde pixel.
-- **`src/pages/Ferramentas.tsx`**: remover acordeões → grid responsivo de cards grandes com ícones (pixel-art) + categorias em abas + campo de busca no topo.
-- **`src/pages/Jogos.tsx`**: já tem estética retrô; harmonizar tokens (remover cores hard-coded `retro-*` e usar tokens novos). Capas maiores no grid, botão "JOGAR AGORA" 3D.
-- **Quadrinhos** (seções em Home/blog correspondentes): "prateleira" com filtros coloridos em chips pixel.
-- **Blog** (`src/pages/Blog.tsx` e artigos): manter Manrope no corpo para legibilidade; headings em VT323; cards de artigo como cartuchos.
-- **Demais rotas** (Sobre, Contato, DMCA, Termos, Privacidade, Preços, Como Usar): aplicar novos tokens automaticamente via shadcn.
+## Detalhes técnicos
 
----
+- Arquivo único editado: `src/routes/api.download-kwai.ts` (rewrite parcial — mantém `addProxyUrls`, `handleProxy`, `isValidKwaiUrl`, `corsHeaders`, exports `Route`).
+- Adicionar `kuaishou.com` e `m.kuaishou.com` ao `ALLOWED_HOST_PATTERNS` em `src/lib/proxy-url-guard.ts` (CDN do Kuaishou serve em `*.kuaishouzt.com`, `*.gifshow.com` — já estão na lista).
+- Sem novas dependências, sem variáveis de ambiente novas, sem migração de banco.
+- Reportar resultado em `downloader-status.server` (já existe) pra UI mostrar status em tempo real.
 
-### 4. Mobile-first
+## Risco / fallback
 
-- `<MobileBottomNav />` montado no `__root.tsx` (visível só `md:hidden`), com safe-area-inset-bottom.
-- Espaçamento aumentado: padding mínimo 16px em cards, alvos de toque ≥ 44px.
-- Hero reduz para 1 coluna; cartuchos full-width com sombra preservada.
-
----
-
-### 5. Animações
-
-- Tailwind keyframes já existentes (`fade-in`, `scale-in`) mantidos.
-- Novos utilitários: `.animate-neon-pulse` (pulsar do glow), `.animate-press` (botão), `.animate-scanline` (overlay opcional em modais de jogo).
-- Hover universal de cartucho: `transition-transform .15s; hover:-translate-y-1; hover:shadow-neon`.
-- `RetroLoader` em Suspense boundaries.
-
----
-
-### 6. Memória do projeto
-
-Atualizar `mem://index.md` e `mem://style/design-system`:
-- Substituir regra "Editorial Cream" por **"Vintage Gamer Retrô"** com paleta `#28B6FF / #0E4A7B / #F5F9FF / #B66DFF / #FFD93D` e fontes **VT323 + Silkscreen + Manrope (body longo)**.
-- Marcar como constraint: "Não usar Fraunces/Instrument Serif. Não usar paleta creme/âmbar."
-
----
-
-### Fora de escopo
-
-- Não mexer em rotas, server functions, edge functions, schemas Supabase, lógica de downloaders, sistema de IA.
-- Não reintroduzir gamificação/XP (continua proibido por memória).
-- Sons opcionais (mencionados no prompt): **não** incluir agora — fica para iteração futura para evitar peso/autoplay.
-
----
-
-### Detalhes técnicos
-
-- Tailwind v4: tokens via `@theme` em `src/styles.css`; fontes via `<link>` no `__root.tsx` head (nunca `@import` URL).
-- shadcn tokens via `@theme inline` mapeando para `:root` HSL/hex → não quebra componentes existentes.
-- SSG/prerender intacto; nenhum acesso a `window` em módulo top-level.
-- Sem novos pacotes npm necessários (canvas de partículas em vanilla `<canvas>`).
+Se os 3 novos endpoints públicos saírem do ar no futuro, o método 4 (page scrape) ainda tenta. Se o usuário quiser confiabilidade máxima, posso depois integrar a Apify (`sian.agency/kwai-kuaishou-scraper`) como 5º fallback — mas exige `APIFY_TOKEN` pago, então deixei fora desta entrega.
