@@ -75,7 +75,8 @@ async function expandShortUrl(url: string, sessionCookie = ""): Promise<string> 
     const r = await fetch(url, {
       method: "GET",
       redirect: "follow",
-        headers: getKwHeaders(sessionCookie),
+      headers: getKwHeaders(sessionCookie),
+      signal: AbortSignal.timeout(6000),
     });
     const finalUrl = (r.url || url).split("?")[0];
     return finalUrl;
@@ -88,7 +89,8 @@ async function expandShortUrl(url: string, sessionCookie = ""): Promise<string> 
 async function tryPageScrape(url: string, sessionCookie = ""): Promise<MediaResponse | null> {
   try {
     console.log("🔍 [Kwai page] Buscando HTML...");
-    const r = await fetch(url, { headers: getKwHeaders(sessionCookie), redirect: "follow" });
+    const headers = { ...getKwHeaders(sessionCookie), "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8" };
+    const r = await fetch(url, { headers, redirect: "follow", signal: AbortSignal.timeout(8000) });
     if (!r.ok) {
       console.warn("⚠️ [Kwai page] status", r.status);
       return null;
@@ -112,8 +114,16 @@ async function tryPageScrape(url: string, sessionCookie = ""): Promise<MediaResp
       if (m) videoUrl = decodeJsonString(m[1]);
     }
     if (!videoUrl) {
+      const m = html.match(/"playUrlV2"\s*:\s*\{[^}]*?"url"\s*:\s*"([^"]+\.mp4[^"]*)"/i);
+      if (m) videoUrl = decodeJsonString(m[1]);
+    }
+    if (!videoUrl) {
       // Last resort: any mp4 URL on a Kwai CDN host
       const m = html.match(/https?:\\?\/\\?\/[^"'\s\\]+\.kwai\.net\\?\/[^"'\s\\]+\.mp4[^"'\s\\]*/i);
+      if (m) videoUrl = decodeJsonString(m[0]).replace(/\\u002F/gi, "/").replace(/\\\//g, "/");
+    }
+    if (!videoUrl) {
+      const m = html.match(/https?:\\?\/\\?\/[^"'\s\\]+(?:kuaishouzt|gifshow|kwimgs|kwaicdn)\.com\\?\/[^"'\s\\]+\.mp4[^"'\s\\]*/i);
       if (m) videoUrl = decodeJsonString(m[0]).replace(/\\u002F/gi, "/").replace(/\\\//g, "/");
     }
     if (!videoUrl) {
@@ -152,19 +162,30 @@ async function tryPageScrape(url: string, sessionCookie = ""): Promise<MediaResp
   }
 }
 
-// Method 2: mobile m.kwai.com — often serves SSR HTML with metadata
+// Method 2: mobile m.kwai.com / m.kuaishou.com (CN domain bypasses anti-bot harder)
 async function tryMobile(url: string, sessionCookie = ""): Promise<MediaResponse | null> {
-  try {
-    const mobileUrl = url
-      .replace("://www.kwai.com", "://m.kwai.com")
-      .replace("://kwai.com", "://m.kwai.com");
-    if (mobileUrl === url) return null;
-    console.log("🔍 [Kwai mobile] tentando", mobileUrl);
-    return await tryPageScrape(mobileUrl, sessionCookie);
-  } catch (e) {
-    console.error("❌ [Kwai mobile] erro:", e);
-    return null;
+  const candidates: string[] = [];
+  const mobile = url
+    .replace("://www.kwai.com", "://m.kwai.com")
+    .replace("://kwai.com", "://m.kwai.com");
+  if (mobile !== url) candidates.push(mobile);
+  // Tenta também o domínio chinês (Kuaishou) — frequentemente serve SSR completo
+  const kuaishou = url
+    .replace("://www.kwai.com", "://m.kuaishou.com")
+    .replace("://kwai.com", "://m.kuaishou.com")
+    .replace("://m.kwai.com", "://m.kuaishou.com");
+  if (kuaishou !== url && !candidates.includes(kuaishou)) candidates.push(kuaishou);
+
+  for (const c of candidates) {
+    try {
+      console.log("🔍 [Kwai mobile] tentando", c);
+      const r = await tryPageScrape(c, sessionCookie);
+      if (r?.success) return r;
+    } catch (e) {
+      console.error("❌ [Kwai mobile] erro:", e);
+    }
   }
+  return null;
 }
 
 // Method 3: GraphQL visionVideoDetail (best-effort, requires photoId)
@@ -182,6 +203,7 @@ async function tryGraphQL(url: string, sessionCookie = ""): Promise<MediaRespons
         "Content-Type": "application/json",
         Accept: "*/*",
       },
+      signal: AbortSignal.timeout(7000),
       body: JSON.stringify({
         operationName: "visionVideoDetail",
         variables: { photoId, page: "detail" },
@@ -215,6 +237,82 @@ async function tryGraphQL(url: string, sessionCookie = ""): Promise<MediaRespons
   }
 }
 
+// Method: ovosnap public parser
+async function tryOvoSnap(url: string): Promise<MediaResponse | null> {
+  try {
+    console.log("🔍 [Kwai ovosnap] tentando…");
+    const r = await fetch("https://ovosnap.com/api/parse", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "User-Agent": pick(USER_AGENTS),
+        Origin: "https://ovosnap.com",
+        Referer: "https://ovosnap.com/kuaishou",
+        Accept: "application/json, text/plain, */*",
+      },
+      body: JSON.stringify({ url, type: "kuaishou" }),
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!r.ok) return null;
+    const j: any = await r.json().catch(() => null);
+    const videoUrl: string | undefined =
+      j?.videoUrl || j?.video_url || j?.data?.videoUrl || j?.data?.url || j?.medias?.[0]?.url;
+    if (!videoUrl) return null;
+    return {
+      success: true,
+      data: {
+        media_url: videoUrl,
+        media_type: "video",
+        thumbnail: j?.cover || j?.thumbnail || j?.data?.cover || "",
+        title: (j?.title || j?.data?.title || "Kwai Video").substring(0, 100),
+        author: j?.author || j?.data?.author || "Kwai",
+      },
+    };
+  } catch (e) {
+    console.error("❌ [Kwai ovosnap] erro:", e);
+    return null;
+  }
+}
+
+// Method: AIO-DL plugin (thedownvideo.com)
+async function tryAioDl(url: string): Promise<MediaResponse | null> {
+  try {
+    console.log("🔍 [Kwai aio-dl] tentando…");
+    const r = await fetch("https://thedownvideo.com/wp-json/aio-dl/video-data/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "User-Agent": pick(USER_AGENTS),
+        Origin: "https://thedownvideo.com",
+        Referer: "https://thedownvideo.com/kwai-video-downloader",
+        Accept: "*/*",
+      },
+      body: new URLSearchParams({ url, token: "" }).toString(),
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!r.ok) return null;
+    const j: any = await r.json().catch(() => null);
+    const medias: any[] = j?.medias || [];
+    const mp4 = medias.find((m) => /mp4/i.test(m?.extension || m?.formattedSize || m?.url || "")) || medias[0];
+    const videoUrl: string | undefined = mp4?.url;
+    if (!videoUrl) return null;
+    return {
+      success: true,
+      data: {
+        media_url: videoUrl,
+        media_type: "video",
+        thumbnail: j?.thumbnail || j?.cover || "",
+        title: (j?.title || "Kwai Video").substring(0, 100),
+        author: j?.author || "Kwai",
+        duration: j?.duration || undefined,
+      },
+    };
+  } catch (e) {
+    console.error("❌ [Kwai aio-dl] erro:", e);
+    return null;
+  }
+}
+
 function addProxyUrls(data: MediaData, routePath: string): MediaData {
   const baseUrl = routePath.startsWith("/") ? routePath : `/${routePath}`;
 
@@ -233,10 +331,11 @@ async function downloadKwaiMedia(rawUrl: string, functionUrl: string, sessionCoo
   const url = await expandShortUrl(rawUrl, sessionCookie);
 
   const methods = [
-    () => tryPageScrape(url, sessionCookie),
+    () => tryOvoSnap(url),
+    () => tryAioDl(url),
     () => tryMobile(url, sessionCookie),
+    () => tryPageScrape(url, sessionCookie),
     () => tryGraphQL(url, sessionCookie),
-    // Last resort: scrape via savekwai.com (public, no key required)
     () => trySaveKwai(url),
   ];
 
@@ -273,6 +372,7 @@ async function trySaveKwai(url: string): Promise<MediaResponse | null> {
         Accept: "*/*",
       },
       body: new URLSearchParams({ q: url, lang: "en" }).toString(),
+      signal: AbortSignal.timeout(7000),
     });
     if (!r.ok) return null;
     const j: any = await r.json().catch(() => null);
