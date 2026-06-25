@@ -64,6 +64,36 @@ export default function MaisSbt() {
         </button>
       </div>
 
+      {/* Always-visible "open in new tab" — required for Google login (Google blocks OAuth in iframes) */}
+      <a
+        href={SBT_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Abrir +SBT em nova aba"
+        className="absolute top-3 right-3 z-20 inline-flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#FFD93D] text-[#0E4A7B] text-xs font-silkscreen uppercase tracking-wider border border-black/10 hover:brightness-110 transition-all shadow-[0_3px_0_rgba(0,0,0,0.5)] active:translate-y-0.5 active:shadow-[0_1px_0_rgba(0,0,0,0.5)]"
+      >
+        <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
+        Abrir / Login Google
+      </a>
+
+      {/* Google-login notice banner */}
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 max-w-[92vw]">
+        <div className="flex items-center gap-2 px-3 py-2 rounded-full bg-black/70 backdrop-blur border border-[#B66DFF]/50 text-[#F5F9FF] text-[11px] sm:text-xs">
+          <Tv className="w-3.5 h-3.5 text-[#28B6FF] shrink-0" aria-hidden="true" />
+          <span className="leading-tight">
+            Para logar com Google, abra em nova aba — o Google não permite login dentro de iframes.
+          </span>
+          <a
+            href={SBT_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-1 font-silkscreen uppercase tracking-wider text-[#FFD93D] hover:text-white shrink-0"
+          >
+            Abrir →
+          </a>
+        </div>
+      </div>
+
       {/* Loading overlay */}
       {loading && !blocked && (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black gap-5 animate-in fade-in">
