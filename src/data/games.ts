@@ -68,5 +68,5 @@ export const games: Game[] = [
   { id: 60, title: "Fantastic Adventures of Dizzy", src: "https://www.retrogames.cc/embed/19288-aladdin-fantastic-adventures-of-dizzy-the-usa-unl.html", img: "https://i.imgur.com/NzPmYyl.png" },
   { id: 61, title: "Altered Beast", src: "https://www.retrogames.cc/embed/7762-altered-beast-set-2-mc-8123b-317-0066.html", img: "https://i.imgur.com/92fhOOL.png" },
   { id: 62, title: "Chrono trigger", src: "https://www.retrogames.cc/embed/22857-chrono-trigger-usa.html", img: "https://i.imgur.com/pS5lb3d.png" },
-  { id: 63, title: "8 Ball Billiards Classic", src: "https://play.famobi.com/8-ball-billiards-classic", img: "https://i.imgur.com/H0XRUiA.jpeg" },
+  { id: 63, title: "8 Ball Billiards Classic", src: "https://play.famobi.com/8-ball-billiards-classic/A1000-10", img: "https://i.imgur.com/H0XRUiA.jpeg" },
 ];
