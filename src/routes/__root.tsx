@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/hooks/useTheme";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import BackToTop from "@/components/BackToTop";
+import ProtectionLayer from "@/components/ProtectionLayer";
 import { registerSW } from "@/lib/registerSW";
 
 import appCss from "../styles.css?url";
@@ -123,6 +124,7 @@ function RootComponent() {
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <ProtectionLayer />
         <Outlet />
         <MobileBottomNav />
         <BackToTop />
