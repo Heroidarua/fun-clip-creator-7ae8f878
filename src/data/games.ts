@@ -69,6 +69,6 @@ export const games: Game[] = [
   { id: 61, title: "Altered Beast", src: "https://www.retrogames.cc/embed/7762-altered-beast-set-2-mc-8123b-317-0066.html", img: "https://i.imgur.com/92fhOOL.png" },
   { id: 62, title: "Chrono trigger", src: "https://www.retrogames.cc/embed/22857-chrono-trigger-usa.html", img: "https://i.imgur.com/pS5lb3d.png" },
   { id: 63, title: "8 Ball Billiards Classic", src: "https://play.famobi.com/8-ball-billiards-classic/A1000-10", img: "https://i.imgur.com/H0XRUiA.jpeg" },
-  { id: 64, title: "Monkey Bounce", src: "https://play.famobi.com/monkey-bounce/A100-10", img: "https://i.imgur.com/ZSOz4vd.jpeg" },
-  { id: 65, title: "Table Tennis World Tour", src "https://play.famobi.com/table-tennis-world-tour/A1000-10", img: "https://i.imgur.com/JWhK9DL.jpeg" },
+  { id: 64, title: "Monkey Bounce", src: "https://play.famobi.com/monkey-bounce/A1000-10", img: "https://i.imgur.com/ZSOz4vd.jpeg" },
+  { id: 65, title: "Table Tennis World Tour", src: "https://play.famobi.com/table-tennis-world-tour/A1000-10", img: "https://i.imgur.com/JWhK9DL.jpeg" },
 ];
