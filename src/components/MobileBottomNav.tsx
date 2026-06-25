@@ -12,6 +12,7 @@ const ITEMS = [
 
 export default function MobileBottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  if (pathname === "/mais-sbt") return null;
   const isActive = (to: string) =>
     to === "/" ? pathname === "/" : pathname === to || pathname.startsWith(to + "/");
 
