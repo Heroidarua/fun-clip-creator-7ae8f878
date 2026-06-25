@@ -1,48 +1,46 @@
-# Corrigir downloader do Kwai
+# Nova aba "+SBT 📺"
 
-## Diagnóstico
+## O que será feito
 
-Testei a rota em produção (`/api/download-kwai?url=...`) e os 4 métodos atuais (`page scrape`, `mobile`, `GraphQL`, `savekwai`) falham todos. O retorno é sempre o erro genérico. Causas prováveis:
+1. **Nova rota fullscreen** `src/routes/mais-sbt.tsx` + página `src/pages/MaisSbt.tsx`
+   - Layout 100vw × 100vh, sem Header/Footer/MobileBottomNav (página totalmente imersiva)
+   - Fundo preto, iframe ocupando toda a tela
+   - `allow="fullscreen; autoplay; encrypted-media"` + `allowFullScreen`
+   - Botão flutuante discreto no canto superior esquerdo: "← Voltar" (retorna ao site) e "⛶ Tela cheia" (usa `requestFullscreen()`)
+   - Indicador de carregamento centralizado (spinner retrô na paleta neon do SOS01: azul neon #28B6FF + roxo #B66DFF, fonte VT323 "CARREGANDO...")
+   - Detecção de bloqueio por X-Frame-Options/CSP:
+     - Timer de 6s após montar; se o `onLoad` do iframe não disparar, considera bloqueado
+     - Também escuta `onError`
+     - Estado de fallback exibe: ícone Tv (lucide-react), título "O +SBT não permite incorporação direta", subtítulo explicativo, botão grande `btn-3d` "Abrir +SBT" com `target="_blank" rel="noopener noreferrer"` apontando para https://mais.sbt.com.br/
+   - CSS: `overflow: hidden` no body enquanto a página estiver montada (cleanup no unmount)
 
-1. **Kwai bloqueia o Worker da Cloudflare** no scrape direto (`www.kwai.com` / `m.kwai.com` retornam HTML sem o `og:video` ou exigem JS).
-2. **GraphQL `visionVideoDetail`** agora requer cookies de sessão / token CSRF — sem o cookie o endpoint devolve `null`.
-3. **savekwai.com** trava (timeout > 30s na chamada `ajaxSearch`), então o último fallback nunca responde.
+2. **Esconder o MobileBottomNav nesta rota**
+   - Em `src/components/MobileBottomNav.tsx` (montado no `__root.tsx`), adicionar verificação do pathname; se for `/mais-sbt`, não renderizar
+   - Mesma lógica caso haja qualquer wrapper visual global
 
-Ou seja: o pipeline atual está obsoleto. Preciso trocar os fallbacks por scrapers públicos que ainda funcionam.
+3. **Adicionar item ao menu principal**
+   - Em `src/components/Header.tsx`, adicionar entrada no array `NAV`:
+     - `{ to: "/mais-sbt", label: "+SBT 📺", icon: Tv, desc: "Assista +SBT grátis" }`
+   - Usar ícone `Tv` do lucide-react
 
-## O que vou fazer
+## Estética (SOS01 retrô)
 
-Reescrever **apenas** `src/routes/api.download-kwai.ts`, mantendo a mesma interface (request/response, proxy de mídia, validação) para não quebrar a UI.
-
-### Novos métodos (ordem de tentativa)
-
-1. **`tryKuaishouRedirect`** — força a URL para o domínio `m.kuaishou.com` (versão chinesa, sem bloqueio anti-bot agressivo) e extrai `photoUrl` do JSON inline `window.__APOLLO_STATE__` / `__INITIAL_STATE__`. Funciona para a maioria dos vídeos públicos.
-2. **`tryOvoSnap`** — POST em `https://ovosnap.com/api/parse` (endpoint público, sem chave), passando `{ url, type: "kuaishou" }`. Retorna JSON com `videoUrl` + `cover`.
-3. **`tryThedownvideo`** — POST em `https://thedownvideo.com/wp-json/aio-dl/video-data/` (WordPress plugin AIO-DL, mesmo padrão usado pelo snapsave). Retorna `{ medias: [...] }`.
-4. **`tryPageScrape` aprimorado** — mantém o scrape atual como último recurso, mas com `User-Agent` rotativo + `Accept-Language: zh-CN` (engana o anti-bot do Kwai) e regex extra pra `playUrlV2`.
-
-Todo fetch externo recebe `AbortSignal.timeout(8000)` pra nunca segurar o Worker mais de 8s por método (hoje o `savekwai` trava 30s+ e estoura o budget total).
-
-### O que NÃO muda
-
-- Endpoint, método, query params, formato da resposta (`MediaResponse`).
-- Lógica de proxy (`?action=proxy`), allowlist em `proxy-url-guard.ts` (já cobre todos os hosts novos).
-- Componente da UI que consome `proxy_url` / `video_url`.
-
-### Validação
-
-Depois do deploy:
-1. `curl` na rota com link real do Kwai → esperar `success: true` e `media_url` apontando pra `.mp4` em CDN do Kwai/Kuaishou.
-2. Testar o `proxy_url` retornado → status 200/206 com `Content-Type: video/mp4`.
-3. Abrir `/ferramentas` na preview, colar o link, confirmar que o preview do vídeo aparece e o botão de download funciona.
+- Tela de loading: fundo preto, spinner com bordas em neon (azul + roxo), texto "CARREGANDO +SBT..." em VT323
+- Tela de fallback (bloqueio): card central com borda neon, ícone Tv grande pulsante, botão CTA usando utilitário `btn-3d` existente, animações `animate-in fade-in` do Tailwind
+- Sem barras, sem padding lateral — iframe edge-to-edge
 
 ## Detalhes técnicos
 
-- Arquivo único editado: `src/routes/api.download-kwai.ts` (rewrite parcial — mantém `addProxyUrls`, `handleProxy`, `isValidKwaiUrl`, `corsHeaders`, exports `Route`).
-- Adicionar `kuaishou.com` e `m.kuaishou.com` ao `ALLOWED_HOST_PATTERNS` em `src/lib/proxy-url-guard.ts` (CDN do Kuaishou serve em `*.kuaishouzt.com`, `*.gifshow.com` — já estão na lista).
-- Sem novas dependências, sem variáveis de ambiente novas, sem migração de banco.
-- Reportar resultado em `downloader-status.server` (já existe) pra UI mostrar status em tempo real.
+- Rota TanStack: `createFileRoute("/mais-sbt")` com `head()` definindo title "+SBT — SOS01" e meta description
+- Não usar `Header` nem `Footer` (página fullscreen dedicada)
+- `useState` para `loading`, `blocked`
+- `useRef<HTMLIFrameElement>` + `useEffect` com `setTimeout(6000)` para detectar bloqueio silencioso
+- `requestFullscreen()` opcional via botão (não automático — navegadores exigem gesto do usuário)
+- Sem alterações em backend, DB ou env
 
-## Risco / fallback
+## Arquivos
 
-Se os 3 novos endpoints públicos saírem do ar no futuro, o método 4 (page scrape) ainda tenta. Se o usuário quiser confiabilidade máxima, posso depois integrar a Apify (`sian.agency/kwai-kuaishou-scraper`) como 5º fallback — mas exige `APIFY_TOKEN` pago, então deixei fora desta entrega.
+- **Novo**: `src/routes/mais-sbt.tsx`
+- **Novo**: `src/pages/MaisSbt.tsx`
+- **Editado**: `src/components/Header.tsx` (item NAV)
+- **Editado**: `src/components/MobileBottomNav.tsx` (hide on /mais-sbt)
