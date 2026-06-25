@@ -70,6 +70,6 @@ export const games: Game[] = [
   { id: 62, title: "Chrono trigger", src: "https://www.retrogames.cc/embed/22857-chrono-trigger-usa.html", img: "https://i.imgur.com/pS5lb3d.png" },
   { id: 63, title: "8 Ball Billiards Classic", src: "https://play.famobi.com/8-ball-billiards-classic/A1000-10", img: "https://i.imgur.com/H0XRUiA.jpeg" },
   { id: 64, title: "Table Tennis World Tour", src: "https://play.famobi.com/monkey-bounce/A1000-1", img: "https://i.imgur.com/JWhK9DL.jpeg" },
-  { id: 65, title: "Totemia: Cursed Marbles", src: "https://play.famobi.com/totemia-cursed-marbles/A1000-1", img: "https://i.imgur.com/SnJmN5D.jpeg" },
+  { id: 65, title: "Totemia: Cursed Marbles", src: "https://play.famobi.com/totemia-cursed-marbles/A1000-10", img: "https://i.imgur.com/SnJmN5D.jpeg" },
   { id: 66, title: "Monkey Bounce", src: "https://play.famobi.com/monkey-bounce/A1000-10", img: "https://i.imgur.com/ZSOz4vd.jpeg" },
 ];
