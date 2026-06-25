@@ -16,6 +16,7 @@ import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as PrecosRouteImport } from './routes/precos'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as NasaRouteImport } from './routes/nasa'
+import { Route as MaisSbtRouteImport } from './routes/mais-sbt'
 import { Route as JogosJavaRouteImport } from './routes/jogos-java'
 import { Route as JogosRouteImport } from './routes/jogos'
 import { Route as FerramentasRouteImport } from './routes/ferramentas'
@@ -80,6 +81,11 @@ const PerfilRoute = PerfilRouteImport.update({
 const NasaRoute = NasaRouteImport.update({
   id: '/nasa',
   path: '/nasa',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MaisSbtRoute = MaisSbtRouteImport.update({
+  id: '/mais-sbt',
+  path: '/mais-sbt',
   getParentRoute: () => rootRouteImport,
 } as any)
 const JogosJavaRoute = JogosJavaRouteImport.update({
@@ -253,6 +259,7 @@ export interface FileRoutesByFullPath {
   '/ferramentas': typeof FerramentasRoute
   '/jogos': typeof JogosRoute
   '/jogos-java': typeof JogosJavaRoute
+  '/mais-sbt': typeof MaisSbtRoute
   '/nasa': typeof NasaRoute
   '/perfil': typeof PerfilRoute
   '/precos': typeof PrecosRoute
@@ -291,6 +298,7 @@ export interface FileRoutesByTo {
   '/ferramentas': typeof FerramentasRoute
   '/jogos': typeof JogosRoute
   '/jogos-java': typeof JogosJavaRoute
+  '/mais-sbt': typeof MaisSbtRoute
   '/nasa': typeof NasaRoute
   '/perfil': typeof PerfilRoute
   '/precos': typeof PrecosRoute
@@ -331,6 +339,7 @@ export interface FileRoutesById {
   '/ferramentas': typeof FerramentasRoute
   '/jogos': typeof JogosRoute
   '/jogos-java': typeof JogosJavaRoute
+  '/mais-sbt': typeof MaisSbtRoute
   '/nasa': typeof NasaRoute
   '/perfil': typeof PerfilRoute
   '/precos': typeof PrecosRoute
@@ -372,6 +381,7 @@ export interface FileRouteTypes {
     | '/ferramentas'
     | '/jogos'
     | '/jogos-java'
+    | '/mais-sbt'
     | '/nasa'
     | '/perfil'
     | '/precos'
@@ -410,6 +420,7 @@ export interface FileRouteTypes {
     | '/ferramentas'
     | '/jogos'
     | '/jogos-java'
+    | '/mais-sbt'
     | '/nasa'
     | '/perfil'
     | '/precos'
@@ -449,6 +460,7 @@ export interface FileRouteTypes {
     | '/ferramentas'
     | '/jogos'
     | '/jogos-java'
+    | '/mais-sbt'
     | '/nasa'
     | '/perfil'
     | '/precos'
@@ -489,6 +501,7 @@ export interface RootRouteChildren {
   FerramentasRoute: typeof FerramentasRoute
   JogosRoute: typeof JogosRoute
   JogosJavaRoute: typeof JogosJavaRoute
+  MaisSbtRoute: typeof MaisSbtRoute
   NasaRoute: typeof NasaRoute
   PerfilRoute: typeof PerfilRoute
   PrecosRoute: typeof PrecosRoute
@@ -554,6 +567,13 @@ declare module '@tanstack/react-router' {
       path: '/nasa'
       fullPath: '/nasa'
       preLoaderRoute: typeof NasaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mais-sbt': {
+      id: '/mais-sbt'
+      path: '/mais-sbt'
+      fullPath: '/mais-sbt'
+      preLoaderRoute: typeof MaisSbtRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/jogos-java': {
@@ -814,6 +834,7 @@ const rootRouteChildren: RootRouteChildren = {
   FerramentasRoute: FerramentasRoute,
   JogosRoute: JogosRoute,
   JogosJavaRoute: JogosJavaRoute,
+  MaisSbtRoute: MaisSbtRoute,
   NasaRoute: NasaRoute,
   PerfilRoute: PerfilRoute,
   PrecosRoute: PrecosRoute,
