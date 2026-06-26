@@ -5,12 +5,10 @@ import { Tv, ArrowLeft, ExternalLink } from "lucide-react";
 const SBT_URL = "https://mais.sbt.com.br/";
 
 export default function MaisSbt() {
-  // Auto-open +SBT in a new tab so Google OAuth login works (Google blocks iframes).
+  // Redirect in the same tab so Google OAuth login works (Google blocks iframes,
+  // and new tabs get blocked by pop-up blockers / lose user gesture context).
   useEffect(() => {
-    const t = window.setTimeout(() => {
-      window.open(SBT_URL, "_blank", "noopener,noreferrer");
-    }, 400);
-    return () => window.clearTimeout(t);
+    window.location.replace(SBT_URL);
   }, []);
 
   return (
@@ -32,13 +30,10 @@ export default function MaisSbt() {
           +SBT
         </h1>
         <p className="text-[#E8EEF5]/80 text-sm mb-7 leading-relaxed">
-          Abrindo o +SBT em uma nova aba para você poder fazer login com sua conta Google normalmente.
-          Se o navegador bloqueou o pop-up, use o botão abaixo.
+          Redirecionando você para o +SBT. Se nada acontecer em alguns segundos, use o botão abaixo.
         </p>
         <a
           href={SBT_URL}
-          target="_blank"
-          rel="noopener noreferrer"
           className="btn-3d inline-flex items-center justify-center gap-2 w-full px-6 py-4 rounded-xl bg-[#FFD93D] text-[#0E4A7B] font-silkscreen uppercase tracking-wider text-base hover:brightness-110 transition-all"
         >
           <ExternalLink className="w-5 h-5" aria-hidden="true" />
