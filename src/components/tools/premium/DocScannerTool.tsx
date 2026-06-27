@@ -46,7 +46,7 @@ export default function DocScannerTool() {
       const page = pdf.addPage([image.width, image.height]);
       page.drawImage(image, { x: 0, y: 0, width: image.width, height: image.height });
       const out = await pdf.save();
-      const blob = new Blob([out], { type: "application/pdf" });
+      const blob = new Blob([new Uint8Array(out)], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a"); a.href = url; a.download = "documento.pdf"; a.click();
       URL.revokeObjectURL(url);
