@@ -13,7 +13,9 @@ import AITextGenerator from "@/components/tools/AITextGenerator";
 import AutoTranslator from "@/components/tools/AutoTranslator";
 import TextSummarizer from "@/components/tools/TextSummarizer";
 import FeatureGate from "@/components/FeatureGate";
-import { Wrench, Music, Eraser, Image, QrCode, Stamp, KeyRound, UserSquare2, Link2, Sparkles, PenTool, Languages, FileText } from "lucide-react";
+import { Wrench, Music, Eraser, Image, QrCode, Stamp, KeyRound, UserSquare2, Link2, Sparkles, PenTool, Languages, FileText, ArrowRight, Crown } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { PREMIUM_TOOLS } from "@/lib/premium-tools";
 
 const Ferramentas = () => {
   return (
@@ -243,6 +245,73 @@ const Ferramentas = () => {
             </div>
           </ScrollReveal>
         </div>
+
+        {/* ⭐ Ferramentas Premium */}
+        <ScrollReveal delay={0.15}>
+          <div className="max-w-6xl mx-auto mt-14">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-sm flex items-center justify-center border-2 border-amber-400/60 bg-gradient-to-br from-amber-400/20 to-pink-500/20">
+                <Crown className="w-5 h-5 text-amber-400" />
+              </div>
+              <div>
+                <h2 className="font-pixel text-base sm:text-lg bg-gradient-to-r from-amber-400 to-pink-500 bg-clip-text text-transparent">
+                  ⭐ FERRAMENTAS PREMIUM
+                </h2>
+                <p className="text-xs text-muted-foreground">Coleção exclusiva — clique em Abrir para usar em tela cheia.</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {PREMIUM_TOOLS.map((tool) => {
+                const Icon = tool.icon;
+                const soon = tool.status === "soon";
+                return (
+                  <div
+                    key={tool.slug}
+                    className="pixel-card rounded-sm p-4 flex flex-col gap-3 transition-transform hover:-translate-y-0.5"
+                    style={{ borderColor: `hsl(${tool.color} / 0.5)` }}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div
+                        className="w-10 h-10 rounded-sm flex items-center justify-center border-2 shrink-0"
+                        style={{ background: `hsl(${tool.color} / 0.2)`, borderColor: `hsl(${tool.color} / 0.5)` }}
+                      >
+                        <Icon className="w-5 h-5" style={{ color: `hsl(${tool.color})` }} />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h3 className="font-pixel text-[11px]" style={{ color: `hsl(${tool.color})` }}>
+                            {tool.name.toUpperCase()}
+                          </h3>
+                          {soon && (
+                            <span className="px-1.5 py-0.5 rounded-sm text-[9px] font-bold bg-muted text-muted-foreground border border-border">
+                              EM BREVE
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">{tool.description}</p>
+                      </div>
+                    </div>
+                    <Link
+                      to="/ferramenta/$slug"
+                      params={{ slug: tool.slug }}
+                      aria-disabled={soon}
+                      onClick={(e) => soon && e.preventDefault()}
+                      className={`mt-auto inline-flex items-center justify-center gap-1 text-xs font-pixel py-2 rounded-sm border-2 transition-all ${
+                        soon
+                          ? "opacity-50 cursor-not-allowed border-border bg-muted text-muted-foreground"
+                          : "border-foreground/20 bg-foreground text-background hover:opacity-90"
+                      }`}
+                    >
+                      <Sparkles className="w-3 h-3" />
+                      {soon ? "EM BREVE" : "ABRIR"}
+                      {!soon && <ArrowRight className="w-3 h-3" />}
+                    </Link>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </ScrollReveal>
       </main>
 
       <Footer />

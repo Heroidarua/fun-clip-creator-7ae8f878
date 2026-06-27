@@ -29,6 +29,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as FerramentaSlugRouteImport } from './routes/ferramenta.$slug'
 import { Route as BlogJogosRetroGratisRouteImport } from './routes/blog.jogos-retro-gratis'
 import { Route as BlogGuiaCompletoClipsaveRouteImport } from './routes/blog.guia-completo-clipsave'
 import { Route as BlogFerramentasGratuitasRouteImport } from './routes/blog.ferramentas-gratuitas'
@@ -147,6 +148,11 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => BlogRoute,
+} as any)
+const FerramentaSlugRoute = FerramentaSlugRouteImport.update({
+  id: '/ferramenta/$slug',
+  path: '/ferramenta/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const BlogJogosRetroGratisRoute = BlogJogosRetroGratisRouteImport.update({
   id: '/jogos-retro-gratis',
@@ -285,6 +291,7 @@ export interface FileRoutesByFullPath {
   '/blog/ferramentas-gratuitas': typeof BlogFerramentasGratuitasRoute
   '/blog/guia-completo-clipsave': typeof BlogGuiaCompletoClipsaveRoute
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
+  '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/blog/': typeof BlogIndexRoute
 }
 export interface FileRoutesByTo {
@@ -324,6 +331,7 @@ export interface FileRoutesByTo {
   '/blog/ferramentas-gratuitas': typeof BlogFerramentasGratuitasRoute
   '/blog/guia-completo-clipsave': typeof BlogGuiaCompletoClipsaveRoute
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
+  '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/blog': typeof BlogIndexRoute
 }
 export interface FileRoutesById {
@@ -365,6 +373,7 @@ export interface FileRoutesById {
   '/blog/ferramentas-gratuitas': typeof BlogFerramentasGratuitasRoute
   '/blog/guia-completo-clipsave': typeof BlogGuiaCompletoClipsaveRoute
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
+  '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/blog/': typeof BlogIndexRoute
 }
 export interface FileRouteTypes {
@@ -407,6 +416,7 @@ export interface FileRouteTypes {
     | '/blog/ferramentas-gratuitas'
     | '/blog/guia-completo-clipsave'
     | '/blog/jogos-retro-gratis'
+    | '/ferramenta/$slug'
     | '/blog/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -446,6 +456,7 @@ export interface FileRouteTypes {
     | '/blog/ferramentas-gratuitas'
     | '/blog/guia-completo-clipsave'
     | '/blog/jogos-retro-gratis'
+    | '/ferramenta/$slug'
     | '/blog'
   id:
     | '__root__'
@@ -486,6 +497,7 @@ export interface FileRouteTypes {
     | '/blog/ferramentas-gratuitas'
     | '/blog/guia-completo-clipsave'
     | '/blog/jogos-retro-gratis'
+    | '/ferramenta/$slug'
     | '/blog/'
   fileRoutesById: FileRoutesById
 }
@@ -516,6 +528,7 @@ export interface RootRouteChildren {
   ApiDownloadYoutubeRoute: typeof ApiDownloadYoutubeRoute
   ApiManageAnnouncementsRoute: typeof ApiManageAnnouncementsRoute
   ApiManageFeatureStatusRoute: typeof ApiManageFeatureStatusRoute
+  FerramentaSlugRoute: typeof FerramentaSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -659,6 +672,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/blog/'
       preLoaderRoute: typeof BlogIndexRouteImport
       parentRoute: typeof BlogRoute
+    }
+    '/ferramenta/$slug': {
+      id: '/ferramenta/$slug'
+      path: '/ferramenta/$slug'
+      fullPath: '/ferramenta/$slug'
+      preLoaderRoute: typeof FerramentaSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/blog/jogos-retro-gratis': {
       id: '/blog/jogos-retro-gratis'
@@ -849,6 +869,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiDownloadYoutubeRoute: ApiDownloadYoutubeRoute,
   ApiManageAnnouncementsRoute: ApiManageAnnouncementsRoute,
   ApiManageFeatureStatusRoute: ApiManageFeatureStatusRoute,
+  FerramentaSlugRoute: FerramentaSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
