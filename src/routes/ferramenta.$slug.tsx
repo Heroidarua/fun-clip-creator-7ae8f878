@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Suspense } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -17,11 +17,6 @@ export const Route = createFileRoute("/ferramenta/$slug")({
       <p className="text-destructive text-center">Erro: {error.message}</p>
     </div>
   ),
-  loader: ({ params }) => {
-    const tool = getPremiumTool(params.slug);
-    if (!tool) throw notFound();
-    return { tool };
-  },
   head: ({ params }) => {
     const tool = PREMIUM_TOOLS.find((t) => t.slug === params.slug);
     if (!tool) return {};
@@ -35,7 +30,15 @@ export const Route = createFileRoute("/ferramenta/$slug")({
 });
 
 function ToolPage() {
-  const { tool } = Route.useLoaderData();
+  const { slug } = Route.useParams();
+  const tool = getPremiumTool(slug);
+  if (!tool) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <p className="font-pixel text-foreground">Ferramenta não encontrada</p>
+      </div>
+    );
+  }
   const Icon = tool.icon;
   const Component = tool.component;
 
