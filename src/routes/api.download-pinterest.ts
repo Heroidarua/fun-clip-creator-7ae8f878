@@ -1,5 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { isSafeProxyUrl } from "@/lib/proxy-url-guard";
+
+function isSafeProxyUrl(u: string): boolean {
+  try {
+    const url = new URL(u);
+    if (url.protocol !== "https:") return false;
+    return /(^|\.)pinimg\.com$/i.test(url.hostname) || /(^|\.)pinterest\.[a-z.]+$/i.test(url.hostname);
+  } catch {
+    return false;
+  }
+}
 
 const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -26,8 +35,14 @@ interface PinterestResponse {
   error?: string;
 }
 
-const UA =
+// UA usado para BAIXAR o pin (Chrome real, evita bloqueio de hotlink no pinimg.com)
+const BROWSER_UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+
+// UA usado para SCRAPING da página do pin. O Pinterest só devolve as meta
+// tags og:* para crawlers conhecidos; com Chrome UA volta uma SPA vazia.
+const BOT_UA =
+  "facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)";
 
 function isValidPinterestUrl(url: string): boolean {
   return /^https?:\/\/([a-z0-9-]+\.)*(pinterest\.[a-z.]+|pin\.it)/i.test(url);
@@ -39,7 +54,7 @@ async function resolveShortLink(url: string): Promise<string> {
     const r = await fetch(url, {
       method: "GET",
       redirect: "follow",
-      headers: { "User-Agent": UA, "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8" },
+      headers: { "User-Agent": BROWSER_UA, "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8" },
     });
     if (r.url && /pinterest\.[a-z.]+\//i.test(r.url)) return r.url.split("?")[0];
   } catch {}
@@ -56,24 +71,10 @@ function decodeEntities(s: string): string {
     .replace(/&gt;/g, ">");
 }
 
-function pickBestImage(srcset: string): string | null {
-  // srcset values are space-separated url + width descriptor, comma separated
-  const parts = srcset.split(",").map((p) => p.trim());
-  let best: { url: string; w: number } | null = null;
-  for (const p of parts) {
-    const m = p.match(/^(\S+)\s+(\d+)w$/);
-    if (m) {
-      const w = parseInt(m[2], 10);
-      if (!best || w > best.w) best = { url: m[1], w };
-    }
-  }
-  return best?.url ?? null;
-}
-
 async function scrapePinterest(url: string): Promise<PinterestResponse> {
   const r = await fetch(url, {
     headers: {
-      "User-Agent": UA,
+      "User-Agent": BOT_UA,
       Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
       "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
     },
@@ -84,7 +85,6 @@ async function scrapePinterest(url: string): Promise<PinterestResponse> {
   }
   const html = await r.text();
 
-  // og:video has priority (Pinterest videos & GIFs converted to mp4)
   const ogVideo =
     html.match(/<meta[^>]+property=["']og:video["'][^>]+content=["']([^"']+)["']/i)?.[1] ||
     html.match(/<meta[^>]+property=["']og:video:url["'][^>]+content=["']([^"']+)["']/i)?.[1] ||
@@ -98,7 +98,7 @@ async function scrapePinterest(url: string): Promise<PinterestResponse> {
     html.match(/<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']+)["']/i)?.[1] ||
     "Pinterest";
 
-  // Try to dig out the highest-quality video from embedded JSON when available
+  // Tenta achar o melhor mp4 dentro do JSON embutido
   let bestVideo: string | null = null;
   const videoListMatch = html.match(/"video_list"\s*:\s*\{([\s\S]*?)\}\s*,/);
   if (videoListMatch) {
@@ -112,11 +112,9 @@ async function scrapePinterest(url: string): Promise<PinterestResponse> {
   let mediaUrl = bestVideo || ogVideo || "";
   let mediaType: MediaType = mediaUrl ? "video" : "image";
 
-  if (!mediaUrl) {
-    // Try to upgrade og:image to an /originals/ url (full resolution)
-    if (ogImage) {
-      mediaUrl = ogImage.replace(/\/\d+x(?:\d+)?\//, "/originals/");
-    }
+  if (!mediaUrl && ogImage) {
+    // Promove para /originals/ (resolução máxima)
+    mediaUrl = ogImage.replace(/\/\d+x(?:\d+)?\//, "/originals/");
   }
 
   if (!mediaUrl) {
@@ -126,7 +124,6 @@ async function scrapePinterest(url: string): Promise<PinterestResponse> {
     };
   }
 
-  // Detect GIF (Pinterest often serves GIFs as mp4; if og:image ends with .gif keep as gif)
   if (mediaType === "image" && /\.gif(\?|$)/i.test(mediaUrl)) {
     mediaType = "gif";
   }
@@ -177,7 +174,7 @@ async function handleProxy(request: Request, mediaUrl: string, mediaType: string
     const response = await fetch(mediaUrl, {
       method: "GET",
       headers: {
-        "User-Agent": UA,
+        "User-Agent": BROWSER_UA,
         Accept: "*/*",
         Referer: "https://www.pinterest.com/",
         ...(range ? { Range: range } : {}),
@@ -218,7 +215,7 @@ async function handleProxy(request: Request, mediaUrl: string, mediaType: string
   }
 }
 
-export const Route = createFileRoute("/api/download-pinterest")({
+export const Route = createFileRoute("/api/public/download-pinterest")({
   server: {
     handlers: {
       OPTIONS: async () => new Response(null, { status: 204, headers: corsHeaders }),
@@ -275,10 +272,6 @@ export const Route = createFileRoute("/api/download-pinterest")({
           });
         }
         const result = await downloadPinterest(url, requestUrl.pathname);
-        try {
-          const { reportDownloaderResult } = await import("@/lib/downloader-status.server");
-          reportDownloaderResult("pinterest", !!result.success);
-        } catch {}
         return new Response(JSON.stringify(result), {
           status: 200,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -287,3 +280,4 @@ export const Route = createFileRoute("/api/download-pinterest")({
     },
   },
 });
+    
