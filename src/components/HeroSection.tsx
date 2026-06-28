@@ -134,6 +134,17 @@ interface FacebookData {
   duration?: number;
 }
 
+interface PinterestData {
+  media_url: string;
+  media_type: 'video' | 'image' | 'gif';
+  proxy_url?: string;
+  video_url?: string;
+  proxy_thumbnail_url?: string;
+  thumbnail: string;
+  title: string;
+  author: string;
+}
+
 interface YouTubeData {
   video_url: string;
   audio_url?: string;
@@ -185,6 +196,13 @@ const HeroSection = () => {
   const [facebookProgress, setFacebookProgress] = useState(0);
   const [facebookData, setFacebookData] = useState<FacebookData | null>(null);
   const [clickedFacebookButton, setClickedFacebookButton] = useState<string | null>(null);
+
+  // Pinterest states
+  const [pinterestUrl, setPinterestUrl] = useState("");
+  const [pinterestLoading, setPinterestLoading] = useState(false);
+  const [pinterestProgress, setPinterestProgress] = useState(0);
+  const [pinterestData, setPinterestData] = useState<PinterestData | null>(null);
+  const [clickedPinterestButton, setClickedPinterestButton] = useState<string | null>(null);
 
 
   const detectPlatform = (url: string) => {
