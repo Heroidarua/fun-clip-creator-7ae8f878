@@ -949,6 +949,77 @@ const HeroSection = () => {
     }
   };
 
+  // Pinterest handlers
+  const handlePinterestPaste = async () => {
+    setClickedPinterestButton("paste");
+    setTimeout(() => setClickedPinterestButton(null), 300);
+    try {
+      const text = await navigator.clipboard.readText();
+      setPinterestUrl(text);
+      toast({ title: "✅ Link colado com sucesso!", description: "Agora clique em 'Buscar' para encontrar o pin." });
+    } catch {
+      toast({ title: "❌ Erro ao colar", description: "Não foi possível acessar a área de transferência.", variant: "destructive" });
+    }
+  };
+
+  const handlePinterestSearch = async () => {
+    setClickedPinterestButton("search");
+    setTimeout(() => setClickedPinterestButton(null), 300);
+    if (!pinterestUrl.trim()) {
+      toast({ title: "URL obrigatório", description: "Por favor, insira um link válido do Pinterest.", variant: "destructive" });
+      return;
+    }
+    setPinterestLoading(true);
+    setPinterestProgress(0);
+    const progressInterval = setInterval(() => {
+      setPinterestProgress((prev) => (prev >= 90 ? prev : prev + Math.random() * 15));
+    }, 200);
+    try {
+      const data = await fetchJsonWithRetry(apiUrl('/api/download-pinterest'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: pinterestUrl.trim() }),
+      });
+      setPinterestProgress(100);
+      clearInterval(progressInterval);
+      if (data && data.success) {
+        setPinterestData(rewriteProxy(data.data));
+        const t = data.data.media_type === 'video' ? 'Vídeo' : data.data.media_type === 'gif' ? 'GIF' : 'Imagem';
+        toast({ title: `${t} encontrado!`, description: "Pronto para download." });
+      } else {
+        toast({ title: "Erro ao processar", description: data.error || "Não foi possível processar o pin.", variant: "destructive" });
+      }
+    } catch (error: any) {
+      clearInterval(progressInterval);
+      toast({ title: "Erro de conexão", description: error?.message || "Tente novamente em alguns momentos.", variant: "destructive" });
+    } finally {
+      setTimeout(() => { setPinterestLoading(false); setPinterestProgress(0); }, 500);
+    }
+  };
+
+  const handlePinterestDownload = async () => {
+    setClickedPinterestButton("download");
+    setTimeout(() => setClickedPinterestButton(null), 300);
+    if (!pinterestData) return;
+    try {
+      const response = await fetch(pinterestData.proxy_url || pinterestData.media_url);
+      const blob = await response.blob();
+      const downloadBlobUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadBlobUrl;
+      const ext = pinterestData.media_type === 'video' ? 'mp4' : pinterestData.media_type === 'gif' ? 'gif' : 'jpg';
+      link.download = `${(pinterestData.title || 'pinterest').replace(/[^a-zA-Z0-9]/g, '_')}_pinterest.${ext}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(downloadBlobUrl);
+      trackDownload('pinterest');
+      toast({ title: "Download iniciado!", description: "O conteúdo está sendo baixado." });
+    } catch {
+      toast({ title: "Erro no download", description: "Não foi possível baixar o conteúdo.", variant: "destructive" });
+    }
+  };
+
   return (
     <section className="relative bg-background text-foreground flex flex-col w-full min-h-[100dvh]">
       {/* Simple Black Background */}
