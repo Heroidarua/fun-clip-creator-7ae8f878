@@ -45,6 +45,7 @@ import { Route as ApiManageFeatureStatusRouteImport } from './routes/api.manage-
 import { Route as ApiManageAnnouncementsRouteImport } from './routes/api.manage-announcements'
 import { Route as ApiDownloadYoutubeRouteImport } from './routes/api.download-youtube'
 import { Route as ApiDownloadTiktokRouteImport } from './routes/api.download-tiktok'
+import { Route as ApiDownloadPinterestRouteImport } from './routes/api.download-pinterest'
 import { Route as ApiDownloadKwaiRouteImport } from './routes/api.download-kwai'
 import { Route as ApiDownloadInstagramRouteImport } from './routes/api.download-instagram'
 import { Route as ApiDownloadFacebookRouteImport } from './routes/api.download-facebook'
@@ -237,6 +238,11 @@ const ApiDownloadTiktokRoute = ApiDownloadTiktokRouteImport.update({
   path: '/api/download-tiktok',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiDownloadPinterestRoute = ApiDownloadPinterestRouteImport.update({
+  id: '/api/download-pinterest',
+  path: '/api/download-pinterest',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiDownloadKwaiRoute = ApiDownloadKwaiRouteImport.update({
   id: '/api/download-kwai',
   path: '/api/download-kwai',
@@ -276,6 +282,7 @@ export interface FileRoutesByFullPath {
   '/api/download-facebook': typeof ApiDownloadFacebookRoute
   '/api/download-instagram': typeof ApiDownloadInstagramRoute
   '/api/download-kwai': typeof ApiDownloadKwaiRoute
+  '/api/download-pinterest': typeof ApiDownloadPinterestRoute
   '/api/download-tiktok': typeof ApiDownloadTiktokRoute
   '/api/download-youtube': typeof ApiDownloadYoutubeRoute
   '/api/manage-announcements': typeof ApiManageAnnouncementsRoute
@@ -316,6 +323,7 @@ export interface FileRoutesByTo {
   '/api/download-facebook': typeof ApiDownloadFacebookRoute
   '/api/download-instagram': typeof ApiDownloadInstagramRoute
   '/api/download-kwai': typeof ApiDownloadKwaiRoute
+  '/api/download-pinterest': typeof ApiDownloadPinterestRoute
   '/api/download-tiktok': typeof ApiDownloadTiktokRoute
   '/api/download-youtube': typeof ApiDownloadYoutubeRoute
   '/api/manage-announcements': typeof ApiManageAnnouncementsRoute
@@ -358,6 +366,7 @@ export interface FileRoutesById {
   '/api/download-facebook': typeof ApiDownloadFacebookRoute
   '/api/download-instagram': typeof ApiDownloadInstagramRoute
   '/api/download-kwai': typeof ApiDownloadKwaiRoute
+  '/api/download-pinterest': typeof ApiDownloadPinterestRoute
   '/api/download-tiktok': typeof ApiDownloadTiktokRoute
   '/api/download-youtube': typeof ApiDownloadYoutubeRoute
   '/api/manage-announcements': typeof ApiManageAnnouncementsRoute
@@ -401,6 +410,7 @@ export interface FileRouteTypes {
     | '/api/download-facebook'
     | '/api/download-instagram'
     | '/api/download-kwai'
+    | '/api/download-pinterest'
     | '/api/download-tiktok'
     | '/api/download-youtube'
     | '/api/manage-announcements'
@@ -441,6 +451,7 @@ export interface FileRouteTypes {
     | '/api/download-facebook'
     | '/api/download-instagram'
     | '/api/download-kwai'
+    | '/api/download-pinterest'
     | '/api/download-tiktok'
     | '/api/download-youtube'
     | '/api/manage-announcements'
@@ -482,6 +493,7 @@ export interface FileRouteTypes {
     | '/api/download-facebook'
     | '/api/download-instagram'
     | '/api/download-kwai'
+    | '/api/download-pinterest'
     | '/api/download-tiktok'
     | '/api/download-youtube'
     | '/api/manage-announcements'
@@ -524,6 +536,7 @@ export interface RootRouteChildren {
   ApiDownloadFacebookRoute: typeof ApiDownloadFacebookRoute
   ApiDownloadInstagramRoute: typeof ApiDownloadInstagramRoute
   ApiDownloadKwaiRoute: typeof ApiDownloadKwaiRoute
+  ApiDownloadPinterestRoute: typeof ApiDownloadPinterestRoute
   ApiDownloadTiktokRoute: typeof ApiDownloadTiktokRoute
   ApiDownloadYoutubeRoute: typeof ApiDownloadYoutubeRoute
   ApiManageAnnouncementsRoute: typeof ApiManageAnnouncementsRoute
@@ -785,6 +798,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiDownloadTiktokRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/download-pinterest': {
+      id: '/api/download-pinterest'
+      path: '/api/download-pinterest'
+      fullPath: '/api/download-pinterest'
+      preLoaderRoute: typeof ApiDownloadPinterestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/download-kwai': {
       id: '/api/download-kwai'
       path: '/api/download-kwai'
@@ -865,6 +885,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiDownloadFacebookRoute: ApiDownloadFacebookRoute,
   ApiDownloadInstagramRoute: ApiDownloadInstagramRoute,
   ApiDownloadKwaiRoute: ApiDownloadKwaiRoute,
+  ApiDownloadPinterestRoute: ApiDownloadPinterestRoute,
   ApiDownloadTiktokRoute: ApiDownloadTiktokRoute,
   ApiDownloadYoutubeRoute: ApiDownloadYoutubeRoute,
   ApiManageAnnouncementsRoute: ApiManageAnnouncementsRoute,

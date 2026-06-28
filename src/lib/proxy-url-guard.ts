@@ -35,6 +35,11 @@ const ALLOWED_HOST_PATTERNS: RegExp[] = [
   // SaveKwai fallback
   /(^|\.)savekwai\.com$/i,
   /(^|\.)kwai-pro\.com$/i,
+  // Pinterest
+  /(^|\.)pinterest\.com$/i,
+  /(^|\.)pinterest\.[a-z.]+$/i,
+  /(^|\.)pinimg\.com$/i,
+  /(^|\.)pin\.it$/i,
 ];
 
 export function isSafeProxyUrl(raw: string): boolean {
