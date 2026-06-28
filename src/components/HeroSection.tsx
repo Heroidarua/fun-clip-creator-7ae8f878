@@ -1892,6 +1892,145 @@ const HeroSection = () => {
               </div>
             )}
           </div>
+
+          {/* Pinterest Section */}
+          <div className="pixel-card rounded-sm p-5 sm:p-6 lg:p-8 mt-6" style={{ borderColor: 'hsl(351 83% 50% / 0.5)' }}>
+            {/* Section header */}
+            <div className="flex flex-col items-center gap-2 mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'hsl(351, 83%, 47%)' }}>
+                  <svg viewBox="0 0 24 24" className="w-4 h-4 text-white" fill="currentColor" aria-hidden="true">
+                    <path d="M12 2C6.48 2 2 6.48 2 12c0 4.09 2.45 7.6 5.97 9.14-.08-.78-.16-1.97.03-2.82.18-.79 1.17-5.02 1.17-5.02s-.3-.6-.3-1.49c0-1.4.81-2.44 1.82-2.44.86 0 1.27.64 1.27 1.41 0 .86-.55 2.15-.83 3.34-.24 1 .5 1.81 1.49 1.81 1.79 0 3.16-1.89 3.16-4.61 0-2.41-1.73-4.1-4.21-4.1-2.87 0-4.55 2.15-4.55 4.37 0 .87.33 1.8.75 2.3.08.1.09.18.07.28-.07.31-.24 1-.27 1.13-.04.18-.14.22-.33.13-1.23-.57-2-2.37-2-3.81 0-3.1 2.25-5.95 6.49-5.95 3.41 0 6.06 2.43 6.06 5.68 0 3.39-2.14 6.12-5.11 6.12-1 0-1.94-.52-2.26-1.13l-.61 2.33c-.22.85-.82 1.92-1.22 2.57.92.28 1.89.44 2.91.44 5.52 0 10-4.48 10-10S17.52 2 12 2z"/>
+                  </svg>
+                </div>
+                <h2 className="font-pixel text-xs sm:text-sm" style={{ color: 'hsl(351, 83%, 60%)' }}>PINTEREST DOWNLOADER</h2>
+              </div>
+              <StatusBadge isActive={isActive('pinterest')} />
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <div className="flex-1 relative">
+                <Input
+                  type="url"
+                  placeholder="Cole o link do Pinterest (pin, vídeo, imagem)..."
+                  value={pinterestUrl}
+                  onChange={(e) => setPinterestUrl(e.target.value)}
+                  disabled={!isActive('pinterest')}
+                  className="h-12 sm:h-14 text-sm sm:text-base bg-background/80 border-2 rounded-sm text-foreground placeholder:text-muted-foreground font-orbitron transition-all duration-200 focus:shadow-[0_0_20px_hsl(351,83%,60%,0.3)] disabled:opacity-50"
+                  style={{ borderColor: 'hsl(351 83% 60% / 0.3)' }}
+                />
+              </div>
+
+              <div className="flex gap-2 sm:gap-3">
+                <Button
+                  onClick={handlePinterestPaste}
+                  variant="secondary"
+                  className={`h-12 sm:h-14 px-4 sm:px-6 rounded-sm bg-secondary/80 hover:bg-secondary border-2 border-secondary/50 hover:border-[hsl(var(--retro-cyan))] font-pixel text-[10px] shadow-[3px_3px_0_hsl(var(--secondary))] hover:shadow-[1px_1px_0_hsl(var(--secondary))] hover:translate-x-[2px] hover:translate-y-[2px] transition-all ${
+                    clickedPinterestButton === "paste" ? "translate-x-[2px] translate-y-[2px] shadow-[1px_1px_0_hsl(var(--secondary))]" : ""
+                  }`}
+                >
+                  <Clipboard className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">COLAR</span>
+                </Button>
+
+                <Button
+                  onClick={handlePinterestSearch}
+                  disabled={pinterestLoading || !isActive('pinterest')}
+                  className={`h-12 sm:h-14 px-5 sm:px-8 rounded-sm border-2 border-[hsl(var(--retro-cyan))] font-pixel text-[10px] text-white shadow-[4px_4px_0_hsl(var(--retro-cyan))] hover:shadow-[2px_2px_0_hsl(var(--retro-cyan))] hover:translate-x-[2px] hover:translate-y-[2px] transition-all disabled:opacity-70 disabled:cursor-not-allowed ${
+                    clickedPinterestButton === "search" ? "translate-x-[2px] translate-y-[2px] shadow-[2px_2px_0_hsl(var(--retro-cyan))]" : ""
+                  } ${pinterestLoading ? "animate-pulse" : ""}`}
+                  style={{ backgroundColor: 'hsl(351, 83%, 47%)' }}
+                >
+                  {pinterestLoading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white animate-spin"></div>
+                      <span className="hidden sm:inline">LOADING</span>
+                    </div>
+                  ) : (
+                    <>
+                      <Search className="w-4 h-4 sm:mr-2" />
+                      <span className="hidden sm:inline">BUSCAR</span>
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            {!isActive('pinterest') && <MaintenanceWarning />}
+
+            {pinterestLoading && (
+              <div className="mt-6 animate-fade-in">
+                <div className="relative border-2 bg-background/80 p-4 sm:p-6" style={{ borderColor: 'hsl(351 83% 47% / 0.5)' }}>
+                  <div className="absolute inset-0 scanlines pointer-events-none opacity-30"></div>
+                  <div className="relative text-center mb-4">
+                    <h3 className="font-pixel text-xs sm:text-sm animate-pulse" style={{ color: 'hsl(351, 83%, 60%)' }}>
+                      PROCESSANDO...
+                    </h3>
+                    <div className="mt-2">
+                      <span className="font-retro text-3xl sm:text-4xl text-[hsl(var(--retro-cyan))]">
+                        {Math.round(pinterestProgress)}%
+                      </span>
+                    </div>
+                  </div>
+                  <div className="relative h-6 bg-background border-2" style={{ borderColor: 'hsl(351 83% 47% / 0.3)' }}>
+                    <div
+                      className="h-full transition-all duration-300"
+                      style={{
+                        width: `${pinterestProgress}%`,
+                        background: 'linear-gradient(to right, hsl(351, 83%, 47%), hsl(var(--retro-cyan)), hsl(351, 83%, 47%))',
+                      }}
+                    >
+                      <div className="absolute inset-0 bg-[repeating-linear-gradient(90deg,transparent,transparent_8px,hsla(0,0%,0%,0.2)_8px,hsla(0,0%,0%,0.2)_16px)]"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {pinterestData && (
+              <div className="mt-6 animate-fade-in">
+                <div className="border-2 bg-background/50 p-4 sm:p-6" style={{ borderColor: 'hsl(351 83% 47% / 0.3)' }}>
+                  <div className="flex justify-center mb-4">
+                    <span className="font-pixel text-[10px] px-3 py-1 text-white" style={{ backgroundColor: 'hsl(351, 83%, 47%)' }}>
+                      {pinterestData.media_type === 'video' ? 'VIDEO FOUND!' : pinterestData.media_type === 'gif' ? 'GIF FOUND!' : 'IMAGE FOUND!'}
+                    </span>
+                  </div>
+
+                  <div
+                    className="relative w-full mb-4 border-2 bg-background/50 overflow-hidden min-h-[320px] bg-center bg-no-repeat bg-contain"
+                    style={{ borderColor: 'hsl(351 83% 47% / 0.3)', backgroundImage: `url(${pinterestData.proxy_thumbnail_url || pinterestData.thumbnail})` }}
+                    aria-label={`Prévia do pin ${pinterestData.title}`}
+                  >
+                    <div className="absolute inset-0 bg-background/10 backdrop-blur-[1px]" />
+                    <img
+                      src={pinterestData.proxy_thumbnail_url || pinterestData.thumbnail}
+                      alt={`Prévia do pin ${pinterestData.title}`}
+                      className="w-full h-[320px] object-contain opacity-0 pointer-events-none"
+                    />
+                    <MediaPreviewOverlay
+                      title={pinterestData.title}
+                      author={pinterestData.author}
+                    />
+                  </div>
+
+                  <Button
+                    onClick={handlePinterestDownload}
+                    className={`w-full h-12 font-pixel text-xs text-white border-2 border-[hsl(var(--retro-cyan))] shadow-[4px_4px_0_hsl(var(--retro-cyan))] hover:shadow-[2px_2px_0_hsl(var(--retro-cyan))] hover:translate-x-[2px] hover:translate-y-[2px] transition-all rounded-sm ${
+                      clickedPinterestButton === "download" ? "translate-x-[2px] translate-y-[2px] shadow-[2px_2px_0_hsl(var(--retro-cyan))]" : ""
+                    }`}
+                    style={{ backgroundColor: 'hsl(351, 83%, 47%)' }}
+                  >
+                    <Download className="mr-2 w-4 h-4" />
+                    BAIXAR
+                  </Button>
+
+                  <p className="font-retro text-lg text-center mt-4 text-muted-foreground">
+                    OBRIGADO POR USAR sos01!
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </section>
