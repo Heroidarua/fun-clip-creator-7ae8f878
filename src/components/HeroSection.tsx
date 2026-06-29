@@ -1999,16 +1999,19 @@ const HeroSection = () => {
                     />
                   </div>
 
-                  <Button
-                    onClick={handlePinterestDownload}
-                    className={`w-full h-12 font-pixel text-xs text-white border-2 border-[hsl(var(--retro-cyan))] shadow-[4px_4px_0_hsl(var(--retro-cyan))] hover:shadow-[2px_2px_0_hsl(var(--retro-cyan))] hover:translate-x-[2px] hover:translate-y-[2px] transition-all rounded-sm ${
+                  <a
+                    href={`/api/public/pinterest-download?url=${encodeURIComponent(pinterestData.media_url)}`}
+                    onClick={handlePinterestDownloadClick}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`flex items-center justify-center w-full h-12 font-pixel text-xs text-white border-2 border-[hsl(var(--retro-cyan))] shadow-[4px_4px_0_hsl(var(--retro-cyan))] hover:shadow-[2px_2px_0_hsl(var(--retro-cyan))] hover:translate-x-[2px] hover:translate-y-[2px] transition-all rounded-sm ${
                       clickedPinterestButton === "download" ? "translate-x-[2px] translate-y-[2px] shadow-[2px_2px_0_hsl(var(--retro-cyan))]" : ""
                     }`}
                     style={{ backgroundColor: 'hsl(351, 83%, 47%)' }}
                   >
                     <Download className="mr-2 w-4 h-4" />
                     BAIXAR
-                  </Button>
+                  </a>
 
                   <p className="font-retro text-lg text-center mt-4 text-muted-foreground">
                     OBRIGADO POR USAR sos01!
