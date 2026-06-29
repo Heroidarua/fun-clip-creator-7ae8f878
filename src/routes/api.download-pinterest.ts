@@ -215,7 +215,7 @@ async function handleProxy(request: Request, mediaUrl: string, mediaType: string
   }
 }
 
-export const Route = createFileRoute("/api/public/download-pinterest")({
+export const Route = createFileRoute("/api/download-pinterest")({
   server: {
     handlers: {
       OPTIONS: async () => new Response(null, { status: 204, headers: corsHeaders }),
