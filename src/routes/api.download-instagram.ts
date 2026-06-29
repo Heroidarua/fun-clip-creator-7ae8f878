@@ -397,22 +397,22 @@ async function downloadInstagramMedia(url: string, functionUrl: string, rapidApi
   console.log("🚀 Iniciando processo para:", url);
   url = await resolveInstagramUrl(url);
 
-  // Snapsave first — free and currently the most reliable.
+  // RapidAPI providers first — Snapsave passou a falhar com frequência.
+  const rapidResult = await fetchViaRapidApi(url, rapidApiKey);
+  if (rapidResult?.success && rapidResult.data) {
+    rapidResult.data = addProxyUrls(rapidResult.data, functionUrl);
+    return rapidResult;
+  }
+
   try {
     const snap = await fetchInstagramSnapsave(url);
     if (snap?.success && snap.data?.media_url) {
-      console.log("✅ Instagram via snapsave");
+      console.log("✅ Instagram via snapsave (fallback)");
       snap.data = addProxyUrls(snap.data, functionUrl);
       return snap;
     }
   } catch (e) {
     console.warn("⚠️ snapsave falhou:", (e as Error).message);
-  }
-
-  const rapidResult = await fetchViaRapidApi(url, rapidApiKey);
-  if (rapidResult?.success && rapidResult.data) {
-    rapidResult.data = addProxyUrls(rapidResult.data, functionUrl);
-    return rapidResult;
   }
 
   const directResult = await tryDirectScrape(url);
