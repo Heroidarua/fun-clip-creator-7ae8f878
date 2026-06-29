@@ -1004,7 +1004,6 @@ const HeroSection = () => {
     trackDownload('pinterest');
     toast({ title: "Download iniciado!", description: "O conteúdo está sendo baixado." });
   };
-  };
 
   return (
     <section className="relative bg-background text-foreground flex flex-col w-full min-h-[100dvh]">
