@@ -9,6 +9,8 @@ import { useDownloaderStatus } from "@/hooks/useDownloaderStatus";
 import ScrollReveal from "./ScrollReveal";
 import { apiUrl, rewriteProxy } from "@/lib/api-base";
 import { parseYouTubeUrl, youtubeValidationError } from "@/lib/youtube-url";
+import { useServerFn } from "@tanstack/react-start";
+import { resolvePin } from "@/lib/pinterest.functions";
 import tiktokIcon from "@/assets/tiktok-icon.png";
 import instagramIcon from "@/assets/instagram-icon.png";
 import kwaiIcon from "@/assets/kwai-icon.png";
@@ -166,6 +168,7 @@ const HeroSection = () => {
   const { toast } = useToast();
   const { isActive } = useDownloaderStatus();
   const trackDownload = (_: string) => {};
+  const resolvePinFn = useServerFn(resolvePin);
 
   // Instagram states
   const [instagramUrl, setInstagramUrl] = useState("");
@@ -975,49 +978,31 @@ const HeroSection = () => {
       setPinterestProgress((prev) => (prev >= 90 ? prev : prev + Math.random() * 15));
     }, 200);
     try {
-      const data = await fetchJsonWithRetry(apiUrl('/api/download-pinterest'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: pinterestUrl.trim() }),
-      });
+      const pin = await resolvePinFn({ data: { url: pinterestUrl.trim() } });
       setPinterestProgress(100);
       clearInterval(progressInterval);
-      if (data && data.success) {
-        setPinterestData(rewriteProxy(data.data));
-        const t = data.data.media_type === 'video' ? 'Vídeo' : data.data.media_type === 'gif' ? 'GIF' : 'Imagem';
-        toast({ title: `${t} encontrado!`, description: "Pronto para download." });
-      } else {
-        toast({ title: "Erro ao processar", description: data.error || "Não foi possível processar o pin.", variant: "destructive" });
-      }
+      setPinterestData({
+        media_url: pin.url,
+        media_type: pin.type,
+        thumbnail: pin.thumbnail,
+        title: pin.title,
+        author: "Pinterest",
+      });
+      const t = pin.type === "video" ? "Vídeo" : pin.type === "gif" ? "GIF" : "Imagem";
+      toast({ title: `${t} encontrado!`, description: "Pronto para download." });
     } catch (error: any) {
       clearInterval(progressInterval);
-      toast({ title: "Erro de conexão", description: error?.message || "Tente novamente em alguns momentos.", variant: "destructive" });
+      toast({ title: "Erro ao processar", description: error?.message || "Não foi possível processar o pin.", variant: "destructive" });
     } finally {
       setTimeout(() => { setPinterestLoading(false); setPinterestProgress(0); }, 500);
     }
   };
 
-  const handlePinterestDownload = async () => {
+  const handlePinterestDownloadClick = () => {
     setClickedPinterestButton("download");
     setTimeout(() => setClickedPinterestButton(null), 300);
-    if (!pinterestData) return;
-    try {
-      const response = await fetch(pinterestData.proxy_url || pinterestData.media_url);
-      const blob = await response.blob();
-      const downloadBlobUrl = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = downloadBlobUrl;
-      const ext = pinterestData.media_type === 'video' ? 'mp4' : pinterestData.media_type === 'gif' ? 'gif' : 'jpg';
-      link.download = `${(pinterestData.title || 'pinterest').replace(/[^a-zA-Z0-9]/g, '_')}_pinterest.${ext}`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(downloadBlobUrl);
-      trackDownload('pinterest');
-      toast({ title: "Download iniciado!", description: "O conteúdo está sendo baixado." });
-    } catch {
-      toast({ title: "Erro no download", description: "Não foi possível baixar o conteúdo.", variant: "destructive" });
-    }
+    trackDownload('pinterest');
+    toast({ title: "Download iniciado!", description: "O conteúdo está sendo baixado." });
   };
 
   return (
@@ -2013,16 +1998,19 @@ const HeroSection = () => {
                     />
                   </div>
 
-                  <Button
-                    onClick={handlePinterestDownload}
-                    className={`w-full h-12 font-pixel text-xs text-white border-2 border-[hsl(var(--retro-cyan))] shadow-[4px_4px_0_hsl(var(--retro-cyan))] hover:shadow-[2px_2px_0_hsl(var(--retro-cyan))] hover:translate-x-[2px] hover:translate-y-[2px] transition-all rounded-sm ${
+                  <a
+                    href={`/api/public/pinterest-download?url=${encodeURIComponent(pinterestData.media_url)}`}
+                    onClick={handlePinterestDownloadClick}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`flex items-center justify-center w-full h-12 font-pixel text-xs text-white border-2 border-[hsl(var(--retro-cyan))] shadow-[4px_4px_0_hsl(var(--retro-cyan))] hover:shadow-[2px_2px_0_hsl(var(--retro-cyan))] hover:translate-x-[2px] hover:translate-y-[2px] transition-all rounded-sm ${
                       clickedPinterestButton === "download" ? "translate-x-[2px] translate-y-[2px] shadow-[2px_2px_0_hsl(var(--retro-cyan))]" : ""
                     }`}
                     style={{ backgroundColor: 'hsl(351, 83%, 47%)' }}
                   >
                     <Download className="mr-2 w-4 h-4" />
                     BAIXAR
-                  </Button>
+                  </a>
 
                   <p className="font-retro text-lg text-center mt-4 text-muted-foreground">
                     OBRIGADO POR USAR sos01!

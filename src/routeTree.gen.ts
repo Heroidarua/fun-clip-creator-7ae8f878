@@ -49,6 +49,7 @@ import { Route as ApiDownloadPinterestRouteImport } from './routes/api.download-
 import { Route as ApiDownloadKwaiRouteImport } from './routes/api.download-kwai'
 import { Route as ApiDownloadInstagramRouteImport } from './routes/api.download-instagram'
 import { Route as ApiDownloadFacebookRouteImport } from './routes/api.download-facebook'
+import { Route as ApiPublicPinterestDownloadRouteImport } from './routes/api.public.pinterest-download'
 
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
@@ -258,6 +259,12 @@ const ApiDownloadFacebookRoute = ApiDownloadFacebookRouteImport.update({
   path: '/api/download-facebook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicPinterestDownloadRoute =
+  ApiPublicPinterestDownloadRouteImport.update({
+    id: '/api/public/pinterest-download',
+    path: '/api/public/pinterest-download',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -300,6 +307,7 @@ export interface FileRoutesByFullPath {
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/blog/': typeof BlogIndexRoute
+  '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -341,6 +349,7 @@ export interface FileRoutesByTo {
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/blog': typeof BlogIndexRoute
+  '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -384,6 +393,7 @@ export interface FileRoutesById {
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/blog/': typeof BlogIndexRoute
+  '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -428,6 +438,7 @@ export interface FileRouteTypes {
     | '/blog/jogos-retro-gratis'
     | '/ferramenta/$slug'
     | '/blog/'
+    | '/api/public/pinterest-download'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -469,6 +480,7 @@ export interface FileRouteTypes {
     | '/blog/jogos-retro-gratis'
     | '/ferramenta/$slug'
     | '/blog'
+    | '/api/public/pinterest-download'
   id:
     | '__root__'
     | '/'
@@ -511,6 +523,7 @@ export interface FileRouteTypes {
     | '/blog/jogos-retro-gratis'
     | '/ferramenta/$slug'
     | '/blog/'
+    | '/api/public/pinterest-download'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -542,6 +555,7 @@ export interface RootRouteChildren {
   ApiManageAnnouncementsRoute: typeof ApiManageAnnouncementsRoute
   ApiManageFeatureStatusRoute: typeof ApiManageFeatureStatusRoute
   FerramentaSlugRoute: typeof FerramentaSlugRoute
+  ApiPublicPinterestDownloadRoute: typeof ApiPublicPinterestDownloadRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -826,6 +840,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiDownloadFacebookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/pinterest-download': {
+      id: '/api/public/pinterest-download'
+      path: '/api/public/pinterest-download'
+      fullPath: '/api/public/pinterest-download'
+      preLoaderRoute: typeof ApiPublicPinterestDownloadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -891,6 +912,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiManageAnnouncementsRoute: ApiManageAnnouncementsRoute,
   ApiManageFeatureStatusRoute: ApiManageFeatureStatusRoute,
   FerramentaSlugRoute: FerramentaSlugRoute,
+  ApiPublicPinterestDownloadRoute: ApiPublicPinterestDownloadRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
