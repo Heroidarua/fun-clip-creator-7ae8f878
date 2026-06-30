@@ -11,6 +11,7 @@ import { apiUrl, rewriteProxy } from "@/lib/api-base";
 import { parseYouTubeUrl, youtubeValidationError } from "@/lib/youtube-url";
 import { useServerFn } from "@tanstack/react-start";
 import { resolvePin } from "@/lib/pinterest.functions";
+import { validatePinterestUrl } from "@/lib/pinterest-validation";
 import tiktokIcon from "@/assets/tiktok-icon.png";
 import instagramIcon from "@/assets/instagram-icon.png";
 import kwaiIcon from "@/assets/kwai-icon.png";
@@ -968,21 +969,23 @@ const HeroSection = () => {
   const handlePinterestSearch = async () => {
     setClickedPinterestButton("search");
     setTimeout(() => setClickedPinterestButton(null), 300);
-    if (!pinterestUrl.trim()) {
-      toast({ title: "URL obrigatório", description: "Por favor, insira um link válido do Pinterest.", variant: "destructive" });
+    const validation = validatePinterestUrl(pinterestUrl);
+    if (!validation.valid) {
+      toast({ title: "Link inválido", description: validation.error, variant: "destructive" });
       return;
     }
+    setPinterestData(null);
     setPinterestLoading(true);
     setPinterestProgress(0);
     const progressInterval = setInterval(() => {
       setPinterestProgress((prev) => (prev >= 90 ? prev : prev + Math.random() * 15));
     }, 200);
     try {
-      const result = await resolvePinFn({ data: { url: pinterestUrl.trim() } });
+      const result = await resolvePinFn({ data: { url: validation.normalized } });
       setPinterestProgress(100);
       clearInterval(progressInterval);
       if (!result.ok) {
-        toast({ title: "Erro ao processar", description: result.error, variant: "destructive" });
+        toast({ title: "Pin indisponível", description: result.error, variant: "destructive" });
         return;
       }
       const pin = result.pin;
