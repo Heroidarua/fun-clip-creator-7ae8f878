@@ -163,14 +163,19 @@ export const resolvePin = createServerFn({ method: "POST" })
     return { url };
   })
   .handler(async ({ data }): Promise<ResolvedPin> => {
-    const resolvedUrl = await followRedirect(data.url);
-    const pinId = extractPinId(resolvedUrl);
-    if (!pinId) {
-      throw new Error("Não foi possível identificar o ID do pin. Use o link do pin (pinterest.com/pin/...) ou pin.it.");
+    try {
+      const resolvedUrl = await followRedirect(data.url);
+      const pinId = extractPinId(resolvedUrl);
+      if (!pinId) {
+        throw new Error("Não foi possível identificar o ID do pin. Use o link do pin (pinterest.com/pin/...) ou pin.it.");
+      }
+      const pin = await fetchPinFromPidgets(pinId);
+      if (!pin) {
+        throw new Error("Pin indisponível, privado ou não encontrado.");
+      }
+      return pin;
+    } catch (err: any) {
+      console.error("[resolvePin] error:", err?.message || err);
+      throw new Error(err?.message || "Falha ao processar o pin");
     }
-    const pin = await fetchPinFromPidgets(pinId);
-    if (!pin) {
-      throw new Error("Pin indisponível, privado ou não encontrado.");
-    }
-    return pin;
   });
