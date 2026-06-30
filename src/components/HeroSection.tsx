@@ -11,6 +11,7 @@ import { apiUrl, rewriteProxy } from "@/lib/api-base";
 import { parseYouTubeUrl, youtubeValidationError } from "@/lib/youtube-url";
 import { useServerFn } from "@tanstack/react-start";
 import { resolvePin } from "@/lib/pinterest.functions";
+import { validatePinterestUrl } from "@/lib/pinterest-validation";
 import tiktokIcon from "@/assets/tiktok-icon.png";
 import instagramIcon from "@/assets/instagram-icon.png";
 import kwaiIcon from "@/assets/kwai-icon.png";
