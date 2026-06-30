@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { validatePinterestUrl } from "./pinterest-validation";
 
 const BROWSER_UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
@@ -24,10 +25,6 @@ function decodeEntities(s: string): string {
     .replace(/&#39;/g, "'")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">");
-}
-
-function isPinterestUrl(url: string): boolean {
-  return /^https?:\/\/([a-z0-9-]+\.)*(pinterest\.[a-z.]+|pin\.it)/i.test(url);
 }
 
 async function followRedirect(url: string): Promise<string> {
@@ -162,24 +159,30 @@ export const resolvePin = createServerFn({ method: "POST" })
   })
   .handler(async ({ data }): Promise<ResolvePinResult> => {
     try {
-      if (!data.url) return { ok: false, error: "URL inválida" };
-      if (!isPinterestUrl(data.url))
-        return { ok: false, error: "URL precisa ser do Pinterest ou pin.it" };
-      const resolvedUrl = await followRedirect(data.url);
-      const pinId = extractPinId(resolvedUrl);
-      if (!pinId)
+      const v = validatePinterestUrl(data.url);
+      if (!v.valid) return { ok: false, error: v.error };
+      let pinId = v.kind === "pin" ? v.pinId! : null;
+      if (!pinId) {
+        const resolvedUrl = await followRedirect(v.normalized);
+        pinId = extractPinId(resolvedUrl);
+        if (!pinId)
+          return {
+            ok: false,
+            error:
+              "Não foi possível abrir o link curto do Pinterest. Cole o link completo do pin (pinterest.com/pin/...).",
+          };
+      }
+      const pin = await fetchPinFromPidgets(pinId);
+      if (!pin)
         return {
           ok: false,
           error:
-            "Não foi possível identificar o ID do pin. Use o link completo do pin (pinterest.com/pin/...).",
+            "Pin indisponível: pode ter sido removido, ser privado, restrito por idade ou estar bloqueado na sua região.",
         };
-      const pin = await fetchPinFromPidgets(pinId);
-      if (!pin)
-        return { ok: false, error: "Pin indisponível, privado ou não encontrado." };
       return { ok: true, pin };
     } catch (err: any) {
       const msg = typeof err?.message === "string" ? err.message : "Falha ao processar o pin";
       console.error("[resolvePin] error:", msg);
-      return { ok: false, error: msg };
+      return { ok: false, error: "Falha temporária ao acessar o Pinterest. Tente novamente em instantes." };
     }
   });
