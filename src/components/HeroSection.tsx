@@ -978,9 +978,14 @@ const HeroSection = () => {
       setPinterestProgress((prev) => (prev >= 90 ? prev : prev + Math.random() * 15));
     }, 200);
     try {
-      const pin = await resolvePinFn({ data: { url: pinterestUrl.trim() } });
+      const result = await resolvePinFn({ data: { url: pinterestUrl.trim() } });
       setPinterestProgress(100);
       clearInterval(progressInterval);
+      if (!result.ok) {
+        toast({ title: "Erro ao processar", description: result.error, variant: "destructive" });
+        return;
+      }
+      const pin = result.pin;
       setPinterestData({
         media_url: pin.url,
         media_type: pin.type,
