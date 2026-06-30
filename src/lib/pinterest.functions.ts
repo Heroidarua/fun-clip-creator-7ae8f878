@@ -12,6 +12,10 @@ export interface ResolvedPin {
   title: string;
 }
 
+export type ResolvePinResult =
+  | { ok: true; pin: ResolvedPin }
+  | { ok: false; error: string };
+
 function decodeEntities(s: string): string {
   return s
     .replace(/&amp;/g, "&")
@@ -153,29 +157,29 @@ async function fetchPinFromPidgets(pinId: string): Promise<ResolvedPin | null> {
 
 export const resolvePin = createServerFn({ method: "POST" })
   .inputValidator((input: { url: string }) => {
-    if (!input || typeof input.url !== "string") {
-      throw new Error("URL inválida");
-    }
-    const url = input.url.trim();
-    if (!isPinterestUrl(url)) {
-      throw new Error("URL precisa ser do Pinterest ou pin.it");
-    }
+    const url = typeof input?.url === "string" ? input.url.trim() : "";
     return { url };
   })
-  .handler(async ({ data }): Promise<ResolvedPin> => {
+  .handler(async ({ data }): Promise<ResolvePinResult> => {
     try {
+      if (!data.url) return { ok: false, error: "URL inválida" };
+      if (!isPinterestUrl(data.url))
+        return { ok: false, error: "URL precisa ser do Pinterest ou pin.it" };
       const resolvedUrl = await followRedirect(data.url);
       const pinId = extractPinId(resolvedUrl);
-      if (!pinId) {
-        throw new Error("Não foi possível identificar o ID do pin. Use o link do pin (pinterest.com/pin/...) ou pin.it.");
-      }
+      if (!pinId)
+        return {
+          ok: false,
+          error:
+            "Não foi possível identificar o ID do pin. Use o link completo do pin (pinterest.com/pin/...).",
+        };
       const pin = await fetchPinFromPidgets(pinId);
-      if (!pin) {
-        throw new Error("Pin indisponível, privado ou não encontrado.");
-      }
-      return pin;
+      if (!pin)
+        return { ok: false, error: "Pin indisponível, privado ou não encontrado." };
+      return { ok: true, pin };
     } catch (err: any) {
-      console.error("[resolvePin] error:", err?.message || err);
-      throw new Error(err?.message || "Falha ao processar o pin");
+      const msg = typeof err?.message === "string" ? err.message : "Falha ao processar o pin";
+      console.error("[resolvePin] error:", msg);
+      return { ok: false, error: msg };
     }
   });
