@@ -4,7 +4,12 @@ function isSafeProxyUrl(u: string): boolean {
   try {
     const url = new URL(u);
     if (url.protocol !== "https:") return false;
-    return /(^|\.)pinimg\.com$/i.test(url.hostname) || /(^|\.)pinterest\.[a-z.]+$/i.test(url.hostname);
+    return (
+      /(^|\.)pinimg\.com$/i.test(url.hostname) ||
+      /(^|\.)pinterest\.[a-z.]+$/i.test(url.hostname) ||
+      /(^|\.)rapidcdn\.app$/i.test(url.hostname) ||
+      /(^|\.)snapsave\.app$/i.test(url.hostname)
+    );
   } catch {
     return false;
   }
@@ -140,6 +145,145 @@ async function scrapePinterest(url: string): Promise<PinterestResponse> {
   };
 }
 
+// Provider 0: Pidgets — API pública oficial do próprio Pinterest.
+// Retorna JSON com images + videos.video_list mesmo sem autenticação, sem
+// depender do HTML SPA (que hoje vem vazio para bots).
+function extractPinIdFromUrl(u: string): string | null {
+  const m = u.match(/\/pin\/(?:[^/]+--)?(\d{6,})/);
+  return m ? m[1] : null;
+}
+function pickBestPidgetsImage(images: any): string | null {
+  if (!images) return null;
+  const orig = images.orig?.url || images.originals?.url;
+  if (orig) return orig;
+  const keys = Object.keys(images).sort((a, b) => {
+    const na = parseInt(a.match(/\d+/)?.[0] || "0", 10);
+    const nb = parseInt(b.match(/\d+/)?.[0] || "0", 10);
+    return nb - na;
+  });
+  return keys.length ? images[keys[0]]?.url || null : null;
+}
+function pickBestVideoUrl(videoList: any): string | null {
+  if (!videoList) return null;
+  const entries = Object.values(videoList) as any[];
+  const mp4 = entries
+    .filter((v) => v?.url && /\.mp4(\?|$)/i.test(v.url))
+    .sort((a, b) => (b?.width || 0) - (a?.width || 0));
+  return mp4[0]?.url || entries.find((v) => v?.url)?.url || null;
+}
+async function fetchPidgets(url: string): Promise<PinterestResponse | null> {
+  const pinId = extractPinIdFromUrl(url);
+  if (!pinId) return null;
+  const r = await fetch(
+    `https://widgets.pinterest.com/v3/pidgets/pins/info/?pin_ids=${encodeURIComponent(pinId)}`,
+    {
+      headers: {
+        Accept: "application/json",
+        "User-Agent": BROWSER_UA,
+        Origin: "https://www.pinterest.com",
+        Referer: "https://www.pinterest.com/",
+      },
+    },
+  );
+  if (!r.ok) return null;
+  const j: any = await r.json().catch(() => null);
+  const pin: any = j?.data?.[0];
+  if (!pin || pin.error) return null;
+
+  let videoUrl: string | null = null;
+  if (pin.videos?.video_list) videoUrl = pickBestVideoUrl(pin.videos.video_list);
+  if (!videoUrl && pin.story_pin_data?.pages?.length) {
+    for (const page of pin.story_pin_data.pages) {
+      for (const block of page.blocks || []) {
+        if (block.video?.video_list) {
+          const v = pickBestVideoUrl(block.video.video_list);
+          if (v) { videoUrl = v; break; }
+        }
+      }
+      if (videoUrl) break;
+    }
+  }
+
+  const imageUrl = pickBestPidgetsImage(pin.images);
+  const mediaUrl = videoUrl || imageUrl;
+  if (!mediaUrl) return null;
+
+  let mediaType: MediaType = videoUrl ? "video" : "image";
+  if (mediaType === "image" && /\.gif(\?|$)/i.test(mediaUrl)) mediaType = "gif";
+
+  const title = (pin.grid_title || pin.title || pin.description || "Pinterest").toString().substring(0, 100);
+  return {
+    success: true,
+    data: {
+      media_url: decodeEntities(mediaUrl),
+      media_type: mediaType,
+      thumbnail: decodeEntities(imageUrl || mediaUrl),
+      title: decodeEntities(title),
+      author: "Pinterest",
+    },
+  };
+}
+
+// Provider 1: RapidAPI social-download-all-in-one (mesmo do Facebook)
+async function fetchSocialAllInOne(url: string, key: string): Promise<PinterestResponse | null> {
+  const r = await fetch("https://social-download-all-in-one.p.rapidapi.com/v1/social/autolink", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-RapidAPI-Key": key,
+      "X-RapidAPI-Host": "social-download-all-in-one.p.rapidapi.com",
+    },
+    body: JSON.stringify({ url }),
+  });
+  if (!r.ok) return null;
+  const j: any = await r.json();
+  const medias: any[] = j?.medias || [];
+  const video = medias.find((m) => m?.type === "video" && m?.url);
+  const media = video || medias.find((m) => m?.url);
+  if (!media?.url) return null;
+  const mediaType: MediaType = video ? "video" : /\.gif(\?|$)/i.test(media.url) ? "gif" : "image";
+  return {
+    success: true,
+    data: {
+      media_url: media.url,
+      media_type: mediaType,
+      thumbnail: j?.thumbnail || media?.thumbnail || media.url,
+      title: (j?.title || "Pinterest").substring(0, 100),
+      author: j?.author || "Pinterest",
+    },
+  };
+}
+
+// Provider 2: RapidAPI auto-download-all-in-one-big (mesmo do Facebook)
+async function fetchAutoAllInOne(url: string, key: string): Promise<PinterestResponse | null> {
+  const r = await fetch("https://auto-download-all-in-one-big.p.rapidapi.com/v1/social/autolink", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-RapidAPI-Key": key,
+      "X-RapidAPI-Host": "auto-download-all-in-one-big.p.rapidapi.com",
+    },
+    body: JSON.stringify({ url }),
+  });
+  if (!r.ok) return null;
+  const j: any = await r.json();
+  const medias: any[] = j?.medias || [];
+  const video = medias.find((m) => m?.type === "video" && m?.url);
+  const media = video || medias.find((m) => m?.url);
+  if (!media?.url) return null;
+  const mediaType: MediaType = video ? "video" : /\.gif(\?|$)/i.test(media.url) ? "gif" : "image";
+  return {
+    success: true,
+    data: {
+      media_url: media.url,
+      media_type: mediaType,
+      thumbnail: j?.thumbnail || media.url,
+      title: (j?.title || "Pinterest").substring(0, 100),
+      author: j?.author || "Pinterest",
+    },
+  };
+}
+
 function addProxyUrls(data: PinterestData, routePath: string): PinterestData {
   const base = routePath.startsWith("/") ? routePath : `/${routePath}`;
   const type = data.media_type === "video" ? "video" : "image";
@@ -153,19 +297,34 @@ function addProxyUrls(data: PinterestData, routePath: string): PinterestData {
 
 async function downloadPinterest(rawUrl: string, functionUrl: string): Promise<PinterestResponse> {
   const url = await resolveShortLink(rawUrl);
-  try {
-    const res = await scrapePinterest(url);
-    if (res.success && res.data) {
-      res.data = addProxyUrls(res.data, functionUrl);
-    }
-    return res;
-  } catch (e) {
-    console.error("[Pinterest] erro:", e);
-    return {
-      success: false,
-      error: "Não foi possível processar o pin. Tente novamente em instantes.",
-    };
+  const key = (process.env.RAPIDAPI_KEY || "").trim();
+  const providers: Array<{ name: string; run: () => Promise<PinterestResponse | null> }> = [
+    { name: "pidgets", run: () => fetchPidgets(url) },
+  ];
+  if (key) {
+    providers.push({ name: "social-all-in-one", run: () => fetchSocialAllInOne(url, key) });
+    providers.push({ name: "auto-all-in-one", run: () => fetchAutoAllInOne(url, key) });
   }
+  providers.push({ name: "html-scrape", run: () => scrapePinterest(url) });
+
+  for (const p of providers) {
+    try {
+      const res = await p.run();
+      if (res?.success && res.data?.media_url) {
+        console.log(`✅ Pinterest via ${p.name}`);
+        res.data = addProxyUrls(res.data, functionUrl);
+        return res;
+      }
+      console.warn(`⚠️ Pinterest provider ${p.name} sem mídia`);
+    } catch (e) {
+      console.warn(`⚠️ Pinterest provider ${p.name} falhou:`, (e as Error).message);
+    }
+  }
+
+  return {
+    success: false,
+    error: "Não foi possível processar o pin. Verifique se o link está correto e se o pin é público.",
+  };
 }
 
 async function handleProxy(request: Request, mediaUrl: string, mediaType: string): Promise<Response> {

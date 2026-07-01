@@ -10,7 +10,6 @@ import ScrollReveal from "./ScrollReveal";
 import { apiUrl, rewriteProxy } from "@/lib/api-base";
 import { parseYouTubeUrl, youtubeValidationError } from "@/lib/youtube-url";
 import { useServerFn } from "@tanstack/react-start";
-import { resolvePin } from "@/lib/pinterest.functions";
 import { validatePinterestUrl } from "@/lib/pinterest-validation";
 import tiktokIcon from "@/assets/tiktok-icon.png";
 import instagramIcon from "@/assets/instagram-icon.png";
@@ -169,7 +168,6 @@ const HeroSection = () => {
   const { toast } = useToast();
   const { isActive } = useDownloaderStatus();
   const trackDownload = (_: string) => {};
-  const resolvePinFn = useServerFn(resolvePin);
 
   // Instagram states
   const [instagramUrl, setInstagramUrl] = useState("");
@@ -981,22 +979,29 @@ const HeroSection = () => {
       setPinterestProgress((prev) => (prev >= 90 ? prev : prev + Math.random() * 15));
     }, 200);
     try {
-      const result = await resolvePinFn({ data: { url: validation.normalized } });
+      const r = await fetch("/api/download-pinterest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: validation.normalized }),
+      });
+      const result = await r.json();
       setPinterestProgress(100);
       clearInterval(progressInterval);
-      if (!result.ok) {
-        toast({ title: "Pin indisponível", description: result.error, variant: "destructive" });
+      if (!result?.success || !result?.data) {
+        toast({
+          title: "Pin indisponível",
+          description: result?.error || "Não foi possível processar o pin.",
+          variant: "destructive",
+        });
         return;
       }
-      const pin = result.pin;
-      setPinterestData({
-        media_url: pin.url,
-        media_type: pin.type,
-        thumbnail: pin.thumbnail,
-        title: pin.title,
-        author: "Pinterest",
-      });
-      const t = pin.type === "video" ? "Vídeo" : pin.type === "gif" ? "GIF" : "Imagem";
+      setPinterestData(result.data as PinterestData);
+      const t =
+        result.data.media_type === "video"
+          ? "Vídeo"
+          : result.data.media_type === "gif"
+          ? "GIF"
+          : "Imagem";
       toast({ title: `${t} encontrado!`, description: "Pronto para download." });
     } catch (error: any) {
       clearInterval(progressInterval);
