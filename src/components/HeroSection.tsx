@@ -10,7 +10,6 @@ import ScrollReveal from "./ScrollReveal";
 import { apiUrl, rewriteProxy } from "@/lib/api-base";
 import { parseYouTubeUrl, youtubeValidationError } from "@/lib/youtube-url";
 import { useServerFn } from "@tanstack/react-start";
-import { resolvePin } from "@/lib/pinterest.functions";
 import { validatePinterestUrl } from "@/lib/pinterest-validation";
 import tiktokIcon from "@/assets/tiktok-icon.png";
 import instagramIcon from "@/assets/instagram-icon.png";
@@ -169,7 +168,6 @@ const HeroSection = () => {
   const { toast } = useToast();
   const { isActive } = useDownloaderStatus();
   const trackDownload = (_: string) => {};
-  const resolvePinFn = useServerFn(resolvePin);
 
   // Instagram states
   const [instagramUrl, setInstagramUrl] = useState("");
