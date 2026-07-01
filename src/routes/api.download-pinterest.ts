@@ -5,7 +5,12 @@ function isSafeProxyUrl(u: string): boolean {
   try {
     const url = new URL(u);
     if (url.protocol !== "https:") return false;
-    return /(^|\.)pinimg\.com$/i.test(url.hostname) || /(^|\.)pinterest\.[a-z.]+$/i.test(url.hostname);
+    return (
+      /(^|\.)pinimg\.com$/i.test(url.hostname) ||
+      /(^|\.)pinterest\.[a-z.]+$/i.test(url.hostname) ||
+      /(^|\.)rapidcdn\.app$/i.test(url.hostname) ||
+      /(^|\.)snapsave\.app$/i.test(url.hostname)
+    );
   } catch {
     return false;
   }
