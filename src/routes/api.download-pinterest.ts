@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { callSnapsave } from "@/lib/snapsave.server";
 
 function isSafeProxyUrl(u: string): boolean {
   try {
@@ -146,23 +145,80 @@ async function scrapePinterest(url: string): Promise<PinterestResponse> {
   };
 }
 
-// Provider 0: Snapsave (mesma solução usada no Facebook). Free, Cloudflare-safe.
-async function fetchSnapsave(url: string): Promise<PinterestResponse | null> {
-  const res = await callSnapsave(url);
-  if (!res || !res.medias.length) return null;
-  // Prioriza vídeo, senão a maior imagem
-  const video = res.medias.find((m) => m.type === "video");
-  const image = res.medias.find((m) => m.type === "image" && !/thumb/i.test(m.url));
-  const media = video || image || res.medias[0];
-  if (!media?.url) return null;
-  const mediaType: MediaType = video ? "video" : /\.gif(\?|$)/i.test(media.url) ? "gif" : "image";
+// Provider 0: Pidgets — API pública oficial do próprio Pinterest.
+// Retorna JSON com images + videos.video_list mesmo sem autenticação, sem
+// depender do HTML SPA (que hoje vem vazio para bots).
+function extractPinIdFromUrl(u: string): string | null {
+  const m = u.match(/\/pin\/(?:[^/]+--)?(\d{6,})/);
+  return m ? m[1] : null;
+}
+function pickBestPidgetsImage(images: any): string | null {
+  if (!images) return null;
+  const orig = images.orig?.url || images.originals?.url;
+  if (orig) return orig;
+  const keys = Object.keys(images).sort((a, b) => {
+    const na = parseInt(a.match(/\d+/)?.[0] || "0", 10);
+    const nb = parseInt(b.match(/\d+/)?.[0] || "0", 10);
+    return nb - na;
+  });
+  return keys.length ? images[keys[0]]?.url || null : null;
+}
+function pickBestVideoUrl(videoList: any): string | null {
+  if (!videoList) return null;
+  const entries = Object.values(videoList) as any[];
+  const mp4 = entries
+    .filter((v) => v?.url && /\.mp4(\?|$)/i.test(v.url))
+    .sort((a, b) => (b?.width || 0) - (a?.width || 0));
+  return mp4[0]?.url || entries.find((v) => v?.url)?.url || null;
+}
+async function fetchPidgets(url: string): Promise<PinterestResponse | null> {
+  const pinId = extractPinIdFromUrl(url);
+  if (!pinId) return null;
+  const r = await fetch(
+    `https://widgets.pinterest.com/v3/pidgets/pins/info/?pin_ids=${encodeURIComponent(pinId)}`,
+    {
+      headers: {
+        Accept: "application/json",
+        "User-Agent": BROWSER_UA,
+        Origin: "https://www.pinterest.com",
+        Referer: "https://www.pinterest.com/",
+      },
+    },
+  );
+  if (!r.ok) return null;
+  const j: any = await r.json().catch(() => null);
+  const pin: any = j?.data?.[0];
+  if (!pin || pin.error) return null;
+
+  let videoUrl: string | null = null;
+  if (pin.videos?.video_list) videoUrl = pickBestVideoUrl(pin.videos.video_list);
+  if (!videoUrl && pin.story_pin_data?.pages?.length) {
+    for (const page of pin.story_pin_data.pages) {
+      for (const block of page.blocks || []) {
+        if (block.video?.video_list) {
+          const v = pickBestVideoUrl(block.video.video_list);
+          if (v) { videoUrl = v; break; }
+        }
+      }
+      if (videoUrl) break;
+    }
+  }
+
+  const imageUrl = pickBestPidgetsImage(pin.images);
+  const mediaUrl = videoUrl || imageUrl;
+  if (!mediaUrl) return null;
+
+  let mediaType: MediaType = videoUrl ? "video" : "image";
+  if (mediaType === "image" && /\.gif(\?|$)/i.test(mediaUrl)) mediaType = "gif";
+
+  const title = (pin.grid_title || pin.title || pin.description || "Pinterest").toString().substring(0, 100);
   return {
     success: true,
     data: {
-      media_url: media.url,
+      media_url: decodeEntities(mediaUrl),
       media_type: mediaType,
-      thumbnail: media.thumbnail || res.thumbnail || media.url,
-      title: (res.title || "Pinterest").substring(0, 100),
+      thumbnail: decodeEntities(imageUrl || mediaUrl),
+      title: decodeEntities(title),
       author: "Pinterest",
     },
   };
@@ -243,7 +299,7 @@ async function downloadPinterest(rawUrl: string, functionUrl: string): Promise<P
   const url = await resolveShortLink(rawUrl);
   const key = (process.env.RAPIDAPI_KEY || "").trim();
   const providers: Array<{ name: string; run: () => Promise<PinterestResponse | null> }> = [
-    { name: "snapsave", run: () => fetchSnapsave(url) },
+    { name: "pidgets", run: () => fetchPidgets(url) },
   ];
   if (key) {
     providers.push({ name: "social-all-in-one", run: () => fetchSocialAllInOne(url, key) });
