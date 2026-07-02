@@ -14,6 +14,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import ThemeToggle from "@/components/ThemeToggle";
 import NotificationBell from "@/components/NotificationBell";
+import InstallAppButton from "@/components/InstallAppButton";
 import { useToast } from "@/hooks/use-toast";
 import {
   Tooltip,
@@ -166,6 +167,7 @@ const Header = () => {
             >
               <Share2 className="w-4 h-4" aria-hidden="true" />
             </button>
+            <InstallAppButton />
             <div className="hidden sm:block"><NotificationBell /></div>
             <Link
               to="/dashboard"
@@ -271,6 +273,8 @@ const Header = () => {
                 <Share2 className="w-4 h-4" aria-hidden="true" />
                 Compartilhar o site
               </button>
+
+              <InstallAppButton variant="mobile" onClick={() => setOpen(false)} />
             </nav>
           </div>
         </>
