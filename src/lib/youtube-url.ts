@@ -38,7 +38,7 @@ function toUrl(input: string): URL | null {
     return new URL(`https://www.youtube.com/channel/${s}`);
   }
   // Bare @handle
-  if (/^@[\w.\-]{2,}$/.test(s)) {
+  if (/^@[\w.-]{2,}$/.test(s)) {
     return new URL(`https://www.youtube.com/${s}`);
   }
 
@@ -154,7 +154,8 @@ export function parseYouTubeUrl(input: string): YouTubeParsed | null {
 /** Convenience: returns a downloadable video id (video or shorts) or null. */
 export function getYouTubeVideoId(input: string): string | null {
   const p = parseYouTubeUrl(input);
-  return p && (p.kind === "video" || p.kind === "shorts") ? p.videoId! : null;
+  if (!p) return null;
+  return (p.kind === "video" || p.kind === "shorts") ? p.videoId ?? null : null;
 }
 
 /** Human-friendly error for invalid YT input. */
