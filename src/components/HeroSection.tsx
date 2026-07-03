@@ -1011,11 +1011,39 @@ const HeroSection = () => {
     }
   };
 
-  const handlePinterestDownloadClick = () => {
+  const handlePinterestDownloadClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (!pinterestData) return;
     setClickedPinterestButton("download");
     setTimeout(() => setClickedPinterestButton(null), 300);
     trackDownload('pinterest');
+
+    const ext = pinterestData.media_type === 'video' ? 'mp4' : pinterestData.media_type === 'gif' ? 'gif' : 'jpg';
+    const filename = `pinterest_${Date.now()}.${ext}`;
+    const proxyUrl = `/api/public/pinterest-download?url=${encodeURIComponent(pinterestData.media_url)}`;
+
     toast({ title: "Download iniciado!", description: "O conteúdo está sendo baixado." });
+    try {
+      const res = await fetch(proxyUrl);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const blob = await res.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = objectUrl;
+      a.download = filename;
+      a.rel = 'noopener';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(objectUrl), 1500);
+    } catch (err) {
+      console.error('Pinterest download error:', err);
+      toast({
+        title: "Falha no download",
+        description: "Não foi possível baixar o arquivo. Tente novamente.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -2011,11 +2039,9 @@ const HeroSection = () => {
                     />
                   </div>
 
-                  <a
-                    href={`/api/public/pinterest-download?url=${encodeURIComponent(pinterestData.media_url)}`}
+                  <button
+                    type="button"
                     onClick={handlePinterestDownloadClick}
-                    target="_blank"
-                    rel="noopener noreferrer"
                     className={`flex items-center justify-center w-full h-12 font-pixel text-xs text-white border-2 border-[hsl(var(--retro-cyan))] shadow-[4px_4px_0_hsl(var(--retro-cyan))] hover:shadow-[2px_2px_0_hsl(var(--retro-cyan))] hover:translate-x-[2px] hover:translate-y-[2px] transition-all rounded-sm ${
                       clickedPinterestButton === "download" ? "translate-x-[2px] translate-y-[2px] shadow-[2px_2px_0_hsl(var(--retro-cyan))]" : ""
                     }`}
@@ -2023,7 +2049,7 @@ const HeroSection = () => {
                   >
                     <Download className="mr-2 w-4 h-4" />
                     BAIXAR
-                  </a>
+                  </button>
 
                   <p className="font-retro text-lg text-center mt-4 text-muted-foreground">
                     OBRIGADO POR USAR sos01!
