@@ -37,7 +37,7 @@ async function fetchMediaDownloader(
   );
   if (!r.ok) {
     console.warn(`youtube-media-downloader HTTP ${r.status}`);
-    return null;
+    return r.status === 429 ? ({ success: false, rateLimited: true } as any) : null;
   }
   const data: any = await r.json().catch(() => null);
   if (!data || (data.errorId && data.errorId !== "Success")) return null;
