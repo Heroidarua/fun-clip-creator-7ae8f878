@@ -54,16 +54,35 @@ function isValidPinterestUrl(url: string): boolean {
 }
 
 async function resolveShortLink(url: string): Promise<string> {
-  try {
-    if (!/pin\.it/i.test(url)) return url;
-    const r = await fetch(url, {
-      method: "GET",
-      redirect: "follow",
-      headers: { "User-Agent": BROWSER_UA, "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8" },
-    });
-    if (r.url && /pinterest\.[a-z.]+\//i.test(r.url)) return r.url.split("?")[0];
-  } catch {}
-  return url;
+  if (!/pin\.it/i.test(url)) return url;
+  let current = url;
+  for (let hop = 0; hop < 5; hop++) {
+    try {
+      const r = await fetch(current, {
+        method: "GET",
+        redirect: "manual",
+        headers: {
+          "User-Agent": BROWSER_UA,
+          "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
+          Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        },
+      });
+      const loc = r.headers.get("location");
+      if (loc) {
+        current = new URL(loc, current).toString();
+        if (/pinterest\.[a-z.]+\/pin\//i.test(current)) return current.split("?")[0];
+        continue;
+      }
+      // Some CDNs use JS/meta refresh — try to scrape final pin URL from body
+      const body = await r.text().catch(() => "");
+      const m = body.match(/https?:\/\/[a-z0-9.-]*pinterest\.[a-z.]+\/pin\/\d+/i);
+      if (m) return m[0];
+      break;
+    } catch {
+      break;
+    }
+  }
+  return current;
 }
 
 function decodeEntities(s: string): string {
