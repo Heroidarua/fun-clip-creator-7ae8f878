@@ -248,6 +248,7 @@ async function resolveYoutube(
     { name: "auto-all-in-one", run: () => fetchAutoAllInOne(rawUrl, videoId, key) },
   ];
 
+  let sawRateLimit = false;
   for (const p of providers) {
     try {
       const res = await p.run();
@@ -256,6 +257,7 @@ async function resolveYoutube(
         return res;
       }
       console.warn(`⚠️ YouTube provider ${p.name} sem mídia`);
+      if ((res as any)?.rateLimited) sawRateLimit = true;
     } catch (e) {
       console.warn(`⚠️ YouTube provider ${p.name} falhou:`, (e as Error).message);
     }
@@ -263,8 +265,9 @@ async function resolveYoutube(
 
   return {
     success: false,
-    error:
-      "Não foi possível processar este vídeo agora. Tente outro link ou aguarde alguns instantes.",
+    error: sawRateLimit
+      ? "Cota diária do YouTube atingida. Tente novamente mais tarde."
+      : "Não foi possível processar este vídeo agora. Tente outro link ou aguarde alguns instantes.",
   };
 }
 
