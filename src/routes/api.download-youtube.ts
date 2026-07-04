@@ -1,24 +1,284 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { parseYouTubeUrl } from "@/lib/youtube-url";
 
+interface YouTubeData {
+  video_url: string;
+  audio_url: string;
+  thumbnail: string;
+  title: string;
+  author: string;
+  duration: number;
+}
+
+interface YouTubeResponse {
+  success: boolean;
+  data?: YouTubeData;
+  error?: string;
+}
+
+const BROWSER_UA =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+
+// Provider 1 (primary): youtube-media-downloader
+async function fetchMediaDownloader(
+  videoId: string,
+  key: string,
+): Promise<YouTubeResponse | null> {
+  const r = await fetch(
+    `https://youtube-media-downloader.p.rapidapi.com/v2/video/details?videoId=${videoId}&urlAccess=normal&videos=auto&audios=auto`,
+    {
+      headers: {
+        "x-rapidapi-host": "youtube-media-downloader.p.rapidapi.com",
+        "x-rapidapi-key": key,
+        Accept: "application/json",
+        "User-Agent": BROWSER_UA,
+      },
+    },
+  );
+  if (!r.ok) return null;
+  const data: any = await r.json().catch(() => null);
+  if (!data || (data.errorId && data.errorId !== "Success")) return null;
+
+  const videoItems: any[] = data.videos?.items || [];
+  const audioItems: any[] = data.audios?.items || [];
+  const muxed = videoItems.find(
+    (v) => /mp4a/.test(v.mimeType || "") && v.extension === "mp4",
+  );
+  const bestVideo =
+    muxed ||
+    videoItems
+      .filter((v) => v.extension === "mp4")
+      .sort(
+        (a, b) => (b.height || b.quality || 0) - (a.height || a.quality || 0),
+      )[0] ||
+    videoItems[0];
+  const bestAudio =
+    audioItems
+      .filter((a) => a.extension === "m4a" || a.extension === "mp4")
+      .sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0))[0] || audioItems[0];
+
+  const videoUrl = bestVideo?.url || "";
+  const audioUrl = bestAudio?.url || "";
+  if (!videoUrl && !audioUrl) return null;
+
+  const thumbnail =
+    (data.thumbnails && data.thumbnails[data.thumbnails.length - 1]?.url) ||
+    `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+
+  return {
+    success: true,
+    data: {
+      video_url: videoUrl,
+      audio_url: audioUrl,
+      thumbnail,
+      title: data.title || "YouTube Video",
+      author: data.channel?.name || "YouTube",
+      duration: Number(data.lengthSeconds || 0),
+    },
+  };
+}
+
+// Aggregator response parser
+function parseAggregator(j: any, videoId: string): YouTubeResponse | null {
+  const medias: any[] = j?.medias || [];
+  if (!medias.length) return null;
+  const videos = medias.filter(
+    (m) => m?.url && (m?.type === "video" || /mp4/i.test(m?.extension || m?.ext || "")),
+  );
+  const audios = medias.filter(
+    (m) => m?.url && (m?.type === "audio" || /m4a|mp3/i.test(m?.extension || m?.ext || "")),
+  );
+  const bestVideo =
+    videos.sort(
+      (a, b) => (parseInt(b?.quality || "0") || 0) - (parseInt(a?.quality || "0") || 0),
+    )[0] || medias.find((m) => m?.url);
+  const bestAudio = audios[0];
+  const videoUrl = bestVideo?.url || "";
+  const audioUrl = bestAudio?.url || bestVideo?.url || "";
+  if (!videoUrl && !audioUrl) return null;
+  return {
+    success: true,
+    data: {
+      video_url: videoUrl,
+      audio_url: audioUrl,
+      thumbnail:
+        j?.thumbnail ||
+        bestVideo?.thumbnail ||
+        `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+      title: (j?.title || "YouTube Video").substring(0, 120),
+      author: j?.author || j?.source || "YouTube",
+      duration: Number(j?.duration || 0),
+    },
+  };
+}
+
+// Provider 2 (fallback): social-download-all-in-one
+async function fetchSocialAllInOne(
+  url: string,
+  videoId: string,
+  key: string,
+): Promise<YouTubeResponse | null> {
+  const r = await fetch(
+    "https://social-download-all-in-one.p.rapidapi.com/v1/social/autolink",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-RapidAPI-Key": key,
+        "X-RapidAPI-Host": "social-download-all-in-one.p.rapidapi.com",
+      },
+      body: JSON.stringify({ url }),
+    },
+  );
+  if (!r.ok) return null;
+  const j: any = await r.json().catch(() => null);
+  return parseAggregator(j, videoId);
+}
+
+// Provider 3 (fallback): auto-download-all-in-one-big
+async function fetchAutoAllInOne(
+  url: string,
+  videoId: string,
+  key: string,
+): Promise<YouTubeResponse | null> {
+  const r = await fetch(
+    "https://auto-download-all-in-one-big.p.rapidapi.com/v1/social/autolink",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-RapidAPI-Key": key,
+        "X-RapidAPI-Host": "auto-download-all-in-one-big.p.rapidapi.com",
+      },
+      body: JSON.stringify({ url }),
+    },
+  );
+  if (!r.ok) return null;
+  const j: any = await r.json().catch(() => null);
+  return parseAggregator(j, videoId);
+}
+
+// Provider 4 (fallback): ytstream-download-youtube-videos
+async function fetchYtStream(
+  videoId: string,
+  key: string,
+): Promise<YouTubeResponse | null> {
+  const r = await fetch(
+    `https://ytstream-download-youtube-videos.p.rapidapi.com/dl?id=${videoId}`,
+    {
+      headers: {
+        "X-RapidAPI-Key": key,
+        "X-RapidAPI-Host": "ytstream-download-youtube-videos.p.rapidapi.com",
+      },
+    },
+  );
+  if (!r.ok) return null;
+  const j: any = await r.json().catch(() => null);
+  if (!j || j?.status === "fail") return null;
+
+  const formats: any[] = [...(j.formats || []), ...(j.adaptiveFormats || [])];
+  const videos = formats.filter(
+    (f) => f?.url && /video\/mp4/.test(f?.mimeType || "") && f?.hasAudio !== false,
+  );
+  const anyVideo = videos.length
+    ? videos
+    : formats.filter((f) => f?.url && /video\/mp4/.test(f?.mimeType || ""));
+  const audios = formats.filter(
+    (f) => f?.url && /audio\/mp4/.test(f?.mimeType || ""),
+  );
+  const bestVideo = anyVideo.sort(
+    (a, b) => (b?.height || 0) - (a?.height || 0),
+  )[0];
+  const bestAudio = audios.sort(
+    (a, b) => (b?.bitrate || 0) - (a?.bitrate || 0),
+  )[0];
+
+  const videoUrl = bestVideo?.url || "";
+  const audioUrl = bestAudio?.url || "";
+  if (!videoUrl && !audioUrl) return null;
+
+  const thumb =
+    (j.thumbnail && j.thumbnail[j.thumbnail.length - 1]?.url) ||
+    `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+
+  return {
+    success: true,
+    data: {
+      video_url: videoUrl,
+      audio_url: audioUrl,
+      thumbnail: thumb,
+      title: j.title || "YouTube Video",
+      author: j.channelTitle || j.author || "YouTube",
+      duration: Number(j.lengthSeconds || 0),
+    },
+  };
+}
+
+async function resolveYoutube(
+  rawUrl: string,
+  videoId: string,
+): Promise<YouTubeResponse> {
+  const key = (process.env.RAPIDAPI_KEY || "").trim();
+  if (!key) {
+    return {
+      success: false,
+      error: "RAPIDAPI_KEY não configurada no servidor",
+    };
+  }
+
+  const providers: Array<{
+    name: string;
+    run: () => Promise<YouTubeResponse | null>;
+  }> = [
+    { name: "youtube-media-downloader", run: () => fetchMediaDownloader(videoId, key) },
+    { name: "ytstream", run: () => fetchYtStream(videoId, key) },
+    { name: "social-all-in-one", run: () => fetchSocialAllInOne(rawUrl, videoId, key) },
+    { name: "auto-all-in-one", run: () => fetchAutoAllInOne(rawUrl, videoId, key) },
+  ];
+
+  for (const p of providers) {
+    try {
+      const res = await p.run();
+      if (res?.success && res.data && (res.data.video_url || res.data.audio_url)) {
+        console.log(`✅ YouTube via ${p.name}`);
+        return res;
+      }
+      console.warn(`⚠️ YouTube provider ${p.name} sem mídia`);
+    } catch (e) {
+      console.warn(`⚠️ YouTube provider ${p.name} falhou:`, (e as Error).message);
+    }
+  }
+
+  return {
+    success: false,
+    error:
+      "Não foi possível processar este vídeo agora. Tente outro link ou aguarde alguns instantes.",
+  };
+}
+
+function corsHeaders(): Record<string, string> {
+  return {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  };
+}
+
 export const Route = createFileRoute("/api/download-youtube")({
   server: {
     handlers: {
-      OPTIONS: async () => {
-        return new Response(null, {
-          status: 204,
-          headers: corsHeaders(),
-        });
-      },
+      OPTIONS: async () =>
+        new Response(null, { status: 204, headers: corsHeaders() }),
+
       POST: async ({ request }) => {
         try {
           const body = await request.json();
-          const rawUrl =
-            typeof body?.url === "string" ? body.url.trim() : "";
+          const rawUrl = typeof body?.url === "string" ? body.url.trim() : "";
           if (!rawUrl || rawUrl.length > 2048) {
             return Response.json(
               { success: false, error: "URL ausente ou muito longa." },
-              { status: 400, headers: corsHeaders() }
+              { status: 400, headers: corsHeaders() },
             );
           }
 
@@ -26,7 +286,7 @@ export const Route = createFileRoute("/api/download-youtube")({
           if (!parsed) {
             return Response.json(
               { success: false, error: "URL do YouTube inválida." },
-              { status: 400, headers: corsHeaders() }
+              { status: 400, headers: corsHeaders() },
             );
           }
           if (parsed.kind !== "video" && parsed.kind !== "shorts") {
@@ -38,146 +298,34 @@ export const Route = createFileRoute("/api/download-youtube")({
                     ? "Esse link é de um canal. Cole o link de um vídeo ou shorts."
                     : "Esse link é de uma playlist. Cole o link de um vídeo específico.",
               },
-              { status: 400, headers: corsHeaders() }
+              { status: 400, headers: corsHeaders() },
             );
           }
           const videoId = parsed.videoId!;
+          const canonicalUrl = parsed.canonicalUrl || rawUrl;
 
-          const rapidKey = process.env.RAPIDAPI_KEY;
-          if (!rapidKey) {
-            const { reportDownloaderResult } = await import(
-              "@/lib/downloader-status.server"
-            );
-            reportDownloaderResult("youtube", false);
-            return Response.json(
-              { success: false, error: "RAPIDAPI_KEY não configurada no servidor" },
-              { status: 500, headers: corsHeaders() }
-            );
-          }
-
-          // youtube-media-downloader (RapidAPI) — returns direct googlevideo URLs
-          const apiResp = await fetch(
-            `https://youtube-media-downloader.p.rapidapi.com/v2/video/details?videoId=${videoId}&urlAccess=normal&videos=auto&audios=auto`,
-            {
-              headers: {
-                "x-rapidapi-host": "youtube-media-downloader.p.rapidapi.com",
-                "x-rapidapi-key": rapidKey,
-                "Accept": "application/json",
-                "User-Agent": "Mozilla/5.0 (sos01-downloader)",
-              },
-            }
-          );
-
-          if (!apiResp.ok) {
-            const txt = await apiResp.text().catch(() => "");
-            console.error("RapidAPI error:", apiResp.status, txt);
-            const { reportDownloaderResult } = await import(
-              "@/lib/downloader-status.server"
-            );
-            reportDownloaderResult("youtube", false);
-            return Response.json(
-              {
-                success: false,
-                error: `Falha no provedor (HTTP ${apiResp.status})`,
-              },
-              { status: 502, headers: corsHeaders() }
-            );
-          }
-
-          const data: any = await apiResp.json();
-
-          console.log("[youtube] RapidAPI keys:", Object.keys(data || {}));
-          console.log(
-            "[youtube] videos.items:",
-            (data?.videos?.items || []).length,
-            "audios.items:",
-            (data?.audios?.items || []).length
-          );
-
-          if (data.errorId && data.errorId !== "Success") {
-            const { reportDownloaderResult } = await import(
-              "@/lib/downloader-status.server"
-            );
-            reportDownloaderResult("youtube", false);
-            return Response.json(
-              { success: false, error: data.reason || data.errorId },
-              { status: 502, headers: corsHeaders() }
-            );
-          }
-
-          // Pick best progressive mp4 (has both video+audio). itag 18 = 360p mp4 muxed.
-          // RapidAPI returns separated streams; we prefer one with audio codec present.
-          const videoItems: any[] = data.videos?.items || [];
-          const audioItems: any[] = data.audios?.items || [];
-
-          // Prefer a muxed mp4 (itag 18 / 22) — codecs string includes both avc1 and mp4a
-          const muxed = videoItems.find(
-            (v) => /mp4a/.test(v.mimeType || "") && v.extension === "mp4"
-          );
-          // Otherwise: highest quality mp4 video-only
-          const bestVideo =
-            muxed ||
-            videoItems
-              .filter((v) => v.extension === "mp4")
-              .sort(
-                (a, b) =>
-                  (b.height || b.quality || 0) - (a.height || a.quality || 0)
-              )[0] ||
-            videoItems[0];
-
-          // Best m4a/mp4 audio
-          const bestAudio =
-            audioItems
-              .filter((a) => a.extension === "m4a" || a.extension === "mp4")
-              .sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0))[0] ||
-            audioItems[0];
-
-          const videoUrl = bestVideo?.url || "";
-          const audioUrl = bestAudio?.url || "";
-
-          const thumbnail =
-            (data.thumbnails && data.thumbnails[data.thumbnails.length - 1]?.url) ||
-            `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+          const result = await resolveYoutube(canonicalUrl, videoId);
 
           const { reportDownloaderResult } = await import(
             "@/lib/downloader-status.server"
           );
-          reportDownloaderResult("youtube", Boolean(videoUrl || audioUrl));
+          reportDownloaderResult("youtube", result.success);
 
-          return Response.json(
-            {
-              success: true,
-              data: {
-                video_url: videoUrl,
-                audio_url: audioUrl,
-                thumbnail,
-                title: data.title || "YouTube Video",
-                author: data.channel?.name || "YouTube",
-                duration: data.lengthSeconds || 0,
-              },
-            },
-            { headers: corsHeaders() }
-          );
+          return Response.json(result, {
+            status: result.success ? 200 : 502,
+            headers: corsHeaders(),
+          });
         } catch (error: any) {
           console.error("YouTube download error:", error);
           return Response.json(
             {
               success: false,
-              error: error.message || "Erro ao processar vídeo do YouTube",
+              error: error?.message || "Erro ao processar vídeo do YouTube",
             },
-            { status: 500, headers: corsHeaders() }
+            { status: 500, headers: corsHeaders() },
           );
         }
       },
     },
   },
 });
-
-function corsHeaders(): Record<string, string> {
-  return {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
-  };
-}
