@@ -35,7 +35,10 @@ async function fetchMediaDownloader(
       },
     },
   );
-  if (!r.ok) return null;
+  if (!r.ok) {
+    console.warn(`youtube-media-downloader HTTP ${r.status}`);
+    return null;
+  }
   const data: any = await r.json().catch(() => null);
   if (!data || (data.errorId && data.errorId !== "Success")) return null;
 
@@ -130,7 +133,10 @@ async function fetchSocialAllInOne(
       body: JSON.stringify({ url }),
     },
   );
-  if (!r.ok) return null;
+  if (!r.ok) {
+    console.warn(`social-all-in-one HTTP ${r.status}`);
+    return null;
+  }
   const j: any = await r.json().catch(() => null);
   return parseAggregator(j, videoId);
 }
@@ -175,7 +181,10 @@ async function fetchYtStream(
       },
     },
   );
-  if (!r.ok) return null;
+  if (!r.ok) {
+    console.warn(`ytstream HTTP ${r.status}`);
+    return null;
+  }
   const j: any = await r.json().catch(() => null);
   if (!j || j?.status === "fail") return null;
 
