@@ -153,7 +153,10 @@ async function fetchAutoAllInOne(
       body: JSON.stringify({ url }),
     },
   );
-  if (!r.ok) return null;
+  if (!r.ok) {
+    console.warn(`auto-all-in-one HTTP ${r.status}`);
+    return null;
+  }
   const j: any = await r.json().catch(() => null);
   return parseAggregator(j, videoId);
 }
