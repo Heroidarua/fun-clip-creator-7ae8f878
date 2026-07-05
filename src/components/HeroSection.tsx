@@ -154,6 +154,7 @@ interface YouTubeData {
   title: string;
   author: string;
   duration?: number;
+  download_page_url?: string;
 }
 
 
@@ -232,6 +233,16 @@ const HeroSection = () => {
     }
 
     throw lastError instanceof Error ? lastError : new Error('Falha temporária ao buscar a mídia.');
+  };
+
+  const openExternalDownload = (url: string) => {
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const handlePaste = async () => {
@@ -798,10 +809,21 @@ const HeroSection = () => {
         throw new Error(freshData?.error || "Não foi possível obter o vídeo");
       }
 
-      const videoUrl = freshData.data.video_url;
+      const videoUrl = youtubeDownloadType === "audio"
+        ? (freshData.data.audio_url || freshData.data.download_page_url || freshData.data.video_url)
+        : (freshData.data.video_url || freshData.data.download_page_url);
       
       if (!videoUrl) {
         throw new Error("URL de vídeo não encontrada.");
+      }
+
+      if (!/^https?:\/\/[^\s]+\.(mp4|m4a|mp3)(\?|$)/i.test(videoUrl) && !videoUrl.startsWith('data:')) {
+        openExternalDownload(videoUrl);
+        toast({
+          title: "✅ Download aberto!",
+          description: "A página segura de download foi aberta para concluir o arquivo.",
+        });
+        return;
       }
 
       // Check if it's a base64 data URL (downloaded by edge function)
@@ -979,7 +1001,7 @@ const HeroSection = () => {
       setPinterestProgress((prev) => (prev >= 90 ? prev : prev + Math.random() * 15));
     }, 200);
     try {
-      const r = await fetch("/api/download-pinterest", {
+      const r = await fetch(apiUrl('/api/download-pinterest'), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url: validation.normalized }),
@@ -995,7 +1017,7 @@ const HeroSection = () => {
         });
         return;
       }
-      setPinterestData(result.data as PinterestData);
+      setPinterestData(rewriteProxy(result.data) as PinterestData);
       const t =
         result.data.media_type === "video"
           ? "Vídeo"
@@ -2012,7 +2034,7 @@ const HeroSection = () => {
                   </div>
 
                   <a
-                    href={`/api/public/pinterest-download?url=${encodeURIComponent(pinterestData.media_url)}`}
+                    href={apiUrl(`/api/public/pinterest-download?url=${encodeURIComponent(pinterestData.media_url)}`)}
                     onClick={handlePinterestDownloadClick}
                     target="_blank"
                     rel="noopener noreferrer"
