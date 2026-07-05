@@ -8,6 +8,7 @@ interface YouTubeData {
   title: string;
   author: string;
   duration: number;
+  download_page_url?: string;
 }
 
 interface YouTubeResponse {
@@ -19,6 +20,20 @@ interface YouTubeResponse {
 const BROWSER_UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
+function saveFromUrl(videoId: string): string {
+  return `https://ssyoutube.com/watch?v=${encodeURIComponent(videoId)}`;
+}
+
+function fallbackThumbnail(videoId: string): string {
+  return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+}
+
+function withTimeout(ms = 6500): AbortSignal | undefined {
+  return typeof AbortSignal !== "undefined" && "timeout" in AbortSignal
+    ? AbortSignal.timeout(ms)
+    : undefined;
+}
+
 // Provider 1 (primary): youtube-media-downloader
 async function fetchMediaDownloader(
   videoId: string,
@@ -27,6 +42,7 @@ async function fetchMediaDownloader(
   const r = await fetch(
     `https://youtube-media-downloader.p.rapidapi.com/v2/video/details?videoId=${videoId}&urlAccess=normal&videos=auto&audios=auto`,
     {
+      signal: withTimeout(6500),
       headers: {
         "x-rapidapi-host": "youtube-media-downloader.p.rapidapi.com",
         "x-rapidapi-key": key,
@@ -125,6 +141,7 @@ async function fetchSocialAllInOne(
     "https://social-download-all-in-one.p.rapidapi.com/v1/social/autolink",
     {
       method: "POST",
+      signal: withTimeout(6500),
       headers: {
         "Content-Type": "application/json",
         "X-RapidAPI-Key": key,
@@ -151,6 +168,7 @@ async function fetchAutoAllInOne(
     "https://auto-download-all-in-one-big.p.rapidapi.com/v1/social/autolink",
     {
       method: "POST",
+      signal: withTimeout(6500),
       headers: {
         "Content-Type": "application/json",
         "X-RapidAPI-Key": key,
@@ -175,6 +193,7 @@ async function fetchYtStream(
   const r = await fetch(
     `https://ytstream-download-youtube-videos.p.rapidapi.com/dl?id=${videoId}`,
     {
+      signal: withTimeout(6500),
       headers: {
         "X-RapidAPI-Key": key,
         "X-RapidAPI-Host": "ytstream-download-youtube-videos.p.rapidapi.com",
@@ -236,6 +255,7 @@ async function fetchY2Mate(
       "https://www.y2mate.com/mates/analyzeV2/ajax",
       {
         method: "POST",
+        signal: withTimeout(6500),
         headers: {
           "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
           "User-Agent": BROWSER_UA,
@@ -271,6 +291,7 @@ async function fetchY2Mate(
     async function convert(k: string): Promise<string | null> {
       const conv = await fetch("https://www.y2mate.com/mates/convertV2/index", {
         method: "POST",
+        signal: withTimeout(6500),
         headers: {
           "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
           "User-Agent": BROWSER_UA,
@@ -294,15 +315,61 @@ async function fetchY2Mate(
       data: {
         video_url: videoUrl || "",
         audio_url: audioUrl || "",
-        thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+        thumbnail: fallbackThumbnail(videoId),
         title: info.title || "YouTube Video",
         author: info.a || "YouTube",
         duration: Number(info.t || 0),
+        download_page_url: saveFromUrl(videoId),
       },
     };
   } catch (e) {
     console.warn("y2mate error:", (e as Error).message);
     return null;
+  }
+}
+
+async function fetchYoutubePreview(videoId: string): Promise<YouTubeResponse> {
+  const canonicalUrl = `https://www.youtube.com/watch?v=${videoId}`;
+  const downloadPageUrl = saveFromUrl(videoId);
+
+  try {
+    const r = await fetch(
+      `https://www.youtube.com/oembed?url=${encodeURIComponent(canonicalUrl)}&format=json`,
+      {
+        signal: withTimeout(4000),
+        headers: {
+          Accept: "application/json",
+          "User-Agent": BROWSER_UA,
+        },
+      },
+    );
+    const j: any = r.ok ? await r.json().catch(() => null) : null;
+
+    return {
+      success: true,
+      data: {
+        video_url: downloadPageUrl,
+        audio_url: "",
+        thumbnail: j?.thumbnail_url || fallbackThumbnail(videoId),
+        title: (j?.title || "YouTube Video").substring(0, 120),
+        author: j?.author_name || "YouTube",
+        duration: 0,
+        download_page_url: downloadPageUrl,
+      },
+    };
+  } catch {
+    return {
+      success: true,
+      data: {
+        video_url: downloadPageUrl,
+        audio_url: "",
+        thumbnail: fallbackThumbnail(videoId),
+        title: "YouTube Video",
+        author: "YouTube",
+        duration: 0,
+        download_page_url: downloadPageUrl,
+      },
+    };
   }
 }
 
@@ -341,12 +408,12 @@ async function resolveYoutube(
     }
   }
 
-  return {
-    success: false,
-    error: sawRateLimit
-      ? "Cota diária do YouTube atingida. Tente novamente mais tarde."
-      : "Não foi possível processar este vídeo agora. Tente outro link ou aguarde alguns instantes.",
-  };
+  console.warn(
+    sawRateLimit
+      ? "⚠️ YouTube: cota direta atingida; usando preview + SaveFrom"
+      : "⚠️ YouTube: providers diretos falharam; usando preview + SaveFrom",
+  );
+  return fetchYoutubePreview(videoId);
 }
 
 function corsHeaders(): Record<string, string> {

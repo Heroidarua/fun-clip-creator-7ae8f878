@@ -45,6 +45,12 @@ interface PinterestResponse {
 const BROWSER_UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
+function withTimeout(ms = 6500): AbortSignal | undefined {
+  return typeof AbortSignal !== "undefined" && "timeout" in AbortSignal
+    ? AbortSignal.timeout(ms)
+    : undefined;
+}
+
 // UA usado para SCRAPING da página do pin. O Pinterest só devolve as meta
 // tags og:* para crawlers conhecidos; com Chrome UA volta uma SPA vazia.
 const BOT_UA =
@@ -62,6 +68,7 @@ async function resolveShortLink(url: string): Promise<string> {
       const r = await fetch(current, {
         method: "GET",
         redirect: "manual",
+        signal: withTimeout(5000),
         headers: {
           "User-Agent": BROWSER_UA,
           "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
@@ -104,6 +111,7 @@ async function scrapePinterest(url: string): Promise<PinterestResponse> {
       "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
     },
     redirect: "follow",
+    signal: withTimeout(6500),
   });
   if (!r.ok) {
     return { success: false, error: "Pin não encontrado ou indisponível." };
@@ -197,6 +205,7 @@ async function fetchPidgets(url: string): Promise<PinterestResponse | null> {
   const r = await fetch(
     `https://widgets.pinterest.com/v3/pidgets/pins/info/?pin_ids=${encodeURIComponent(pinId)}`,
     {
+      signal: withTimeout(6500),
       headers: {
         Accept: "application/json",
         "User-Agent": BROWSER_UA,
@@ -248,6 +257,7 @@ async function fetchPidgets(url: string): Promise<PinterestResponse | null> {
 async function fetchSocialAllInOne(url: string, key: string): Promise<PinterestResponse | null> {
   const r = await fetch("https://social-download-all-in-one.p.rapidapi.com/v1/social/autolink", {
     method: "POST",
+    signal: withTimeout(6500),
     headers: {
       "Content-Type": "application/json",
       "X-RapidAPI-Key": key,
@@ -278,6 +288,7 @@ async function fetchSocialAllInOne(url: string, key: string): Promise<PinterestR
 async function fetchAutoAllInOne(url: string, key: string): Promise<PinterestResponse | null> {
   const r = await fetch("https://auto-download-all-in-one-big.p.rapidapi.com/v1/social/autolink", {
     method: "POST",
+    signal: withTimeout(6500),
     headers: {
       "Content-Type": "application/json",
       "X-RapidAPI-Key": key,
@@ -379,6 +390,7 @@ async function handleProxy(request: Request, mediaUrl: string, mediaType: string
     const range = request.headers.get("range");
     const response = await fetch(mediaUrl, {
       method: "GET",
+      signal: withTimeout(10000),
       headers: {
         "User-Agent": BROWSER_UA,
         Accept: "*/*",
