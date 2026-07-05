@@ -226,27 +226,105 @@ async function fetchYtStream(
   };
 }
 
+// Provider 5 (public, no key): Y2Mate — mesmo backend usado por SaveFrom/SaveData.
+// Fluxo: analyzeV2 → convertV2. Não exige RapidAPI.
+async function fetchY2Mate(
+  videoId: string,
+): Promise<YouTubeResponse | null> {
+  try {
+    const analyze = await fetch(
+      "https://www.y2mate.com/mates/analyzeV2/ajax",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+          "User-Agent": BROWSER_UA,
+          Origin: "https://www.y2mate.com",
+          Referer: "https://www.y2mate.com/",
+          Accept: "*/*",
+        },
+        body: new URLSearchParams({
+          k_query: `https://www.youtube.com/watch?v=${videoId}`,
+          k_page: "home",
+          hl: "en",
+          q_auto: "0",
+        }).toString(),
+      },
+    );
+    if (!analyze.ok) return null;
+    const info: any = await analyze.json().catch(() => null);
+    if (!info || info.status !== "ok") return null;
+
+    const vid = info.vid;
+    const mp4 = info?.links?.mp4 || {};
+    const mp3 = info?.links?.mp3 || {};
+    // Pick highest resolution mp4 with audio (progressive first)
+    const mp4Entries = Object.values(mp4) as any[];
+    const progressive = mp4Entries.find((m) => /mp4/i.test(m?.f || "") && /^\d+p$/i.test(m?.q || "") && /audio/i.test(m?.q_text || ""));
+    const bestMp4 =
+      progressive ||
+      mp4Entries.sort(
+        (a, b) => (parseInt(b?.q || "0") || 0) - (parseInt(a?.q || "0") || 0),
+      )[0];
+    const bestMp3 = Object.values(mp3)[0] as any;
+
+    async function convert(k: string): Promise<string | null> {
+      const conv = await fetch("https://www.y2mate.com/mates/convertV2/index", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+          "User-Agent": BROWSER_UA,
+          Origin: "https://www.y2mate.com",
+          Referer: "https://www.y2mate.com/",
+          Accept: "*/*",
+        },
+        body: new URLSearchParams({ vid, k }).toString(),
+      });
+      if (!conv.ok) return null;
+      const j: any = await conv.json().catch(() => null);
+      return j?.dlink || null;
+    }
+
+    const videoUrl = bestMp4?.k ? await convert(bestMp4.k) : "";
+    const audioUrl = bestMp3?.k ? await convert(bestMp3.k) : "";
+    if (!videoUrl && !audioUrl) return null;
+
+    return {
+      success: true,
+      data: {
+        video_url: videoUrl || "",
+        audio_url: audioUrl || "",
+        thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+        title: info.title || "YouTube Video",
+        author: info.a || "YouTube",
+        duration: Number(info.t || 0),
+      },
+    };
+  } catch (e) {
+    console.warn("y2mate error:", (e as Error).message);
+    return null;
+  }
+}
+
 async function resolveYoutube(
   rawUrl: string,
   videoId: string,
 ): Promise<YouTubeResponse> {
   const key = (process.env.RAPIDAPI_KEY || "").trim();
-  if (!key) {
-    return {
-      success: false,
-      error: "RAPIDAPI_KEY não configurada no servidor",
-    };
-  }
-
   const providers: Array<{
     name: string;
     run: () => Promise<YouTubeResponse | null>;
-  }> = [
-    { name: "youtube-media-downloader", run: () => fetchMediaDownloader(videoId, key) },
-    { name: "ytstream", run: () => fetchYtStream(videoId, key) },
-    { name: "social-all-in-one", run: () => fetchSocialAllInOne(rawUrl, videoId, key) },
-    { name: "auto-all-in-one", run: () => fetchAutoAllInOne(rawUrl, videoId, key) },
-  ];
+  }> = [];
+  if (key) {
+    providers.push({ name: "youtube-media-downloader", run: () => fetchMediaDownloader(videoId, key) });
+    providers.push({ name: "ytstream", run: () => fetchYtStream(videoId, key) });
+  }
+  // Y2Mate (público, estilo SaveFrom/SaveData) — sem chave, usado quando os providers pagos caem ou estão fora de cota
+  providers.push({ name: "y2mate", run: () => fetchY2Mate(videoId) });
+  if (key) {
+    providers.push({ name: "social-all-in-one", run: () => fetchSocialAllInOne(rawUrl, videoId, key) });
+    providers.push({ name: "auto-all-in-one", run: () => fetchAutoAllInOne(rawUrl, videoId, key) });
+  }
 
   let sawRateLimit = false;
   for (const p of providers) {
