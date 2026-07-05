@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { callSnapsave } from "@/lib/snapsave.server";
 
 function isSafeProxyUrl(u: string): boolean {
   try {
@@ -303,6 +304,32 @@ async function fetchAutoAllInOne(url: string, key: string): Promise<PinterestRes
   };
 }
 
+// Provider 3 (público, estilo SaveFrom/SaveData): SnapSave.
+// Não exige chave. O SnapSave também devolve links do pinimg.com para pins.
+async function fetchSnapsavePinterest(url: string): Promise<PinterestResponse | null> {
+  const res = await callSnapsave(url);
+  if (!res || !res.medias?.length) return null;
+  const video = res.medias.find((m) => m.type === "video" && m.url);
+  const image = res.medias.find((m) => m.type === "image" && m.url);
+  const picked = video || image;
+  if (!picked?.url) return null;
+  const mediaType: MediaType = video
+    ? "video"
+    : /\.gif(\?|$)/i.test(picked.url)
+      ? "gif"
+      : "image";
+  return {
+    success: true,
+    data: {
+      media_url: picked.url,
+      media_type: mediaType,
+      thumbnail: res.thumbnail || picked.thumbnail || picked.url,
+      title: (res.title || "Pinterest").substring(0, 100),
+      author: "Pinterest",
+    },
+  };
+}
+
 function addProxyUrls(data: PinterestData, routePath: string): PinterestData {
   const base = routePath.startsWith("/") ? routePath : `/${routePath}`;
   const type = data.media_type === "video" ? "video" : "image";
@@ -324,6 +351,7 @@ async function downloadPinterest(rawUrl: string, functionUrl: string): Promise<P
     providers.push({ name: "social-all-in-one", run: () => fetchSocialAllInOne(url, key) });
     providers.push({ name: "auto-all-in-one", run: () => fetchAutoAllInOne(url, key) });
   }
+  providers.push({ name: "snapsave", run: () => fetchSnapsavePinterest(url) });
   providers.push({ name: "html-scrape", run: () => scrapePinterest(url) });
 
   for (const p of providers) {
