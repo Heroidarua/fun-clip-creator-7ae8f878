@@ -373,7 +373,7 @@ async function fetchYoutubePreview(videoId: string): Promise<YouTubeResponse> {
   }
 }
 
-async function resolveYoutube(
+export async function resolveYoutube(
   rawUrl: string,
   videoId: string,
 ): Promise<YouTubeResponse> {
