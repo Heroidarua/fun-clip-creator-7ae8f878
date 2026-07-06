@@ -43,6 +43,7 @@ import { Route as BlogComoBaixarVideosKwaiRouteImport } from './routes/blog.como
 import { Route as BlogBibliotecaQuadrinhosRouteImport } from './routes/blog.biblioteca-quadrinhos'
 import { Route as ApiManageFeatureStatusRouteImport } from './routes/api.manage-feature-status'
 import { Route as ApiManageAnnouncementsRouteImport } from './routes/api.manage-announcements'
+import { Route as ApiDownloadYoutubeStreamRouteImport } from './routes/api.download-youtube-stream'
 import { Route as ApiDownloadYoutubeRouteImport } from './routes/api.download-youtube'
 import { Route as ApiDownloadTiktokRouteImport } from './routes/api.download-tiktok'
 import { Route as ApiDownloadPinterestRouteImport } from './routes/api.download-pinterest'
@@ -229,6 +230,12 @@ const ApiManageAnnouncementsRoute = ApiManageAnnouncementsRouteImport.update({
   path: '/api/manage-announcements',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiDownloadYoutubeStreamRoute =
+  ApiDownloadYoutubeStreamRouteImport.update({
+    id: '/api/download-youtube-stream',
+    path: '/api/download-youtube-stream',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiDownloadYoutubeRoute = ApiDownloadYoutubeRouteImport.update({
   id: '/api/download-youtube',
   path: '/api/download-youtube',
@@ -292,6 +299,7 @@ export interface FileRoutesByFullPath {
   '/api/download-pinterest': typeof ApiDownloadPinterestRoute
   '/api/download-tiktok': typeof ApiDownloadTiktokRoute
   '/api/download-youtube': typeof ApiDownloadYoutubeRoute
+  '/api/download-youtube-stream': typeof ApiDownloadYoutubeStreamRoute
   '/api/manage-announcements': typeof ApiManageAnnouncementsRoute
   '/api/manage-feature-status': typeof ApiManageFeatureStatusRoute
   '/blog/biblioteca-quadrinhos': typeof BlogBibliotecaQuadrinhosRoute
@@ -334,6 +342,7 @@ export interface FileRoutesByTo {
   '/api/download-pinterest': typeof ApiDownloadPinterestRoute
   '/api/download-tiktok': typeof ApiDownloadTiktokRoute
   '/api/download-youtube': typeof ApiDownloadYoutubeRoute
+  '/api/download-youtube-stream': typeof ApiDownloadYoutubeStreamRoute
   '/api/manage-announcements': typeof ApiManageAnnouncementsRoute
   '/api/manage-feature-status': typeof ApiManageFeatureStatusRoute
   '/blog/biblioteca-quadrinhos': typeof BlogBibliotecaQuadrinhosRoute
@@ -378,6 +387,7 @@ export interface FileRoutesById {
   '/api/download-pinterest': typeof ApiDownloadPinterestRoute
   '/api/download-tiktok': typeof ApiDownloadTiktokRoute
   '/api/download-youtube': typeof ApiDownloadYoutubeRoute
+  '/api/download-youtube-stream': typeof ApiDownloadYoutubeStreamRoute
   '/api/manage-announcements': typeof ApiManageAnnouncementsRoute
   '/api/manage-feature-status': typeof ApiManageFeatureStatusRoute
   '/blog/biblioteca-quadrinhos': typeof BlogBibliotecaQuadrinhosRoute
@@ -423,6 +433,7 @@ export interface FileRouteTypes {
     | '/api/download-pinterest'
     | '/api/download-tiktok'
     | '/api/download-youtube'
+    | '/api/download-youtube-stream'
     | '/api/manage-announcements'
     | '/api/manage-feature-status'
     | '/blog/biblioteca-quadrinhos'
@@ -465,6 +476,7 @@ export interface FileRouteTypes {
     | '/api/download-pinterest'
     | '/api/download-tiktok'
     | '/api/download-youtube'
+    | '/api/download-youtube-stream'
     | '/api/manage-announcements'
     | '/api/manage-feature-status'
     | '/blog/biblioteca-quadrinhos'
@@ -508,6 +520,7 @@ export interface FileRouteTypes {
     | '/api/download-pinterest'
     | '/api/download-tiktok'
     | '/api/download-youtube'
+    | '/api/download-youtube-stream'
     | '/api/manage-announcements'
     | '/api/manage-feature-status'
     | '/blog/biblioteca-quadrinhos'
@@ -552,6 +565,7 @@ export interface RootRouteChildren {
   ApiDownloadPinterestRoute: typeof ApiDownloadPinterestRoute
   ApiDownloadTiktokRoute: typeof ApiDownloadTiktokRoute
   ApiDownloadYoutubeRoute: typeof ApiDownloadYoutubeRoute
+  ApiDownloadYoutubeStreamRoute: typeof ApiDownloadYoutubeStreamRoute
   ApiManageAnnouncementsRoute: typeof ApiManageAnnouncementsRoute
   ApiManageFeatureStatusRoute: typeof ApiManageFeatureStatusRoute
   FerramentaSlugRoute: typeof FerramentaSlugRoute
@@ -798,6 +812,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiManageAnnouncementsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/download-youtube-stream': {
+      id: '/api/download-youtube-stream'
+      path: '/api/download-youtube-stream'
+      fullPath: '/api/download-youtube-stream'
+      preLoaderRoute: typeof ApiDownloadYoutubeStreamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/download-youtube': {
       id: '/api/download-youtube'
       path: '/api/download-youtube'
@@ -909,6 +930,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiDownloadPinterestRoute: ApiDownloadPinterestRoute,
   ApiDownloadTiktokRoute: ApiDownloadTiktokRoute,
   ApiDownloadYoutubeRoute: ApiDownloadYoutubeRoute,
+  ApiDownloadYoutubeStreamRoute: ApiDownloadYoutubeStreamRoute,
   ApiManageAnnouncementsRoute: ApiManageAnnouncementsRoute,
   ApiManageFeatureStatusRoute: ApiManageFeatureStatusRoute,
   FerramentaSlugRoute: FerramentaSlugRoute,
