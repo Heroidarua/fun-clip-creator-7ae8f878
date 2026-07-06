@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { parseYouTubeUrl } from "@/lib/youtube-url";
-import { resolveYoutube } from "./api.download-youtube";
-
-const BROWSER_UA =
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+import {
+  resolveYoutube,
+  isDirectMediaUrl,
+  BROWSER_UA,
+} from "@/lib/youtube-resolver.server";
 
 function corsHeaders(extra: Record<string, string> = {}): Record<string, string> {
   return {
@@ -33,7 +34,8 @@ export const Route = createFileRoute("/api/download-youtube-stream")({
         try {
           const u = new URL(request.url);
           const rawUrl = (u.searchParams.get("url") || "").trim();
-          const type = (u.searchParams.get("type") || "video") === "audio" ? "audio" : "video";
+          const type =
+            (u.searchParams.get("type") || "video") === "audio" ? "audio" : "video";
 
           if (!rawUrl || rawUrl.length > 2048) {
             return Response.json(
@@ -55,10 +57,7 @@ export const Route = createFileRoute("/api/download-youtube-stream")({
           const data = resolved?.data;
           const mediaUrl = type === "audio" ? data?.audio_url : data?.video_url;
 
-          const isRealMedia =
-            !!mediaUrl && /^https?:\/\//i.test(mediaUrl) && !/ssyoutube\.com|savefrom|y2mate\.com\/(?!.*dlink)/i.test(mediaUrl);
-
-          if (!isRealMedia) {
+          if (!isDirectMediaUrl(mediaUrl)) {
             return Response.json(
               {
                 success: false,
