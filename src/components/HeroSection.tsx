@@ -794,105 +794,38 @@ const HeroSection = () => {
         description: "Baixando o vídeo diretamente do servidor. Isso pode levar alguns segundos...",
       });
 
-      // Request the Edge Function to download the file directly (handles tunnel URLs)
-      const freshResp = await fetch(apiUrl('/api/download-youtube'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          url: parseYouTubeUrl(youtubeUrl)?.canonicalUrl || youtubeUrl.trim(),
-          download: true,
-        }),
-      });
-      const freshData = await freshResp.json();
+      // Streaming endpoint: server resolves e faz proxy do MP4/M4A direto ao browser.
+      // Assim o usuário baixa sem abrir outra aba.
+      const canonical = parseYouTubeUrl(youtubeUrl)?.canonicalUrl || youtubeUrl.trim();
+      const streamUrl =
+        apiUrl('/api/download-youtube-stream') +
+        `?url=${encodeURIComponent(canonical)}&type=${youtubeDownloadType}`;
 
-      if (!freshData?.success) {
-        throw new Error(freshData?.error || "Não foi possível obter o vídeo");
-      }
-
-      const videoUrl = youtubeDownloadType === "audio"
-        ? (freshData.data.audio_url || freshData.data.download_page_url || freshData.data.video_url)
-        : (freshData.data.video_url || freshData.data.download_page_url);
-      
-      if (!videoUrl) {
-        throw new Error("URL de vídeo não encontrada.");
-      }
-
-      if (!/^https?:\/\/[^\s]+\.(mp4|m4a|mp3)(\?|$)/i.test(videoUrl) && !videoUrl.startsWith('data:')) {
-        openExternalDownload(videoUrl);
-        toast({
-          title: "✅ Download aberto!",
-          description: "A página segura de download foi aberta para concluir o arquivo.",
-        });
-        return;
-      }
-
-      // Check if it's a base64 data URL (downloaded by edge function)
-      if (videoUrl.startsWith('data:')) {
-        toast({
-          title: "📦 Processando arquivo...",
-          description: "Preparando o download do arquivo...",
-        });
-        
-        // Convert base64 to blob
-        const response = await fetch(videoUrl);
-        const blob = await response.blob();
-        
-        if (blob.size === 0) {
-          throw new Error('Arquivo vazio recebido');
-        }
-
-        // Create download link
-        const blobUrl = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = blobUrl;
-        link.download = `${filename}.${extension}`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        // Cleanup after a short delay
-        setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
-
-        // YouTube tracking removed - service in maintenance
-        toast({
-          title: "✅ Download concluído!",
-          description: `O ${youtubeDownloadType === "video" ? "vídeo" : "áudio"} foi baixado com sucesso.`,
-        });
-      } else {
-        // Direct URL - fetch as blob and force download
+      const resp = await fetch(streamUrl);
+      if (!resp.ok) {
+        let msg = `Falha ao baixar (HTTP ${resp.status}).`;
         try {
-          const fileResp = await fetch(videoUrl);
-          if (!fileResp.ok) throw new Error('Falha ao baixar arquivo');
-          const blob = await fileResp.blob();
-          if (blob.size === 0) throw new Error('Arquivo vazio recebido');
-          const blobUrl = URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = blobUrl;
-          link.download = `${filename}.${extension}`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
-          toast({
-            title: "✅ Download concluído!",
-            description: `O ${youtubeDownloadType === "video" ? "vídeo" : "áudio"} foi baixado com sucesso.`,
-          });
-        } catch (e) {
-          // Fallback: open in new tab (user can save manually)
-          const link = document.createElement('a');
-          link.href = videoUrl;
-          link.download = `${filename}.${extension}`;
-          link.target = '_blank';
-          link.rel = 'noopener noreferrer';
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          toast({
-            title: "✅ Download iniciado!",
-            description: "Se o download não começar, clique com o botão direito no vídeo e selecione 'Salvar como'.",
-          });
-        }
+          const j = await resp.json();
+          if (j?.error) msg = j.error;
+        } catch {}
+        throw new Error(msg);
       }
+      const blob = await resp.blob();
+      if (!blob.size) throw new Error('Arquivo vazio recebido.');
+
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = `${filename}.${extension}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+
+      toast({
+        title: "✅ Download concluído!",
+        description: `O ${youtubeDownloadType === "video" ? "vídeo" : "áudio"} foi baixado com sucesso.`,
+      });
 
     } catch (error) {
       console.error("Download error:", error);
