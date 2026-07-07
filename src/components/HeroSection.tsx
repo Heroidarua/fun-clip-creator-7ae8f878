@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Clipboard, Search, Download, Headphones, Gamepad2, Book, Music, Camera, CheckCircle, AlertTriangle, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +8,7 @@ import { useDownloaderStatus } from "@/hooks/useDownloaderStatus";
 
 import ScrollReveal from "./ScrollReveal";
 import { apiUrl, rewriteProxy } from "@/lib/api-base";
-import { parseYouTubeUrl, youtubeValidationError } from "@/lib/youtube-url";
+import { parseYouTubeUrl, youtubeValidationError, getYouTubeVideoId } from "@/lib/youtube-url";
 import { useServerFn } from "@tanstack/react-start";
 import { validatePinterestUrl } from "@/lib/pinterest-validation";
 import tiktokIcon from "@/assets/tiktok-icon.png";
