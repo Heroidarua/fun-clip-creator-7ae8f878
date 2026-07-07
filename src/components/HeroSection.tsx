@@ -192,6 +192,7 @@ const HeroSection = () => {
   const [youtubeData, setYoutubeData] = useState<YouTubeData | null>(null);
   const [youtubeDownloadType, setYoutubeDownloadType] = useState<"video" | "audio">("video");
   const [clickedYoutubeButton, setClickedYoutubeButton] = useState<string | null>(null);
+  const lastYoutubeSearchedId = useRef<string | null>(null);
 
   // Facebook states
   const [facebookUrl, setFacebookUrl] = useState("");
