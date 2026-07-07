@@ -679,10 +679,18 @@ const HeroSection = () => {
     try {
       const text = await navigator.clipboard.readText();
       setYoutubeUrl(text);
-      toast({
-        title: "✅ Link colado com sucesso!",
-        description: "Agora clique em 'Procurar' para encontrar o vídeo.",
-      });
+      const vid = getYouTubeVideoId(text);
+      if (vid) {
+        toast({
+          title: "✅ Link colado!",
+          description: "Buscando o vídeo automaticamente...",
+        });
+      } else {
+        toast({
+          title: "✅ Link colado",
+          description: "Cole um link válido do YouTube (vídeo, shorts ou youtu.be).",
+        });
+      }
     } catch (err) {
       toast({
         title: "❌ Erro ao colar",
