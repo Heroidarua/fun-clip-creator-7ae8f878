@@ -28,6 +28,7 @@ const NAV = [
   { to: "/jogos", label: "Jogos", icon: Gamepad2, desc: "Clássicos retrô grátis" },
   { to: "/nasa", label: "🌎 NASA", icon: Wrench, desc: "Satélites em tempo real", premium: true },
   { to: "/mais-sbt", label: "+SBT 📺", icon: Tv, desc: "Assista +SBT grátis" },
+  { to: "/iptv", label: "IPTV", icon: Tv, desc: "Pluto TV grátis" },
   { to: "/blog", label: "Blog", icon: BookOpen, desc: "Guias e novidades" },
   { to: "/precos", label: "Preços", icon: Tag, desc: "Planos e benefícios" },
 ] as const;
