@@ -788,6 +788,22 @@ const HeroSection = () => {
     }
   };
 
+  // Auto-preview: extrai o ID do YouTube ao colar/digitar e busca o preview imediatamente.
+  useEffect(() => {
+    const vid = getYouTubeVideoId(youtubeUrl);
+    if (!vid) {
+      lastYoutubeSearchedId.current = null;
+      if (youtubeData) setYoutubeData(null);
+      return;
+    }
+    if (lastYoutubeSearchedId.current === vid) return;
+    if (youtubeLoading) return;
+    if (!isActive('youtube')) return;
+    lastYoutubeSearchedId.current = vid;
+    handleYoutubeSearch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [youtubeUrl]);
+
   const handleYoutubeDownload = async () => {
     setClickedYoutubeButton("download");
     setTimeout(() => setClickedYoutubeButton(null), 200);
