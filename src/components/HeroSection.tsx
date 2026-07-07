@@ -1581,6 +1581,13 @@ const HeroSection = () => {
                   placeholder="Cole o link do YouTube aqui..."
                   value={youtubeUrl}
                   onChange={(e) => setYoutubeUrl(e.target.value)}
+                  onPaste={(e) => {
+                    const text = e.clipboardData.getData("text");
+                    if (text) {
+                      e.preventDefault();
+                      setYoutubeUrl(text);
+                    }
+                  }}
                   disabled={!isActive('youtube')}
                   className="h-12 sm:h-14 text-sm sm:text-base bg-background/80 border-2 border-[hsl(0,100%,50%)]/30 rounded-sm text-foreground placeholder:text-muted-foreground font-orbitron transition-all duration-200 focus:border-[hsl(0,100%,50%)] focus:shadow-[0_0_20px_hsl(0,100%,50%,0.3)] disabled:opacity-50"
                 />
