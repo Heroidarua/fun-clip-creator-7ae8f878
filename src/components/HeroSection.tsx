@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Clipboard, Search, Download, Headphones, Gamepad2, Book, Music, Camera, CheckCircle, AlertTriangle, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +8,7 @@ import { useDownloaderStatus } from "@/hooks/useDownloaderStatus";
 
 import ScrollReveal from "./ScrollReveal";
 import { apiUrl, rewriteProxy } from "@/lib/api-base";
-import { parseYouTubeUrl, youtubeValidationError } from "@/lib/youtube-url";
+import { parseYouTubeUrl, youtubeValidationError, getYouTubeVideoId } from "@/lib/youtube-url";
 import { useServerFn } from "@tanstack/react-start";
 import { validatePinterestUrl } from "@/lib/pinterest-validation";
 import tiktokIcon from "@/assets/tiktok-icon.png";
@@ -192,6 +192,7 @@ const HeroSection = () => {
   const [youtubeData, setYoutubeData] = useState<YouTubeData | null>(null);
   const [youtubeDownloadType, setYoutubeDownloadType] = useState<"video" | "audio">("video");
   const [clickedYoutubeButton, setClickedYoutubeButton] = useState<string | null>(null);
+  const lastYoutubeSearchedId = useRef<string | null>(null);
 
   // Facebook states
   const [facebookUrl, setFacebookUrl] = useState("");
@@ -678,10 +679,18 @@ const HeroSection = () => {
     try {
       const text = await navigator.clipboard.readText();
       setYoutubeUrl(text);
-      toast({
-        title: "✅ Link colado com sucesso!",
-        description: "Agora clique em 'Procurar' para encontrar o vídeo.",
-      });
+      const vid = getYouTubeVideoId(text);
+      if (vid) {
+        toast({
+          title: "✅ Link colado!",
+          description: "Buscando o vídeo automaticamente...",
+        });
+      } else {
+        toast({
+          title: "✅ Link colado",
+          description: "Cole um link válido do YouTube (vídeo, shorts ou youtu.be).",
+        });
+      }
     } catch (err) {
       toast({
         title: "❌ Erro ao colar",
@@ -778,6 +787,22 @@ const HeroSection = () => {
       }, 500);
     }
   };
+
+  // Auto-preview: extrai o ID do YouTube ao colar/digitar e busca o preview imediatamente.
+  useEffect(() => {
+    const vid = getYouTubeVideoId(youtubeUrl);
+    if (!vid) {
+      lastYoutubeSearchedId.current = null;
+      if (youtubeData) setYoutubeData(null);
+      return;
+    }
+    if (lastYoutubeSearchedId.current === vid) return;
+    if (youtubeLoading) return;
+    if (!isActive('youtube')) return;
+    lastYoutubeSearchedId.current = vid;
+    handleYoutubeSearch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [youtubeUrl]);
 
   const handleYoutubeDownload = async () => {
     setClickedYoutubeButton("download");
@@ -1556,6 +1581,13 @@ const HeroSection = () => {
                   placeholder="Cole o link do YouTube aqui..."
                   value={youtubeUrl}
                   onChange={(e) => setYoutubeUrl(e.target.value)}
+                  onPaste={(e) => {
+                    const text = e.clipboardData.getData("text");
+                    if (text) {
+                      e.preventDefault();
+                      setYoutubeUrl(text);
+                    }
+                  }}
                   disabled={!isActive('youtube')}
                   className="h-12 sm:h-14 text-sm sm:text-base bg-background/80 border-2 border-[hsl(0,100%,50%)]/30 rounded-sm text-foreground placeholder:text-muted-foreground font-orbitron transition-all duration-200 focus:border-[hsl(0,100%,50%)] focus:shadow-[0_0_20px_hsl(0,100%,50%,0.3)] disabled:opacity-50"
                 />
