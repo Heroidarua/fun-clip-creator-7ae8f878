@@ -19,6 +19,7 @@ import { Route as NasaRouteImport } from './routes/nasa'
 import { Route as MaisSbtRouteImport } from './routes/mais-sbt'
 import { Route as JogosJavaRouteImport } from './routes/jogos-java'
 import { Route as JogosRouteImport } from './routes/jogos'
+import { Route as IptvRouteImport } from './routes/iptv'
 import { Route as FerramentasRouteImport } from './routes/ferramentas'
 import { Route as DmcaRouteImport } from './routes/dmca'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -100,6 +101,11 @@ const JogosJavaRoute = JogosJavaRouteImport.update({
 const JogosRoute = JogosRouteImport.update({
   id: '/jogos',
   path: '/jogos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IptvRoute = IptvRouteImport.update({
+  id: '/iptv',
+  path: '/iptv',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FerramentasRoute = FerramentasRouteImport.update({
@@ -283,6 +289,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/dmca': typeof DmcaRoute
   '/ferramentas': typeof FerramentasRoute
+  '/iptv': typeof IptvRoute
   '/jogos': typeof JogosRoute
   '/jogos-java': typeof JogosJavaRoute
   '/mais-sbt': typeof MaisSbtRoute
@@ -326,6 +333,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/dmca': typeof DmcaRoute
   '/ferramentas': typeof FerramentasRoute
+  '/iptv': typeof IptvRoute
   '/jogos': typeof JogosRoute
   '/jogos-java': typeof JogosJavaRoute
   '/mais-sbt': typeof MaisSbtRoute
@@ -371,6 +379,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/dmca': typeof DmcaRoute
   '/ferramentas': typeof FerramentasRoute
+  '/iptv': typeof IptvRoute
   '/jogos': typeof JogosRoute
   '/jogos-java': typeof JogosJavaRoute
   '/mais-sbt': typeof MaisSbtRoute
@@ -417,6 +426,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dmca'
     | '/ferramentas'
+    | '/iptv'
     | '/jogos'
     | '/jogos-java'
     | '/mais-sbt'
@@ -460,6 +470,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dmca'
     | '/ferramentas'
+    | '/iptv'
     | '/jogos'
     | '/jogos-java'
     | '/mais-sbt'
@@ -504,6 +515,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dmca'
     | '/ferramentas'
+    | '/iptv'
     | '/jogos'
     | '/jogos-java'
     | '/mais-sbt'
@@ -549,6 +561,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   DmcaRoute: typeof DmcaRoute
   FerramentasRoute: typeof FerramentasRoute
+  IptvRoute: typeof IptvRoute
   JogosRoute: typeof JogosRoute
   JogosJavaRoute: typeof JogosJavaRoute
   MaisSbtRoute: typeof MaisSbtRoute
@@ -642,6 +655,13 @@ declare module '@tanstack/react-router' {
       path: '/jogos'
       fullPath: '/jogos'
       preLoaderRoute: typeof JogosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/iptv': {
+      id: '/iptv'
+      path: '/iptv'
+      fullPath: '/iptv'
+      preLoaderRoute: typeof IptvRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ferramentas': {
@@ -914,6 +934,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   DmcaRoute: DmcaRoute,
   FerramentasRoute: FerramentasRoute,
+  IptvRoute: IptvRoute,
   JogosRoute: JogosRoute,
   JogosJavaRoute: JogosJavaRoute,
   MaisSbtRoute: MaisSbtRoute,
