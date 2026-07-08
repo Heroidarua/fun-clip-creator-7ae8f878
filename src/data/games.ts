@@ -73,4 +73,4 @@ export const games: Game[] = [
   { id: 65, title: "Totemia: Cursed Marbles", src: "https://play.famobi.com/totemia-cursed-marbles/A1000-10", img: "https://i.imgur.com/SnJmN5D.jpeg" },
   { id: 66, title: "Monkey Bounce", src: "https://play.famobi.com/monkey-bounce/A1000-10", img: "https://i.imgur.com/ZSOz4vd.jpeg" },
   { id: 67, title: "Ultra X", src: "https://www.retrogames.cc/embed/34661-ultra-x-weapons-ultra-keibitai.html", img: "https://i.imgur.com/LwZRaqI.png" },
-];
+  { id: 68, title: "Vampire Hunter", src: "https://www.retrogames.cc/embed/10578-vampire-hunter-darkstalkers-revenge-950302-japan.html", img: "https://i.imgur.com/7M7CzqF.png" },
