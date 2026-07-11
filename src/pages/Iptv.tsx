@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { Tv, ArrowLeft, ExternalLink } from "lucide-react";
 
-const PLUTO_URL = "https://pluto.tv/br/search";
+const PLUTO_URL = "https://pluto.tv/br/live-tv/655e5c4d2c46f3000877a54b";
 
 export default function Iptv() {
   useEffect(() => {
