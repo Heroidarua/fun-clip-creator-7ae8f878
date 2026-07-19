@@ -1,35 +1,38 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-const BASE_URL = "https://fun-clip-creator.lovable.app";
+const BASE_URL = "https://sos01.com.br";
 
-// Lista estática de rotas públicas. Manter sincronizada ao adicionar páginas novas.
-// Não usar `import.meta.glob` aqui: os mesmos arquivos são importados
-// estaticamente por `routeTree.gen.ts`, e o glob criaria imports dinâmicos
-// concorrentes que quebram o build do Rollup.
+// Rotas públicas do SOS01
 const routes: string[] = [
   "/",
+
+  // Institucional
+  "/sobre",
+  "/como-usar",
+  "/contato",
+  "/privacidade",
+  "/termos",
+  "/dmca",
+  "/precos",
+
+  // Conteúdo
+  "/ferramentas",
+  "/jogos",
+  "/jogos-java",
+
+  // Blog
   "/blog",
   "/blog/biblioteca-quadrinhos",
   "/blog/como-baixar-videos-kwai",
   "/blog/como-baixar-videos-tiktok-sem-marca",
   "/blog/como-baixar-videos-youtube",
   "/blog/como-extrair-audio-tiktok",
-  "/blog/como-nasceu-clipsave",
+  "/blog/como-nasceu-sos01",
   "/blog/como-usar-downloaders",
   "/blog/dicas-criadores-conteudo",
   "/blog/ferramentas-gratuitas",
-  "/blog/guia-completo-clipsave",
+  "/blog/guia-completo-sos01",
   "/blog/jogos-retro-gratis",
-  "/como-usar",
-  "/contato",
-  "/dmca",
-  "/ferramentas",
-  "/jogos",
-  "/jogos-java",
-  "/precos",
-  "/privacidade",
-  "/sobre",
-  "/termos",
 ];
 
 export const Route = createFileRoute("/sitemap.xml")({
@@ -37,20 +40,31 @@ export const Route = createFileRoute("/sitemap.xml")({
     handlers: {
       GET: async () => {
         const lastmod = new Date().toISOString().split("T")[0];
+
         const urls = routes
-          .map(
-            (path) =>
-              `  <url><loc>${BASE_URL}${path}</loc><lastmod>${lastmod}</lastmod><changefreq>${path === "/" ? "daily" : "weekly"}</changefreq><priority>${path === "/" ? "1.0" : "0.7"}</priority></url>`,
-          )
-          .join("\n");
+          .map((path) => {
+            const priority = path === "/" ? "1.0" : "0.8";
+            const changefreq = path === "/" ? "daily" : "weekly";
+
+            return `
+  <url>
+    <loc>${BASE_URL}${path}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>${changefreq}</changefreq>
+    <priority>${priority}</priority>
+  </url>`;
+          })
+          .join("");
+
         const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls}
 </urlset>`;
+
         return new Response(xml, {
           headers: {
             "Content-Type": "application/xml; charset=utf-8",
-            "Cache-Control": "public, max-age=3600",
+            "Cache-Control": "public, max-age=86400",
           },
         });
       },
