@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import GuiaCompletoClipSave from "@/pages/blog/GuiaCompleto";
+import GuiaCompletoClipSave from "@/pages/blog/GuiaCompletoClipSave";
 
-export const Route = createFileRoute("/blog/guia-completo")({
+export const Route = createFileRoute("/blog/guia-completo-clipsave")({
   component: GuiaCompletoClipSave,
   head: () => {
     const url = "https://fun-clip-creator.lovable.app/blog/guia";
