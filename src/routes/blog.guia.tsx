@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import GuiaCompletoClipSave from "@/pages/blog/GuiaCompletoClipSave";
+import GuiaCompletoClipSave from "@/pages/blog/GuiaCompleto";
 
-export const Route = createFileRoute("/blog/guia-completo-clipsave")({
+export const Route = createFileRoute("/blog/guia-completo")({
   component: GuiaCompletoClipSave,
   head: () => {
-    const url = "https://fun-clip-creator.lovable.app/blog/guia-completo-clipsave";
-    const title = "Guia completo do SOS/01 (ClipSave) — Tudo o que dá pra fazer";
+    const url = "https://fun-clip-creator.lovable.app/blog/guia";
+    const title = "Guia completo do SOS/01 — Tudo o que dá pra fazer";
     const description = "Um tour completo por todas as ferramentas, jogos, IA e utilitários gratuitos disponíveis no SOS/01.";
     return {
       meta: [
