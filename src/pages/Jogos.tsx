@@ -56,33 +56,47 @@ function pushRecent(id: number) {
 
 // ---------- Card ----------
 function GameCard({
-  game, onPlay, isFavorite, onToggleFavorite, size = "md",
+  game, onPlay, isFavorite, onToggleFavorite,
 }: {
   game: Game; onPlay: () => void; isFavorite: boolean;
-  onToggleFavorite: () => void; size?: "sm" | "md" | "lg";
+  onToggleFavorite: () => void;
 }) {
   const rating = ratingOf(game);
   const category = categoryOf(game);
 
   return (
-    <div className="group relative">
-      {/* neon ring on hover */}
+    <div className="group relative h-full">
+      {/* neon aura on hover */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        className="pointer-events-none absolute -inset-1 rounded-[22px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
         style={{
           background:
-            "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%)",
-          filter: "blur(10px)",
+            "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 55%, hsl(var(--retro-yellow)) 100%)",
+          filter: "blur(14px)",
         }}
       />
+
       <button
         onClick={onPlay}
-        className="relative w-full text-left rounded-2xl overflow-hidden bg-[hsl(var(--card))] border border-[hsl(var(--border))] shadow-[0_4px_0_hsl(var(--secondary)/0.25),0_10px_24px_-12px_hsl(var(--secondary)/0.4)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_0_hsl(var(--secondary)/0.3),0_20px_40px_-12px_hsl(var(--primary)/0.45)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--primary))]"
+        className="cartridge relative w-full h-full text-left rounded-[14px] overflow-hidden bg-[hsl(var(--card))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--primary))] flex flex-col"
         aria-label={`Jogar ${game.title}`}
       >
+        {/* Cartridge top ridge / slot */}
+        <div className="relative h-5 bg-[hsl(var(--secondary))] shrink-0">
+          <div className="absolute inset-x-0 top-0 h-1 bg-[hsl(var(--primary))] opacity-60" />
+          <div className="absolute inset-0 flex items-center justify-center gap-1.5">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="w-2 h-2.5 rounded-sm bg-[hsl(var(--secondary-foreground)/0.15)]" />
+            ))}
+          </div>
+          {/* corner screws */}
+          <div className="absolute top-1 left-2 w-1.5 h-1.5 rounded-full bg-[hsl(var(--secondary-foreground)/0.25)]" />
+          <div className="absolute top-1 right-2 w-1.5 h-1.5 rounded-full bg-[hsl(var(--secondary-foreground)/0.25)]" />
+        </div>
+
         {/* Cover */}
-        <div className="relative aspect-[3/4] overflow-hidden bg-gradient-to-br from-[hsl(var(--muted))] to-[hsl(var(--primary)/0.1)]">
+        <div className="relative flex-1 min-h-0 aspect-[3/4] overflow-hidden bg-gradient-to-br from-[hsl(var(--muted))] to-[hsl(var(--primary)/0.12)]">
           <img
             src={game.img || `https://placehold.co/400x533/0E4A7B/F5F9FF?text=${encodeURIComponent(game.title)}`}
             alt={game.title}
@@ -96,21 +110,31 @@ function GameCard({
             }}
           />
 
+          {/* scanlines overlay */}
+          <div
+            aria-hidden
+            className="absolute inset-0 pointer-events-none opacity-[0.06]"
+            style={{
+              backgroundImage:
+                "repeating-linear-gradient(0deg, rgba(0,0,0,0.25) 0px, rgba(0,0,0,0.25) 1px, transparent 1px, transparent 3px)",
+            }}
+          />
+
           {/* Bottom gradient for text legibility */}
-          <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
 
           {/* Top row: category chip + favorite */}
-          <div className="absolute top-2 left-2 right-2 flex items-start justify-between gap-2">
-            <span className="px-2 py-1 rounded-md bg-black/55 backdrop-blur-md text-[10px] font-silkscreen tracking-wider text-white border border-white/15">
+          <div className="absolute top-2.5 left-2.5 right-2.5 flex items-start justify-between gap-2">
+            <span className="px-2 py-1 rounded-md bg-black/60 backdrop-blur-md text-[10px] font-silkscreen tracking-wider text-white border border-white/15 shadow-sm">
               {category.toUpperCase()}
             </span>
             <button
               type="button"
               onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleFavorite(); }}
-              className={`shrink-0 grid place-items-center w-9 h-9 rounded-full backdrop-blur-md transition-all duration-200 border ${
+              className={`shrink-0 grid place-items-center w-9 h-9 rounded-lg backdrop-blur-md transition-all duration-200 border shadow-sm ${
                 isFavorite
-                  ? "bg-[hsl(var(--accent))] text-white border-[hsl(var(--accent))] scale-105"
-                  : "bg-black/45 text-white border-white/20 hover:bg-[hsl(var(--accent))] hover:border-[hsl(var(--accent))]"
+                  ? "bg-[hsl(var(--accent))] text-white border-[hsl(var(--accent))] scale-105 shadow-neon-purple"
+                  : "bg-black/50 text-white border-white/20 hover:bg-[hsl(var(--accent))] hover:border-[hsl(var(--accent))] hover:scale-105"
               }`}
               aria-label={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
             >
@@ -119,15 +143,15 @@ function GameCard({
           </div>
 
           {/* Hover play overlay */}
-          <div className="absolute inset-0 grid place-items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div className="w-16 h-16 rounded-full bg-[hsl(var(--primary))] grid place-items-center text-white shadow-[0_0_24px_hsl(var(--primary)/0.7)] scale-90 group-hover:scale-100 transition-transform">
+          <div className="absolute inset-0 grid place-items-center opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black/20">
+            <div className="w-16 h-16 rounded-full bg-[hsl(var(--primary))] grid place-items-center text-white shadow-neon scale-90 group-hover:scale-100 transition-transform duration-300">
               <Play className="w-7 h-7 ml-0.5" fill="currentColor" />
             </div>
           </div>
 
           {/* Bottom overlay info */}
           <div className="absolute inset-x-0 bottom-0 p-3 text-white">
-            <h3 className="font-display text-base sm:text-lg leading-tight line-clamp-2 drop-shadow">
+            <h3 className="font-display text-base sm:text-lg leading-tight line-clamp-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
               {game.title}
             </h3>
             <div className="mt-1.5 flex items-center justify-between text-[11px]">
@@ -140,10 +164,10 @@ function GameCard({
           </div>
         </div>
 
-        {/* Play CTA strip (mobile-friendly tap area) */}
-        <div className="flex items-center justify-between gap-2 px-3 py-2.5 bg-[hsl(var(--card))]">
+        {/* Footer strip */}
+        <div className="shrink-0 flex items-center justify-between gap-2 px-3 py-2.5 bg-[hsl(var(--muted)/0.5)] border-t border-[hsl(var(--border))]">
           <span className="text-[11px] font-silkscreen tracking-wider text-[hsl(var(--muted-foreground))]">
-            #{String(game.id).padStart(2, "0")}
+            #{String(game.id).padStart(3, "0")}
           </span>
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[11px] font-silkscreen tracking-wider bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] shadow-[0_2px_0_hsl(var(--secondary))]">
             <Play className="w-3.5 h-3.5" fill="currentColor" />
@@ -185,7 +209,7 @@ function GameRow({
           )}
         </div>
       </div>
-      <div className="grid gap-3 sm:gap-4 grid-cols-2 sm:grid-cols-4 lg:grid-cols-6">
+      <div className="grid gap-4 sm:gap-5 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
         {list.map((g, i) => (
           <div key={g.id} className="animate-fade-in" style={{ animationDelay: `${Math.min(i * 30, 240)}ms` }}>
             <GameCard
@@ -448,7 +472,7 @@ export default function Jogos() {
             </div>
 
             {filtered.length > 0 ? (
-              <div className="grid gap-3 sm:gap-4 grid-cols-2 sm:grid-cols-4 lg:grid-cols-6">
+              <div className="grid gap-4 sm:gap-5 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
                 {filtered.map((g, i) => (
                   <div key={g.id} className="animate-fade-in" style={{ animationDelay: `${Math.min(i * 20, 240)}ms` }}>
                     <GameCard
