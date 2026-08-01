@@ -10,7 +10,6 @@ import { useAvatarGallery } from "@/hooks/useAvatarGallery";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { generateFreeImage } from "@/lib/free-ai";
-import { puterGenerateImage } from "@/lib/puter-ai";
 
 const loadingMessages = [
   "🎨 Preparando pixels...",
@@ -476,16 +475,11 @@ const PixelAvatarGenerator = ({ onSuccess }: PixelAvatarGeneratorProps) => {
       parts.push("centered character portrait, high quality");
 
       const finalPrompt = parts.join(", ");
-      let imageUrl: string;
-      try {
-        // IA gratuita do Puter (GPT Image)
-        imageUrl = await puterGenerateImage(finalPrompt);
-      } catch {
-        imageUrl = await generateFreeImage(finalPrompt, {
-          width: selectedSize.width,
-          height: selectedSize.height,
-        });
-      }
+      // IA gratuita sem login e sem redirecionamento externo
+      const imageUrl = await generateFreeImage(finalPrompt, {
+        width: selectedSize.width,
+        height: selectedSize.height,
+      });
 
       setGeneratedAvatar(imageUrl);
       saveAvatar(imageUrl, style, size);
