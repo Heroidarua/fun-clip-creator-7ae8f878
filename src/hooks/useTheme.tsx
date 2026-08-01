@@ -21,20 +21,33 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 const themes: Theme[] = ["dark", "light", "sepia", "ocean", "forest"];
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
+  // SSR always renders "light" (see RootShell) — the stored theme is read in an
+  // effect after hydration so server and client markup stay identical.
   const [theme, setThemeState] = useState<Theme>("light");
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem("sos01-theme") as Theme | null;
-    if (stored && themes.includes(stored)) {
-      setThemeState(stored);
+    try {
+      const stored = localStorage.getItem("sos01-theme") as Theme | null;
+      if (stored && themes.includes(stored)) {
+        setThemeState(stored);
+      }
+    } catch {
+      // localStorage unavailable (private mode) — keep the default theme.
     }
+    setHydrated(true);
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("sos01-theme", theme);
+    if (!hydrated) return;
+    try {
+      localStorage.setItem("sos01-theme", theme);
+    } catch {
+      // ignore write failures
+    }
     document.documentElement.classList.remove(...themes);
     document.documentElement.classList.add(theme);
-  }, [theme]);
+  }, [theme, hydrated]);
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
