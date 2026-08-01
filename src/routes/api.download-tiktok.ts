@@ -22,6 +22,7 @@ async function tryTikwmGet(url: string): Promise<TikTokData | null> {
     const apiUrl = `https://www.tikwm.com/api/?url=${encodeURIComponent(url)}&hd=1`;
     const resp = await fetch(apiUrl, {
       headers: { "User-Agent": UA, Accept: "application/json" },
+      signal: AbortSignal.timeout(8000),
     });
     if (!resp.ok) return null;
     const json: any = await resp.json();
@@ -44,6 +45,7 @@ async function tryTikwmPost(url: string): Promise<TikTokData | null> {
         "Content-Type": "application/x-www-form-urlencoded",
       },
       body: `url=${encodeURIComponent(url)}&hd=1`,
+      signal: AbortSignal.timeout(8000),
     });
     if (!resp.ok) return null;
     const json: any = await resp.json();
@@ -61,6 +63,7 @@ async function tryTiklydown(url: string): Promise<TikTokData | null> {
     const apiUrl = `https://api.tiklydown.eu.org/api/download?url=${encodeURIComponent(url)}`;
     const resp = await fetch(apiUrl, {
       headers: { "User-Agent": UA, Accept: "application/json" },
+      signal: AbortSignal.timeout(8000),
     });
     if (!resp.ok) return null;
     const json: any = await resp.json();
@@ -97,6 +100,7 @@ async function trySsstik(url: string): Promise<TikTokData | null> {
         Referer: "https://ssstik.io/en",
       },
       body: `id=${encodeURIComponent(url)}&locale=en&tt=XXX`,
+      signal: AbortSignal.timeout(8000),
     });
     if (!resp.ok) return null;
     const html = await resp.text();
