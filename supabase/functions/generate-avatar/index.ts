@@ -70,17 +70,18 @@ serve(async (req) => {
     } = body as Record<string, any>;
 
     let prompt = "";
+    const safeArtStyle = str(artStyle, 40) || "pixel";
     if (customPrompt) {
-      prompt = `Create a ${artStyle || "pixel"} art avatar: ${customPrompt}. `;
+      prompt = `Create a ${safeArtStyle} art avatar: ${str(customPrompt, 500)}. `;
     } else {
-      prompt = `Create a ${artStyle || "pixel"} art avatar of a ${style || "human"} character. `;
-      if (color) prompt += `Main color: ${color}. `;
-      if (expression) prompt += `Expression: ${expression}. `;
-      if (pose) prompt += `Pose: ${pose}. `;
-      if (outfit) prompt += `Outfit: ${outfit}. `;
-      if (hairStyle) prompt += `Hair style: ${hairStyle}. `;
-      if (accessories && Array.isArray(accessories) && accessories.length > 0) {
-        prompt += `Accessories: ${accessories.join(", ")}. `;
+      prompt = `Create a ${safeArtStyle} art avatar of a ${str(style, 40) || "human"} character. `;
+      if (color) prompt += `Main color: ${str(color, 40)}. `;
+      if (expression) prompt += `Expression: ${str(expression, 40)}. `;
+      if (pose) prompt += `Pose: ${str(pose, 40)}. `;
+      if (outfit) prompt += `Outfit: ${str(outfit, 60)}. `;
+      if (hairStyle) prompt += `Hair style: ${str(hairStyle, 40)}. `;
+      if (Array.isArray(accessories) && accessories.length > 0) {
+        prompt += `Accessories: ${accessories.slice(0, 8).map((a) => str(a, 30)).filter(Boolean).join(", ")}. `;
       }
     }
 
@@ -88,7 +89,9 @@ serve(async (req) => {
       prompt += "On a clean solid white background for easy background removal. ";
     }
 
-    prompt += `The image should be ${width || 256}x${height || 256} pixels, high quality, centered character portrait.`;
+    const w = Math.min(Math.max(Number(width) || 256, 64), 1024);
+    const h = Math.min(Math.max(Number(height) || 256, 64), 1024);
+    prompt += `The image should be ${w}x${h} pixels, high quality, centered character portrait.`;
 
     const aiResp = await fetch(LOVABLE_AI_URL, {
       method: "POST",

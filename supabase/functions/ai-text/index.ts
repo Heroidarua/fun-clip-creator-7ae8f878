@@ -162,9 +162,8 @@ serve(async (req) => {
     });
   } catch (error) {
     console.error("AI text error:", error);
-    const message = error instanceof Error ? error.message : "Erro interno";
     return new Response(
-      JSON.stringify({ error: message }),
+      JSON.stringify({ error: "Erro interno" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

@@ -252,7 +252,7 @@ export const Route = createFileRoute("/api/download-tiktok")({
           );
         } catch (error: any) {
           return Response.json(
-            { success: false, error: error.message || "Erro ao processar requisição" },
+            { success: false, error: "Erro ao processar requisição" },
             { status: 200, headers: corsHeaders() },
           );
         }
@@ -307,7 +307,7 @@ export const Route = createFileRoute("/api/download-tiktok")({
           return Response.json(
             {
               success: false,
-              error: error.message || "Erro ao processar vídeo do TikTok",
+              error: "Erro ao processar vídeo do TikTok",
             },
             { status: 200, headers: corsHeaders() }
           );
