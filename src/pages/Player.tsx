@@ -9,11 +9,9 @@ import {
   Copy,
   ExternalLink,
   AlertTriangle,
-  KeyRound,
-  Check,
 } from "lucide-react";
 import { toast } from "sonner";
-import { getPlayerCredentials } from "@/lib/wplayer.functions";
+
 
 const PLAYER_URL = "https://wplayer.click/dashboard?view=movies";
 const MEDIA_TITLE = "SOS01 Player";
@@ -26,33 +24,10 @@ export default function Player() {
   const [failed, setFailed] = useState(false);
   const [favorite, setFavorite] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
-  const [creds, setCreds] = useState<{ user: string; pass: string } | null>(null);
-  const [copied, setCopied] = useState<"user" | "pass" | null>(null);
+
 
   useEffect(() => {
-    let mounted = true;
-    getPlayerCredentials()
-      .then((data) => {
-        if (mounted && data?.user) setCreds(data);
-      })
-      .catch(() => undefined);
-    return () => {
-      mounted = false;
-    };
-  }, []);
 
-  const copyValue = useCallback(async (value: string, field: "user" | "pass") => {
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopied(field);
-      window.setTimeout(() => setCopied(null), 1600);
-      toast.success(field === "user" ? "Login copiado!" : "Senha copiada!");
-    } catch {
-      toast.error("Não foi possível copiar");
-    }
-  }, []);
-
-  useEffect(() => {
     setFavorite(localStorage.getItem(FAV_KEY) === "1");
   }, []);
 
@@ -229,47 +204,6 @@ export default function Player() {
           )}
         </div>
       </main>
-
-      {creds && (
-        <section className="px-2 sm:px-6 pb-2">
-          <div className="rounded-2xl border-2 border-secondary/50 bg-card/60 p-4">
-            <div className="mb-3 flex items-center gap-2">
-              <KeyRound className="h-4 w-4 text-primary" aria-hidden="true" />
-              <h2 className="font-silkscreen text-[11px] uppercase tracking-widest text-primary">
-                Acesso rápido ao player
-              </h2>
-            </div>
-            <p className="mb-3 text-xs text-muted-foreground">
-              O player é um serviço externo e não permite login automático. Toque para copiar e cole na tela de login.
-            </p>
-            <div className="grid gap-2 sm:grid-cols-2">
-              {[
-                { label: "Login", value: creds.user, field: "user" as const },
-                { label: "Senha", value: creds.pass, field: "pass" as const },
-              ].map((item) => (
-                <button
-                  key={item.field}
-                  type="button"
-                  onClick={() => copyValue(item.value, item.field)}
-                  className="flex items-center justify-between gap-3 rounded-xl border-2 border-secondary/60 bg-background/40 px-3 py-2 text-left transition-colors hover:border-primary"
-                >
-                  <span className="min-w-0">
-                    <span className="block font-silkscreen text-[9px] uppercase tracking-widest text-muted-foreground">
-                      {item.label}
-                    </span>
-                    <span className="block truncate text-sm text-foreground">{item.value}</span>
-                  </span>
-                  {copied === item.field ? (
-                    <Check className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-                  ) : (
-                    <Copy className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
       <footer className="flex flex-wrap items-center justify-between gap-2 px-4 sm:px-6 pb-24 md:pb-6 pt-2 text-xs text-muted-foreground">
         <span>SOS01 © 2026 · Player integrado</span>
