@@ -1,64 +1,68 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { SITE } from "@/lib/seo";
+import { PREMIUM_TOOLS } from "@/lib/premium-tools";
 
-const BASE_URL = "https://sos01.com.br";
+type Entry = { path: string; changefreq: string; priority: string };
 
-// Rotas públicas do SOS01
-const routes: string[] = [
-  "/",
+const staticEntries: Entry[] = [
+  { path: "/", changefreq: "daily", priority: "1.0" },
+
+  // Conteúdo principal
+  { path: "/ferramentas", changefreq: "weekly", priority: "0.9" },
+  { path: "/jogos", changefreq: "weekly", priority: "0.9" },
+  { path: "/jogos-java", changefreq: "weekly", priority: "0.7" },
+  { path: "/player", changefreq: "weekly", priority: "0.8" },
+  { path: "/iptv", changefreq: "weekly", priority: "0.7" },
+  { path: "/mais-sbt", changefreq: "weekly", priority: "0.7" },
+  { path: "/nasa", changefreq: "monthly", priority: "0.6" },
+  { path: "/dashboard", changefreq: "weekly", priority: "0.6" },
 
   // Institucional
-  "/sobre",
-  "/como-usar",
-  "/contato",
-  "/privacidade",
-  "/termos",
-  "/dmca",
-  "/precos",
-
-  // Conteúdo
-  "/ferramentas",
-  "/jogos",
-  "/jogos-java",
+  { path: "/sobre", changefreq: "monthly", priority: "0.6" },
+  { path: "/como-usar", changefreq: "monthly", priority: "0.7" },
+  { path: "/contato", changefreq: "monthly", priority: "0.5" },
+  { path: "/precos", changefreq: "monthly", priority: "0.5" },
+  { path: "/privacidade", changefreq: "yearly", priority: "0.3" },
+  { path: "/termos", changefreq: "yearly", priority: "0.3" },
+  { path: "/dmca", changefreq: "yearly", priority: "0.3" },
 
   // Blog
-  "/blog",
-  "/blog/biblioteca-quadrinhos",
-  "/blog/como-baixar-videos-kwai",
-  "/blog/como-baixar-videos-tiktok-sem-marca",
-  "/blog/como-baixar-videos-youtube",
-  "/blog/como-extrair-audio-tiktok",
-  "/blog/como-nasceu-sos01",
-  "/blog/como-usar-downloaders",
-  "/blog/dicas-criadores-conteudo",
-  "/blog/ferramentas-gratuitas",
-  "/blog/guia-completo-sos01",
-  "/blog/jogos-retro-gratis",
+  { path: "/blog", changefreq: "weekly", priority: "0.8" },
+  { path: "/blog/biblioteca-quadrinhos", changefreq: "monthly", priority: "0.7" },
+  { path: "/blog/como-baixar-videos-kwai", changefreq: "monthly", priority: "0.7" },
+  { path: "/blog/como-baixar-videos-tiktok-sem-marca", changefreq: "monthly", priority: "0.7" },
+  { path: "/blog/como-baixar-videos-youtube", changefreq: "monthly", priority: "0.7" },
+  { path: "/blog/como-extrair-audio-tiktok", changefreq: "monthly", priority: "0.7" },
+  { path: "/blog/como-nasceu-clipsave", changefreq: "monthly", priority: "0.6" },
+  { path: "/blog/como-usar-downloaders", changefreq: "monthly", priority: "0.7" },
+  { path: "/blog/dicas-criadores-conteudo", changefreq: "monthly", priority: "0.7" },
+  { path: "/blog/ferramentas-gratuitas", changefreq: "monthly", priority: "0.7" },
+  { path: "/blog/guia-completo-clipsave", changefreq: "monthly", priority: "0.7" },
+  { path: "/blog/jogos-retro-gratis", changefreq: "monthly", priority: "0.7" },
 ];
 
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
       GET: async () => {
-        const lastmod = new Date().toISOString().split("T")[0];
+        // Ferramentas premium entram automaticamente ao serem cadastradas.
+        const toolEntries: Entry[] = PREMIUM_TOOLS.filter((tool) => tool.status === "ready").map(
+          (tool) => ({ path: `/ferramenta/${tool.slug}`, changefreq: "monthly", priority: "0.6" }),
+        );
 
-        const urls = routes
-          .map((path) => {
-            const priority = path === "/" ? "1.0" : "0.8";
-            const changefreq = path === "/" ? "daily" : "weekly";
-
-            return `
+        const urls = [...staticEntries, ...toolEntries]
+          .map(
+            (entry) => `
   <url>
-    <loc>${BASE_URL}${path}</loc>
-    <lastmod>${lastmod}</lastmod>
-    <changefreq>${changefreq}</changefreq>
-    <priority>${priority}</priority>
-  </url>`;
-          })
+    <loc>${SITE.url}${entry.path}</loc>
+    <changefreq>${entry.changefreq}</changefreq>
+    <priority>${entry.priority}</priority>
+  </url>`,
+          )
           .join("");
 
         const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}
 </urlset>`;
 
         return new Response(xml, {
