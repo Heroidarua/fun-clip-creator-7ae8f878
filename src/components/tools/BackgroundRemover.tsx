@@ -149,6 +149,31 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
     foregroundImg.src = resultUrl;
   }, [resultUrl, selectedBackground, bgAdjustments]);
 
+  // Reduz a imagem antes do processamento para acelerar bastante a remoção
+  const downscaleImage = (source: File, maxSize = 1024): Promise<Blob> =>
+    new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const ratio = Math.min(1, maxSize / Math.max(img.width, img.height));
+        if (ratio === 1) {
+          resolve(source);
+          return;
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(img.width * ratio);
+        canvas.height = Math.round(img.height * ratio);
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          resolve(source);
+          return;
+        }
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob((blob) => resolve(blob ?? source), "image/png");
+      };
+      img.onerror = () => resolve(source);
+      img.src = URL.createObjectURL(source);
+    });
+
   const handleFileSelect = (selectedFile: File) => {
     if (!selectedFile.type.includes("image/")) {
       toast({
@@ -200,7 +225,11 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
 
     try {
       // Processamento 100% no navegador via @imgly/background-removal (modelo ONNX)
-      const blob = await imglyRemoveBackground(file, {
+      // Imagem reduzida + modelo quantizado = muito mais rápido
+      const input = await downscaleImage(file, 1024);
+      const blob = await imglyRemoveBackground(input, {
+        model: "isnet_quint8",
+        output: { format: "image/png", quality: 0.9 },
         progress: (_key, current, total) => {
           const pct = Math.min(95, Math.round((current / total) * 90));
           setProgress(pct);
