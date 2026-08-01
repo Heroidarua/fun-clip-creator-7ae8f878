@@ -15,7 +15,13 @@ interface FeatureGateProps {
 export function FeatureGate({ featureKey, label, children }: FeatureGateProps) {
   const { isActive, loading } = useDownloaderStatus();
 
-  if (loading) return <>{children}</>;
+  if (loading) {
+    return (
+      <div aria-busy="true" className="flex min-h-32 items-center justify-center">
+        <span className="text-sm text-muted-foreground">Carregando ferramenta...</span>
+      </div>
+    );
+  }
   if (isActive(featureKey)) return <>{children}</>;
 
   return (
