@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, Wrench, Gamepad2, BookOpen, LayoutDashboard, Globe2, Tv, Radio } from "lucide-react";
+import { Home, Wrench, Gamepad2, BookOpen, LayoutDashboard, Globe2, Tv, Radio, PlayCircle } from "lucide-react";
 
 const ITEMS = [
   { to: "/", label: "Home", icon: Home },
@@ -8,6 +8,7 @@ const ITEMS = [
   { to: "/nasa", label: "NASA", icon: Globe2 },
   { to: "/mais-sbt", label: "+SBT", icon: Tv },
   { to: "/iptv", label: "IPTV", icon: Radio },
+  { to: "/player", label: "Player", icon: PlayCircle },
   { to: "/blog", label: "Blog", icon: BookOpen },
   { to: "/dashboard", label: "Painel", icon: LayoutDashboard },
 ] as const;
@@ -23,7 +24,7 @@ export default function MobileBottomNav() {
       className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t-2 border-secondary bg-background/95 backdrop-blur-md"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
-      <ul className="grid grid-cols-8 h-[64px]">
+      <ul className="grid grid-cols-9 h-[64px]">
         {ITEMS.map(({ to, label, icon: Icon }) => {
           const active = isActive(to);
           return (
