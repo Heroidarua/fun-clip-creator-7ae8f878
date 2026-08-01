@@ -52,7 +52,6 @@ export const Route = createFileRoute("/api/free-text")({
             { role: "user", content: prompt },
           ];
 
-          const debug: string[] = [];
           const attempts: string[] = [...MODELS, ...MODELS];
           for (let i = 0; i < attempts.length; i++) {
             const model = attempts[i];
@@ -66,21 +65,43 @@ export const Route = createFileRoute("/api/free-text")({
                 signal: controller.signal,
               });
               clearTimeout(timer);
-              if (!res.ok) debug.push(`${model}:${res.status}:${(await res.text()).slice(0,120)}`);
               if (res.ok) {
                 const payload = await res.json().catch(() => null);
                 const text = extractContent(payload);
                 if (text) return Response.json({ text }, { headers });
               }
-            } catch (e) { debug.push(`${model}:ex:${String(e).slice(0,120)}`); }
+            } catch {
+              // tenta a próxima alternativa
+            }
             if (i < attempts.length - 1) {
               // pequena espera para liberar a fila do provedor gratuito
               await new Promise((resolve) => setTimeout(resolve, 1200));
             }
           }
 
+          // Último recurso: IA do próprio projeto, para a ferramenta nunca ficar fora do ar.
+          const gatewayKey = process.env.LOVABLE_API_KEY;
+          if (gatewayKey) {
+            try {
+              const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Lovable-API-Key": gatewayKey,
+                },
+                body: JSON.stringify({ model: "google/gemini-2.5-flash", messages }),
+              });
+              if (res.ok) {
+                const text = extractContent(await res.json().catch(() => null));
+                if (text) return Response.json({ text }, { headers });
+              }
+            } catch {
+              // continua para o erro padrão
+            }
+          }
+
           return Response.json(
-            { error: "A IA gratuita está indisponível agora. Tente novamente.", debug },
+            { error: "A IA gratuita está indisponível agora. Tente novamente." },
             { status: 502, headers }
           );
         } catch {
