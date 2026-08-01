@@ -246,27 +246,17 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
 
     setProcessing(true);
     setProgress(0);
-    setActiveProvider("remove.bg");
+    setActiveProvider("local");
 
     const progressInterval = setInterval(() => {
       setProgress(prev => Math.min(prev + 2, 85));
     }, 500);
 
     try {
-      // Provedor principal: remove.bg (alta qualidade). Fallback: processamento local no navegador.
-      let blob: Blob;
-      let usedApi = true;
-      try {
-        setProgress(30);
-        blob = await removeBackgroundViaApi(file, file.name);
-      } catch (apiError) {
-        console.warn("remove.bg indisponível; usando processamento local.", apiError);
-        usedApi = false;
-        setActiveProvider("local");
-        setProgress(5);
-        const input = await downscaleImage(file, 1024);
-        blob = await removeBackgroundLocally(input);
-      }
+      // 100% gratuito: processamento local no navegador (sem API paga, sem créditos).
+      setProgress(5);
+      const input = await downscaleImage(file, 1024);
+      const blob = await removeBackgroundLocally(input);
       clearInterval(progressInterval);
 
       const outputUrl = URL.createObjectURL(blob);
@@ -280,9 +270,7 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
       onSuccess?.();
       toast({
         title: "✅ Fundo removido!",
-        description: usedApi
-          ? "Processado em alta qualidade pela API remove.bg"
-          : "Processado localmente no seu navegador",
+        description: "Processado gratuitamente no seu navegador",
       });
     } catch (error: unknown) {
       console.error("Background removal error:", error);
