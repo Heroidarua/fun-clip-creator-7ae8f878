@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Languages, Copy, Loader2 } from "lucide-react";
+import { puterGenerateText } from "@/lib/puter-ai";
 
 interface AutoTranslatorProps {
   onSuccess?: () => void;
@@ -23,6 +24,22 @@ const LANGUAGES = [
   { value: "ar", label: "🇸🇦 Árabe" },
 ];
 
+const LANGUAGE_NAMES: Record<string, string> = {
+  en: "inglês", es: "espanhol", fr: "francês", de: "alemão", it: "italiano",
+  ja: "japonês", ko: "coreano", "zh-CN": "chinês simplificado",
+  pt: "português do Brasil", ru: "russo", ar: "árabe",
+};
+
+async function translateWithGoogle(text: string, targetLanguage: string) {
+  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${encodeURIComponent(targetLanguage)}&dt=t&q=${encodeURIComponent(text)}`;
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error("Falha ao conectar com o serviço de tradução");
+  const data = await resp.json();
+  const translated = (data?.[0] || []).map((seg: any[]) => seg?.[0] || "").join("");
+  if (!translated) throw new Error("Tradução vazia");
+  return translated as string;
+}
+
 const AutoTranslator = ({ onSuccess }: AutoTranslatorProps) => {
   const [text, setText] = useState("");
   const [targetLanguage, setTargetLanguage] = useState("en");
@@ -39,13 +56,16 @@ const AutoTranslator = ({ onSuccess }: AutoTranslatorProps) => {
     setResult("");
 
     try {
-      // Free Google Translate public endpoint - no API key needed
-      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${encodeURIComponent(targetLanguage)}&dt=t&q=${encodeURIComponent(text.trim())}`;
-      const resp = await fetch(url);
-      if (!resp.ok) throw new Error("Falha ao conectar com o serviço de tradução");
-      const data = await resp.json();
-      const translated = (data?.[0] || []).map((seg: any[]) => seg?.[0] || "").join("");
-      if (!translated) throw new Error("Tradução vazia");
+      const target = LANGUAGE_NAMES[targetLanguage] ?? targetLanguage;
+      let translated: string;
+      try {
+        // IA gratuita (Puter) — tradução com mais contexto
+        translated = await puterGenerateText(text.trim(), {
+          system: `Você é um tradutor profissional. Traduza o texto do usuário para ${target}. Retorne APENAS a tradução, sem explicações, sem aspas e sem comentários.`,
+        });
+      } catch {
+        translated = await translateWithGoogle(text.trim(), targetLanguage);
+      }
       setResult(translated);
       onSuccess?.();
       toast.success("Texto traduzido!");
