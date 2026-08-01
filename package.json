@@ -93,5 +93,13 @@
     "vite": "^7.3.1",
     "vite-plugin-pwa": "^1.3.0",
     "workbox-window": "^7.4.1"
+  },
+  "overrides": {
+    "seroval": "^1.6.0",
+    "seroval-plugins": "^1.6.0"
+  },
+  "resolutions": {
+    "seroval": "^1.6.0",
+    "seroval-plugins": "^1.6.0"
   }
 }
