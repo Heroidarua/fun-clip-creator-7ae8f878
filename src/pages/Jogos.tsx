@@ -209,7 +209,7 @@ function GameRow({
           )}
         </div>
       </div>
-      <div className="grid gap-3 sm:gap-4 grid-cols-2 sm:grid-cols-4 lg:grid-cols-6">
+      <div className="grid gap-4 sm:gap-5 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
         {list.map((g, i) => (
           <div key={g.id} className="animate-fade-in" style={{ animationDelay: `${Math.min(i * 30, 240)}ms` }}>
             <GameCard
