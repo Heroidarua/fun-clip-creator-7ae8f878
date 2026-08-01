@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Upload, Download, Loader2, X, CheckCircle, Image as ImageIcon, Eraser, Sparkles, SlidersHorizontal, Cloud, Cpu } from "lucide-react";
+import { Upload, Download, Loader2, X, CheckCircle, Image as ImageIcon, Eraser, Sparkles, SlidersHorizontal, Cpu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
@@ -25,7 +25,7 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
   const [compositeImage, setCompositeImage] = useState<string | null>(null);
   const [showBackgroundSelector, setShowBackgroundSelector] = useState(false);
   const [bgAdjustments, setBgAdjustments] = useState<BackgroundAdjustments>(DEFAULT_ADJUSTMENTS);
-  const [activeProvider, setActiveProvider] = useState<"remove.bg" | "local" | null>(null);
+  const [activeProvider, setActiveProvider] = useState<"local" | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { toast } = useToast();
@@ -180,23 +180,6 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
       img.src = sourceUrl;
     });
 
-  const removeBackgroundViaApi = async (input: Blob, name: string): Promise<Blob> => {
-    const body = new FormData();
-    body.append("image", new File([input], name || "image.png", { type: input.type || "image/png" }));
-    const response = await fetch("/api/remove-bg", { method: "POST", body });
-    if (!response.ok) {
-      let message = "Falha na API de remoção de fundo";
-      try {
-        const data = (await response.json()) as { error?: string };
-        if (data?.error) message = data.error;
-      } catch {
-        /* resposta sem JSON */
-      }
-      throw new Error(message);
-    }
-    return response.blob();
-  };
-
   const removeBackgroundLocally = async (input: Blob): Promise<Blob> => {
     const runModel = (model: "isnet_quint8" | "isnet_fp16") =>
       imglyRemoveBackground(input, {
@@ -263,27 +246,17 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
 
     setProcessing(true);
     setProgress(0);
-    setActiveProvider("remove.bg");
+    setActiveProvider("local");
 
     const progressInterval = setInterval(() => {
       setProgress(prev => Math.min(prev + 2, 85));
     }, 500);
 
     try {
-      // Provedor principal: remove.bg (alta qualidade). Fallback: processamento local no navegador.
-      let blob: Blob;
-      let usedApi = true;
-      try {
-        setProgress(30);
-        blob = await removeBackgroundViaApi(file, file.name);
-      } catch (apiError) {
-        console.warn("remove.bg indisponível; usando processamento local.", apiError);
-        usedApi = false;
-        setActiveProvider("local");
-        setProgress(5);
-        const input = await downscaleImage(file, 1024);
-        blob = await removeBackgroundLocally(input);
-      }
+      // 100% gratuito: processamento local no navegador (sem API paga, sem créditos).
+      setProgress(5);
+      const input = await downscaleImage(file, 1024);
+      const blob = await removeBackgroundLocally(input);
       clearInterval(progressInterval);
 
       const outputUrl = URL.createObjectURL(blob);
@@ -297,9 +270,7 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
       onSuccess?.();
       toast({
         title: "✅ Fundo removido!",
-        description: usedApi
-          ? "Processado em alta qualidade pela API remove.bg"
-          : "Processado localmente no seu navegador",
+        description: "Processado gratuitamente no seu navegador",
       });
     } catch (error: unknown) {
       console.error("Background removal error:", error);
@@ -362,9 +333,9 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
       {/* Info indicator */}
       <div className="flex items-center justify-between p-3 bg-muted/30 rounded-sm border border-border/50">
         <div className="flex items-center gap-2">
-          <Cloud className="w-4 h-4 text-[#B66DFF]" />
+          <Cpu className="w-4 h-4 text-[#FFD93D]" />
           <span className="text-xs text-muted-foreground">
-            Provedor principal: <strong className="text-foreground">remove.bg</strong> · fallback local no navegador
+            <strong className="text-foreground">100% gratuito</strong> · processado no seu navegador, sem limites
           </span>
         </div>
       </div>
@@ -479,23 +450,16 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
           {processing && (
             <div className="space-y-2">
               <div className="flex items-center justify-center gap-2">
-                {activeProvider === "remove.bg" ? (
-                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-[#B66DFF]/10 text-[#B66DFF] text-xs font-pixel">
-                    <Cloud className="w-3 h-3" />
-                    remove.bg
-                  </span>
-                ) : activeProvider === "local" ? (
+                {activeProvider === "local" ? (
                   <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-[#FFD93D]/10 text-[#FFD93D] text-xs font-pixel">
                     <Cpu className="w-3 h-3" />
-                    fallback local
+                    gratuito · local
                   </span>
                 ) : null}
               </div>
               <Progress value={progress} className="h-2" />
               <p className="text-xs text-center text-muted-foreground">
-                {activeProvider === "remove.bg"
-                  ? `Removendo fundo via remove.bg... ${progress}%`
-                  : `Removendo fundo localmente... ${progress}%`}
+                {`Removendo fundo no seu navegador... ${progress}%`}
               </p>
             </div>
           )}
@@ -509,16 +473,10 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
                   {compositeImage ? "Novo fundo aplicado!" : "Fundo removido com sucesso!"}
                 </span>
               </div>
-              {activeProvider === "remove.bg" && (
-                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-[#B66DFF]/10 text-[#B66DFF] text-xs font-pixel">
-                  <Cloud className="w-3 h-3" />
-                  remove.bg
-                </span>
-              )}
               {activeProvider === "local" && (
                 <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-[#FFD93D]/10 text-[#FFD93D] text-xs font-pixel">
                   <Cpu className="w-3 h-3" />
-                  fallback local
+                  gratuito · local
                 </span>
               )}
             </div>
