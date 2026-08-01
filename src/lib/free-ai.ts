@@ -63,3 +63,47 @@ export async function generateFreeImage(
 
   return blobToDataUrl(blob);
 }
+
+const FREE_TEXT_ENDPOINT = "https://text.pollinations.ai/";
+
+export interface FreeTextOptions {
+  system?: string;
+  signal?: AbortSignal;
+}
+
+/** Gera texto usando IA gratuita e pública (sem chave de API e sem consumir créditos). */
+export async function generateFreeText(
+  prompt: string,
+  options: FreeTextOptions = {}
+): Promise<string> {
+  const messages = [
+    {
+      role: "system",
+      content:
+        options.system ??
+        "Você é um assistente criativo. Responda sempre em português do Brasil, de forma clara e objetiva.",
+    },
+    { role: "user", content: prompt.trim().slice(0, 4000) },
+  ];
+
+  const response = await fetch(FREE_TEXT_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ model: "openai", messages }),
+    signal: options.signal,
+  });
+
+  if (!response.ok) {
+    if (response.status === 429) {
+      throw new Error("A IA gratuita está ocupada. Aguarde alguns segundos e tente novamente.");
+    }
+    throw new Error("Não foi possível gerar o texto agora. Tente novamente.");
+  }
+
+  const text = (await response.text()).trim();
+  if (!text || text.startsWith("{\"error\"")) {
+    throw new Error("A IA gratuita não retornou um texto válido. Tente novamente.");
+  }
+
+  return text;
+}
