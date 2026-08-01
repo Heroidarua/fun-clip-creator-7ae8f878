@@ -1,24 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import ComoBaixarVideosTikTokSemMarca from "@/pages/blog/ComoBaixarVideosTikTokSemMarca";
+import { buildArticleSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/blog/como-baixar-videos-tiktok-sem-marca")({
   component: ComoBaixarVideosTikTokSemMarca,
-  head: () => {
-    const url = "https://fun-clip-creator.lovable.app/blog/como-baixar-videos-tiktok-sem-marca";
-    const title = "Como baixar vídeos do TikTok sem marca d'água — SOS/01";
-    const description = "Passo a passo para salvar vídeos do TikTok em HD sem marca d'água, online, grátis e sem cadastro.";
-    return {
-      meta: [
-        { title }, { name: "description", content: description },
-        { property: "og:title", content: title }, { property: "og:description", content: description },
-        { property: "og:url", content: url }, { property: "og:type", content: "article" },
+  head: () =>
+    buildArticleSeo({
+      path: "/blog/como-baixar-videos-tiktok-sem-marca",
+      title: "Como Baixar Vídeos do TikTok Sem Marca d’Água | Guia 2026",
+      description: "Guia completo para baixar vídeos do TikTok sem marca d’água, em HD, grátis e sem instalar nenhum aplicativo.",
+      keywords: ["baixar vídeo tiktok","tiktok sem marca d’água","download tiktok hd"],
+      breadcrumb: [
+        { name: "Início", path: "/" },
+        { name: "Blog", path: "/blog" },
+        { name: "Como Baixar Vídeos do TikTok Sem Marca d’Água", path: "/blog/como-baixar-videos-tiktok-sem-marca" },
       ],
-      links: [{ rel: "canonical", href: url }],
-      scripts: [{ type: "application/ld+json", children: JSON.stringify({
-        "@context": "https://schema.org", "@type": "Article", headline: title,
-        description, author: { "@type": "Organization", name: "SOS/01" },
-        publisher: { "@type": "Organization", name: "SOS/01" }, mainEntityOfPage: url,
-      }) }],
-    };
-  },
+    }),
 });

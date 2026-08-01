@@ -1,24 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import JogosRetroGratis from "@/pages/blog/JogosRetroGratis";
+import { buildArticleSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/blog/jogos-retro-gratis")({
   component: JogosRetroGratis,
-  head: () => {
-    const url = "https://fun-clip-creator.lovable.app/blog/jogos-retro-gratis";
-    const title = "Jogos retrô grátis online no navegador — SOS/01";
-    const description = "Mais de 60 clássicos retrô jogáveis direto no navegador, sem download e sem cadastro.";
-    return {
-      meta: [
-        { title }, { name: "description", content: description },
-        { property: "og:title", content: title }, { property: "og:description", content: description },
-        { property: "og:url", content: url }, { property: "og:type", content: "article" },
+  head: () =>
+    buildArticleSeo({
+      path: "/blog/jogos-retro-gratis",
+      title: "Jogos Retrô Grátis Online — Os melhores clássicos no navegador",
+      description: "Lista dos melhores jogos retrô gratuitos jogáveis direto no navegador, sem download, sem emulador e sem cadastro.",
+      keywords: ["jogos retrô grátis","clássicos online"],
+      breadcrumb: [
+        { name: "Início", path: "/" },
+        { name: "Blog", path: "/blog" },
+        { name: "Jogos Retrô Grátis Online", path: "/blog/jogos-retro-gratis" },
       ],
-      links: [{ rel: "canonical", href: url }],
-      scripts: [{ type: "application/ld+json", children: JSON.stringify({
-        "@context": "https://schema.org", "@type": "Article", headline: title,
-        description, author: { "@type": "Organization", name: "SOS/01" },
-        publisher: { "@type": "Organization", name: "SOS/01" }, mainEntityOfPage: url,
-      }) }],
-    };
-  },
+    }),
 });

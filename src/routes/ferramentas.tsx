@@ -1,16 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import Ferramentas from "@/pages/Ferramentas";
+import { buildToolSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/ferramentas")({
   component: Ferramentas,
-  head: () => ({
-    meta: [
-      { title: "Ferramentas gratuitas online — SOS/01" },
-      { name: "description", content: "Catálogo de utilitários gratuitos: QR Code, gerador de senhas, conversor MP4 para MP3, removedor de fundo, encurtador de URL e mais." },
-      { property: "og:title", content: "Ferramentas gratuitas — SOS/01" },
-      { property: "og:description", content: "Utilitários online sem cadastro: QR Code, conversores, IA, geradores e mais." },
-      { property: "og:url", content: "https://fun-clip-creator.lovable.app/ferramentas" },
-    ],
-    links: [{ rel: "canonical", href: "https://fun-clip-creator.lovable.app/ferramentas" }],
-  }),
+  head: () =>
+    buildToolSeo({
+      path: "/ferramentas",
+      title: "Ferramentas Online Gratuitas — QR Code, PDF, IA e mais | SOS01",
+      description: "Catálogo de utilitários gratuitos online: gerador de QR Code, senhas, conversor MP4 para MP3, removedor de fundo, OCR, PDF e muito mais.",
+      keywords: ["ferramentas online","gerador de qr code","conversor mp4 para mp3","removedor de fundo"],
+      toolName: "Ferramentas SOS01",
+    }),
 });
