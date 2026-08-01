@@ -1,16 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import Blog from "@/pages/Blog";
+import { buildSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/blog/")({
   component: Blog,
-  head: () => ({
-    meta: [
-      { title: "Blog SOS/01 — Tutoriais, dicas e novidades" },
-      { name: "description", content: "Tutoriais de downloaders, dicas para criadores, novidades das ferramentas gratuitas e da plataforma SOS/01." },
-      { property: "og:title", content: "Blog — SOS/01" },
-      { property: "og:description", content: "Tutoriais, dicas e novidades do SOS/01." },
-      { property: "og:url", content: "https://fun-clip-creator.lovable.app/blog" },
-    ],
-    links: [{ rel: "canonical", href: "https://fun-clip-creator.lovable.app/blog" }],
-  }),
+  head: () =>
+    buildSeo({
+      path: "/blog",
+      title: "Blog SOS01 — Tutoriais, dicas e novidades",
+      description: "Tutoriais de downloaders, dicas para criadores de conteúdo e novidades das ferramentas gratuitas do SOS01.",
+      keywords: ["blog","tutoriais","dicas para criadores"],
+    }),
 });

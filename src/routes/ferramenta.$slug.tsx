@@ -4,6 +4,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getPremiumTool, PREMIUM_TOOLS } from "@/lib/premium-tools";
 import { ArrowLeft, Loader2, Sparkles } from "lucide-react";
+import RelatedTools from "@/components/RelatedTools";
+import { buildToolSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/ferramenta/$slug")({
   component: ToolPage,
@@ -20,12 +22,19 @@ export const Route = createFileRoute("/ferramenta/$slug")({
   head: ({ params }) => {
     const tool = PREMIUM_TOOLS.find((t) => t.slug === params.slug);
     if (!tool) return {};
-    return {
-      meta: [
-        { title: `${tool.name} — SOS/01` },
-        { name: "description", content: tool.description },
+    const title = `${tool.name} Online Grátis | SOS01`;
+    return buildToolSeo({
+      path: `/ferramenta/${tool.slug}`,
+      title,
+      description: tool.description,
+      keywords: [tool.name.toLowerCase(), `${tool.name.toLowerCase()} online`, "ferramenta grátis"],
+      toolName: tool.name,
+      breadcrumb: [
+        { name: "Início", path: "/" },
+        { name: "Ferramentas", path: "/ferramentas" },
+        { name: tool.name, path: `/ferramenta/${tool.slug}` },
       ],
-    };
+    });
   },
 });
 
@@ -80,6 +89,8 @@ function ToolPage() {
             <Component />
           </Suspense>
         </div>
+
+        <RelatedTools />
       </main>
       <Footer />
     </div>

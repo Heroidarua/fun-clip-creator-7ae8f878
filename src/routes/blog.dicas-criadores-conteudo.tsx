@@ -1,24 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import DicasCriadoresConteudo from "@/pages/blog/DicasCriadoresConteudo";
+import { buildArticleSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/blog/dicas-criadores-conteudo")({
   component: DicasCriadoresConteudo,
-  head: () => {
-    const url = "https://fun-clip-creator.lovable.app/blog/dicas-criadores-conteudo";
-    const title = "Dicas práticas para criadores de conteúdo — SOS/01";
-    const description = "Ferramentas, atalhos e boas práticas para acelerar a produção de quem trabalha com vídeo e redes sociais.";
-    return {
-      meta: [
-        { title }, { name: "description", content: description },
-        { property: "og:title", content: title }, { property: "og:description", content: description },
-        { property: "og:url", content: url }, { property: "og:type", content: "article" },
+  head: () =>
+    buildArticleSeo({
+      path: "/blog/dicas-criadores-conteudo",
+      title: "Dicas Essenciais para Criadores de Conteúdo em 2026",
+      description: "Estratégias, ferramentas e boas práticas para criadores de conteúdo crescerem em TikTok, Instagram, YouTube e Kwai.",
+      keywords: ["dicas criadores","crescer no tiktok","marketing de conteúdo"],
+      breadcrumb: [
+        { name: "Início", path: "/" },
+        { name: "Blog", path: "/blog" },
+        { name: "Dicas Essenciais para Criadores de Conteúdo em 2026", path: "/blog/dicas-criadores-conteudo" },
       ],
-      links: [{ rel: "canonical", href: url }],
-      scripts: [{ type: "application/ld+json", children: JSON.stringify({
-        "@context": "https://schema.org", "@type": "Article", headline: title,
-        description, author: { "@type": "Organization", name: "SOS/01" },
-        publisher: { "@type": "Organization", name: "SOS/01" }, mainEntityOfPage: url,
-      }) }],
-    };
-  },
+    }),
 });

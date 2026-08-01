@@ -1,24 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import BibliotecaQuadrinhos from "@/pages/blog/BibliotecaQuadrinhos";
+import { buildArticleSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/blog/biblioteca-quadrinhos")({
   component: BibliotecaQuadrinhos,
-  head: () => {
-    const url = "https://fun-clip-creator.lovable.app/blog/biblioteca-quadrinhos";
-    const title = "Biblioteca de quadrinhos grátis — SOS/01";
-    const description = "Mais de 100 mil HQs e mangás (Marvel, DC, Naruto, One Piece e mais) para ler online sem cadastro pelo SOS/01.";
-    return {
-      meta: [
-        { title }, { name: "description", content: description },
-        { property: "og:title", content: title }, { property: "og:description", content: description },
-        { property: "og:url", content: url }, { property: "og:type", content: "article" },
+  head: () =>
+    buildArticleSeo({
+      path: "/blog/biblioteca-quadrinhos",
+      title: "Biblioteca de Quadrinhos Online Grátis — Onde ler HQs legalmente",
+      description: "Descubra onde ler quadrinhos, mangás e HQs online de graça e de forma legal, com plataformas oficiais organizadas pelo SOS01.",
+      keywords: ["quadrinhos online","ler mangá grátis","hq online"],
+      breadcrumb: [
+        { name: "Início", path: "/" },
+        { name: "Blog", path: "/blog" },
+        { name: "Biblioteca de Quadrinhos Online Grátis", path: "/blog/biblioteca-quadrinhos" },
       ],
-      links: [{ rel: "canonical", href: url }],
-      scripts: [{ type: "application/ld+json", children: JSON.stringify({
-        "@context": "https://schema.org", "@type": "Article", headline: title,
-        description, author: { "@type": "Organization", name: "SOS/01" },
-        publisher: { "@type": "Organization", name: "SOS/01" }, mainEntityOfPage: url,
-      }) }],
-    };
-  },
+    }),
 });

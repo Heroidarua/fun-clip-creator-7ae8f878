@@ -1,16 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import ComoUsar from "@/pages/ComoUsar";
+import { buildSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/como-usar")({
   component: ComoUsar,
-  head: () => ({
-    meta: [
-      { title: "Como usar o SOS/01 — Guia rápido das ferramentas" },
-      { name: "description", content: "Passo a passo para usar os downloaders de vídeo, conversores, gerador de QR Code e demais utilitários do SOS/01." },
-      { property: "og:title", content: "Como usar o SOS/01" },
-      { property: "og:description", content: "Guia rápido das ferramentas gratuitas do SOS/01." },
-      { property: "og:url", content: "https://fun-clip-creator.lovable.app/como-usar" },
-    ],
-    links: [{ rel: "canonical", href: "https://fun-clip-creator.lovable.app/como-usar" }],
-  }),
+  head: () =>
+    buildSeo({
+      path: "/como-usar",
+      title: "Como usar o SOS01 — Guia rápido das ferramentas gratuitas",
+      description: "Passo a passo para baixar vídeos, converter arquivos, gerar QR Code e usar todos os utilitários gratuitos do SOS01.",
+      keywords: ["como baixar vídeos","tutorial downloader","guia sos01"],
+    }),
 });

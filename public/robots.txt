@@ -1,8 +1,20 @@
 User-agent: *
 Allow: /
 Disallow: /admin
-Disallow: /api/
 Disallow: /perfil
 Disallow: /auth
+Disallow: /api/
 
-Sitemap: https://fun-clip-creator.lovable.app/sitemap.xml
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+Sitemap: https://sos01.com.br/sitemap.xml

@@ -1,24 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import ComoBaixarVideosKwai from "@/pages/blog/ComoBaixarVideosKwai";
+import { buildArticleSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/blog/como-baixar-videos-kwai")({
   component: ComoBaixarVideosKwai,
-  head: () => {
-    const url = "https://fun-clip-creator.lovable.app/blog/como-baixar-videos-kwai";
-    const title = "Como baixar vídeos do Kwai grátis — SOS/01";
-    const description = "Tutorial completo para baixar vídeos do Kwai em alta qualidade, sem marca d'água e sem instalar aplicativos.";
-    return {
-      meta: [
-        { title }, { name: "description", content: description },
-        { property: "og:title", content: title }, { property: "og:description", content: description },
-        { property: "og:url", content: url }, { property: "og:type", content: "article" },
+  head: () =>
+    buildArticleSeo({
+      path: "/blog/como-baixar-videos-kwai",
+      title: "Como Baixar Vídeos do Kwai Sem Marca d’Água (2026)",
+      description: "Aprenda a baixar vídeos do Kwai em alta qualidade e sem marca d’água, direto do navegador e sem instalar aplicativos.",
+      keywords: ["baixar vídeo kwai","kwai sem marca d’água"],
+      breadcrumb: [
+        { name: "Início", path: "/" },
+        { name: "Blog", path: "/blog" },
+        { name: "Como Baixar Vídeos do Kwai Sem Marca d’Água (2026)", path: "/blog/como-baixar-videos-kwai" },
       ],
-      links: [{ rel: "canonical", href: url }],
-      scripts: [{ type: "application/ld+json", children: JSON.stringify({
-        "@context": "https://schema.org", "@type": "Article", headline: title,
-        description, author: { "@type": "Organization", name: "SOS/01" },
-        publisher: { "@type": "Organization", name: "SOS/01" }, mainEntityOfPage: url,
-      }) }],
-    };
-  },
+    }),
 });

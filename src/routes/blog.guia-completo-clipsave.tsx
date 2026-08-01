@@ -1,24 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import GuiaCompletoClipSave from "@/pages/blog/GuiaCompletoClipSave";
+import { buildArticleSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/blog/guia-completo-clipsave")({
   component: GuiaCompletoClipSave,
-  head: () => {
-    const url = "https://fun-clip-creator.lovable.app/blog/guia";
-    const title = "Guia completo do SOS/01 — Tudo o que dá pra fazer";
-    const description = "Um tour completo por todas as ferramentas, jogos, IA e utilitários gratuitos disponíveis no SOS/01.";
-    return {
-      meta: [
-        { title }, { name: "description", content: description },
-        { property: "og:title", content: title }, { property: "og:description", content: description },
-        { property: "og:url", content: url }, { property: "og:type", content: "article" },
+  head: () =>
+    buildArticleSeo({
+      path: "/blog/guia-completo-clipsave",
+      title: "Guia Completo do SOS01 — Todos os recursos explicados",
+      description: "Conheça todos os recursos do SOS01: downloaders, utilitários com IA, jogos retrô, player e ferramentas de produtividade.",
+      keywords: ["guia sos01","recursos","tutorial completo"],
+      breadcrumb: [
+        { name: "Início", path: "/" },
+        { name: "Blog", path: "/blog" },
+        { name: "Guia Completo do SOS01", path: "/blog/guia-completo-clipsave" },
       ],
-      links: [{ rel: "canonical", href: url }],
-      scripts: [{ type: "application/ld+json", children: JSON.stringify({
-        "@context": "https://schema.org", "@type": "Article", headline: title,
-        description, author: { "@type": "Organization", name: "SOS/01" },
-        publisher: { "@type": "Organization", name: "SOS/01" }, mainEntityOfPage: url,
-      }) }],
-    };
-  },
+    }),
 });
