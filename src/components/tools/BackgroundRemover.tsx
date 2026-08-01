@@ -333,9 +333,9 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
       {/* Info indicator */}
       <div className="flex items-center justify-between p-3 bg-muted/30 rounded-sm border border-border/50">
         <div className="flex items-center gap-2">
-          <Cloud className="w-4 h-4 text-[#B66DFF]" />
+          <Cpu className="w-4 h-4 text-[#FFD93D]" />
           <span className="text-xs text-muted-foreground">
-            Provedor principal: <strong className="text-foreground">remove.bg</strong> · fallback local no navegador
+            <strong className="text-foreground">100% gratuito</strong> · processado no seu navegador, sem limites
           </span>
         </div>
       </div>
@@ -450,23 +450,16 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
           {processing && (
             <div className="space-y-2">
               <div className="flex items-center justify-center gap-2">
-                {activeProvider === "remove.bg" ? (
-                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-[#B66DFF]/10 text-[#B66DFF] text-xs font-pixel">
-                    <Cloud className="w-3 h-3" />
-                    remove.bg
-                  </span>
-                ) : activeProvider === "local" ? (
+                {activeProvider === "local" ? (
                   <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-[#FFD93D]/10 text-[#FFD93D] text-xs font-pixel">
                     <Cpu className="w-3 h-3" />
-                    fallback local
+                    gratuito · local
                   </span>
                 ) : null}
               </div>
               <Progress value={progress} className="h-2" />
               <p className="text-xs text-center text-muted-foreground">
-                {activeProvider === "remove.bg"
-                  ? `Removendo fundo via remove.bg... ${progress}%`
-                  : `Removendo fundo localmente... ${progress}%`}
+                {`Removendo fundo no seu navegador... ${progress}%`}
               </p>
             </div>
           )}
@@ -480,16 +473,10 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
                   {compositeImage ? "Novo fundo aplicado!" : "Fundo removido com sucesso!"}
                 </span>
               </div>
-              {activeProvider === "remove.bg" && (
-                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-[#B66DFF]/10 text-[#B66DFF] text-xs font-pixel">
-                  <Cloud className="w-3 h-3" />
-                  remove.bg
-                </span>
-              )}
               {activeProvider === "local" && (
                 <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-[#FFD93D]/10 text-[#FFD93D] text-xs font-pixel">
                   <Cpu className="w-3 h-3" />
-                  fallback local
+                  gratuito · local
                 </span>
               )}
             </div>
