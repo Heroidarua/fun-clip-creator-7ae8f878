@@ -4,8 +4,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Sparkles, Copy, Loader2 } from "lucide-react";
 import { generateFreeText } from "@/lib/free-ai";
-import { puterGenerateText } from "@/lib/puter-ai";
-
 interface AITextGeneratorProps {
   onSuccess?: () => void;
 }
@@ -27,15 +25,7 @@ const AITextGenerator = ({ onSuccess }: AITextGeneratorProps) => {
     abortRef.current = new AbortController();
 
     try {
-      let text: string;
-      try {
-        // Streaming em tempo real com a IA gratuita do Puter
-        text = await puterGenerateText(prompt, {
-          onChunk: (partial) => setResult(partial),
-        });
-      } catch {
-        text = await generateFreeText(prompt, { signal: abortRef.current.signal });
-      }
+      const text = await generateFreeText(prompt, { signal: abortRef.current.signal });
       setResult(text);
       onSuccess?.();
       toast.success("Texto gerado com sucesso!");
