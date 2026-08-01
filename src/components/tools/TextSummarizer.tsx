@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { FileText, Copy, Loader2 } from "lucide-react";
+import { puterGenerateText } from "@/lib/puter-ai";
 
 interface TextSummarizerProps {
   onSuccess?: () => void;
@@ -75,11 +76,18 @@ const TextSummarizer = ({ onSuccess }: TextSummarizerProps) => {
     setResult("");
 
     try {
-      // Resumo extractive 100% local — sem custo de IA
-      await new Promise((r) => setTimeout(r, 250));
       const wordCount = text.trim().split(/\s+/).length;
       const sentences = wordCount > 300 ? 5 : wordCount > 150 ? 4 : 3;
-      const summary = summarize(text.trim(), sentences);
+      let summary: string;
+      try {
+        // IA gratuita (Puter) — resumo abstrativo
+        summary = await puterGenerateText(text.trim(), {
+          system: `Você resume textos em português do Brasil. Escreva um resumo claro e objetivo com no máximo ${sentences} frases. Retorne apenas o resumo.`,
+        });
+      } catch {
+        // Fallback 100% local, sem rede
+        summary = summarize(text.trim(), sentences);
+      }
       setResult(summary);
       onSuccess?.();
       toast.success("Texto resumido!");
