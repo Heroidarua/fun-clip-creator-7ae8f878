@@ -337,6 +337,7 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
     setPreview(null);
     setResultUrl(null);
     setProgress(0);
+    setActiveProvider(null);
     setShowCompare(false);
     setSelectedBackground(null);
     setCompositeImage(null);
