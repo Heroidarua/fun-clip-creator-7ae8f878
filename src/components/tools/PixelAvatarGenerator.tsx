@@ -9,7 +9,7 @@ import { toast } from "@/hooks/use-toast";
 import { useAvatarGallery } from "@/hooks/useAvatarGallery";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { supabase } from "@/integrations/supabase/client";
+import { generateFreeImage } from "@/lib/free-ai";
 
 const loadingMessages = [
   "🎨 Preparando pixels...",
@@ -453,39 +453,39 @@ const PixelAvatarGenerator = ({ onSuccess }: PixelAvatarGeneratorProps) => {
 
     try {
       const selectedSize = sizes.find(s => s.value === size) || sizes[2];
-      const { data, error } = await supabase.functions.invoke("generate-avatar", {
-        body: {
-          style,
-          color,
-          accessories,
-          expression,
-          background,
-          width: selectedSize.width,
-          height: selectedSize.height,
-          artStyle,
-          pose,
-          outfit,
-          hairStyle,
-          customPrompt: customPrompt.trim(),
-        },
+      const trimmedPrompt = customPrompt.trim();
+
+      const parts: string[] = [];
+      if (trimmedPrompt) {
+        parts.push(`${artStyle || "pixel"} art avatar: ${trimmedPrompt}`);
+      } else {
+        parts.push(`${artStyle || "pixel"} art avatar of a ${style || "human"} character`);
+        if (color) parts.push(`main color ${color}`);
+        if (expression) parts.push(`${expression} expression`);
+        if (pose) parts.push(`${pose} pose`);
+        if (outfit) parts.push(`wearing ${outfit} outfit`);
+        if (hairStyle) parts.push(`${hairStyle} hair`);
+        if (Array.isArray(accessories) && accessories.length > 0) {
+          parts.push(`accessories: ${accessories.join(", ")}`);
+        }
+      }
+      if (background === "transparent") {
+        parts.push("on a clean solid white background for easy background removal");
+      }
+      parts.push("centered character portrait, high quality");
+
+      const imageUrl = await generateFreeImage(parts.join(", "), {
+        width: selectedSize.width,
+        height: selectedSize.height,
       });
 
-      if (error) {
-        throw new Error(error.message || "Erro ao gerar avatar");
-      }
-      if (data?.error) {
-        throw new Error(data.error);
-      }
-
-      if (data.imageUrl) {
-        setGeneratedAvatar(data.imageUrl);
-        saveAvatar(data.imageUrl, style, size);
-        onSuccess?.();
-        toast({
-          title: "Avatar gerado e salvo!",
-          description: "Seu avatar foi criado e adicionado à galeria",
-        });
-      }
+      setGeneratedAvatar(imageUrl);
+      saveAvatar(imageUrl, style, size);
+      onSuccess?.();
+      toast({
+        title: "Avatar gerado e salvo!",
+        description: "Criado com IA gratuita — sem consumir créditos",
+      });
     } catch (error) {
       console.error("Error generating avatar:", error);
       toast({
