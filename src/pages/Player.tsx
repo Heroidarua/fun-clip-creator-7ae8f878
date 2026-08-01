@@ -27,29 +27,7 @@ export default function Player() {
 
 
   useEffect(() => {
-    let mounted = true;
-    getPlayerCredentials()
-      .then((data) => {
-        if (mounted && data?.user) setCreds(data);
-      })
-      .catch(() => undefined);
-    return () => {
-      mounted = false;
-    };
-  }, []);
 
-  const copyValue = useCallback(async (value: string, field: "user" | "pass") => {
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopied(field);
-      window.setTimeout(() => setCopied(null), 1600);
-      toast.success(field === "user" ? "Login copiado!" : "Senha copiada!");
-    } catch {
-      toast.error("Não foi possível copiar");
-    }
-  }, []);
-
-  useEffect(() => {
     setFavorite(localStorage.getItem(FAV_KEY) === "1");
   }, []);
 
