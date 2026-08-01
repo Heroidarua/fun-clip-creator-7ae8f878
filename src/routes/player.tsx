@@ -30,7 +30,7 @@ export const Route = createFileRoute("/player")({
           name: "SOS01 Player",
           description: DESC,
           uploadDate: "2026-01-01",
-          embedUrl: "https://wplayer.click",
+          embedUrl: "https://wplayer.click/dashboard?view=movies",
         }),
       },
     ],
