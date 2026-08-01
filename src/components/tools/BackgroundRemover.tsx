@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Upload, Download, Loader2, X, CheckCircle, Image as ImageIcon, Eraser, Sparkles, SlidersHorizontal } from "lucide-react";
+import { Upload, Download, Loader2, X, CheckCircle, Image as ImageIcon, Eraser, Sparkles, SlidersHorizontal, Cloud, Cpu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
