@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Sparkles, Copy, Loader2 } from "lucide-react";
+import { generateFreeText } from "@/lib/free-ai";
 
 interface AITextGeneratorProps {
   onSuccess?: () => void;
@@ -25,52 +26,8 @@ const AITextGenerator = ({ onSuccess }: AITextGeneratorProps) => {
     abortRef.current = new AbortController();
 
     try {
-      const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-text`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-        },
-        body: JSON.stringify({ action: "generate", prompt: prompt.trim() }),
-        signal: abortRef.current.signal,
-      });
-
-      if (!resp.ok) {
-        const err = await resp.json();
-        throw new Error(err.error || "Erro ao gerar texto");
-      }
-
-      const reader = resp.body?.getReader();
-      if (!reader) throw new Error("Stream não disponível");
-
-      const decoder = new TextDecoder();
-      let buffer = "";
-      let fullText = "";
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-
-        let idx: number;
-        while ((idx = buffer.indexOf("\n")) !== -1) {
-          let line = buffer.slice(0, idx);
-          buffer = buffer.slice(idx + 1);
-          if (line.endsWith("\r")) line = line.slice(0, -1);
-          if (!line.startsWith("data: ")) continue;
-          const json = line.slice(6).trim();
-          if (json === "[DONE]") break;
-          try {
-            const parsed = JSON.parse(json);
-            const content = parsed.choices?.[0]?.delta?.content;
-            if (content) {
-              fullText += content;
-              setResult(fullText);
-            }
-          } catch {}
-        }
-      }
-
+      const text = await generateFreeText(prompt, { signal: abortRef.current.signal });
+      setResult(text);
       onSuccess?.();
       toast.success("Texto gerado com sucesso!");
     } catch (e: any) {
