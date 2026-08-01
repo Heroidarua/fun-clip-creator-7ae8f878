@@ -30,7 +30,7 @@ export const Route = createFileRoute("/api/player-catalog")({
 
         const query = [
           "mediatype:movies",
-          "collection:(feature_films OR classic_cartoons OR moviesandfilms)",
+          "(collection:feature_films OR collection:classic_cartoons)",
           term ? `title:(${term})` : "",
         ]
           .filter(Boolean)
