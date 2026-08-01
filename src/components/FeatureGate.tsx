@@ -26,7 +26,7 @@ export function FeatureGate({ featureKey, label, children }: FeatureGateProps) {
       <div className="flex items-center justify-center gap-2 mb-1">
         <AlertTriangle className="w-4 h-4 text-yellow-400" />
         <span className="font-pixel text-[11px] text-yellow-400 uppercase">
-          ativo
+          em manutenção
         </span>
       </div>
       <p className="text-sm text-yellow-200/90 mt-1">
