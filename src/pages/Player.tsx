@@ -164,7 +164,9 @@ export default function Player() {
               ref={iframeRef}
               src={PLAYER_URL}
               title={MEDIA_TITLE}
-              loading="lazy"
+              loading="eager"
+              // @ts-expect-error atributo válido no DOM
+              fetchpriority="high"
               allowFullScreen
               allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
               onLoad={() => setLoading(false)}
