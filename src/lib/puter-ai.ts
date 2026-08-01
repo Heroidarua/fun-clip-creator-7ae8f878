@@ -1,18 +1,38 @@
 /**
- * Puter.js — IA gratuita (sem chave de API e sem consumir créditos do projeto).
- * O SDK é carregado sob demanda no navegador via script oficial, pois o pacote
- * npm não é compatível com o bundle SSR do projeto.
+ * Puter.js — IA gratuita e ilimitada (sem chave de API e sem consumir créditos).
+ * Baseado em https://developer.puter.com/tutorials/free-unlimited-openai-api/
+ *
+ * O SDK é carregado sob demanda no navegador pelo script oficial
+ * (https://js.puter.com/v2/), pois o pacote npm não é compatível
+ * com o bundle SSR deste projeto.
  */
 
 const PUTER_SDK_URL = "https://js.puter.com/v2/";
 
-type PuterChatOptions = { model?: string; stream?: boolean };
+/** Modelos OpenAI disponíveis gratuitamente via Puter. */
+export const PUTER_MODELS = {
+  nano: "gpt-5.4-nano",
+  luna: "gpt-5.6-luna",
+  terra: "gpt-5.6-terra",
+  sol: "gpt-5.6-sol",
+  image: "gpt-image-2",
+} as const;
+
+type ChatOptions = {
+  model?: string;
+  stream?: boolean;
+  temperature?: number;
+  max_tokens?: number;
+};
+
 type PuterGlobal = {
   ai: {
     chat: (
       prompt: string,
-      options?: PuterChatOptions
+      imageUrlOrOptions?: string | ChatOptions,
+      options?: ChatOptions
     ) => Promise<unknown>;
+    txt2img: (prompt: string, options?: { model?: string }) => Promise<HTMLImageElement>;
   };
 };
 
@@ -79,9 +99,13 @@ const extractText = (response: unknown): string => {
 export interface PuterTextOptions {
   system?: string;
   model?: string;
+  temperature?: number;
+  maxTokens?: number;
+  /** Recebe o texto parcial enquanto a IA responde (ativa streaming). */
+  onChunk?: (partial: string) => void;
 }
 
-/** Gera texto com a IA gratuita do Puter. Lança erro se indisponível. */
+/** Gera texto com a IA gratuita do Puter. Lança erro se estiver indisponível. */
 export async function puterGenerateText(
   prompt: string,
   options: PuterTextOptions = {}
@@ -90,12 +114,58 @@ export async function puterGenerateText(
   const system =
     options.system ??
     "Você é um assistente criativo. Responda sempre em português do Brasil, de forma clara e objetiva.";
+  const input = `${system}\n\n${prompt.trim().slice(0, 6000)}`;
 
-  const response = await puter.ai.chat(`${system}\n\n${prompt.trim().slice(0, 6000)}`, {
-    model: options.model ?? "gpt-5-nano",
-  });
+  const chatOptions: ChatOptions = {
+    model: options.model ?? PUTER_MODELS.nano,
+    ...(options.temperature !== undefined ? { temperature: options.temperature } : {}),
+    ...(options.maxTokens !== undefined ? { max_tokens: options.maxTokens } : {}),
+  };
 
-  const text = extractText(response);
+  let text = "";
+
+  if (options.onChunk) {
+    // Streaming: entrega a resposta em tempo real
+    const stream = (await puter.ai.chat(input, {
+      ...chatOptions,
+      stream: true,
+    })) as AsyncIterable<{ text?: string }>;
+
+    for await (const part of stream) {
+      if (part?.text) {
+        text += part.text;
+        options.onChunk(text);
+      }
+    }
+    text = text.trim();
+  } else {
+    text = extractText(await puter.ai.chat(input, chatOptions));
+  }
+
   if (!text) throw new Error("A IA gratuita não retornou um texto válido. Tente novamente.");
   return text;
+}
+
+/** Analisa uma imagem (URL pública) e responde sobre ela. */
+export async function puterAnalyzeImage(
+  prompt: string,
+  imageUrl: string,
+  model: string = PUTER_MODELS.luna
+): Promise<string> {
+  const puter = await loadPuter();
+  const text = extractText(await puter.ai.chat(prompt, imageUrl, { model }));
+  if (!text) throw new Error("A IA gratuita não conseguiu analisar a imagem. Tente novamente.");
+  return text;
+}
+
+/** Gera uma imagem com GPT Image e devolve a URL (data URL) pronta para exibir. */
+export async function puterGenerateImage(
+  prompt: string,
+  model: string = PUTER_MODELS.image
+): Promise<string> {
+  const puter = await loadPuter();
+  const image = await puter.ai.txt2img(prompt.trim().slice(0, 900), { model });
+  const src = image?.src;
+  if (!src) throw new Error("A IA gratuita não retornou uma imagem válida. Tente novamente.");
+  return src;
 }

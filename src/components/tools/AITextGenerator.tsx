@@ -29,7 +29,10 @@ const AITextGenerator = ({ onSuccess }: AITextGeneratorProps) => {
     try {
       let text: string;
       try {
-        text = await puterGenerateText(prompt);
+        // Streaming em tempo real com a IA gratuita do Puter
+        text = await puterGenerateText(prompt, {
+          onChunk: (partial) => setResult(partial),
+        });
       } catch {
         text = await generateFreeText(prompt, { signal: abortRef.current.signal });
       }
