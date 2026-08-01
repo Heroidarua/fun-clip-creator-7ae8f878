@@ -60,6 +60,26 @@ export default function Player() {
     else void el.requestFullscreen?.().catch(() => toast.error("Tela cheia indisponível"));
   }, []);
 
+  const openPopup = useCallback(() => {
+    const w = Math.min(1280, window.screen.availWidth - 80);
+    const h = Math.min(760, window.screen.availHeight - 80);
+    const left = Math.max(0, (window.screen.availWidth - w) / 2);
+    const top = Math.max(0, (window.screen.availHeight - h) / 2);
+    const win = window.open(
+      PLAYER_URL,
+      "sos01player",
+      `popup=yes,width=${w},height=${h},left=${left},top=${top},noopener`,
+    );
+    if (!win) toast.error("Permita pop-ups para abrir o player");
+  }, []);
+
+  const legacyFullscreen = useCallback(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    if (document.fullscreenElement) void document.exitFullscreen();
+    else void el.requestFullscreen?.().catch(() => toast.error("Tela cheia indisponível"));
+  }, []);
+
   const copyLink = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
