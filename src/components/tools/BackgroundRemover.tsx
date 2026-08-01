@@ -150,35 +150,130 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
     foregroundImg.src = resultUrl;
   }, [resultUrl, selectedBackground, bgAdjustments]);
 
-  // Reduz a imagem antes do processamento para acelerar bastante a remoção
-  const downscaleImage = (source: File, maxSize = 1024): Promise<Blob> =>
-    new Promise((resolve) => {
+  const MODEL_INPUT_SIZE = 1024;
+  const MAX_OUTPUT_SIZE = 2048;
+
+  const loadImage = (source: Blob | string): Promise<HTMLImageElement> =>
+    new Promise((resolve, reject) => {
       const img = new Image();
-      const sourceUrl = URL.createObjectURL(source);
+      const url = typeof source === "string" ? source : URL.createObjectURL(source);
       img.onload = () => {
-        URL.revokeObjectURL(sourceUrl);
-        const ratio = Math.min(1, maxSize / Math.max(img.width, img.height));
-        if (ratio === 1) {
-          resolve(source);
-          return;
-        }
-        const canvas = document.createElement("canvas");
-        canvas.width = Math.round(img.width * ratio);
-        canvas.height = Math.round(img.height * ratio);
-        const ctx = canvas.getContext("2d");
-        if (!ctx) {
-          resolve(source);
-          return;
-        }
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        canvas.toBlob((blob) => resolve(blob ?? source), "image/png");
+        if (typeof source !== "string") URL.revokeObjectURL(url);
+        resolve(img);
       };
       img.onerror = () => {
-        URL.revokeObjectURL(sourceUrl);
-        resolve(source);
+        if (typeof source !== "string") URL.revokeObjectURL(url);
+        reject(new Error("Falha ao carregar imagem"));
       };
-      img.src = sourceUrl;
+      img.crossOrigin = "anonymous";
+      img.src = url;
     });
+
+  // Redimensiona em etapas (halving) para preservar nitidez e evitar serrilhado
+  const resizeToCanvas = (img: CanvasImageSource, width: number, height: number) => {
+    let sourceCanvas: CanvasImageSource = img;
+    let currentW = width;
+    let currentH = height;
+    const startW = (img as HTMLImageElement).naturalWidth ?? width;
+    const startH = (img as HTMLImageElement).naturalHeight ?? height;
+
+    let w = startW;
+    let h = startH;
+    while (w / 2 > width && h / 2 > height) {
+      w = Math.round(w / 2);
+      h = Math.round(h / 2);
+      const step = document.createElement("canvas");
+      step.width = w;
+      step.height = h;
+      const stepCtx = step.getContext("2d");
+      if (!stepCtx) break;
+      stepCtx.imageSmoothingEnabled = true;
+      stepCtx.imageSmoothingQuality = "high";
+      stepCtx.drawImage(sourceCanvas, 0, 0, w, h);
+      sourceCanvas = step;
+    }
+
+    const canvas = document.createElement("canvas");
+    canvas.width = currentW;
+    canvas.height = currentH;
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(sourceCanvas, 0, 0, currentW, currentH);
+    }
+    return canvas;
+  };
+
+  const canvasToBlob = (canvas: HTMLCanvasElement): Promise<Blob> =>
+    new Promise((resolve, reject) => {
+      canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error("toBlob falhou"))), "image/png");
+    });
+
+  // Prepara a entrada do modelo: recorta bordas vazias e normaliza o tamanho
+  const prepareModelInput = async (source: File): Promise<Blob> => {
+    const img = await loadImage(source);
+    const ratio = Math.min(1, MODEL_INPUT_SIZE / Math.max(img.naturalWidth, img.naturalHeight));
+    if (ratio === 1) return source;
+    const canvas = resizeToCanvas(
+      img,
+      Math.round(img.naturalWidth * ratio),
+      Math.round(img.naturalHeight * ratio),
+    );
+    return canvasToBlob(canvas);
+  };
+
+  // Aplica o alfa do recorte (baixa resolução) sobre a imagem original em alta,
+  // com leve realce de contraste no canal alfa para manter bordas nítidas.
+  const refineCutout = async (source: File, cutout: Blob): Promise<Blob> => {
+    const [original, mask] = await Promise.all([loadImage(source), loadImage(cutout)]);
+
+    const scale = Math.min(1, MAX_OUTPUT_SIZE / Math.max(original.naturalWidth, original.naturalHeight));
+    const width = Math.round(original.naturalWidth * scale);
+    const height = Math.round(original.naturalHeight * scale);
+
+    const maskCanvas = document.createElement("canvas");
+    maskCanvas.width = width;
+    maskCanvas.height = height;
+    const maskCtx = maskCanvas.getContext("2d", { willReadFrequently: true });
+    if (!maskCtx) return cutout;
+    maskCtx.imageSmoothingEnabled = true;
+    maskCtx.imageSmoothingQuality = "high";
+    maskCtx.drawImage(mask, 0, 0, width, height);
+
+    // Realce das bordas: curva de contraste no alfa (remove halo e suaviza serrilhado)
+    try {
+      const imageData = maskCtx.getImageData(0, 0, width, height);
+      const data = imageData.data;
+      const lut = new Uint8ClampedArray(256);
+      for (let i = 0; i < 256; i++) {
+        const a = i / 255;
+        const boosted = 1 / (1 + Math.exp(-12 * (a - 0.5)));
+        lut[i] = Math.round(Math.min(1, Math.max(0, boosted)) * 255);
+      }
+      for (let i = 3; i < data.length; i += 4) {
+        data[i] = lut[data[i]];
+      }
+      maskCtx.putImageData(imageData, 0, 0);
+    } catch (error) {
+      console.warn("Não foi possível refinar as bordas do recorte.", error);
+    }
+
+    const output = document.createElement("canvas");
+    output.width = width;
+    output.height = height;
+    const ctx = output.getContext("2d");
+    if (!ctx) return cutout;
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    const highRes = resizeToCanvas(original, width, height);
+    ctx.drawImage(highRes, 0, 0);
+    ctx.globalCompositeOperation = "destination-in";
+    ctx.drawImage(maskCanvas, 0, 0);
+    ctx.globalCompositeOperation = "source-over";
+
+    return canvasToBlob(output);
+  };
 
   const removeBackgroundLocally = async (input: Blob): Promise<Blob> => {
     const runModel = (model: "isnet_quint8" | "isnet_fp16") =>
@@ -255,8 +350,15 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
     try {
       // 100% gratuito: processamento local no navegador (sem API paga, sem créditos).
       setProgress(5);
-      const input = await downscaleImage(file, 1024);
-      const blob = await removeBackgroundLocally(input);
+      const input = await prepareModelInput(file);
+      const cutout = await removeBackgroundLocally(input);
+      setProgress(96);
+      let blob = cutout;
+      try {
+        blob = await refineCutout(file, cutout);
+      } catch (error) {
+        console.warn("Refino de bordas indisponível; usando recorte padrão.", error);
+      }
       clearInterval(progressInterval);
 
       const outputUrl = URL.createObjectURL(blob);
