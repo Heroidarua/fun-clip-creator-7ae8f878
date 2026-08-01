@@ -14,6 +14,7 @@ import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as PrecosRouteImport } from './routes/precos'
+import { Route as PlayerRouteImport } from './routes/player'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as NasaRouteImport } from './routes/nasa'
 import { Route as MaisSbtRouteImport } from './routes/mais-sbt'
@@ -76,6 +77,11 @@ const PrivacidadeRoute = PrivacidadeRouteImport.update({
 const PrecosRoute = PrecosRouteImport.update({
   id: '/precos',
   path: '/precos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlayerRoute = PlayerRouteImport.update({
+  id: '/player',
+  path: '/player',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PerfilRoute = PerfilRouteImport.update({
@@ -295,6 +301,7 @@ export interface FileRoutesByFullPath {
   '/mais-sbt': typeof MaisSbtRoute
   '/nasa': typeof NasaRoute
   '/perfil': typeof PerfilRoute
+  '/player': typeof PlayerRoute
   '/precos': typeof PrecosRoute
   '/privacidade': typeof PrivacidadeRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -339,6 +346,7 @@ export interface FileRoutesByTo {
   '/mais-sbt': typeof MaisSbtRoute
   '/nasa': typeof NasaRoute
   '/perfil': typeof PerfilRoute
+  '/player': typeof PlayerRoute
   '/precos': typeof PrecosRoute
   '/privacidade': typeof PrivacidadeRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -385,6 +393,7 @@ export interface FileRoutesById {
   '/mais-sbt': typeof MaisSbtRoute
   '/nasa': typeof NasaRoute
   '/perfil': typeof PerfilRoute
+  '/player': typeof PlayerRoute
   '/precos': typeof PrecosRoute
   '/privacidade': typeof PrivacidadeRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -432,6 +441,7 @@ export interface FileRouteTypes {
     | '/mais-sbt'
     | '/nasa'
     | '/perfil'
+    | '/player'
     | '/precos'
     | '/privacidade'
     | '/sitemap.xml'
@@ -476,6 +486,7 @@ export interface FileRouteTypes {
     | '/mais-sbt'
     | '/nasa'
     | '/perfil'
+    | '/player'
     | '/precos'
     | '/privacidade'
     | '/sitemap.xml'
@@ -521,6 +532,7 @@ export interface FileRouteTypes {
     | '/mais-sbt'
     | '/nasa'
     | '/perfil'
+    | '/player'
     | '/precos'
     | '/privacidade'
     | '/sitemap.xml'
@@ -567,6 +579,7 @@ export interface RootRouteChildren {
   MaisSbtRoute: typeof MaisSbtRoute
   NasaRoute: typeof NasaRoute
   PerfilRoute: typeof PerfilRoute
+  PlayerRoute: typeof PlayerRoute
   PrecosRoute: typeof PrecosRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -620,6 +633,13 @@ declare module '@tanstack/react-router' {
       path: '/precos'
       fullPath: '/precos'
       preLoaderRoute: typeof PrecosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/player': {
+      id: '/player'
+      path: '/player'
+      fullPath: '/player'
+      preLoaderRoute: typeof PlayerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/perfil': {
@@ -940,6 +960,7 @@ const rootRouteChildren: RootRouteChildren = {
   MaisSbtRoute: MaisSbtRoute,
   NasaRoute: NasaRoute,
   PerfilRoute: PerfilRoute,
+  PlayerRoute: PlayerRoute,
   PrecosRoute: PrecosRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
