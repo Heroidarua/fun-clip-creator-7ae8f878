@@ -263,6 +263,7 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
 
     setProcessing(true);
     setProgress(0);
+    setActiveProvider("remove.bg");
 
     const progressInterval = setInterval(() => {
       setProgress(prev => Math.min(prev + 2, 85));
@@ -278,6 +279,7 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
       } catch (apiError) {
         console.warn("remove.bg indisponível; usando processamento local.", apiError);
         usedApi = false;
+        setActiveProvider("local");
         setProgress(5);
         const input = await downscaleImage(file, 1024);
         blob = await removeBackgroundLocally(input);
@@ -301,6 +303,7 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
       });
     } catch (error: unknown) {
       console.error("Background removal error:", error);
+      setActiveProvider(null);
       const message = error instanceof Error ? error.message : "";
       toast({
         title: "❌ Erro no processamento",
