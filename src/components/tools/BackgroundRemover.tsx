@@ -478,9 +478,24 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
           {/* Progress bar */}
           {processing && (
             <div className="space-y-2">
+              <div className="flex items-center justify-center gap-2">
+                {activeProvider === "remove.bg" ? (
+                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-[hsl(280,100%,60%)]/10 text-[hsl(280,100%,60%)] text-xs font-pixel">
+                    <Cloud className="w-3 h-3" />
+                    remove.bg
+                  </span>
+                ) : activeProvider === "local" ? (
+                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-amber-500/10 text-amber-500 text-xs font-pixel">
+                    <Cpu className="w-3 h-3" />
+                    fallback local
+                  </span>
+                ) : null}
+              </div>
               <Progress value={progress} className="h-2" />
               <p className="text-xs text-center text-muted-foreground">
-                Removendo fundo localmente... {progress}%
+                {activeProvider === "remove.bg"
+                  ? `Removendo fundo via remove.bg... ${progress}%`
+                  : `Removendo fundo localmente... ${progress}%`}
               </p>
             </div>
           )}
