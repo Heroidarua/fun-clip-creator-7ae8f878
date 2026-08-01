@@ -284,12 +284,15 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
     return canvasToBlob(output);
   };
 
+  const hasWebGPU = () =>
+    typeof navigator !== "undefined" && "gpu" in navigator;
+
   const removeBackgroundLocally = async (input: Blob): Promise<Blob> => {
-    const runModel = (model: "isnet_quint8" | "isnet_fp16") =>
+    const runModel = (model: "isnet_quint8" | "isnet_fp16", device: "gpu" | "cpu") =>
       imglyRemoveBackground(input, {
         model,
-        device: "cpu",
-        output: { format: "image/png", quality: 0.9 },
+        device,
+        output: { format: "image/png", quality: 1 },
         progress: (_key, current, total) => {
           if (total <= 0) return;
           const pct = Math.min(95, Math.round((current / total) * 90));
@@ -297,13 +300,23 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
         },
       });
 
-    try {
-      return await runModel("isnet_quint8");
-    } catch (error) {
-      console.warn("Modelo leve indisponível; tentando modelo compatível.", error);
-      setProgress(5);
-      return runModel("isnet_fp16");
+    // GPU (WebGPU) com modelo de maior qualidade quando disponível: mais rápido e
+    // com menos falhas no recorte. Cai para CPU/modelo leve em dispositivos antigos.
+    const attempts: Array<[("isnet_quint8" | "isnet_fp16"), ("gpu" | "cpu")]> = hasWebGPU()
+      ? [["isnet_fp16", "gpu"], ["isnet_quint8", "gpu"], ["isnet_quint8", "cpu"]]
+      : [["isnet_quint8", "cpu"], ["isnet_fp16", "cpu"]];
+
+    let lastError: unknown;
+    for (const [model, device] of attempts) {
+      try {
+        return await runModel(model, device);
+      } catch (error) {
+        lastError = error;
+        console.warn(`Falha no recorte (${model}/${device}); tentando alternativa.`, error);
+        setProgress(5);
+      }
     }
+    throw lastError instanceof Error ? lastError : new Error("Falha ao remover o fundo");
   };
 
   const handleFileSelect = (selectedFile: File) => {
