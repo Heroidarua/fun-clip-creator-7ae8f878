@@ -39,13 +39,7 @@ export default function Player() {
     return () => window.clearTimeout(reveal);
   }, [loading, reloadKey]);
 
-  useEffect(() => {
-    setFailed(false);
-    const timer = window.setTimeout(() => {
-      setFailed((prev) => prev);
-    }, 0);
-    return () => window.clearTimeout(timer);
-  }, [reloadKey]);
+
 
   const reload = useCallback(() => {
     setLoading(true);
