@@ -25,6 +25,7 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
   const [compositeImage, setCompositeImage] = useState<string | null>(null);
   const [showBackgroundSelector, setShowBackgroundSelector] = useState(false);
   const [bgAdjustments, setBgAdjustments] = useState<BackgroundAdjustments>(DEFAULT_ADJUSTMENTS);
+  const [activeProvider, setActiveProvider] = useState<"remove.bg" | "local" | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { toast } = useToast();
