@@ -4,6 +4,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Languages, Copy, Loader2 } from "lucide-react";
+import { generateFreeText } from "@/lib/free-ai";
+
 interface AutoTranslatorProps {
   onSuccess?: () => void;
 }
@@ -54,7 +56,16 @@ const AutoTranslator = ({ onSuccess }: AutoTranslatorProps) => {
     setResult("");
 
     try {
-      const translated = await translateWithGoogle(text.trim(), targetLanguage);
+      const target = LANGUAGE_NAMES[targetLanguage] ?? targetLanguage;
+      let translated: string;
+      try {
+        // IA gratuita e ilimitada (sem chave, sem login, sem créditos)
+        translated = await generateFreeText(text.trim(), {
+          system: `Você é um tradutor profissional. Traduza o texto do usuário para ${target}. Retorne APENAS a tradução, sem explicações, sem aspas e sem comentários.`,
+        });
+      } catch {
+        translated = await translateWithGoogle(text.trim(), targetLanguage);
+      }
       setResult(translated);
       onSuccess?.();
       toast.success("Texto traduzido!");
