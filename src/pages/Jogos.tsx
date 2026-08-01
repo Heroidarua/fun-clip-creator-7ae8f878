@@ -472,7 +472,7 @@ export default function Jogos() {
             </div>
 
             {filtered.length > 0 ? (
-              <div className="grid gap-3 sm:gap-4 grid-cols-2 sm:grid-cols-4 lg:grid-cols-6">
+              <div className="grid gap-4 sm:gap-5 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
                 {filtered.map((g, i) => (
                   <div key={g.id} className="animate-fade-in" style={{ animationDelay: `${Math.min(i * 20, 240)}ms` }}>
                     <GameCard
