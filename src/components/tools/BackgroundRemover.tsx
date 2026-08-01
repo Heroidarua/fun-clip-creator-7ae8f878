@@ -362,8 +362,10 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
       {/* Info indicator */}
       <div className="flex items-center justify-between p-3 bg-muted/30 rounded-sm border border-border/50">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-green-500" />
-          <span className="text-xs text-muted-foreground">100% gratuito · processado no seu navegador</span>
+          <Cloud className="w-4 h-4 text-[hsl(280,100%,60%)]" />
+          <span className="text-xs text-muted-foreground">
+            Provedor principal: <strong className="text-foreground">remove.bg</strong> · fallback local no navegador
+          </span>
         </div>
       </div>
 
