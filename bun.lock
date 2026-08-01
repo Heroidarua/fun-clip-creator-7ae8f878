@@ -38,9 +38,9 @@
         "@supabase/supabase-js": "^2.101.1",
         "@tailwindcss/vite": "^4.2.1",
         "@tanstack/react-query": "^5.83.0",
-        "@tanstack/react-router": "^1.162.9",
-        "@tanstack/react-start": "^1.162.9",
-        "@tanstack/router-plugin": "^1.162.9",
+        "@tanstack/react-router": "1.162.9",
+        "@tanstack/react-start": "1.162.9",
+        "@tanstack/router-plugin": "1.162.9",
         "@types/qrcode": "^1.5.6",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
@@ -87,6 +87,10 @@
         "workbox-window": "^7.4.1",
       },
     },
+  },
+  "overrides": {
+    "seroval": "^1.6.0",
+    "seroval-plugins": "^1.6.0",
   },
   "packages": {
     "@alloc/quick-lru": ["@alloc/quick-lru@5.2.0", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@alloc/quick-lru/-/quick-lru-5.2.0.tgz", {}, "sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw=="],
@@ -1589,9 +1593,9 @@
 
     "serialize-javascript": ["serialize-javascript@7.0.6", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/serialize-javascript/-/serialize-javascript-7.0.6.tgz", {}, "sha512-ATTK5Q4gFVg0YDp1my2vqygyvhcklD/UV5GIlYHooGTn/NogJqIzpetkD6E5kmuVULqz/S9inUL25XcAgDRJQg=="],
 
-    "seroval": ["seroval@1.5.2", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/seroval/-/seroval-1.5.2.tgz", {}, "sha512-xcRN39BdsnO9Tf+VzsE7b3JyTJASItIV1FVFewJKCFcW4s4haIKS3e6vj8PGB9qBwC7tnuOywQMdv5N4qkzi7Q=="],
+    "seroval": ["seroval@1.6.0", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/seroval/-/seroval-1.6.0.tgz", {}, "sha512-TBwwKfscTEgnBEWmYKKeCcmCGmrJi0LV6qNUY//WBA3MDesh/zfn+KOMq/ckpxM4gZ0ouAE706A1eenekM2sug=="],
 
-    "seroval-plugins": ["seroval-plugins@1.5.2", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/seroval-plugins/-/seroval-plugins-1.5.2.tgz", { "peerDependencies": { "seroval": "^1.0" } }, "sha512-qpY0Cl+fKYFn4GOf3cMiq6l72CpuVaawb6ILjubOQ+diJ54LfOWaSSPsaswN8DRPIPW4Yq+tE1k5aKd7ILyaFg=="],
+    "seroval-plugins": ["seroval-plugins@1.6.0", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/seroval-plugins/-/seroval-plugins-1.6.0.tgz", { "peerDependencies": { "seroval": "^1.0" } }, "sha512-CbR5DP5DPicpd9RwRUzka7hi4x1577eGFXJVBW409LXqqJNst99JSUTZ8CXcnskQX7laPOWpmzliq0gBZEGlrQ=="],
 
     "set-blocking": ["set-blocking@2.0.0", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/set-blocking/-/set-blocking-2.0.0.tgz", {}, "sha512-KiKBS8AnWGEyLzofFfmvKwpdPzqiy16LvQfK3yv/fVH7Bj13/wl3JSR1J+rfgRE9q7xUJK4qvgS8raSOeLUehw=="],
 
