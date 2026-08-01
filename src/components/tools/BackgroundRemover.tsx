@@ -153,7 +153,9 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
   const downscaleImage = (source: File, maxSize = 1024): Promise<Blob> =>
     new Promise((resolve) => {
       const img = new Image();
+      const sourceUrl = URL.createObjectURL(source);
       img.onload = () => {
+        URL.revokeObjectURL(sourceUrl);
         const ratio = Math.min(1, maxSize / Math.max(img.width, img.height));
         if (ratio === 1) {
           resolve(source);
@@ -170,9 +172,34 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         canvas.toBlob((blob) => resolve(blob ?? source), "image/png");
       };
-      img.onerror = () => resolve(source);
-      img.src = URL.createObjectURL(source);
+      img.onerror = () => {
+        URL.revokeObjectURL(sourceUrl);
+        resolve(source);
+      };
+      img.src = sourceUrl;
     });
+
+  const removeBackgroundLocally = async (input: Blob): Promise<Blob> => {
+    const runModel = (model: "isnet_quint8" | "isnet_fp16") =>
+      imglyRemoveBackground(input, {
+        model,
+        device: "cpu",
+        output: { format: "image/png", quality: 0.9 },
+        progress: (_key, current, total) => {
+          if (total <= 0) return;
+          const pct = Math.min(95, Math.round((current / total) * 90));
+          setProgress(pct);
+        },
+      });
+
+    try {
+      return await runModel("isnet_quint8");
+    } catch (error) {
+      console.warn("Modelo leve indisponível; tentando modelo compatível.", error);
+      setProgress(5);
+      return runModel("isnet_fp16");
+    }
+  };
 
   const handleFileSelect = (selectedFile: File) => {
     if (!selectedFile.type.includes("image/")) {
@@ -227,34 +254,30 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
       // Processamento 100% no navegador via @imgly/background-removal (modelo ONNX)
       // Imagem reduzida + modelo quantizado = muito mais rápido
       const input = await downscaleImage(file, 1024);
-      const blob = await imglyRemoveBackground(input, {
-        model: "isnet_quint8",
-        output: { format: "image/png", quality: 0.9 },
-        progress: (_key, current, total) => {
-          const pct = Math.min(95, Math.round((current / total) * 90));
-          setProgress(pct);
-        },
-      });
+      const blob = await removeBackgroundLocally(input);
       clearInterval(progressInterval);
 
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setResultUrl(reader.result as string);
-        setProgress(100);
-        setShowCompare(true);
-        setShowBackgroundSelector(true);
-        onSuccess?.();
-        toast({
-          title: "✅ Fundo removido!",
-          description: "Processado localmente no seu navegador",
-        });
-      };
-      reader.readAsDataURL(blob);
-    } catch (error: any) {
+      const outputUrl = URL.createObjectURL(blob);
+      setResultUrl((previousUrl) => {
+        if (previousUrl?.startsWith("blob:")) URL.revokeObjectURL(previousUrl);
+        return outputUrl;
+      });
+      setProgress(100);
+      setShowCompare(true);
+      setShowBackgroundSelector(true);
+      onSuccess?.();
+      toast({
+        title: "✅ Fundo removido!",
+        description: "Processado localmente no seu navegador",
+      });
+    } catch (error: unknown) {
       console.error("Background removal error:", error);
+      const message = error instanceof Error ? error.message : "";
       toast({
         title: "❌ Erro no processamento",
-        description: error.message || "Não foi possível remover o fundo. Tente novamente.",
+        description: message.includes("memory")
+          ? "Seu dispositivo ficou sem memória. Tente uma foto menor."
+          : "Não foi possível carregar o modelo. Verifique sua conexão e tente novamente.",
         variant: "destructive",
       });
     } finally {
@@ -277,6 +300,7 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
   };
 
   const handleReset = () => {
+    if (resultUrl?.startsWith("blob:")) URL.revokeObjectURL(resultUrl);
     setFile(null);
     setPreview(null);
     setResultUrl(null);

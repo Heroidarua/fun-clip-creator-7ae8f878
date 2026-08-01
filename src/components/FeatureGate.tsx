@@ -15,8 +15,7 @@ interface FeatureGateProps {
 export function FeatureGate({ featureKey, label, children }: FeatureGateProps) {
   const { isActive, loading } = useDownloaderStatus();
 
-  if (loading) return <>{children}</>;
-  if (isActive(featureKey)) return <>{children}</>;
+  if (loading || isActive(featureKey)) return <div>{children}</div>;
 
   return (
     <div className="rounded-sm border-2 border-yellow-500/40 bg-yellow-500/10 p-6 text-center">
