@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { MonitorPlay, ArrowLeft, ExternalLink } from "lucide-react";
 
-const PLAYER_URL = "https://wplayer.link/dashboard?view=movies";
+const PLAYER_URL = "https://wplayer.link/";
 
 export default function Player() {
   useEffect(() => {
@@ -28,7 +28,7 @@ export default function Player() {
           SOS01 Player
         </h1>
         <p className="text-[#E8EEF5]/80 text-sm mb-7 leading-relaxed">
-          Abrindo o player agora. Se nada acontecer em alguns segundos, use o botão abaixo.
+          Abrindo o acesso do player. Seu perfil será recuperado pelo próprio serviço antes de exibir as mídias.
         </p>
         <a
           href={PLAYER_URL}

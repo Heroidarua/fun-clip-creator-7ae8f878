@@ -5,7 +5,7 @@ import { buildSeo } from "@/lib/seo";
 const seo = buildSeo({
   path: "/player",
   title: "SOS01 Player — Assista mídia online grátis",
-  description: "Player premium do SOS01: reproduza filmes e mídia em tela cheia, com favoritos, compartilhamento e atalhos de teclado.",
+  description: "Acesse o SOS01 Player para assistir filmes e outras mídias online diretamente pelo serviço integrado.",
   keywords: ["player online", "assistir filmes", "streaming grátis"],
   type: "video.other",
 });
