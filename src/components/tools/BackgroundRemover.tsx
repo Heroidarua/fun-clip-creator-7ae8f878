@@ -179,6 +179,23 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
       img.src = sourceUrl;
     });
 
+  const removeBackgroundViaApi = async (input: Blob, name: string): Promise<Blob> => {
+    const body = new FormData();
+    body.append("image", new File([input], name || "image.png", { type: input.type || "image/png" }));
+    const response = await fetch("/api/remove-bg", { method: "POST", body });
+    if (!response.ok) {
+      let message = "Falha na API de remoção de fundo";
+      try {
+        const data = (await response.json()) as { error?: string };
+        if (data?.error) message = data.error;
+      } catch {
+        /* resposta sem JSON */
+      }
+      throw new Error(message);
+    }
+    return response.blob();
+  };
+
   const removeBackgroundLocally = async (input: Blob): Promise<Blob> => {
     const runModel = (model: "isnet_quint8" | "isnet_fp16") =>
       imglyRemoveBackground(input, {
@@ -251,10 +268,19 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
     }, 500);
 
     try {
-      // Processamento 100% no navegador via @imgly/background-removal (modelo ONNX)
-      // Imagem reduzida + modelo quantizado = muito mais rápido
-      const input = await downscaleImage(file, 1024);
-      const blob = await removeBackgroundLocally(input);
+      // Provedor principal: remove.bg (alta qualidade). Fallback: processamento local no navegador.
+      let blob: Blob;
+      let usedApi = true;
+      try {
+        setProgress(30);
+        blob = await removeBackgroundViaApi(file, file.name);
+      } catch (apiError) {
+        console.warn("remove.bg indisponível; usando processamento local.", apiError);
+        usedApi = false;
+        setProgress(5);
+        const input = await downscaleImage(file, 1024);
+        blob = await removeBackgroundLocally(input);
+      }
       clearInterval(progressInterval);
 
       const outputUrl = URL.createObjectURL(blob);
@@ -268,7 +294,9 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
       onSuccess?.();
       toast({
         title: "✅ Fundo removido!",
-        description: "Processado localmente no seu navegador",
+        description: usedApi
+          ? "Processado em alta qualidade pela API remove.bg"
+          : "Processado localmente no seu navegador",
       });
     } catch (error: unknown) {
       console.error("Background removal error:", error);
