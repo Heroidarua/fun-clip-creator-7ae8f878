@@ -60,6 +60,19 @@ export default function Player() {
     else void el.requestFullscreen?.().catch(() => toast.error("Tela cheia indisponível"));
   }, []);
 
+  const openPopup = useCallback(() => {
+    const w = Math.min(1280, window.screen.availWidth - 80);
+    const h = Math.min(760, window.screen.availHeight - 80);
+    const left = Math.max(0, (window.screen.availWidth - w) / 2);
+    const top = Math.max(0, (window.screen.availHeight - h) / 2);
+    const win = window.open(
+      PLAYER_URL,
+      "sos01player",
+      `popup=yes,width=${w},height=${h},left=${left},top=${top},noopener`,
+    );
+    if (!win) toast.error("Permita pop-ups para abrir o player");
+  }, []);
+
   const copyLink = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
@@ -208,15 +221,23 @@ export default function Player() {
                 SOS01
               </span>
               <p className="max-w-md text-sm text-foreground">
-                O provedor da mídia não permite exibição dentro do site. Abra o player em uma nova guia para assistir normalmente.
+                O servidor da mídia bloqueia a exibição dentro de outro site (proteção Cloudflare + X-Frame-Options).
+                Abra em uma janela do SOS01 para assistir sem sair daqui.
               </p>
+              <button
+                type="button"
+                onClick={openPopup}
+                className="btn-3d px-6 py-3 rounded-xl bg-primary text-primary-foreground font-silkscreen uppercase text-xs tracking-wider"
+              >
+                Abrir janela do player
+              </button>
               <a
                 href={PLAYER_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-3d px-6 py-3 rounded-xl bg-primary text-primary-foreground font-silkscreen uppercase text-xs tracking-wider"
+                className="text-xs underline text-primary"
               >
-                Abrir player
+                Abrir em nova guia
               </a>
               <button type="button" onClick={reload} className="text-xs underline text-primary">
                 Tentar carregar aqui novamente
