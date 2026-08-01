@@ -221,15 +221,23 @@ export default function Player() {
                 SOS01
               </span>
               <p className="max-w-md text-sm text-foreground">
-                O provedor da mídia não permite exibição dentro do site. Abra o player em uma nova guia para assistir normalmente.
+                O servidor da mídia bloqueia a exibição dentro de outro site (proteção Cloudflare + X-Frame-Options).
+                Abra em uma janela do SOS01 para assistir sem sair daqui.
               </p>
+              <button
+                type="button"
+                onClick={openPopup}
+                className="btn-3d px-6 py-3 rounded-xl bg-primary text-primary-foreground font-silkscreen uppercase text-xs tracking-wider"
+              >
+                Abrir janela do player
+              </button>
               <a
                 href={PLAYER_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-3d px-6 py-3 rounded-xl bg-primary text-primary-foreground font-silkscreen uppercase text-xs tracking-wider"
+                className="text-xs underline text-primary"
               >
-                Abrir player
+                Abrir em nova guia
               </a>
               <button type="button" onClick={reload} className="text-xs underline text-primary">
                 Tentar carregar aqui novamente
