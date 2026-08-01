@@ -52,6 +52,7 @@ export const Route = createFileRoute("/api/free-text")({
             { role: "user", content: prompt },
           ];
 
+          const debug: string[] = [];
           const attempts: string[] = [...MODELS, ...MODELS];
           for (let i = 0; i < attempts.length; i++) {
             const model = attempts[i];
@@ -65,14 +66,13 @@ export const Route = createFileRoute("/api/free-text")({
                 signal: controller.signal,
               });
               clearTimeout(timer);
+              if (!res.ok) debug.push(`${model}:${res.status}:${(await res.text()).slice(0,120)}`);
               if (res.ok) {
                 const payload = await res.json().catch(() => null);
                 const text = extractContent(payload);
                 if (text) return Response.json({ text }, { headers });
               }
-            } catch {
-              // tenta a próxima alternativa
-            }
+            } catch (e) { debug.push(`${model}:ex:${String(e).slice(0,120)}`); }
             if (i < attempts.length - 1) {
               // pequena espera para liberar a fila do provedor gratuito
               await new Promise((resolve) => setTimeout(resolve, 1200));
@@ -80,7 +80,7 @@ export const Route = createFileRoute("/api/free-text")({
           }
 
           return Response.json(
-            { error: "A IA gratuita está indisponível agora. Tente novamente." },
+            { error: "A IA gratuita está indisponível agora. Tente novamente.", debug },
             { status: 502, headers }
           );
         } catch {
