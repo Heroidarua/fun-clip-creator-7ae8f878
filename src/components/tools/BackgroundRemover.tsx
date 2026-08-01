@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Upload, Download, Loader2, X, CheckCircle, Image as ImageIcon, Eraser, Sparkles, SlidersHorizontal, Cloud, Cpu } from "lucide-react";
+import { Upload, Download, Loader2, X, CheckCircle, Image as ImageIcon, Eraser, Sparkles, SlidersHorizontal, Cpu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
@@ -25,7 +25,7 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
   const [compositeImage, setCompositeImage] = useState<string | null>(null);
   const [showBackgroundSelector, setShowBackgroundSelector] = useState(false);
   const [bgAdjustments, setBgAdjustments] = useState<BackgroundAdjustments>(DEFAULT_ADJUSTMENTS);
-  const [activeProvider, setActiveProvider] = useState<"remove.bg" | "local" | null>(null);
+  const [activeProvider, setActiveProvider] = useState<"local" | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { toast } = useToast();
@@ -179,23 +179,6 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
       };
       img.src = sourceUrl;
     });
-
-  const removeBackgroundViaApi = async (input: Blob, name: string): Promise<Blob> => {
-    const body = new FormData();
-    body.append("image", new File([input], name || "image.png", { type: input.type || "image/png" }));
-    const response = await fetch("/api/remove-bg", { method: "POST", body });
-    if (!response.ok) {
-      let message = "Falha na API de remoção de fundo";
-      try {
-        const data = (await response.json()) as { error?: string };
-        if (data?.error) message = data.error;
-      } catch {
-        /* resposta sem JSON */
-      }
-      throw new Error(message);
-    }
-    return response.blob();
-  };
 
   const removeBackgroundLocally = async (input: Blob): Promise<Blob> => {
     const runModel = (model: "isnet_quint8" | "isnet_fp16") =>
