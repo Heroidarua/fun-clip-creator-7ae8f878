@@ -68,13 +68,15 @@ export const Route = createFileRoute("/api/download-youtube-stream")({
             );
           }
 
-          const upstream = await fetch(mediaUrl!, {
-            headers: {
-              "User-Agent": BROWSER_UA,
-              Referer: "https://www.youtube.com/",
-              Accept: "*/*",
-            },
-          });
+          const range = request.headers.get("range");
+          const upstreamHeaders: Record<string, string> = {
+            "User-Agent": BROWSER_UA,
+            Referer: "https://www.youtube.com/",
+            Accept: "*/*",
+          };
+          if (range) upstreamHeaders["Range"] = range;
+
+          const upstream = await fetch(mediaUrl!, { headers: upstreamHeaders });
           if (!upstream.ok || !upstream.body) {
             return Response.json(
               { success: false, error: `Falha ao baixar (HTTP ${upstream.status}).` },
@@ -89,13 +91,19 @@ export const Route = createFileRoute("/api/download-youtube-stream")({
           const filename = `${sanitizeFilename(data?.title || "", "youtube")}.${ext}`;
           const headers: Record<string, string> = corsHeaders({
             "Content-Type": contentType,
-            "Content-Disposition": `attachment; filename="${filename}"`,
+            "Content-Disposition": `attachment; filename="${filename.replace(/[^\x20-\x7E]/g, "_").replace(/"/g, "")}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
             "Cache-Control": "no-store",
+            "Accept-Ranges": "bytes",
           });
           const len = upstream.headers.get("content-length");
           if (len) headers["Content-Length"] = len;
+          const contentRange = upstream.headers.get("content-range");
+          if (contentRange) headers["Content-Range"] = contentRange;
 
-          return new Response(upstream.body, { status: 200, headers });
+          return new Response(upstream.body, {
+            status: upstream.status === 206 ? 206 : 200,
+            headers,
+          });
         } catch (error: any) {
           console.error("YouTube stream error:", error);
           return Response.json(

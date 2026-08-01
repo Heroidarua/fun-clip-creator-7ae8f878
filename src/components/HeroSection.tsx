@@ -810,46 +810,44 @@ const HeroSection = () => {
     
     if (!youtubeData) return;
 
-    const extension = youtubeDownloadType === "video" ? "mp4" : "mp3";
+    const extension = youtubeDownloadType === "video" ? "mp4" : "m4a";
     const filename = youtubeData.title?.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_') || 'youtube_video';
 
     try {
       toast({
         title: "⏳ Preparando download...",
-        description: "Baixando o vídeo diretamente do servidor. Isso pode levar alguns segundos...",
+        description: "Preparando o arquivo no servidor. O download inicia em instantes...",
       });
 
-      // Streaming endpoint: server resolves e faz proxy do MP4/M4A direto ao browser.
-      // Assim o usuário baixa sem abrir outra aba.
       const canonical = parseYouTubeUrl(youtubeUrl)?.canonicalUrl || youtubeUrl.trim();
       const streamUrl =
         apiUrl('/api/download-youtube-stream') +
         `?url=${encodeURIComponent(canonical)}&type=${youtubeDownloadType}`;
 
-      const resp = await fetch(streamUrl);
-      if (!resp.ok) {
-        let msg = `Falha ao baixar (HTTP ${resp.status}).`;
+      // 1) Valida o link (pede só o 1º byte) para mostrar erro amigável em vez de JSON na tela.
+      const probe = await fetch(streamUrl, { headers: { Range: 'bytes=0-0' } });
+      if (!probe.ok) {
+        let msg = `Falha ao baixar (HTTP ${probe.status}).`;
         try {
-          const j = await resp.json();
+          const j = await probe.json();
           if (j?.error) msg = j.error;
-        } catch {}
+        } catch { /* resposta não-JSON */ }
         throw new Error(msg);
       }
-      const blob = await resp.blob();
-      if (!blob.size) throw new Error('Arquivo vazio recebido.');
+      try { probe.body?.cancel(); } catch { /* ignore */ }
 
-      const blobUrl = URL.createObjectURL(blob);
+      // 2) Download nativo do navegador (streaming, sem estourar memória em vídeos grandes).
       const link = document.createElement('a');
-      link.href = blobUrl;
+      link.href = streamUrl;
       link.download = `${filename}.${extension}`;
+      link.rel = 'noopener';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
 
       toast({
-        title: "✅ Download concluído!",
-        description: `O ${youtubeDownloadType === "video" ? "vídeo" : "áudio"} foi baixado com sucesso.`,
+        title: "✅ Download iniciado!",
+        description: `O ${youtubeDownloadType === "video" ? "vídeo" : "áudio"} está sendo baixado pelo navegador.`,
       });
 
     } catch (error) {
