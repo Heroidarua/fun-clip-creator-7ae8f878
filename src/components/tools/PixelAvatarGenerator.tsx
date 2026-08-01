@@ -10,7 +10,6 @@ import { useAvatarGallery } from "@/hooks/useAvatarGallery";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { generateFreeImage } from "@/lib/free-ai";
-import { puterGenerateImage } from "@/lib/puter-ai";
 
 const loadingMessages = [
   "🎨 Preparando pixels...",
