@@ -47,6 +47,7 @@ import { Route as BlogBibliotecaQuadrinhosRouteImport } from './routes/blog.bibl
 import { Route as ApiRemoveBgRouteImport } from './routes/api.remove-bg'
 import { Route as ApiManageFeatureStatusRouteImport } from './routes/api.manage-feature-status'
 import { Route as ApiManageAnnouncementsRouteImport } from './routes/api.manage-announcements'
+import { Route as ApiFreeTextRouteImport } from './routes/api.free-text'
 import { Route as ApiDownloadYoutubeStreamRouteImport } from './routes/api.download-youtube-stream'
 import { Route as ApiDownloadYoutubeRouteImport } from './routes/api.download-youtube'
 import { Route as ApiDownloadTiktokRouteImport } from './routes/api.download-tiktok'
@@ -254,6 +255,11 @@ const ApiManageAnnouncementsRoute = ApiManageAnnouncementsRouteImport.update({
   path: '/api/manage-announcements',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiFreeTextRoute = ApiFreeTextRouteImport.update({
+  id: '/api/free-text',
+  path: '/api/free-text',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiDownloadYoutubeStreamRoute =
   ApiDownloadYoutubeStreamRouteImport.update({
     id: '/api/download-youtube-stream',
@@ -327,6 +333,7 @@ export interface FileRoutesByFullPath {
   '/api/download-tiktok': typeof ApiDownloadTiktokRoute
   '/api/download-youtube': typeof ApiDownloadYoutubeRoute
   '/api/download-youtube-stream': typeof ApiDownloadYoutubeStreamRoute
+  '/api/free-text': typeof ApiFreeTextRoute
   '/api/manage-announcements': typeof ApiManageAnnouncementsRoute
   '/api/manage-feature-status': typeof ApiManageFeatureStatusRoute
   '/api/remove-bg': typeof ApiRemoveBgRoute
@@ -374,6 +381,7 @@ export interface FileRoutesByTo {
   '/api/download-tiktok': typeof ApiDownloadTiktokRoute
   '/api/download-youtube': typeof ApiDownloadYoutubeRoute
   '/api/download-youtube-stream': typeof ApiDownloadYoutubeStreamRoute
+  '/api/free-text': typeof ApiFreeTextRoute
   '/api/manage-announcements': typeof ApiManageAnnouncementsRoute
   '/api/manage-feature-status': typeof ApiManageFeatureStatusRoute
   '/api/remove-bg': typeof ApiRemoveBgRoute
@@ -423,6 +431,7 @@ export interface FileRoutesById {
   '/api/download-tiktok': typeof ApiDownloadTiktokRoute
   '/api/download-youtube': typeof ApiDownloadYoutubeRoute
   '/api/download-youtube-stream': typeof ApiDownloadYoutubeStreamRoute
+  '/api/free-text': typeof ApiFreeTextRoute
   '/api/manage-announcements': typeof ApiManageAnnouncementsRoute
   '/api/manage-feature-status': typeof ApiManageFeatureStatusRoute
   '/api/remove-bg': typeof ApiRemoveBgRoute
@@ -473,6 +482,7 @@ export interface FileRouteTypes {
     | '/api/download-tiktok'
     | '/api/download-youtube'
     | '/api/download-youtube-stream'
+    | '/api/free-text'
     | '/api/manage-announcements'
     | '/api/manage-feature-status'
     | '/api/remove-bg'
@@ -520,6 +530,7 @@ export interface FileRouteTypes {
     | '/api/download-tiktok'
     | '/api/download-youtube'
     | '/api/download-youtube-stream'
+    | '/api/free-text'
     | '/api/manage-announcements'
     | '/api/manage-feature-status'
     | '/api/remove-bg'
@@ -568,6 +579,7 @@ export interface FileRouteTypes {
     | '/api/download-tiktok'
     | '/api/download-youtube'
     | '/api/download-youtube-stream'
+    | '/api/free-text'
     | '/api/manage-announcements'
     | '/api/manage-feature-status'
     | '/api/remove-bg'
@@ -617,6 +629,7 @@ export interface RootRouteChildren {
   ApiDownloadTiktokRoute: typeof ApiDownloadTiktokRoute
   ApiDownloadYoutubeRoute: typeof ApiDownloadYoutubeRoute
   ApiDownloadYoutubeStreamRoute: typeof ApiDownloadYoutubeStreamRoute
+  ApiFreeTextRoute: typeof ApiFreeTextRoute
   ApiManageAnnouncementsRoute: typeof ApiManageAnnouncementsRoute
   ApiManageFeatureStatusRoute: typeof ApiManageFeatureStatusRoute
   ApiRemoveBgRoute: typeof ApiRemoveBgRoute
@@ -892,6 +905,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiManageAnnouncementsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/free-text': {
+      id: '/api/free-text'
+      path: '/api/free-text'
+      fullPath: '/api/free-text'
+      preLoaderRoute: typeof ApiFreeTextRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/download-youtube-stream': {
       id: '/api/download-youtube-stream'
       path: '/api/download-youtube-stream'
@@ -1014,6 +1034,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiDownloadTiktokRoute: ApiDownloadTiktokRoute,
   ApiDownloadYoutubeRoute: ApiDownloadYoutubeRoute,
   ApiDownloadYoutubeStreamRoute: ApiDownloadYoutubeStreamRoute,
+  ApiFreeTextRoute: ApiFreeTextRoute,
   ApiManageAnnouncementsRoute: ApiManageAnnouncementsRoute,
   ApiManageFeatureStatusRoute: ApiManageFeatureStatusRoute,
   ApiRemoveBgRoute: ApiRemoveBgRoute,
