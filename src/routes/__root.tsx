@@ -75,6 +75,10 @@ export const Route = createRootRoute({
     ],
     scripts: [
       {
+        children:
+          "(function(){try{var t=localStorage.getItem('sos01-theme');var l=['dark','light','sepia','ocean','forest'];if(t&&l.indexOf(t)>-1){var e=document.documentElement;e.classList.remove.apply(e.classList,l);e.classList.add(t);}}catch(e){}})();",
+      },
+      {
         async: true,
         src: "https://www.googletagmanager.com/gtag/js?id=G-JD2L3ZPP4T",
       },
