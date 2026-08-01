@@ -241,15 +241,24 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
     maskCtx.imageSmoothingQuality = "high";
     maskCtx.drawImage(mask, 0, 0, width, height);
 
-    // Realce das bordas: curva de contraste no alfa (remove halo e suaviza serrilhado)
+    // Realce das bordas: limpa resíduos de fundo (alfa baixo) e solidifica o objeto,
+    // mantendo transição suave apenas na faixa intermediária.
     try {
       const imageData = maskCtx.getImageData(0, 0, width, height);
       const data = imageData.data;
+      const LOW = 0.32;   // abaixo disso é fundo residual -> transparente
+      const HIGH = 0.68;  // acima disso é objeto -> totalmente opaco
       const lut = new Uint8ClampedArray(256);
       for (let i = 0; i < 256; i++) {
         const a = i / 255;
-        const boosted = 1 / (1 + Math.exp(-12 * (a - 0.5)));
-        lut[i] = Math.round(Math.min(1, Math.max(0, boosted)) * 255);
+        let v: number;
+        if (a <= LOW) v = 0;
+        else if (a >= HIGH) v = 1;
+        else {
+          const t = (a - LOW) / (HIGH - LOW);
+          v = t * t * (3 - 2 * t); // smoothstep: borda suave sem halo
+        }
+        lut[i] = Math.round(v * 255);
       }
       for (let i = 3; i < data.length; i += 4) {
         data[i] = lut[data[i]];
