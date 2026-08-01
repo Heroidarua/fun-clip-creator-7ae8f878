@@ -15,7 +15,7 @@ import {
 import { toast } from "sonner";
 import { getPlayerCredentials } from "@/lib/wplayer.functions";
 
-const PLAYER_URL = "https://wplayer.click";
+const PLAYER_URL = "https://wplayer.click/dashboard?view=movies";
 const MEDIA_TITLE = "SOS01 Player";
 const FAV_KEY = "sos01:player:favorite";
 
