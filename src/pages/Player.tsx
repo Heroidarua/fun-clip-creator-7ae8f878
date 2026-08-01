@@ -9,11 +9,9 @@ import {
   Copy,
   ExternalLink,
   AlertTriangle,
-  KeyRound,
-  Check,
 } from "lucide-react";
 import { toast } from "sonner";
-import { getPlayerCredentials } from "@/lib/wplayer.functions";
+
 
 const PLAYER_URL = "https://wplayer.click/dashboard?view=movies";
 const MEDIA_TITLE = "SOS01 Player";
