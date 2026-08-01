@@ -22,6 +22,7 @@ export default function Player() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
+  const [blocked, setBlocked] = useState(false);
   const [favorite, setFavorite] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
 
@@ -31,19 +32,24 @@ export default function Player() {
     setFavorite(localStorage.getItem(FAV_KEY) === "1");
   }, []);
 
-  // Mostra o player assim que houver qualquer sinal de render (evita tela de
-  // carregamento longa quando o onLoad do iframe demora a disparar)
+  // O provedor envia X-Frame-Options: SAMEORIGIN, o que impede a exibição
+  // dentro de um iframe. Detectamos rapidamente e oferecemos abrir em nova guia.
   useEffect(() => {
-    if (!loading) return;
-    const reveal = window.setTimeout(() => setLoading(false), 2500);
-    return () => window.clearTimeout(reveal);
-  }, [loading, reloadKey]);
+    setLoading(true);
+    setBlocked(false);
+    const timer = window.setTimeout(() => {
+      setLoading(false);
+      setBlocked(true);
+    }, 3000);
+    return () => window.clearTimeout(timer);
+  }, [reloadKey]);
 
 
 
   const reload = useCallback(() => {
     setLoading(true);
     setFailed(false);
+    setBlocked(false);
     setReloadKey((k) => k + 1);
   }, []);
 
@@ -158,7 +164,7 @@ export default function Player() {
           ref={containerRef}
           className="relative w-full h-[calc(100vh-190px)] min-h-[320px] overflow-hidden rounded-2xl border-2 border-secondary/50 bg-black shadow-2xl"
         >
-          {!failed && (
+          {!failed && !blocked && (
             <iframe
               key={reloadKey}
               ref={iframeRef}
@@ -169,7 +175,10 @@ export default function Player() {
               fetchpriority="high"
               allowFullScreen
               allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
-              onLoad={() => setLoading(false)}
+              onLoad={() => {
+                setLoading(false);
+                setBlocked(false);
+              }}
               onError={() => {
                 setLoading(false);
                 setFailed(true);
@@ -178,7 +187,7 @@ export default function Player() {
             />
           )}
 
-          {loading && !failed && (
+          {loading && !failed && !blocked && (
             <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-[#0d1117] animate-fade-in">
               <span
                 className="font-silkscreen text-2xl sm:text-3xl text-primary"
@@ -190,6 +199,28 @@ export default function Player() {
               <div className="w-56 h-2 overflow-hidden rounded-full bg-secondary/40">
                 <div className="h-full w-1/3 rounded-full bg-primary animate-[slide-in-right_1.2s_ease-in-out_infinite]" />
               </div>
+            </div>
+          )}
+
+          {blocked && !failed && (
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 px-6 text-center bg-[#0d1117] animate-fade-in">
+              <span className="font-silkscreen text-2xl text-primary" style={{ textShadow: "0 0 12px currentColor" }}>
+                SOS01
+              </span>
+              <p className="max-w-md text-sm text-foreground">
+                O provedor da mídia não permite exibição dentro do site. Abra o player em uma nova guia para assistir normalmente.
+              </p>
+              <a
+                href={PLAYER_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-3d px-6 py-3 rounded-xl bg-primary text-primary-foreground font-silkscreen uppercase text-xs tracking-wider"
+              >
+                Abrir player
+              </a>
+              <button type="button" onClick={reload} className="text-xs underline text-primary">
+                Tentar carregar aqui novamente
+              </button>
             </div>
           )}
 
