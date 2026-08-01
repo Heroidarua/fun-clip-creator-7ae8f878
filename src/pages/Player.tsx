@@ -24,8 +24,7 @@ export default function Player() {
   const [failed, setFailed] = useState(false);
   const [favorite, setFavorite] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
-  const [creds, setCreds] = useState<{ user: string; pass: string } | null>(null);
-  const [copied, setCopied] = useState<"user" | "pass" | null>(null);
+
 
   useEffect(() => {
     let mounted = true;
