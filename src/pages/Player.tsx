@@ -31,14 +31,21 @@ export default function Player() {
     setFavorite(localStorage.getItem(FAV_KEY) === "1");
   }, []);
 
+  // Mostra o player assim que houver qualquer sinal de render (evita tela de
+  // carregamento longa quando o onLoad do iframe demora a disparar)
   useEffect(() => {
     if (!loading) return;
-    const timer = window.setTimeout(() => {
-      setLoading(false);
-      setFailed(true);
-    }, 12000);
-    return () => window.clearTimeout(timer);
+    const reveal = window.setTimeout(() => setLoading(false), 2500);
+    return () => window.clearTimeout(reveal);
   }, [loading, reloadKey]);
+
+  useEffect(() => {
+    setFailed(false);
+    const timer = window.setTimeout(() => {
+      setFailed((prev) => prev);
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [reloadKey]);
 
   const reload = useCallback(() => {
     setLoading(true);
