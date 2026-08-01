@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Upload, Download, Loader2, X, CheckCircle, Image as ImageIcon, Eraser, Sparkles, SlidersHorizontal } from "lucide-react";
+import { Upload, Download, Loader2, X, CheckCircle, Image as ImageIcon, Eraser, Sparkles, SlidersHorizontal, Cloud, Cpu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
@@ -25,6 +25,7 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
   const [compositeImage, setCompositeImage] = useState<string | null>(null);
   const [showBackgroundSelector, setShowBackgroundSelector] = useState(false);
   const [bgAdjustments, setBgAdjustments] = useState<BackgroundAdjustments>(DEFAULT_ADJUSTMENTS);
+  const [activeProvider, setActiveProvider] = useState<"remove.bg" | "local" | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { toast } = useToast();
@@ -262,6 +263,7 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
 
     setProcessing(true);
     setProgress(0);
+    setActiveProvider("remove.bg");
 
     const progressInterval = setInterval(() => {
       setProgress(prev => Math.min(prev + 2, 85));
@@ -277,6 +279,7 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
       } catch (apiError) {
         console.warn("remove.bg indisponível; usando processamento local.", apiError);
         usedApi = false;
+        setActiveProvider("local");
         setProgress(5);
         const input = await downscaleImage(file, 1024);
         blob = await removeBackgroundLocally(input);
@@ -300,6 +303,7 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
       });
     } catch (error: unknown) {
       console.error("Background removal error:", error);
+      setActiveProvider(null);
       const message = error instanceof Error ? error.message : "";
       toast({
         title: "❌ Erro no processamento",
@@ -333,6 +337,7 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
     setPreview(null);
     setResultUrl(null);
     setProgress(0);
+    setActiveProvider(null);
     setShowCompare(false);
     setSelectedBackground(null);
     setCompositeImage(null);
@@ -357,8 +362,10 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
       {/* Info indicator */}
       <div className="flex items-center justify-between p-3 bg-muted/30 rounded-sm border border-border/50">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-green-500" />
-          <span className="text-xs text-muted-foreground">100% gratuito · processado no seu navegador</span>
+          <Cloud className="w-4 h-4 text-[#B66DFF]" />
+          <span className="text-xs text-muted-foreground">
+            Provedor principal: <strong className="text-foreground">remove.bg</strong> · fallback local no navegador
+          </span>
         </div>
       </div>
 
@@ -471,20 +478,49 @@ const BackgroundRemover = ({ onSuccess }: BackgroundRemoverProps) => {
           {/* Progress bar */}
           {processing && (
             <div className="space-y-2">
+              <div className="flex items-center justify-center gap-2">
+                {activeProvider === "remove.bg" ? (
+                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-[#B66DFF]/10 text-[#B66DFF] text-xs font-pixel">
+                    <Cloud className="w-3 h-3" />
+                    remove.bg
+                  </span>
+                ) : activeProvider === "local" ? (
+                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-[#FFD93D]/10 text-[#FFD93D] text-xs font-pixel">
+                    <Cpu className="w-3 h-3" />
+                    fallback local
+                  </span>
+                ) : null}
+              </div>
               <Progress value={progress} className="h-2" />
               <p className="text-xs text-center text-muted-foreground">
-                Removendo fundo localmente... {progress}%
+                {activeProvider === "remove.bg"
+                  ? `Removendo fundo via remove.bg... ${progress}%`
+                  : `Removendo fundo localmente... ${progress}%`}
               </p>
             </div>
           )}
 
           {/* Success state */}
           {resultUrl && (
-            <div className="flex items-center gap-2 p-3 bg-green-500/10 border border-green-500/30 rounded-sm">
-              <CheckCircle className="w-5 h-5 text-green-500" />
-              <span className="text-sm text-green-500">
-                {compositeImage ? "Novo fundo aplicado!" : "Fundo removido com sucesso!"}
-              </span>
+            <div className="flex items-center justify-between gap-2 p-3 bg-green-500/10 border border-green-500/30 rounded-sm">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-5 h-5 text-green-500" />
+                <span className="text-sm text-green-500">
+                  {compositeImage ? "Novo fundo aplicado!" : "Fundo removido com sucesso!"}
+                </span>
+              </div>
+              {activeProvider === "remove.bg" && (
+                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-[#B66DFF]/10 text-[#B66DFF] text-xs font-pixel">
+                  <Cloud className="w-3 h-3" />
+                  remove.bg
+                </span>
+              )}
+              {activeProvider === "local" && (
+                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-[#FFD93D]/10 text-[#FFD93D] text-xs font-pixel">
+                  <Cpu className="w-3 h-3" />
+                  fallback local
+                </span>
+              )}
             </div>
           )}
 
