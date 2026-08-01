@@ -9,12 +9,39 @@ const corsHeaders = {
 
 const LOVABLE_AI_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
+// Anti-abuse: per-IP rate limit so anonymous users cannot drain AI credits.
+const RATE_WINDOW_MS = 60_000;
+const RATE_MAX = 8;
+const hits = new Map<string, { count: number; resetAt: number }>();
+
+function isRateLimited(req: Request): boolean {
+  const ip =
+    req.headers.get("cf-connecting-ip") ||
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    "unknown";
+  const now = Date.now();
+  const entry = hits.get(ip);
+  if (!entry || now > entry.resetAt) {
+    hits.set(ip, { count: 1, resetAt: now + RATE_WINDOW_MS });
+    return false;
+  }
+  entry.count += 1;
+  return entry.count > RATE_MAX;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    if (isRateLimited(req)) {
+      return new Response(
+        JSON.stringify({ error: "Muitas requisições. Aguarde um minuto e tente novamente." }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const apiKey = Deno.env.get("LOVABLE_API_KEY");
     if (!apiKey) {
       return new Response(
