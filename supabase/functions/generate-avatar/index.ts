@@ -9,12 +9,42 @@ const corsHeaders = {
 
 const LOVABLE_AI_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
+// Anti-abuse: per-IP rate limit so anonymous users cannot drain AI credits.
+const RATE_WINDOW_MS = 60_000;
+const RATE_MAX = 5;
+const hits = new Map<string, { count: number; resetAt: number }>();
+
+function isRateLimited(req: Request): boolean {
+  const ip =
+    req.headers.get("cf-connecting-ip") ||
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    "unknown";
+  const now = Date.now();
+  const entry = hits.get(ip);
+  if (!entry || now > entry.resetAt) {
+    hits.set(ip, { count: 1, resetAt: now + RATE_WINDOW_MS });
+    return false;
+  }
+  entry.count += 1;
+  return entry.count > RATE_MAX;
+}
+
+const str = (v: unknown, max = 120): string =>
+  typeof v === "string" ? v.replace(/[\r\n]+/g, " ").slice(0, max) : "";
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    if (isRateLimited(req)) {
+      return new Response(
+        JSON.stringify({ error: "Muitas requisições. Aguarde um minuto e tente novamente." }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const apiKey = Deno.env.get("LOVABLE_API_KEY");
     if (!apiKey) {
       return new Response(
@@ -40,17 +70,18 @@ serve(async (req) => {
     } = body as Record<string, any>;
 
     let prompt = "";
+    const safeArtStyle = str(artStyle, 40) || "pixel";
     if (customPrompt) {
-      prompt = `Create a ${artStyle || "pixel"} art avatar: ${customPrompt}. `;
+      prompt = `Create a ${safeArtStyle} art avatar: ${str(customPrompt, 500)}. `;
     } else {
-      prompt = `Create a ${artStyle || "pixel"} art avatar of a ${style || "human"} character. `;
-      if (color) prompt += `Main color: ${color}. `;
-      if (expression) prompt += `Expression: ${expression}. `;
-      if (pose) prompt += `Pose: ${pose}. `;
-      if (outfit) prompt += `Outfit: ${outfit}. `;
-      if (hairStyle) prompt += `Hair style: ${hairStyle}. `;
-      if (accessories && Array.isArray(accessories) && accessories.length > 0) {
-        prompt += `Accessories: ${accessories.join(", ")}. `;
+      prompt = `Create a ${safeArtStyle} art avatar of a ${str(style, 40) || "human"} character. `;
+      if (color) prompt += `Main color: ${str(color, 40)}. `;
+      if (expression) prompt += `Expression: ${str(expression, 40)}. `;
+      if (pose) prompt += `Pose: ${str(pose, 40)}. `;
+      if (outfit) prompt += `Outfit: ${str(outfit, 60)}. `;
+      if (hairStyle) prompt += `Hair style: ${str(hairStyle, 40)}. `;
+      if (Array.isArray(accessories) && accessories.length > 0) {
+        prompt += `Accessories: ${accessories.slice(0, 8).map((a) => str(a, 30)).filter(Boolean).join(", ")}. `;
       }
     }
 
@@ -58,7 +89,9 @@ serve(async (req) => {
       prompt += "On a clean solid white background for easy background removal. ";
     }
 
-    prompt += `The image should be ${width || 256}x${height || 256} pixels, high quality, centered character portrait.`;
+    const w = Math.min(Math.max(Number(width) || 256, 64), 1024);
+    const h = Math.min(Math.max(Number(height) || 256, 64), 1024);
+    prompt += `The image should be ${w}x${h} pixels, high quality, centered character portrait.`;
 
     const aiResp = await fetch(LOVABLE_AI_URL, {
       method: "POST",
