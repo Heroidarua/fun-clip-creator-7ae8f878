@@ -9,7 +9,7 @@ import { toast } from "@/hooks/use-toast";
 import { useAvatarGallery } from "@/hooks/useAvatarGallery";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { supabase } from "@/integrations/supabase/client";
+import { generateFreeImage } from "@/lib/free-ai";
 
 const loadingMessages = [
   "🎨 Preparando pixels...",
