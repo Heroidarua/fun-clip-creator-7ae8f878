@@ -73,13 +73,6 @@ export default function Player() {
     if (!win) toast.error("Permita pop-ups para abrir o player");
   }, []);
 
-  const legacyFullscreen = useCallback(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    if (document.fullscreenElement) void document.exitFullscreen();
-    else void el.requestFullscreen?.().catch(() => toast.error("Tela cheia indisponível"));
-  }, []);
-
   const copyLink = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
