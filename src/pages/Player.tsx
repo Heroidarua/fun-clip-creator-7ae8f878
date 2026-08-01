@@ -9,8 +9,11 @@ import {
   Copy,
   ExternalLink,
   AlertTriangle,
+  KeyRound,
+  Check,
 } from "lucide-react";
 import { toast } from "sonner";
+import { getPlayerCredentials } from "@/lib/wplayer.functions";
 
 const PLAYER_URL = "https://wplayer.click";
 const MEDIA_TITLE = "SOS01 Player";
@@ -23,6 +26,31 @@ export default function Player() {
   const [failed, setFailed] = useState(false);
   const [favorite, setFavorite] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
+  const [creds, setCreds] = useState<{ user: string; pass: string } | null>(null);
+  const [copied, setCopied] = useState<"user" | "pass" | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    getPlayerCredentials()
+      .then((data) => {
+        if (mounted && data?.user) setCreds(data);
+      })
+      .catch(() => undefined);
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const copyValue = useCallback(async (value: string, field: "user" | "pass") => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(field);
+      window.setTimeout(() => setCopied(null), 1600);
+      toast.success(field === "user" ? "Login copiado!" : "Senha copiada!");
+    } catch {
+      toast.error("Não foi possível copiar");
+    }
+  }, []);
 
   useEffect(() => {
     setFavorite(localStorage.getItem(FAV_KEY) === "1");
@@ -203,6 +231,7 @@ export default function Player() {
       </main>
 
       <footer className="flex flex-wrap items-center justify-between gap-2 px-4 sm:px-6 pb-24 md:pb-6 pt-2 text-xs text-muted-foreground">
+*** MARKER
         <span>SOS01 © 2026 · Player integrado</span>
         <span className="inline-flex items-center gap-2">
           <span
