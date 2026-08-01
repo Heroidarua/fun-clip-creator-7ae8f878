@@ -64,11 +64,54 @@ export async function generateFreeImage(
   return blobToDataUrl(blob);
 }
 
-const FREE_TEXT_ENDPOINT = "https://text.pollinations.ai/";
-
 export interface FreeTextOptions {
   system?: string;
   signal?: AbortSignal;
+}
+
+const DEFAULT_SYSTEM =
+  "Você é um assistente criativo. Responda sempre em português do Brasil, de forma clara e objetiva.";
+
+async function viaProxy(prompt: string, options: FreeTextOptions): Promise<string> {
+  const response = await fetch("/api/free-text", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ prompt, system: options.system }),
+    signal: options.signal,
+  });
+  const data = (await response.json().catch(() => null)) as
+    | { text?: string; error?: string }
+    | null;
+  if (!response.ok || !data?.text) {
+    throw new Error(data?.error || "Não foi possível gerar o texto agora. Tente novamente.");
+  }
+  return data.text.trim();
+}
+
+async function viaDirect(prompt: string, options: FreeTextOptions): Promise<string> {
+  const response = await fetch("https://text.pollinations.ai/openai", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "openai",
+      messages: [
+        { role: "system", content: options.system ?? DEFAULT_SYSTEM },
+        { role: "user", content: prompt.trim().slice(0, 4000) },
+      ],
+    }),
+    signal: options.signal,
+  });
+  if (!response.ok) {
+    throw new Error("Não foi possível gerar o texto agora. Tente novamente.");
+  }
+  const data = (await response.json().catch(() => null)) as
+    | { choices?: Array<{ message?: { content?: string } }> }
+    | null;
+  const text = data?.choices?.[0]?.message?.content?.trim();
+  if (!text) {
+    throw new Error("A IA gratuita não retornou um texto válido. Tente novamente.");
+  }
+  return text;
 }
 
 /** Gera texto usando IA gratuita e pública (sem chave de API e sem consumir créditos). */
@@ -76,34 +119,10 @@ export async function generateFreeText(
   prompt: string,
   options: FreeTextOptions = {}
 ): Promise<string> {
-  const messages = [
-    {
-      role: "system",
-      content:
-        options.system ??
-        "Você é um assistente criativo. Responda sempre em português do Brasil, de forma clara e objetiva.",
-    },
-    { role: "user", content: prompt.trim().slice(0, 4000) },
-  ];
-
-  const response = await fetch(FREE_TEXT_ENDPOINT, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ model: "openai", messages }),
-    signal: options.signal,
-  });
-
-  if (!response.ok) {
-    if (response.status === 429) {
-      throw new Error("A IA gratuita está ocupada. Aguarde alguns segundos e tente novamente.");
-    }
-    throw new Error("Não foi possível gerar o texto agora. Tente novamente.");
+  try {
+    return await viaProxy(prompt, options);
+  } catch (error) {
+    if ((error as Error)?.name === "AbortError") throw error;
+    return viaDirect(prompt, options);
   }
-
-  const text = (await response.text()).trim();
-  if (!text || text.startsWith("{\"error\"")) {
-    throw new Error("A IA gratuita não retornou um texto válido. Tente novamente.");
-  }
-
-  return text;
 }
