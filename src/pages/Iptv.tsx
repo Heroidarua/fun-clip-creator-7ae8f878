@@ -25,7 +25,7 @@ export default function Iptv() {
           className="text-3xl sm:text-4xl text-[#F5F9FF] mb-3"
           style={{ fontFamily: "'VT323', monospace", textShadow: "0 0 10px rgba(40,182,255,0.7)" }}
         >
-          TV ON — Pluto TV
+          IPTV — Pluto TV
         </h1>
         <p className="text-[#E8EEF5]/80 text-sm mb-7 leading-relaxed">
           Redirecionando você para a Pluto TV. Se nada acontecer em alguns segundos, use o botão abaixo.
