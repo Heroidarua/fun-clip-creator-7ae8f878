@@ -7,7 +7,7 @@ const ITEMS = [
   { to: "/jogos", label: "Jogos", icon: Gamepad2 },
   { to: "/nasa", label: "NASA", icon: Globe2 },
   { to: "/mais-sbt", label: "+SBT", icon: Tv },
-  { to: "/iptv", label: "IPTV", icon: Radio },
+  { to: "/iptv", label: "TV ON", icon: Radio },
   { to: "/player", label: "Player", icon: PlayCircle },
   { to: "/blog", label: "Blog", icon: BookOpen },
   { to: "/dashboard", label: "Painel", icon: LayoutDashboard },
