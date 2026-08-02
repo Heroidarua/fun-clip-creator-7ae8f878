@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { MonitorPlay, ArrowLeft, ExternalLink } from "lucide-react";
 
-const PLAYER_URL = "https://wplayer.link/";
+const PLAYER_URL = "https://wplayer.link/dashboard?view=movies";
 
 export default function Player() {
   useEffect(() => {
