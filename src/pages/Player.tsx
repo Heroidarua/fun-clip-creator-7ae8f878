@@ -25,7 +25,7 @@ export default function Player() {
           className="text-3xl sm:text-4xl text-[#F5F9FF] mb-3"
           style={{ fontFamily: "'VT323', monospace", textShadow: "0 0 10px rgba(40,182,255,0.7)" }}
         >
-          SOS01 Player
+          IPTV 1.0
         </h1>
         <p className="text-[#E8EEF5]/80 text-sm mb-7 leading-relaxed">
           Abrindo o acesso do player. Seu perfil será recuperado pelo próprio serviço antes de exibir as mídias.
@@ -35,7 +35,7 @@ export default function Player() {
           className="btn-3d inline-flex items-center justify-center gap-2 w-full px-6 py-4 rounded-xl bg-[#FFD93D] text-[#0E4A7B] font-silkscreen uppercase tracking-wider text-base hover:brightness-110 transition-all"
         >
           <ExternalLink className="w-5 h-5" aria-hidden="true" />
-          Abrir Player
+          Abrir IPTV 1.0
         </a>
         <Link
           to="/"

@@ -8,7 +8,7 @@ const ITEMS = [
   { to: "/nasa", label: "NASA", icon: Globe2 },
   { to: "/mais-sbt", label: "+SBT", icon: Tv },
   { to: "/iptv", label: "IPTV", icon: Radio },
-  { to: "/player", label: "Player", icon: PlayCircle },
+  { to: "/player", label: "IPTV 1.0", icon: PlayCircle },
   { to: "/blog", label: "Blog", icon: BookOpen },
   { to: "/dashboard", label: "Painel", icon: LayoutDashboard },
 ] as const;
