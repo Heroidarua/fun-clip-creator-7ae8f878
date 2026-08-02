@@ -2,7 +2,10 @@ import { useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { MonitorPlay, ArrowLeft, ExternalLink } from "lucide-react";
 
-const PLAYER_URL = "https://wplayer.link/dashboard?view=movies";
+// A rota /dashboard só funciona para quem já tem sessão salva no domínio do
+// provedor. Para carregar igual ao Pluto TV (para todos), usamos a entrada
+// oficial, que cria a sessão e leva ao catálogo automaticamente.
+const PLAYER_URL = "https://wplayer.link/";
 
 export default function Player() {
   useEffect(() => {
