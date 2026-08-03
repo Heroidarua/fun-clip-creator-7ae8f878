@@ -20,6 +20,9 @@ export const SITE = {
     "downloader online",
     "ferramentas gratuitas",
     "jogos retrô online",
+    "remover metadados sos01",
+    "limpar exif online",
+    "metadata remover sos01",
   ],
 } as const;
 
