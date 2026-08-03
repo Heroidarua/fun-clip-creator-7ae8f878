@@ -124,7 +124,7 @@ const Header = () => {
 
           {/* Actions */}
           <div className="flex items-center gap-1.5 sm:gap-2">
-            <div className="hidden md:block">
+            <div className="flex items-center">
               <LanguageSelector />
             </div>
             <InstallAppButton />

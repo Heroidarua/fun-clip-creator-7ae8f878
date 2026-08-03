@@ -34,16 +34,16 @@ export const LanguageSelector = () => {
 
   return (
     <Select value={currentLang.code} onValueChange={changeLanguage}>
-      <SelectTrigger className="w-[140px] bg-background/50 border-border/50">
+      <SelectTrigger className="w-[60px] md:w-[140px] bg-background/50 border-border/50">
         <Globe className="w-4 h-4 mr-2 text-muted-foreground" />
-        <SelectValue placeholder="Idioma" />
+        <SelectValue placeholder="Language" />
       </SelectTrigger>
       <SelectContent>
         {LANGUAGES.map((lang) => (
           <SelectItem key={lang.code} value={lang.code}>
             <span className="flex items-center gap-2">
               <span>{lang.flag}</span>
-              <span>{lang.name}</span>
+              <span className="hidden md:inline">{lang.name}</span>
             </span>
           </SelectItem>
         ))}
