@@ -20,14 +20,32 @@
     "home": "Inicio"
   },
   "hero": {
-    "title": "Descargar videos sin marca de agua",
-    "subtitle": "TikTok, Instagram, YouTube, Kwai, Facebook y Pinterest — Todo en un mismo lugar.",
+    "title": "NO CREERÁS LO QUE HAY AQUÍ.",
+    "subtitle": "Herramientas, juegos, cómics, manga y mucho más. Explora por ti mismo.",
     "placeholder": "Pegue el enlace aquí...",
     "auto_download_msg": "¡Descarga automática iniciada!",
     "searching": "Buscando medios..."
   },
+  "advantages": {
+    "fast": "RÁPIDO",
+    "fast_desc": "Descargas en segundos",
+    "no_watermark": "SIN MARCA",
+    "no_watermark_desc": "Videos HD limpios",
+    "games": "+60 JUEGOS",
+    "games_desc": "Arcade retro gratis",
+    "free": "SOS01 GRATIS",
+    "free_desc": "Todo sin pagar nada"
+  },
   "footer": {
     "rights": "Todos los derechos reservados.",
-    "about": "SOS01 es una plataforma gratuita de utilidades digitales."
+    "about": "SOS01 es una plataforma gratuita de utilidades digitales.",
+    "legal_notice": "Aviso Legal: sos01.com.br no aloja, almacena ni distribuye contenido.",
+    "dev_by": "Desarrollado por"
+  },
+  "about": {
+    "title": "QUIÉN CREÓ",
+    "subtitle": "El desarrollador detrás de sos01",
+    "founder": "FUNDADOR Y DESARROLLADOR",
+    "description": "Desarrollador web brasileño, creador de sos01.com.br, una plataforma 100% gratuita que reúne herramientas de descarga de sos01, utilidades de IA, juegos retro y cómics."
   }
 }

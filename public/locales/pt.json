@@ -6,7 +6,7 @@
     "download": "Baixar",
     "paste": "Colar",
     "back": "Voltar",
-    "home": "Início"
+    "home": "Home"
   },
   "nav": {
     "tools": "Ferramentas",
@@ -20,14 +20,32 @@
     "home": "Home"
   },
   "hero": {
-    "title": "Baixe vídeos sem marca d'água",
-    "subtitle": "TikTok, Instagram, YouTube, Kwai, Facebook e Pinterest — Tudo em um só lugar.",
+    "title": "VOCÊ NÃO VAI ACREDITAR NO QUE TEM AQUI.",
+    "subtitle": "Ferramentas, jogos, HQs, mangás e muito mais. Explore por sua conta.",
     "placeholder": "Cole o link aqui...",
     "auto_download_msg": "Download automático iniciado!",
     "searching": "Buscando mídia..."
   },
+  "advantages": {
+    "fast": "RÁPIDO",
+    "fast_desc": "Downloads em segundos",
+    "no_watermark": "SEM MARCA",
+    "no_watermark_desc": "Vídeos em HD limpos",
+    "games": "+60 JOGOS",
+    "games_desc": "Arcade retrô grátis",
+    "free": "SOS01 GRÁTIS",
+    "free_desc": "Tudo sem pagar nada"
+  },
   "footer": {
     "rights": "Todos os direitos reservados.",
-    "about": "O SOS01 é uma plataforma gratuita de utilidades digitais."
+    "about": "O SOS01 é uma plataforma gratuita de utilidades digitais.",
+    "legal_notice": "Aviso Legal: O sos01.com.br não hospeda, armazena ou distribui conteúdo.",
+    "dev_by": "Desenvolvido por"
+  },
+  "about": {
+    "title": "QUEM CRIOU",
+    "subtitle": "O desenvolvedor por trás do sos01",
+    "founder": "FUNDADOR & DESENVOLVEDOR",
+    "description": "Desenvolvedor web brasileiro, criador do sos01.com.br — uma plataforma 100% gratuita que reúne ferramentas de download sos01, utilitários com IA, jogos retrô e quadrinhos."
   }
 }
