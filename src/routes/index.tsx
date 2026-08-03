@@ -1,4 +1,4 @@
-/* Backend próprio (/api/download-youtube-stream) extrai e entrega o arquivo do YouTube direto ao navegador, sem redirecionar. */
+/* Agora que tem backend o donwload precisa acontecer */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";
