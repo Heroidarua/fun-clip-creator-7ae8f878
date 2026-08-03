@@ -64,5 +64,6 @@ export const Route = createFileRoute("/")({
           offers: { "@type": "Offer", price: "0", priceCurrency: "BRL" },
         },
       ],
-    }),
+    });
+  },
 });
