@@ -23,16 +23,16 @@ const MetadataRemoverIframeTool = () => {
         {loading && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-card gap-3 z-10">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            <p className="text-xs text-muted-foreground font-pixel">INICIANDO AMBIENTE SEGURO...</p>
+            <p className="text-xs text-muted-foreground font-pixel text-center px-4">INICIANDO AMBIENTE SEGURO...</p>
           </div>
         )}
         
         <iframe
           src="https://ianonymous3000.github.io/metadata-remover/"
-          className="w-full h-full border-none"
+          className="w-full h-full border-none relative z-0"
           title="Removedor de Metadados Profissional"
           onLoad={() => setLoading(false)}
-          allow="clipboard-write; clipboard-read"
+          allow="clipboard-write; clipboard-read; browse"
         />
 
         {/* Overlay de Interação (opcional, para estética) */}
