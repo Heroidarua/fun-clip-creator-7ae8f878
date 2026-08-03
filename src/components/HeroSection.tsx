@@ -1472,6 +1472,7 @@ const HeroSection = () => {
                             title={instagramData.title}
                             author={instagramData.author}
                             duration={instagramData.duration}
+                            mediaUrl={currentItem.proxy_url || currentItem.media_url}
                           />
                         </div>
                       ) : (
