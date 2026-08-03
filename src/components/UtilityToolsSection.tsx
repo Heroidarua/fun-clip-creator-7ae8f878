@@ -18,7 +18,7 @@ const ImageToPdfConverter = lazy(() => import("@/components/tools/ImageToPdfConv
 const AITextGenerator     = lazy(() => import("@/components/tools/AITextGenerator"));
 const AutoTranslator      = lazy(() => import("@/components/tools/AutoTranslator"));
 const TextSummarizer      = lazy(() => import("@/components/tools/TextSummarizer"));
-const MetadataRemover     = lazy(() => import("@/components/tools/premium/MetadataRemoverTool"));
+const MetadataRemover     = lazy(() => import("@/components/tools/premium/MetadataRemoverIframeTool"));
 
 const ToolFallback = () => (
   <div className="flex items-center justify-center gap-2 py-10 text-muted-foreground">
