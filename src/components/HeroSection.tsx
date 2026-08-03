@@ -1012,7 +1012,7 @@ const HeroSection = () => {
         <div className="mb-8 sm:mb-10 lg:mb-12">
           {/* Pixel badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/20 border-2 border-primary mb-6 font-pixel text-[10px] text-primary">
-            <Gamepad2 className="w-4 h-4" />
+            </>
             
           </div>
           
