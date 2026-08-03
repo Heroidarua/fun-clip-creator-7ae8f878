@@ -119,18 +119,31 @@ async function fetchYtStream(videoId: string, key: string): Promise<YouTubeRespo
   const j: any = await r.json().catch(() => null);
   if (!j || j?.status === "fail") return null;
   const formats: any[] = [...(j.formats || []), ...(j.adaptiveFormats || [])];
+  
+  // Prefer formats that have both video and audio (muxed)
   const videos = formats.filter((f) => f?.url && /video\/mp4/.test(f?.mimeType || "") && f?.hasAudio !== false);
+  // Fallback to any mp4 video if no muxed format is found
   const anyVideo = videos.length ? videos : formats.filter((f) => f?.url && /video\/mp4/.test(f?.mimeType || ""));
-  const audios = formats.filter((f) => f?.url && /audio\/mp4/.test(f?.mimeType || ""));
+  const audios = formats.filter((f) => f?.url && /audio\/(mp4|mpeg|m4a)/.test(f?.mimeType || ""));
+  
   const bestVideo = anyVideo.sort((a, b) => (b?.height || 0) - (a?.height || 0))[0];
-  const bestAudio = audios.sort((a, b) => (b?.bitrate || 0) - (a?.bitrate || 0))[0];
+  const bestAudio = audios.sort((a, b) => (b?.bitrate || 0) - (a?.bitrate || 0))[0] || formats.find(f => /audio/.test(f?.mimeType || ""));
+  
   const videoUrl = bestVideo?.url || "";
   const audioUrl = bestAudio?.url || "";
   if (!videoUrl && !audioUrl) return null;
-  const thumb = (j.thumbnail && j.thumbnail[j.thumbnail.length - 1]?.url) || `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+  
+  const thumb = (j.thumbnail && j.thumbnail[j.thumbnail.length - 1]?.url) || fallbackThumbnail(videoId);
   return {
     success: true,
-    data: { video_url: videoUrl, audio_url: audioUrl, thumbnail: thumb, title: j.title || "YouTube Video", author: j.channelTitle || j.author || "YouTube", duration: Number(j.lengthSeconds || 0) },
+    data: { 
+      video_url: videoUrl, 
+      audio_url: audioUrl, 
+      thumbnail: thumb, 
+      title: j.title || "YouTube Video", 
+      author: j.channelTitle || j.author || "YouTube", 
+      duration: Number(j.lengthSeconds || 0) 
+    },
   };
 }
 
@@ -219,12 +232,13 @@ async function fetchYoutubePreview(videoId: string): Promise<YouTubeResponse> {
 export async function resolveYoutube(rawUrl: string, videoId: string): Promise<YouTubeResponse> {
   const key = (process.env.RAPIDAPI_KEY || "").trim();
   const providers: Array<{ name: string; run: () => Promise<YouTubeResponse | null> }> = [];
-  if (key) {
-    providers.push({ name: "youtube-media-downloader", run: () => fetchMediaDownloader(videoId, key) });
-    providers.push({ name: "ytstream", run: () => fetchYtStream(videoId, key) });
-  }
+  
+  // Prioritize Y2Mate as it's often more reliable for direct links
   providers.push({ name: "y2mate", run: () => fetchY2Mate(videoId) });
+
   if (key) {
+    providers.push({ name: "ytstream", run: () => fetchYtStream(videoId, key) });
+    providers.push({ name: "youtube-media-downloader", run: () => fetchMediaDownloader(videoId, key) });
     providers.push({ name: "social-all-in-one", run: () => fetchSocialAllInOne(rawUrl, videoId, key) });
     providers.push({ name: "auto-all-in-one", run: () => fetchAutoAllInOne(rawUrl, videoId, key) });
   }
