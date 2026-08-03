@@ -378,7 +378,8 @@ export async function resolveYoutube(rawUrl: string, videoId: string): Promise<Y
   const key = (process.env.RAPIDAPI_KEY || "").trim();
   const providers: Array<{ name: string; run: () => Promise<YouTubeResponse | null> }> = [];
   
-  // Prioritize Y2Mate with deeper extraction for direct links
+  // Extração nativa pelo próprio backend (links diretos googlevideo)
+  providers.push({ name: "innertube", run: () => fetchInnerTube(videoId) });
   providers.push({ name: "y2mate", run: () => fetchY2Mate(videoId) });
 
   if (key) {
