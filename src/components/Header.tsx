@@ -126,113 +126,11 @@ const Header = () => {
             <InstallAppButton />
             <div className="hidden sm:block"><NotificationBell /></div>
 
-            <button
-              onClick={() => setOpen((v) => !v)}
-              className="lg:hidden inline-flex items-center justify-center w-11 h-11 rounded-full border border-border text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-              aria-label={open ? "Fechar menu" : "Abrir menu"}
-              aria-expanded={open}
-              aria-controls="mobile-nav"
-            >
-              {open ? <X className="w-5 h-5" aria-hidden="true" /> : <Menu className="w-5 h-5" aria-hidden="true" />}
-            </button>
+            <div className="hidden sm:block"><NotificationBell /></div>
           </div>
         </div>
       </div>
 
-      {/* Mobile nav */}
-      {open && (
-        <>
-          {/* Backdrop */}
-          <button
-            type="button"
-            aria-label="Fechar menu"
-            onClick={() => setOpen(false)}
-            className="lg:hidden fixed inset-0 top-16 z-40 bg-foreground/20 backdrop-blur-[2px] animate-in fade-in"
-          />
-          {/* Drawer */}
-          <div
-            id="mobile-nav"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Menu de navegação"
-            className="lg:hidden absolute left-0 right-0 top-full z-50 border-t border-border bg-background shadow-xl animate-in slide-in-from-top-2"
-          >
-            <nav aria-label="Navegação móvel" className="container mx-auto px-4 py-5 max-w-7xl flex flex-col gap-1.5">
-              <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground px-2 pb-1">
-                Navegação
-              </p>
-              {NAV.map((item) => {
-                const active = isActive(item.to);
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.to}
-                    to={item.to}
-                    onClick={(e) => {
-                      setOpen(false);
-                      if (item.to === "/player") {
-                        e.preventDefault();
-                        setIptvModalOpen(true);
-                      }
-                    }}
-                    aria-current={active ? "page" : undefined}
-                    aria-label={`${item.label} — ${item.desc}`}
-                    className={`group flex items-center gap-3 px-3 py-3 min-h-11 rounded-xl border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
-                      active
-                        ? "border-foreground/20 bg-muted"
-                        : "border-transparent hover:bg-muted/60"
-                    }`}
-                  >
-                    <span
-                      className={`flex items-center justify-center w-10 h-10 rounded-lg ${
-                        active ? "bg-foreground text-background" : "bg-muted text-foreground"
-                      }`}
-                      aria-hidden="true"
-                    >
-                      <Icon className="w-4 h-4" aria-hidden="true" />
-                    </span>
-                    <span className="flex-1 min-w-0">
-                      <span className="block text-base font-medium text-foreground leading-tight">
-                        {item.label}
-                      </span>
-                      <span className="block text-xs text-foreground/70 truncate">
-                        {item.desc}
-                      </span>
-                    </span>
-                    <ArrowRight className="w-4 h-4 text-foreground/60 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
-                  </Link>
-                );
-              })}
-
-              <div className="h-px bg-border my-3" />
-
-              <Link
-                to="/dashboard"
-                onClick={() => setOpen(false)}
-                aria-label="Abrir meu painel"
-                className="flex items-center justify-center gap-2 px-4 py-3 min-h-11 rounded-full bg-gradient-to-r from-primary to-accent text-primary-foreground text-sm font-semibold shadow-[var(--shadow-elegant)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-              >
-                <LayoutDashboard className="w-4 h-4" aria-hidden="true" />
-                Abrir meu painel
-              </Link>
-
-              <button
-                onClick={() => {
-                  setOpen(false);
-                  handleShare();
-                }}
-                aria-label="Compartilhar o site"
-                className="flex items-center justify-center gap-2 px-4 py-2.5 min-h-11 rounded-full border border-border text-sm text-foreground/80 hover:text-foreground hover:border-foreground/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-              >
-                <Share2 className="w-4 h-4" aria-hidden="true" />
-                Compartilhar o site
-              </button>
-
-              <InstallAppButton variant="mobile" onClick={() => setOpen(false)} />
-            </nav>
-          </div>
-        </>
-      )}
       <IPTVModal isOpen={iptvModalOpen} onClose={() => setIptvModalOpen(false)} />
     </header>
   );
