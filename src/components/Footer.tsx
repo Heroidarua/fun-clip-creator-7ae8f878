@@ -13,8 +13,8 @@ const Footer = () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "sos01 - Plataforma de Utilidades Digitais",
-          text: "Ferramentas digitais, entretenimento e jogos clássicos - tudo em um só lugar!",
+          title: "sos01.com.br - Plataforma de Utilidades Digitais",
+          text: "Ferramentas digitais sos01, entretenimento e jogos clássicos - tudo em um só lugar!",
           url: window.location.origin,
         });
       } catch (error) {

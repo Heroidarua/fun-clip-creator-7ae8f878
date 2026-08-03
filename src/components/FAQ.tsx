@@ -9,8 +9,8 @@ import FreeFlash from "@/components/FreeFlash";
 const FAQ = () => {
   const faqs = [
     {
-      question: "O que é o sos01?",
-      answer: "O sos01 é uma plataforma 100% gratuita de utilidades digitais que oferece ferramentas para download de vídeos, biblioteca de quadrinhos e mangás, jogos clássicos retrô e utilitários com inteligência artificial — tudo sem cadastro e sem custos."
+      question: "O que é o SOS01.com.br?",
+      answer: "O SOS01.com.br é uma plataforma 100% gratuita de utilidades digitais que oferece ferramentas para download de vídeos sos01, biblioteca de quadrinhos e mangás, jogos clássicos retrô e utilitários com inteligência artificial — tudo sem cadastro e sem custos."
     },
     {
       question: "Como funcionam as ferramentas de mídia?",
@@ -65,8 +65,8 @@ const FAQ = () => {
       answer: "Nossa biblioteca conta com mais de 100 mil HQs e mangás organizados por categorias, incluindo super-heróis Marvel e DC, mangás populares como One Piece, Naruto e Dragon Ball, além de quadrinhos brasileiros. Tudo gratuito e sem limite de leitura."
     },
     {
-      question: "A biblioteca de quadrinhos é realmente gratuita?",
-      answer: "Sim! A biblioteca de quadrinhos e mangás do sos01 é 100% gratuita. Não cobramos nenhuma assinatura ou taxa. Você pode ler quantos quadrinhos quiser, quando quiser, sem pagar nada."
+      question: "A biblioteca de quadrinhos sos01 é realmente gratuita?",
+      answer: "Sim! A biblioteca de quadrinhos e mangás do sos01.com.br é 100% gratuita. Não cobramos nenhuma assinatura ou taxa. Você pode ler quantos quadrinhos quiser, quando quiser, sem pagar nada no sos01."
     },
     {
       question: "Preciso respeitar direitos autorais?",
