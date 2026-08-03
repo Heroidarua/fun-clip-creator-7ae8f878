@@ -5,12 +5,14 @@ import { buildSeo, SITE } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
   component: Index,
-  head: () =>
-    buildSeo({
+  head: () => {
+    const title = "SOS01.com.br — Baixar vídeos sem marca d'água, jogos retrô e ferramentas grátis";
+    const description = "No SOS01.com.br você baixa vídeos do TikTok, YouTube, Instagram, Kwai, Facebook e Pinterest sem marca d'água. Explore jogos retrô, utilitários com IA e muito mais — 100% grátis.";
+    
+    return buildSeo({
       path: "/",
-      title: "SOS01.com.br — Baixar vídeos sem marca d'água, jogos retrô e ferramentas grátis",
-      description:
-        "No SOS01.com.br você baixa vídeos do TikTok, YouTube, Instagram, Kwai, Facebook e Pinterest sem marca d'água. Explore jogos retrô, utilitários com IA e muito mais — 100% grátis.",
+      title,
+      description,
       keywords: [
         "sos01.com.br",
         "baixar vídeo tiktok sem marca d'água sos01",
