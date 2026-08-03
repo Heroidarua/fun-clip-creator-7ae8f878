@@ -1,3 +1,4 @@
+/* Corrija o código do YouTube para fazer download */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";

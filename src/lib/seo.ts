@@ -15,6 +15,7 @@ export const SITE = {
     "sos01.com.br",
     "sos01 player",
     "sos01 iptv",
+    "sos01 youtube download",
     "sos01 baixar videos",
     "baixar vídeos",
     "downloader online",
