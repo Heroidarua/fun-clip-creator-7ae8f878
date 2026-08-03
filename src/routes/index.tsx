@@ -1,4 +1,18 @@
-/* Diminua o neon das fontes */
+/* Código para baixar vídeos do YouTube em python: from pytube import YouTube
+
+def download_youtube_video(url):
+    try:
+        yt = YouTube(url)
+        video = yt.streams.get_highest_resolution()
+        print(f"Baixando: {yt.title}")
+        video.download()
+        print("Download concluído!")
+    except Exception as e:
+        print(f"Erro ao baixar o vídeo: {e}")
+
+if __name__ == "__main__":
+    url = input("Insira o URL do vídeo do YouTube: ")
+    download_youtube_video(url) */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";
