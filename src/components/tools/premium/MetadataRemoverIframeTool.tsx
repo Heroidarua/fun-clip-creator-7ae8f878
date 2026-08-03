@@ -35,13 +35,6 @@ const MetadataRemoverIframeTool = () => {
           allow="clipboard-write; clipboard-read; browse"
         />
 
-        {/* Overlay de Interação (opcional, para estética) */}
-        <div className="absolute top-4 right-4 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
-          <div className="bg-background/80 backdrop-blur-sm px-3 py-1.5 rounded-full border border-border flex items-center gap-2 shadow-sm">
-            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Live Environment</span>
-          </div>
-        </div>
       </div>
 
       {/* Instruções Rápidas */}
