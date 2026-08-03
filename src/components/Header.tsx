@@ -78,7 +78,7 @@ const Header = () => {
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+      className={`sticky top-0 z-40 w-full transition-all duration-300 ${
         scrolled
           ? "backdrop-blur-xl bg-[hsl(var(--background)/0.85)] border-b border-border/70 shadow-[0_1px_0_0_hsl(var(--border)/0.4)]"
           : "backdrop-blur-sm bg-[hsl(var(--background)/0.6)] border-b border-transparent"
@@ -87,7 +87,7 @@ const Header = () => {
       <div className="container mx-auto px-4 sm:px-6 max-w-7xl">
         <div className="flex items-center justify-between h-16 sm:h-[68px]">
           {/* Logo — 3D icon */}
-          <Link to="/" className="flex items-center gap-3 group shrink-0" aria-label="Ir para a página inicial">
+          <Link to="/" className="md:hidden flex items-center gap-3 group shrink-0" aria-label="Ir para a página inicial">
             <div className="relative" style={{ perspective: '800px' }}>
               <div
                 className="relative w-12 h-12 rounded-2xl transition-transform duration-500 ease-out group-hover:[transform:rotateY(22deg)_rotateX(8deg)_scale(1.06)]"
