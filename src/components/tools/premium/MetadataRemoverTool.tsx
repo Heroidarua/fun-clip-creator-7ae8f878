@@ -231,9 +231,8 @@ const MetadataRemoverTool = () => {
       <div className="flex items-start gap-3 p-4 bg-blue-500/10 border border-blue-500/30 rounded-sm">
         <ShieldCheck className="w-5 h-5 text-blue-400 mt-0.5 shrink-0" />
         <p className="text-xs text-blue-200/80 leading-relaxed">
-          <strong>Segurança Total:</strong> Seus arquivos nunca são enviados para servidores. 
-          Todo o processamento acontece diretamente no seu navegador de forma privada e segura. 
-          Funciona offline.
+          <strong>Segurança Total:</strong> Verifique se a ferramenta Removedor de Metadados não faz nenhum upload e funciona 100% offline depois do carregamento inicial. Todo o processamento acontece diretamente no seu navegador de forma privada e segura. 
+
         </p>
       </div>
 
