@@ -8,7 +8,8 @@ import {
   ExternalLink, 
   ClipboardCheck, 
   Tv,
-  GripHorizontal
+  GripHorizontal,
+  MessageCircle
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
@@ -76,6 +77,17 @@ export default function IPTVModal({ isOpen, onClose }: IPTVModalProps) {
 
   const openIPTV = () => {
     window.open(IPTV_CREDENTIALS.url, "_blank");
+  };
+  
+  const handleWhatsAppShare = () => {
+    const message = encodeURIComponent(
+      `📺 *Credenciais IPTV SOS01*\n\n` +
+      `👤 *Login:* ${IPTV_CREDENTIALS.login}\n` +
+      `🔑 *Senha:* ${IPTV_CREDENTIALS.senha}\n\n` +
+      `🔗 *Acesse aqui:* ${IPTV_CREDENTIALS.url}\n\n` +
+      `SOS01.com.br - Ferramentas e Entretenimento Grátis!`
+    );
+    window.open(`https://api.whatsapp.com/send?text=${message}`, "_blank");
   };
 
   return (
@@ -174,13 +186,22 @@ export default function IPTVModal({ isOpen, onClose }: IPTVModalProps) {
                 </div>
               </div>
 
-              <button
-                onClick={handleCopyAll}
-                className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-primary/20 hover:border-primary/50 text-primary/80 hover:text-primary hover:bg-primary/5 rounded-2xl transition-all text-sm font-medium"
-              >
-                <ClipboardCheck className="w-4 h-4" />
-                Copiar Tudo
-              </button>
+              <div className="flex gap-3">
+                <button
+                  onClick={handleCopyAll}
+                  className="flex-1 flex items-center justify-center gap-2 py-3 border-2 border-dashed border-primary/20 hover:border-primary/50 text-primary/80 hover:text-primary hover:bg-primary/5 rounded-2xl transition-all text-sm font-medium"
+                >
+                  <ClipboardCheck className="w-4 h-4" />
+                  Copiar Tudo
+                </button>
+                <button
+                  onClick={handleWhatsAppShare}
+                  className="flex-1 flex items-center justify-center gap-2 py-3 bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#25D366] border border-[#25D366]/30 rounded-2xl transition-all text-sm font-medium group"
+                >
+                  <MessageCircle className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                  WhatsApp
+                </button>
+              </div>
             </div>
 
             {/* Footer */}

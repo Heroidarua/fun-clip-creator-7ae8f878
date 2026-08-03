@@ -1,4 +1,4 @@
-/* Tente para ver se o próprio servidor da lovable consegue extrair a mia do YouTube */
+/* Crie um botão das credenciais do IPTV que quando o usuário clicar, o LOGIN: sos01.com.br E SENHA: 19601525488 DO IPTV VAI DIRETO PARA O WHATSAPP DO USUÁRIO juntamente com o link do site para ele entrar no IPTV 1.0 para logar */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";
