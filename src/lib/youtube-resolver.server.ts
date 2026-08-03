@@ -78,15 +78,16 @@ const INNERTUBE_CLIENTS = [
 
 function pickInnertubeFormats(player: any) {
   const streaming = player?.streamingData || {};
-  const formats: any[] = [
-    ...(streaming.formats || []),
-    ...(streaming.adaptiveFormats || []),
-  ].filter((f) => typeof f?.url === "string" && f.url.startsWith("http"));
+  const hasUrl = (f: any) => typeof f?.url === "string" && f.url.startsWith("http");
+  const progressive: any[] = (streaming.formats || []).filter(hasUrl);
+  const adaptive: any[] = (streaming.adaptiveFormats || []).filter(hasUrl);
+  const formats = [...progressive, ...adaptive];
 
-  const muxed = formats
-    .filter((f) => /video\/mp4/.test(f.mimeType || "") && /avc1/.test(f.mimeType || "") && /mp4a/.test(f.mimeType || ""))
+  // Progressivo (vídeo + áudio no mesmo arquivo) é o que o navegador reproduz direto
+  const muxed = progressive
+    .filter((f) => /video\/mp4/.test(f.mimeType || "") && /mp4a/.test(f.mimeType || ""))
     .sort((a, b) => (b.height || 0) - (a.height || 0));
-  const videoOnly = formats
+  const videoOnly = adaptive
     .filter((f) => /video\/mp4/.test(f.mimeType || ""))
     .sort((a, b) => (b.height || 0) - (a.height || 0));
   const audioOnly = formats
