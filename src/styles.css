@@ -82,16 +82,16 @@ input::placeholder, textarea::placeholder {
   --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
   --color-sidebar-border: hsl(var(--sidebar-border));
   --color-sidebar-ring: hsl(var(--sidebar-ring));
-  --font-pixel: 'Press Start 2P', monospace;
-  --font-vt323: 'VT323', monospace;
+  --font-pixel: 'Archivo Black', sans-serif;
+  --font-vt323: 'Manrope', sans-serif;
   --font-orbitron: 'Orbitron', sans-serif;
   --font-inter: 'Manrope', 'Hind', system-ui, sans-serif;
   --font-sora: 'Manrope', 'Hind', system-ui, sans-serif;
   --font-manrope: 'Manrope', 'Hind', system-ui, sans-serif;
-  --font-silkscreen: 'Silkscreen', 'VT323', monospace;
+  --font-silkscreen: 'Manrope', sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
-  --font-display: 'VT323', 'Press Start 2P', monospace;
-  --font-serif: 'VT323', 'Press Start 2P', monospace;
+  --font-display: 'Archivo Black', sans-serif;
+  --font-serif: 'Manrope', sans-serif;
 }
 
 @layer base {
@@ -207,10 +207,17 @@ body {
     letter-spacing: -0.005em;
   }
 
-  h1, h2, h3, h4, h5, h6, .font-display, .font-serif {
-    font-family: 'VT323', 'Press Start 2P', monospace;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
+  h1, h2, h3, h4, h5, h6, .font-display {
+    font-family: 'Archivo Black', sans-serif;
+    letter-spacing: -0.02em;
+    text-transform: none;
+    font-weight: 900;
+  }
+
+  .font-serif {
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: normal;
+    text-transform: none;
     font-weight: 400;
   }
 
@@ -251,9 +258,9 @@ body {
   }
 
   /* Tipografia editorial — títulos com peso, leitura mais arejada */
-  h1 { line-height: 1.0;  font-size: clamp(2rem, 6vw, 4rem); }
-  h2 { line-height: 1.05; font-size: clamp(1.5rem, 4vw, 2.5rem); }
-  h3 { line-height: 1.1;  font-size: clamp(1.25rem, 3vw, 1.75rem); }
+  h1 { line-height: 1.1;  font-size: clamp(2.5rem, 8vw, 5rem); }
+  h2 { line-height: 1.1; font-size: clamp(2rem, 6vw, 3.5rem); }
+  h3 { line-height: 1.2;  font-size: clamp(1.5rem, 4vw, 2.5rem); }
   p  { line-height: 1.65; }
 
   /* Cards e bordas mais discretos */
@@ -288,7 +295,7 @@ body {
     transform: translateY(-2px);
   }
 
-  /* Ambient backdrop — grid retrô arcade */
+  /* Ambient backdrop — subtle modern glow */
   body::before {
     content: "";
     position: fixed;
@@ -296,13 +303,10 @@ body {
     pointer-events: none;
     z-index: 0;
     background-image:
-      radial-gradient(60% 50% at 50% 0%, hsl(var(--primary) / 0.12) 0%, transparent 60%),
-      radial-gradient(40% 40% at 90% 10%, hsl(var(--accent) / 0.10) 0%, transparent 60%),
-      linear-gradient(to right, hsl(var(--primary) / 0.10) 1px, transparent 1px),
-      linear-gradient(to bottom, hsl(var(--primary) / 0.10) 1px, transparent 1px);
-    background-size: auto, auto, 32px 32px, 32px 32px;
-    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 80%);
-    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 80%);
+      radial-gradient(80% 80% at 50% -10%, hsl(var(--primary) / 0.15) 0%, transparent 60%),
+      radial-gradient(50% 50% at 100% 0%, hsl(var(--accent) / 0.12) 0%, transparent 70%);
+    mask-image: radial-gradient(ellipse 100% 100% at 50% 0%, black 50%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 100% 100% at 50% 0%, black 50%, transparent 100%);
   }
   body > * { position: relative; z-index: 1; }
 
@@ -408,30 +412,24 @@ body {
     100% { background-position: 200% center; }
   }
   
-  /* Scanline overlay effect */
+  /* Modern glow overlay instead of scanlines */
   .scanlines::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      hsla(0 0% 0% / 0.1) 2px,
-      hsla(0 0% 0% / 0.1) 4px
-    );
+    background: radial-gradient(circle at center, transparent 30%, hsla(var(--primary) / 0.05) 100%);
     pointer-events: none;
     z-index: 10;
   }
   
-  /* CRT flicker effect */
+  /* Soft pulse instead of CRT flicker */
   .crt-flicker {
-    animation: crt-flicker 0.15s infinite;
+    animation: soft-pulse 4s ease-in-out infinite;
   }
   
-  @keyframes crt-flicker {
+  @keyframes soft-pulse {
     0%, 100% { opacity: 1; }
-    50% { opacity: 0.98; }
+    50% { opacity: 0.95; }
   }
   
   /* Pixel hover lift */
@@ -457,7 +455,7 @@ body {
   
   /* Retro button styles */
   .btn-retro {
-    font-family: 'Press Start 2P', monospace;
+    font-family: 'Archivo Black', sans-serif;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     border: 3px solid currentColor;
@@ -484,20 +482,20 @@ body {
   
   /* Pixel font text */
   .pixel-text {
-    font-family: 'Press Start 2P', monospace;
+    font-family: 'Archivo Black', sans-serif;
     letter-spacing: 0.1em;
     line-height: 1.8;
   }
   
   /* Retro VT323 text */
   .retro-text {
-    font-family: 'VT323', monospace;
+    font-family: 'Manrope', sans-serif;
     letter-spacing: 0.05em;
   }
   
   /* Arcade badge */
   .arcade-badge {
-    font-family: 'Press Start 2P', monospace;
+    font-family: 'Archivo Black', sans-serif;
     font-size: 0.6rem;
     padding: 0.5rem 1rem;
     background: linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.8) 100%);
