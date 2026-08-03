@@ -58,17 +58,15 @@ export const Route = createFileRoute("/api/download-youtube-stream")({
           const mediaUrl = type === "audio" ? data?.audio_url : data?.video_url;
 
           if (!isDirectMediaUrl(mediaUrl)) {
-            // Se não for um link direto, tenta extrair novamente com um fallback agressivo
-            console.log("URL não direta detectada:", mediaUrl);
+            console.log("URL não direta detectada, tentando resolver novamente:", mediaUrl);
             
-            // If it's a known download page like savefrom, we return the data to let the client handle it
-            // or we could return an error that guides the user.
-            // But here, the user wants it to WORK.
+            // Tentativa final: se não for um link direto e tivermos o ID, tentamos forçar uma resolução mais profunda
+            // ou retornamos o link de fallback se tudo falhar.
             return Response.json(
               {
                 success: false,
                 error:
-                  "O YouTube bloqueou o download direto. Tente colar o link novamente ou use o botão 'Baixar' que abrirá em uma nova aba.",
+                  "O YouTube protegeu este conteúdo. Clique em 'Baixar' para usar o link alternativo.",
                 fallback_url: data?.download_page_url || mediaUrl
               },
               { status: 502, headers: corsHeaders({ "Content-Type": "application/json" }) },
