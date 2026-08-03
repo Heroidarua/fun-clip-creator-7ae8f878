@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/hooks/useTheme";
-import MobileBottomNav from "@/components/MobileBottomNav";
+import Navigation from "@/components/Navigation";
 import BackToTop from "@/components/BackToTop";
 import ProtectionLayer from "@/components/ProtectionLayer";
 import { registerSW } from "@/lib/registerSW";
@@ -139,7 +139,7 @@ function RootComponent() {
         <Sonner />
         <ProtectionLayer />
         <Outlet />
-        <MobileBottomNav />
+        <Navigation />
         <BackToTop />
       </TooltipProvider>
     </ThemeProvider>
