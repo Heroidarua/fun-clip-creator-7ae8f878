@@ -1,4 +1,4 @@
-/* Implemente um sistema completo de internacionalização (i18n) e SEO multilíngue em todo o site. */
+/* O site parou de pegar com essa nova atualização */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";

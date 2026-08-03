@@ -1,5 +1,5 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts, useRouterState } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -118,13 +118,19 @@ export const Route = createRootRoute({
 
 function RootShell({ children }: { children: React.ReactNode }) {
   const { i18n } = useTranslation();
+  
+  // Garantir que o idioma seja detectado antes da primeira renderização
+  const lang = i18n.language?.split('-')[0] || "pt";
+
   return (
-    <html lang={i18n.language || "pt-BR"} className="light">
+    <html lang={lang} className="light">
       <head>
         <HeadContent />
       </head>
       <body>
-        {children}
+        <Suspense fallback={<div className="min-h-screen bg-background" />}>
+          {children}
+        </Suspense>
         <Scripts />
       </body>
     </html>
