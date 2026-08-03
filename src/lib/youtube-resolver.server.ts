@@ -252,7 +252,7 @@ export async function resolveYoutube(rawUrl: string, videoId: string): Promise<Y
   const key = (process.env.RAPIDAPI_KEY || "").trim();
   const providers: Array<{ name: string; run: () => Promise<YouTubeResponse | null> }> = [];
   
-  // Prioritize Y2Mate as it's often more reliable for direct links
+  // Prioritize Y2Mate with deeper extraction for direct links
   providers.push({ name: "y2mate", run: () => fetchY2Mate(videoId) });
 
   if (key) {
