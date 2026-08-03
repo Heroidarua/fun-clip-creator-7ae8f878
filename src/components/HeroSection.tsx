@@ -2080,6 +2080,7 @@ const HeroSection = () => {
                     <MediaPreviewOverlay
                       title={pinterestData.title}
                       author={pinterestData.author}
+                      mediaUrl={pinterestData.media_type === 'video' ? (pinterestData.proxy_url || pinterestData.video_url) : undefined}
                     />
                   </div>
 
