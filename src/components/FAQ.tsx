@@ -17,8 +17,8 @@ const FAQ = () => {
       answer: "Nossas ferramentas processam URLs de conteúdos públicos. Cole o link no campo apropriado, clique em 'Procurar' e, se disponível, poderá acessar o conteúdo. Importante: o usuário é responsável por garantir que possui os direitos necessários sobre qualquer conteúdo."
     },
     {
-      question: "O sos01 armazena conteúdos?",
-      answer: "Não. O sos01 não hospeda, armazena ou distribui qualquer conteúdo de mídia. Nossa plataforma atua exclusivamente como uma interface técnica para acessar conteúdos públicos de terceiros."
+      question: "O SOS01.com.br armazena conteúdos?",
+      answer: "Não. O SOS01.com.br não hospeda, armazena ou distribui qualquer conteúdo de mídia. Nossa plataforma sos01 atua exclusivamente como uma interface técnica para acessar conteúdos públicos de terceiros."
     },
     {
       question: "Como funciona o Gerador de Avatar Pixelado?",
@@ -93,8 +93,8 @@ const FAQ = () => {
       answer: "Se você é detentor de direitos autorais e acredita que houve uso inadequado, consulte nossa Política DMCA e envie uma notificação formal para contatosos01@gmail.com."
     },
     {
-      question: "Vocês coletam dados pessoais?",
-      answer: "O sos01 foi projetado com privacidade em mente. Não coletamos dados pessoais durante o uso regular das ferramentas. Para mais detalhes, consulte nossa Política de Privacidade."
+      question: "O SOS01.com.br coleta dados pessoais?",
+      answer: "O SOS01.com.br foi projetado com privacidade em mente. Não coletamos dados pessoais durante o uso regular das ferramentas sos01. Para mais detalhes, consulte nossa Política de Privacidade."
     }
   ];
 

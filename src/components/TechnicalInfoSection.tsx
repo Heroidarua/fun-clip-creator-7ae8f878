@@ -34,7 +34,7 @@ const TechnicalInfoSection = () => {
           <div className="w-16 h-1 bg-primary mx-auto rounded-full mb-4"></div>
           <p className="text-lg text-muted-foreground font-inter max-w-2xl mx-auto">
             Desenvolvido com foco na segurança, qualidade e facilidade de uso. 
-            Conheça os diferenciais que fazem do sos01 a melhor opção para download de vídeos.
+            Conheça os diferenciais que fazem do sos01.com.br a melhor opção para download de vídeos e utilitários.
           </p>
         </div>
         
@@ -87,8 +87,8 @@ const TechnicalInfoSection = () => {
           </div>
           
           <p className="text-center mt-6 text-xs text-muted-foreground">
-            O sos01 é uma ferramenta técnica que facilita o acesso a conteúdo público. 
-            O usuário é responsável pelo uso adequado e legal do material baixado.
+            O sos01.com.br é uma ferramenta técnica que facilita o acesso a conteúdo público. 
+            O usuário sos01 é responsável pelo uso adequado e legal do material baixado.
           </p>
         </div>
       </div>
