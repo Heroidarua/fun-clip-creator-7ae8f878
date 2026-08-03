@@ -114,8 +114,8 @@ export default function SidebarNav() {
 
       {/* Mobile Nav (remains at bottom for ergonomics on mobile) */}
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t-2 border-secondary bg-background/95 backdrop-blur-md"
-        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t-2 border-secondary bg-background/95 backdrop-blur-md safe-area-bottom"
+        style={{ height: 'calc(64px + env(safe-area-inset-bottom))' }}
       >
         <ul className="flex items-center justify-around h-[64px] px-2 overflow-x-auto no-scrollbar">
           {ITEMS.map(({ to, label, icon: Icon }) => {
@@ -145,12 +145,17 @@ export default function SidebarNav() {
 
       <IPTVModal isOpen={iptvModalOpen} onClose={() => setIptvModalOpen(false)} />
 
-      {/* Main Layout Adjustments for Sidebar */}
+      {/* Main Layout Adjustments for Sidebar & Mobile Nav */}
       <style dangerouslySetInnerHTML={{ __html: `
         @media (min-width: 768px) {
           main, header, footer {
-            margin-left: \${isCollapsed ? '80px' : '256px'};
+            margin-left: ${isCollapsed ? '80px' : '256px'};
             transition: margin-left 300ms ease-in-out;
+          }
+        }
+        @media (max-width: 767px) {
+          main {
+            padding-bottom: calc(64px + env(safe-area-inset-bottom) + 1rem);
           }
         }
       `}} />
