@@ -17,6 +17,7 @@ import {
   ScanLine,
   ShieldAlert,
   Languages,
+  ShieldCheck,
   type LucideIcon,
 } from "lucide-react";
 
@@ -33,6 +34,15 @@ export type PremiumTool = {
 const Placeholder = lazy(() => import("@/components/tools/premium/Placeholder"));
 
 export const PREMIUM_TOOLS: PremiumTool[] = [
+  {
+    slug: "remover-metadados",
+    name: "Removedor de Metadados",
+    description: "Limpe EXIF, GPS e dados privados de imagens e documentos localmente.",
+    icon: ShieldCheck,
+    color: "210 100% 50%",
+    component: lazy(() => import("@/components/tools/premium/MetadataRemoverTool")),
+    status: "ready",
+  },
   {
     slug: "ocr",
     name: "OCR Imagem → Texto",
@@ -114,7 +124,7 @@ export const PREMIUM_TOOLS: PremiumTool[] = [
     component: lazy(() => import("@/components/tools/premium/LanguageDetectorTool")),
     status: "ready",
   },
-  // Em breve — dependem de APIs externas/embeds e foram apresentados como pendentes.
+  // Em breve
   { slug: "avioes", name: "Rastreador de Aviões", description: "Voos em tempo real (em breve).", icon: Plane, color: "210 80% 60%", component: Placeholder, status: "soon" },
   { slug: "raios", name: "Raios em Tempo Real", description: "Descargas elétricas no mundo (em breve).", icon: CloudLightning, color: "50 100% 55%", component: Placeholder, status: "soon" },
   { slug: "navios", name: "Navios em Tempo Real", description: "Tráfego marítimo (em breve).", icon: Ship, color: "200 80% 50%", component: Placeholder, status: "soon" },
