@@ -1,4 +1,4 @@
-/* Agora que tem backend o donwload precisa acontecer */
+/* Quando colar o link do vídeo do YouTube precisa aparecer o preview do vídeo */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";
