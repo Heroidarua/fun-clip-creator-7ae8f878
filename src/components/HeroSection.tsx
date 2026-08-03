@@ -1765,6 +1765,7 @@ const HeroSection = () => {
                       title={youtubeData.title}
                       author={youtubeData.author}
                       duration={youtubeData.duration}
+                      mediaUrl={youtubeData.video_url}
                     />
                   </div>
 
