@@ -838,9 +838,10 @@ const HeroSection = () => {
           const j = await probe.json();
           if (j?.fallback_url) {
             toast({
-              title: "Redirecionando...",
-              description: "O YouTube bloqueou o acesso direto. Abrindo página de download alternativa.",
+              title: "Atenção",
+              description: "O YouTube bloqueou o download direto. Estamos tentando uma rota alternativa...",
             });
+            // Tenta abrir o link de fallback se o direto falhar
             window.open(j.fallback_url, '_blank');
             return;
           }

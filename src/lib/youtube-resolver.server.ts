@@ -165,12 +165,13 @@ async function fetchY2Mate(videoId: string): Promise<YouTubeResponse | null> {
     const vid = info.vid;
     const mp4 = info?.links?.mp4 || {};
     const mp3 = info?.links?.mp3 || {};
-    const mp4Entries = Object.values(mp4) as any[];
     
-    // Find best quality video with audio
-    const progressive = mp4Entries.find((m) => /mp4/i.test(m?.f || "") && /^\d+p$/i.test(m?.q || "") && /audio/i.test(m?.q_text || ""));
-    const bestMp4 = progressive || mp4Entries.sort((a, b) => (parseInt(b?.q || "0") || 0) - (parseInt(a?.q || "0") || 0))[0];
-    const bestMp3 = (Object.values(mp3) as any[]).sort((a, b) => (parseInt(b?.q || "0") || 0) - (parseInt(a?.q || "0") || 0))[0];
+    // Sort keys to get highest quality
+    const mp4Keys = Object.keys(mp4).sort((a, b) => parseInt(b) - parseInt(a));
+    const mp3Keys = Object.keys(mp3).sort((a, b) => parseInt(b) - parseInt(a));
+    
+    const bestMp4Key = mp4Keys[0] ? mp4[mp4Keys[0]]?.k : null;
+    const bestMp3Key = mp3Keys[0] ? mp3[mp3Keys[0]]?.k : null;
 
     async function convert(k: string): Promise<string | null> {
       try {
@@ -185,21 +186,16 @@ async function fetchY2Mate(videoId: string): Promise<YouTubeResponse | null> {
         if (!conv.ok) return null;
         const j: any = await conv.json().catch(() => null);
         
-        // y2mate returns a direct link if successful, sometimes it's under 'dlink' or 'url'
-        const directLink = j?.dlink || j?.url || null;
-        if (directLink && (directLink.includes("y2mate.com") || directLink.includes("googlevideo.com"))) {
-            return directLink;
-        }
-        return directLink;
+        // y2mate returns a direct link in 'dlink'
+        return j?.dlink || j?.url || null;
       } catch {
         return null;
       }
     }
 
-    const videoUrl = bestMp4?.k ? await convert(bestMp4.k) : "";
-    const audioUrl = bestMp3?.k ? await convert(bestMp3.k) : "";
+    const videoUrl = bestMp4Key ? await convert(bestMp4Key) : "";
+    const audioUrl = bestMp3Key ? await convert(bestMp3Key) : "";
     
-    // If y2mate fails or returns non-direct, we'll try to find any link
     if (!videoUrl && !audioUrl) return null;
     
     return {
@@ -256,7 +252,7 @@ export async function resolveYoutube(rawUrl: string, videoId: string): Promise<Y
   const key = (process.env.RAPIDAPI_KEY || "").trim();
   const providers: Array<{ name: string; run: () => Promise<YouTubeResponse | null> }> = [];
   
-  // Prioritize Y2Mate as it's often more reliable for direct links
+  // Prioritize Y2Mate with deeper extraction for direct links
   providers.push({ name: "y2mate", run: () => fetchY2Mate(videoId) });
 
   if (key) {
@@ -297,7 +293,7 @@ export function isDirectMediaUrl(u: string | undefined | null): boolean {
   if (/ssyoutube\.com|savefrom\.net|en\.y2mate\.com\/youtube/i.test(u)) return false;
   
   // If it's a known direct media source or a y2mate delivery link, allow it
-  if (u.includes("googlevideo.com") || u.includes("y2mate.com/download") || u.includes("dlink")) return true;
+  if (u.includes("googlevideo.com") || u.includes("y2mate.com") || u.includes("dlink") || u.includes(".mp4") || u.includes(".m4a")) return true;
   
   // Block the main search/analyze pages
   if (/y2mate\.com\/(?!.*(dlink|convert|download))/i.test(u)) return false;
