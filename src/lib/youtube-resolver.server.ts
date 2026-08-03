@@ -185,10 +185,9 @@ async function fetchY2Mate(videoId: string): Promise<YouTubeResponse | null> {
         if (!conv.ok) return null;
         const j: any = await conv.json().catch(() => null);
         
-        // y2mate returns a direct link if successful, sometimes it's under 'dlink'
+        // y2mate returns a direct link if successful, sometimes it's under 'dlink' or 'url'
         const directLink = j?.dlink || j?.url || null;
-        if (directLink && directLink.includes("y2mate.com")) {
-            // Some y2mate links are still redirects, but we'll try it
+        if (directLink && (directLink.includes("y2mate.com") || directLink.includes("googlevideo.com"))) {
             return directLink;
         }
         return directLink;
@@ -293,11 +292,16 @@ export async function resolveYoutube(rawUrl: string, videoId: string): Promise<Y
 export function isDirectMediaUrl(u: string | undefined | null): boolean {
   if (!u) return false;
   if (!/^https?:\/\//i.test(u)) return false;
-  // If it's a savefrom or y2mate direct link, we allow it to proceed to the stream proxy
-  if (/ssyoutube\.com|savefrom\.net/i.test(u)) return false;
-  // Y2mate direct links often have 'dlink' or specific patterns, we'll be more lenient
-  // but still block the main site pages.
-  if (/y2mate\.com\/(?!.*(dlink|convert))/i.test(u)) return false;
+  
+  // Known download landing pages that require user interaction
+  if (/ssyoutube\.com|savefrom\.net|en\.y2mate\.com\/youtube/i.test(u)) return false;
+  
+  // If it's a known direct media source or a y2mate delivery link, allow it
+  if (u.includes("googlevideo.com") || u.includes("y2mate.com/download") || u.includes("dlink")) return true;
+  
+  // Block the main search/analyze pages
+  if (/y2mate\.com\/(?!.*(dlink|convert|download))/i.test(u)) return false;
+  
   return true;
 }
 
