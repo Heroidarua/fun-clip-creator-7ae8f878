@@ -1,4 +1,4 @@
-/* Conectar a ferramenta de donwload do YouTube a um beckend para poder o donwload funcionar */
+/* Implementar um backend que receba a URL do YouTube e faça o download/stream do arquivo para o cliente sem redirecionar para páginas externas. */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";
