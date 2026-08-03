@@ -12,6 +12,10 @@ export const SITE = {
     "https://storage.googleapis.com/gpt-engineer-file-uploads/W9nvJ5xZlFOuhB2wUyS0coPiyM22/social-images/social-1782694696983-1000953354.webp",
   defaultKeywords: [
     "sos01",
+    "sos01.com.br",
+    "sos01 player",
+    "sos01 iptv",
+    "sos01 baixar videos",
     "baixar vídeos",
     "downloader online",
     "ferramentas gratuitas",

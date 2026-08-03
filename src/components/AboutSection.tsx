@@ -114,9 +114,9 @@ const AboutSection = () => {
                 
                 {/* Description */}
                 <p className="text-muted-foreground font-orbitron text-sm text-center mb-6 leading-relaxed">
-                  Desenvolvedor web brasileiro, criador do sos01 — uma plataforma 100% gratuita 
-                  que reúne ferramentas de download, utilitários com IA, jogos retrô e quadrinhos. 
-                  Apaixonado por tecnologia, nostalgia gamer e por criar soluções que facilitam o dia a dia dos usuários.
+                  Desenvolvedor web brasileiro, criador do sos01.com.br — uma plataforma 100% gratuita 
+                  que reúne ferramentas de download sos01, utilitários com IA, jogos retrô e quadrinhos. 
+                  Apaixonado por tecnologia, nostalgia gamer e por criar o ecossistema sos01.
                 </p>
                 
                 {/* Social Link */}

@@ -28,7 +28,7 @@ const AdvantagesSection = () => {
     },
     {
       icon: <Gift className="w-8 h-8" />,
-      title: "100% GRÁTIS",
+      title: "SOS01 GRÁTIS",
       description: "Tudo sem pagar nada",
       color: "text-primary",
       borderColor: "border-primary",

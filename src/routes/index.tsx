@@ -7,15 +7,16 @@ export const Route = createFileRoute("/")({
   head: () =>
     buildSeo({
       path: "/",
-      title: "SOS01 — Baixar vídeos sem marca d'água, jogos retrô e ferramentas grátis",
+      title: "SOS01.com.br — Baixar vídeos sem marca d'água, jogos retrô e ferramentas grátis",
       description:
-        "Baixe vídeos do TikTok, YouTube, Instagram, Kwai, Facebook e Pinterest sem marca d'água. Jogos retrô, utilitários com IA e gerador de QR Code — 100% grátis e sem cadastro.",
+        "No SOS01.com.br você baixa vídeos do TikTok, YouTube, Instagram, Kwai, Facebook e Pinterest sem marca d'água. Explore jogos retrô, utilitários com IA e muito mais — 100% grátis.",
       keywords: [
-        "baixar vídeo tiktok sem marca d'água",
-        "baixar vídeo instagram",
-        "baixar vídeo youtube",
-        "downloader online grátis",
-        "jogos retrô no navegador",
+        "sos01.com.br",
+        "baixar vídeo tiktok sem marca d'água sos01",
+        "baixar vídeo instagram sos01",
+        "baixar vídeo youtube sos01",
+        "sos01 downloader online grátis",
+        "jogos retrô sos01",
       ],
       faq: [
         {

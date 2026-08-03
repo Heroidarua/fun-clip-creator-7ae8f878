@@ -7,14 +7,14 @@ const SocialProof = () => {
       icon: Download,
       value: 100000,
       suffix: "+",
-      label: "Conteúdos",
+      label: "SOS01 Mídias",
       color: "text-primary"
     },
     {
       icon: Users,
       value: 50000,
       suffix: "+", 
-      label: "Usuários",
+      label: "Usuários SOS01",
       color: "text-[hsl(var(--accent))]"
     },
     {
