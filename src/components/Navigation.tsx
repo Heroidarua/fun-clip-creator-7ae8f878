@@ -105,10 +105,7 @@ export default function SidebarNav() {
 
         {/* Footer actions */}
         <div className="p-4 border-t border-border/50 space-y-2">
-          <div className={`flex items-center ${isCollapsed ? "justify-center" : "justify-between"}`}>
-             <ThemeToggle />
-             {!isCollapsed && <span className="text-[10px] text-muted-foreground uppercase tracking-widest">v2.0.1</span>}
-          </div>
+          {!isCollapsed && <span className="text-[10px] text-muted-foreground uppercase tracking-widest block text-center mb-2">v2.0.1</span>}
         </div>
       </nav>
 
