@@ -1,4 +1,4 @@
-/* Toda vez que colo um link pra baixar no YouTube, ele me redireciona para cá https://en1.savefrom.net/1-youtube/?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DyznDX2JRZPM&utm_source=youtube.com&utm_medium=short_domains&utm_campaign=ssyoutube.com&a_ts=1785798145.408 */
+/* Conectar a ferramenta de donwload do YouTube a um beckend para poder o donwload funcionar */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";
