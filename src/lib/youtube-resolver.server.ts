@@ -150,12 +150,12 @@ async function fetchYtStream(videoId: string, key: string): Promise<YouTubeRespo
 async function fetchY2Mate(videoId: string): Promise<YouTubeResponse | null> {
   try {
     const analyze = await fetch("https://www.y2mate.com/mates/analyzeV2/ajax", {
-      method: "POST", signal: withTimeout(6500),
+      method: "POST", signal: withTimeout(7500),
       headers: {
         "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
         "User-Agent": BROWSER_UA, Origin: "https://www.y2mate.com", Referer: "https://www.y2mate.com/", Accept: "*/*",
       },
-      body: new URLSearchParams({ k_query: `https://www.youtube.com/watch?v=${videoId}`, k_page: "home", hl: "en", q_auto: "0" }).toString(),
+      body: new URLSearchParams({ k_query: `https://www.youtube.com/watch?v=${videoId}`, k_page: "home", hl: "pt", q_auto: "0" }).toString(),
     });
     
     if (!analyze.ok) return null;
@@ -175,7 +175,7 @@ async function fetchY2Mate(videoId: string): Promise<YouTubeResponse | null> {
     async function convert(k: string): Promise<string | null> {
       try {
         const conv = await fetch("https://www.y2mate.com/mates/convertV2/index", {
-          method: "POST", signal: withTimeout(6500),
+          method: "POST", signal: withTimeout(7500),
           headers: {
             "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
             "User-Agent": BROWSER_UA, Origin: "https://www.y2mate.com", Referer: "https://www.y2mate.com/", Accept: "*/*",
@@ -255,6 +255,10 @@ export async function resolveYoutube(rawUrl: string, videoId: string): Promise<Y
   if (key) {
     providers.push({ name: "ytstream", run: () => fetchYtStream(videoId, key) });
     providers.push({ name: "youtube-media-downloader", run: () => fetchMediaDownloader(videoId, key) });
+  }
+
+  // Fallback providers
+  if (key) {
     providers.push({ name: "social-all-in-one", run: () => fetchSocialAllInOne(rawUrl, videoId, key) });
     providers.push({ name: "auto-all-in-one", run: () => fetchAutoAllInOne(rawUrl, videoId, key) });
   }
