@@ -1,5 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Home, Wrench, Gamepad2, BookOpen, LayoutDashboard, Globe2, Tv, Radio, PlayCircle } from "lucide-react";
+import { useState } from "react";
+import IPTVModal from "./IPTVModal";
 
 const ITEMS = [
   { to: "/", label: "Home", icon: Home },
@@ -15,6 +17,7 @@ const ITEMS = [
 
 export default function MobileBottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [iptvModalOpen, setIptvModalOpen] = useState(false);
   const isActive = (to: string) =>
     to === "/" ? pathname === "/" : pathname === to || pathname.startsWith(to + "/");
 
@@ -31,6 +34,12 @@ export default function MobileBottomNav() {
             <li key={to} className="flex">
               <Link
                 to={to}
+                onClick={(e) => {
+                  if (to === "/player") {
+                    e.preventDefault();
+                    setIptvModalOpen(true);
+                  }
+                }}
                 aria-current={active ? "page" : undefined}
                 className={`flex-1 flex flex-col items-center justify-center gap-1 text-[10px] font-silkscreen uppercase tracking-wider transition-colors ${
                   active
@@ -56,6 +65,7 @@ export default function MobileBottomNav() {
           );
         })}
       </ul>
+      <IPTVModal isOpen={iptvModalOpen} onClose={() => setIptvModalOpen(false)} />
     </nav>
   );
 }
