@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import ThemeToggle from "@/components/ThemeToggle";
 import NotificationBell from "@/components/NotificationBell";
 import InstallAppButton from "@/components/InstallAppButton";
+import IPTVModal from "@/components/IPTVModal";
 import { useToast } from "@/hooks/use-toast";
 import {
   Tooltip,
@@ -38,6 +39,7 @@ const Header = () => {
   const { toast } = useToast();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [iptvModalOpen, setIptvModalOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => {
@@ -132,6 +134,12 @@ const Header = () => {
                     <TooltipTrigger asChild>
                       <Link
                         to={item.to}
+                        onClick={(e) => {
+                          if (item.to === "/player") {
+                            e.preventDefault();
+                            setIptvModalOpen(true);
+                          }
+                        }}
                         aria-current={active ? "page" : undefined}
                         aria-label={`${item.label} — ${item.desc}`}
                         className={`relative inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
@@ -222,7 +230,13 @@ const Header = () => {
                   <Link
                     key={item.to}
                     to={item.to}
-                    onClick={() => setOpen(false)}
+                    onClick={(e) => {
+                      setOpen(false);
+                      if (item.to === "/player") {
+                        e.preventDefault();
+                        setIptvModalOpen(true);
+                      }
+                    }}
                     aria-current={active ? "page" : undefined}
                     aria-label={`${item.label} — ${item.desc}`}
                     className={`group flex items-center gap-3 px-3 py-3 min-h-11 rounded-xl border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
@@ -281,6 +295,7 @@ const Header = () => {
           </div>
         </>
       )}
+      <IPTVModal isOpen={iptvModalOpen} onClose={() => setIptvModalOpen(false)} />
     </header>
   );
 };
