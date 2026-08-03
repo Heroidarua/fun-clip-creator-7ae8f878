@@ -179,15 +179,7 @@ const Header = () => {
             </button>
             <InstallAppButton />
             <div className="hidden sm:block"><NotificationBell /></div>
-            <Link
-              to="/dashboard"
-              aria-label="Abrir meu painel"
-              title="Abrir meu painel"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-gradient-to-r from-primary to-accent text-primary-foreground text-sm font-semibold hover:opacity-90 transition-opacity shadow-[var(--shadow-elegant)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-            >
-              <LayoutDashboard className="w-4 h-4" aria-hidden="true" />
-              <span>Painel</span>
-            </Link>
+
             <button
               onClick={() => setOpen((v) => !v)}
               className="lg:hidden inline-flex items-center justify-center w-11 h-11 rounded-full border border-border text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
