@@ -798,10 +798,8 @@ const HeroSection = () => {
     }
     if (lastYoutubeSearchedId.current === vid) return;
     if (youtubeLoading) return;
-    if (!isActive('youtube')) return;
     lastYoutubeSearchedId.current = vid;
     handleYoutubeSearch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [youtubeUrl]);
 
   const handleYoutubeDownload = async () => {
