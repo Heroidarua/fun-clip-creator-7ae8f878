@@ -36,7 +36,8 @@ const MetadataRemoverIframeTool = () => {
             console.log("Iframe loaded");
             setLoading(false);
           }}
-          allow="clipboard-write; clipboard-read; camera; microphone; payment; geolocation"
+          allow="clipboard-write; clipboard-read; camera; microphone; payment; geolocation; fullscreen"
+          sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-downloads"
           loading="eager"
         />
 
