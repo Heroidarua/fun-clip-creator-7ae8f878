@@ -31,6 +31,136 @@ function withTimeout(ms = 6500): AbortSignal | undefined {
     : undefined;
 }
 
+/**
+ * Extração nativa via InnerTube (API interna do YouTube).
+ * Clientes de app (iOS/Android) devolvem URLs diretas de googlevideo.com
+ * sem cifra de assinatura, permitindo o proxy do próprio backend do SOS01.
+ */
+const INNERTUBE_CLIENTS = [
+  {
+    name: "IOS",
+    userAgent:
+      "com.google.ios.youtube/20.03.02 (iPhone16,2; U; CPU iOS 18_2_1 like Mac OS X;)",
+    clientNameHeader: "5",
+    context: {
+      client: {
+        clientName: "IOS",
+        clientVersion: "20.03.02",
+        deviceMake: "Apple",
+        deviceModel: "iPhone16,2",
+        osName: "iPhone",
+        osVersion: "18.2.1.22C161",
+        hl: "pt",
+        gl: "BR",
+      },
+    },
+  },
+  {
+    name: "ANDROID_VR",
+    userAgent:
+      "com.google.android.apps.youtube.vr.oculus/1.62.27 (Linux; U; Android 12; GB) gzip",
+    clientNameHeader: "28",
+    context: {
+      client: {
+        clientName: "ANDROID_VR",
+        clientVersion: "1.62.27",
+        deviceMake: "Oculus",
+        deviceModel: "Quest 3",
+        osName: "Android",
+        osVersion: "12",
+        androidSdkVersion: 32,
+        hl: "pt",
+        gl: "BR",
+      },
+    },
+  },
+] as const;
+
+function pickInnertubeFormats(player: any) {
+  const streaming = player?.streamingData || {};
+  const hasUrl = (f: any) => typeof f?.url === "string" && f.url.startsWith("http");
+  const progressive: any[] = (streaming.formats || []).filter(hasUrl);
+  const adaptive: any[] = (streaming.adaptiveFormats || []).filter(hasUrl);
+  const formats = [...progressive, ...adaptive];
+
+  // Progressivo (vídeo + áudio no mesmo arquivo) é o que o navegador reproduz direto
+  const muxed = progressive
+    .filter((f) => /video\/mp4/.test(f.mimeType || "") && /mp4a/.test(f.mimeType || ""))
+    .sort((a, b) => (b.height || 0) - (a.height || 0));
+  // Sem progressivo, usa o melhor MP4 adaptativo limitado a 1080p (arquivo menor)
+  const videoOnly = adaptive
+    .filter((f) => /video\/mp4/.test(f.mimeType || "") && (f.height || 0) <= 1080)
+    .sort((a, b) => (b.height || 0) - (a.height || 0));
+  const audioOnly = formats
+    .filter((f) => /audio\/(mp4|mpeg)/.test(f.mimeType || ""))
+    .sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0));
+
+  return {
+    video: muxed[0]?.url || videoOnly[0]?.url || "",
+    audio: audioOnly[0]?.url || "",
+    hasMuxed: Boolean(muxed[0]?.url),
+  };
+}
+
+async function fetchInnerTube(videoId: string): Promise<YouTubeResponse | null> {
+  let fallbackResult: YouTubeResponse | null = null;
+  for (const client of INNERTUBE_CLIENTS) {
+    try {
+      const r = await fetch(
+        "https://www.youtube.com/youtubei/v1/player?prettyPrint=false",
+        {
+          method: "POST",
+          signal: withTimeout(8000),
+          headers: {
+            "Content-Type": "application/json",
+            "User-Agent": client.userAgent,
+            "X-YouTube-Client-Name": client.clientNameHeader,
+            "X-YouTube-Client-Version": client.context.client.clientVersion,
+            Origin: "https://www.youtube.com",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            videoId,
+            context: client.context,
+            contentCheckOk: true,
+            racyCheckOk: true,
+          }),
+        },
+      );
+      if (!r.ok) continue;
+      const player: any = await r.json().catch(() => null);
+      const status = player?.playabilityStatus?.status;
+      if (!player || (status && status !== "OK")) continue;
+
+      const { video, audio, hasMuxed } = pickInnertubeFormats(player);
+      if (!video && !audio) continue;
+
+      const details = player.videoDetails || {};
+      const thumbs: any[] = details.thumbnail?.thumbnails || [];
+      const result: YouTubeResponse = {
+        success: true,
+        data: {
+          video_url: video || audio,
+          audio_url: audio || "",
+          thumbnail: thumbs[thumbs.length - 1]?.url || fallbackThumbnail(videoId),
+          title: (details.title || "YouTube Video").substring(0, 120),
+          author: details.author || "YouTube",
+          duration: Number(details.lengthSeconds || 0),
+        },
+      };
+      // Prioriza cliente que oferece vídeo com áudio embutido
+      if (hasMuxed) {
+        console.log(`✅ InnerTube (${client.name}) extraiu link direto com áudio`);
+        return result;
+      }
+      fallbackResult = fallbackResult || result;
+    } catch (e) {
+      console.warn(`InnerTube ${client.name} falhou:`, (e as Error).message);
+    }
+  }
+  return fallbackResult;
+}
+
 async function fetchMediaDownloader(videoId: string, key: string): Promise<YouTubeResponse | null> {
   const r = await fetch(
     `https://youtube-media-downloader.p.rapidapi.com/v2/video/details?videoId=${videoId}&urlAccess=normal&videos=auto&audios=auto`,
@@ -259,7 +389,8 @@ export async function resolveYoutube(rawUrl: string, videoId: string): Promise<Y
   const key = (process.env.RAPIDAPI_KEY || "").trim();
   const providers: Array<{ name: string; run: () => Promise<YouTubeResponse | null> }> = [];
   
-  // Prioritize Y2Mate with deeper extraction for direct links
+  // Extração nativa pelo próprio backend (links diretos googlevideo)
+  providers.push({ name: "innertube", run: () => fetchInnerTube(videoId) });
   providers.push({ name: "y2mate", run: () => fetchY2Mate(videoId) });
 
   if (key) {
