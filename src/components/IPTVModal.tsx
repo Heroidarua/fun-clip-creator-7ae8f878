@@ -21,7 +21,7 @@ interface IPTVModalProps {
 const IPTV_CREDENTIALS = {
   login: "sos01.com.br",
   senha: "19601525488",
-  url: "https://wplayer.link/dashboard?view=movies"
+  url: "https://wplayer.link/"
 };
 
 export default function IPTVModal({ isOpen, onClose }: IPTVModalProps) {
