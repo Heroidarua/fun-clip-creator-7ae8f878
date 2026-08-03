@@ -184,7 +184,13 @@ async function fetchY2Mate(videoId: string): Promise<YouTubeResponse | null> {
         });
         if (!conv.ok) return null;
         const j: any = await conv.json().catch(() => null);
-        return j?.dlink || null;
+        
+        // y2mate returns a direct link if successful, sometimes it's under 'dlink' or 'url'
+        const directLink = j?.dlink || j?.url || null;
+        if (directLink && (directLink.includes("y2mate.com") || directLink.includes("googlevideo.com"))) {
+            return directLink;
+        }
+        return directLink;
       } catch {
         return null;
       }
@@ -193,6 +199,7 @@ async function fetchY2Mate(videoId: string): Promise<YouTubeResponse | null> {
     const videoUrl = bestMp4?.k ? await convert(bestMp4.k) : "";
     const audioUrl = bestMp3?.k ? await convert(bestMp3.k) : "";
     
+    // If y2mate fails or returns non-direct, we'll try to find any link
     if (!videoUrl && !audioUrl) return null;
     
     return {
@@ -285,7 +292,16 @@ export async function resolveYoutube(rawUrl: string, videoId: string): Promise<Y
 export function isDirectMediaUrl(u: string | undefined | null): boolean {
   if (!u) return false;
   if (!/^https?:\/\//i.test(u)) return false;
-  if (/ssyoutube\.com|savefrom\.net|y2mate\.com\/(?!.*dlink)/i.test(u)) return false;
+  
+  // Known download landing pages that require user interaction
+  if (/ssyoutube\.com|savefrom\.net|en\.y2mate\.com\/youtube/i.test(u)) return false;
+  
+  // If it's a known direct media source or a y2mate delivery link, allow it
+  if (u.includes("googlevideo.com") || u.includes("y2mate.com/download") || u.includes("dlink")) return true;
+  
+  // Block the main search/analyze pages
+  if (/y2mate\.com\/(?!.*(dlink|convert|download))/i.test(u)) return false;
+  
   return true;
 }
 
