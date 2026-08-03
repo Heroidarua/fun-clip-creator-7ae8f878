@@ -1725,7 +1725,7 @@ const HeroSection = () => {
                   </div>
 
                   <Button
-                    onClick={handleYoutubeDownload}
+                    onClick={() => handleYoutubeDownload(false)}
                     className={`w-full h-12 font-pixel text-xs text-white border-2 border-[hsl(var(--retro-cyan))] shadow-[4px_4px_0_hsl(var(--retro-cyan))] hover:shadow-[2px_2px_0_hsl(var(--retro-cyan))] hover:translate-x-[2px] hover:translate-y-[2px] transition-all rounded-sm ${
                       clickedYoutubeButton === "download" ? "translate-x-[2px] translate-y-[2px] shadow-[2px_2px_0_hsl(var(--retro-cyan))]" : ""
                     }`}
