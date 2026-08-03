@@ -22,7 +22,7 @@ i18n
       lookupFromPathIndex: 0,
     },
     react: {
-      useSuspense: false // SEO and SSR friendly
+      useSuspense: true // Habilitando Suspense para garantir o carregamento correto das traduções
     }
   });
 
