@@ -21,6 +21,9 @@ i18n
       caches: ['cookie', 'localStorage'],
       lookupFromPathIndex: 0,
     },
+    react: {
+      useSuspense: false // SEO and SSR friendly
+    }
   });
 
 export default i18n;

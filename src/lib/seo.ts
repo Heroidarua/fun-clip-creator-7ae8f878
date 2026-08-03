@@ -2,6 +2,7 @@
  * SEOManager — gerador central de metadados do SOS01 com suporte multilíngue.
  * Usado por todas as rotas via `head: () => buildSeo({ ... })`.
  */
+import i18next from 'i18next';
 
 export const SITE = {
   name: "SOS01",
@@ -90,7 +91,7 @@ export function buildSeo(input: SeoInput): {
     : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1";
 
   // Language detection for meta tags (default to pt)
-  const currentLang = typeof window !== 'undefined' ? (localStorage.getItem('i18nextLng') || 'pt').split('-')[0] : 'pt';
+  const currentLang = i18next.language || 'pt';
 
   const meta: MetaTag[] = [
     { title: input.title },
