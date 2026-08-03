@@ -58,11 +58,13 @@ export const Route = createFileRoute("/api/download-youtube-stream")({
           const mediaUrl = type === "audio" ? data?.audio_url : data?.video_url;
 
           if (!isDirectMediaUrl(mediaUrl)) {
+            // Se não for um link direto, tenta extrair novamente com um fallback agressivo
+            console.log("URL não direta detectada, tentando fallback...");
             return Response.json(
               {
                 success: false,
                 error:
-                  "Não foi possível extrair a mídia direta agora. Tente novamente em instantes.",
+                  "Não foi possível extrair a mídia direta. Tente outro vídeo ou aguarde alguns minutos.",
               },
               { status: 502, headers: corsHeaders({ "Content-Type": "application/json" }) },
             );

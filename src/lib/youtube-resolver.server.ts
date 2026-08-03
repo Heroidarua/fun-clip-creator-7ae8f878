@@ -255,6 +255,10 @@ export async function resolveYoutube(rawUrl: string, videoId: string): Promise<Y
   if (key) {
     providers.push({ name: "ytstream", run: () => fetchYtStream(videoId, key) });
     providers.push({ name: "youtube-media-downloader", run: () => fetchMediaDownloader(videoId, key) });
+  }
+
+  // Fallback providers
+  if (key) {
     providers.push({ name: "social-all-in-one", run: () => fetchSocialAllInOne(rawUrl, videoId, key) });
     providers.push({ name: "auto-all-in-one", run: () => fetchAutoAllInOne(rawUrl, videoId, key) });
   }
