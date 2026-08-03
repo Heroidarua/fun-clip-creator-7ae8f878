@@ -17,7 +17,6 @@ import NotificationBell from "@/components/NotificationBell";
 import InstallAppButton from "@/components/InstallAppButton";
 import IPTVModal from "@/components/IPTVModal";
 import { useToast } from "@/hooks/use-toast";
-import { LanguageSelector } from "@/components/LanguageSelector";
 import {
   Tooltip,
   TooltipContent,
@@ -124,10 +123,9 @@ const Header = () => {
 
           {/* Actions */}
           <div className="flex items-center gap-1.5 sm:gap-2">
-            <div className="flex items-center">
-              <LanguageSelector />
-            </div>
             <InstallAppButton />
+            <div className="hidden sm:block"><NotificationBell /></div>
+
             <div className="hidden sm:block"><NotificationBell /></div>
           </div>
         </div>

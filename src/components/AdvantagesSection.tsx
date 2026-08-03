@@ -1,37 +1,35 @@
 import { Zap, Sparkles, Gift, Gamepad2 } from "lucide-react";
-import { useTranslation } from "react-i18next";
 
 const AdvantagesSection = () => {
-  const { t } = useTranslation();
   const advantages = [
     {
       icon: <Zap className="w-8 h-8" />,
-      title: t('advantages.fast'),
-      description: t('advantages.fast_desc'),
+      title: "RÁPIDO",
+      description: "Downloads em segundos",
       color: "text-[hsl(var(--retro-yellow))]",
       borderColor: "border-[hsl(var(--retro-yellow))]",
       shadowColor: "shadow-[0_0_20px_hsl(var(--retro-yellow)/0.3)]"
     },
     {
       icon: <Sparkles className="w-8 h-8" />,
-      title: t('advantages.no_watermark'),
-      description: t('advantages.no_watermark_desc'),
+      title: "SEM MARCA",
+      description: "Vídeos em HD limpos",
       color: "text-[hsl(var(--retro-cyan))]",
       borderColor: "border-[hsl(var(--retro-cyan))]",
       shadowColor: "shadow-[0_0_20px_hsl(var(--retro-cyan)/0.3)]"
     },
     {
       icon: <Gamepad2 className="w-8 h-8" />,
-      title: t('advantages.games'),
-      description: t('advantages.games_desc'),
+      title: "+60 JOGOS",
+      description: "Arcade retrô grátis",
       color: "text-[hsl(var(--accent))]",
       borderColor: "border-[hsl(var(--accent))]",
       shadowColor: "shadow-[0_0_20px_hsl(var(--accent)/0.3)]"
     },
     {
       icon: <Gift className="w-8 h-8" />,
-      title: t('advantages.free'),
-      description: t('advantages.free_desc'),
+      title: "SOS01 GRÁTIS",
+      description: "Tudo sem pagar nada",
       color: "text-primary",
       borderColor: "border-primary",
       shadowColor: "shadow-[0_0_20px_hsl(var(--primary)/0.3)]"

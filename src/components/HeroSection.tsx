@@ -3,7 +3,6 @@ import { Clipboard, Search, Download, Headphones, Gamepad2, Book, Music, Camera,
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { useTranslation } from "react-i18next";
 
 import { useDownloaderStatus } from "@/hooks/useDownloaderStatus";
 
@@ -160,7 +159,6 @@ interface YouTubeData {
 
 
 const HeroSection = () => {
-  const { t } = useTranslation();
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -1029,8 +1027,8 @@ const HeroSection = () => {
           </div>
           
           <h1 className="font-pixel text-lg sm:text-xl md:text-2xl lg:text-3xl mb-4 tracking-wider leading-relaxed">
-            <span className="block text-primary neon-text mb-2">{t('hero.title')}</span>
-            <span className="block text-[hsl(var(--accent))]">{t('hero.subtitle')}</span>
+            <span className="block text-primary neon-text mb-2">VOCÊ NÃO VAI ACREDITAR NO QUE TEM AQUI.</span>
+            <span className="block text-[hsl(var(--accent))]">Ferramentas, jogos, HQs, mangás e muito mais. Explore por sua conta.</span>
           </h1>
           
           <p className="font-retro text-xl sm:text-2xl text-[hsl(var(--retro-red))] mb-6">
@@ -1078,7 +1076,7 @@ const HeroSection = () => {
               <div className="flex-1 relative">
                 <Input
                   type="url"
-                  placeholder={t('hero.placeholder')}
+                  placeholder="Cole o link do TikTok aqui..."
                   value={url}
                   onChange={(e) => {
                     setUrl(e.target.value);
@@ -1098,7 +1096,6 @@ const HeroSection = () => {
                   }`}
                 >
                   <Clipboard className="w-4 h-4 sm:mr-2" />
-                  <span className="hidden sm:inline">{t('common.paste')}</span>
                   <span className="hidden sm:inline">COLAR</span>
                 </Button>
                 

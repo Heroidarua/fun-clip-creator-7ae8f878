@@ -1,14 +1,12 @@
 /**
- * SEOManager — gerador central de metadados do SOS01 com suporte multilíngue.
+ * SEOManager — gerador central de metadados do SOS01.
  * Usado por todas as rotas via `head: () => buildSeo({ ... })`.
  */
-import i18next from 'i18next';
 
 export const SITE = {
   name: "SOS01",
   url: "https://sos01.com.br",
-  locales: ["pt", "en", "es", "fr", "de", "it", "ja", "ru", "tr", "hi"],
-  defaultLocale: "pt",
+  locale: "pt_BR",
   twitter: "@sos01",
   defaultImage:
     "https://storage.googleapis.com/gpt-engineer-file-uploads/W9nvJ5xZlFOuhB2wUyS0coPiyM22/social-images/social-1782694696983-1000953354.webp",
@@ -90,9 +88,6 @@ export function buildSeo(input: SeoInput): {
     ? "noindex, nofollow"
     : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1";
 
-  // Language detection for meta tags (default to pt)
-  const currentLang = i18next.language || 'pt';
-
   const meta: MetaTag[] = [
     { title: input.title },
     { name: "description", content: input.description },
@@ -101,7 +96,7 @@ export function buildSeo(input: SeoInput): {
     { name: "googlebot", content: robots },
     { name: "author", content: SITE.name },
     { property: "og:site_name", content: SITE.name },
-    { property: "og:locale", content: currentLang === 'pt' ? 'pt_BR' : currentLang },
+    { property: "og:locale", content: SITE.locale },
     { property: "og:title", content: input.title },
     { property: "og:description", content: input.description },
     { property: "og:type", content: type },
@@ -126,23 +121,6 @@ export function buildSeo(input: SeoInput): {
   }
 
   const links: LinkTag[] = input.noindex ? [] : [{ rel: "canonical", href: url }];
-
-  // Add hreflang tags for all supported languages
-  if (!input.noindex) {
-    SITE.locales.forEach(lang => {
-      links.push({
-        rel: "alternate",
-        hreflang: lang === 'pt' ? 'pt-BR' : lang,
-        href: `${SITE.url}/${lang}${input.path === '/' ? '' : input.path}`
-      });
-    });
-    // Add x-default
-    links.push({
-      rel: "alternate",
-      hreflang: "x-default",
-      href: `${SITE.url}${input.path === '/' ? '' : input.path}`
-    });
-  }
 
   const graphs: Record<string, unknown>[] = [];
 

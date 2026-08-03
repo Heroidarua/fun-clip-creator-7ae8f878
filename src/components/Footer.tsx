@@ -3,11 +3,9 @@ import { Share2, ChevronDown, ChevronUp, Joystick, AlertTriangle } from "lucide-
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { useTranslation } from "react-i18next";
 import developerPhoto from "@/assets/developer-photo.jpg";
 
 const Footer = () => {
-  const { t } = useTranslation();
   const [faqOpen, setFaqOpen] = useState(false);
   const [comoUsarOpen, setComoUsarOpen] = useState(false);
 
@@ -68,7 +66,7 @@ const Footer = () => {
           <div className="flex items-start gap-3">
             <AlertTriangle className="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" />
             <p className="text-xs sm:text-sm text-muted-foreground font-orbitron leading-relaxed">
-              {t('footer.legal_notice')}
+              <strong className="text-foreground">Aviso Legal:</strong> O sos01.com.br não hospeda, armazena ou distribui conteúdo. A plataforma sos01 oferece ferramentas para acesso a conteúdos publicamente disponíveis na internet. O usuário é o único responsável por garantir que possui os direitos necessários sobre qualquer conteúdo utilizado.
             </p>
           </div>
         </div>
@@ -86,7 +84,7 @@ const Footer = () => {
               </div>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed font-orbitron">
-              {t('footer.about')}
+              Plataforma 100% gratuita de utilidades digitais: downloads de vídeos, ferramentas com IA, jogos clássicos e quadrinhos.
             </p>
           </div>
 
@@ -170,7 +168,7 @@ const Footer = () => {
         <div className="border-t-2 border-primary/20 mt-8 pt-8">
           <div className="flex flex-col items-center">
             <p className="text-muted-foreground text-sm font-orbitron">
-              © 2026 sos01.com.br. {t('footer.rights')}
+              © 2025 sos01.com.br. Todos os direitos reservados.
             </p>
             <p className="text-muted-foreground/60 text-xs mt-2 font-orbitron text-center max-w-2xl">
               Plataforma de utilidades digitais. Todo conteúdo acessado permanece de propriedade de seus respectivos criadores.
@@ -187,7 +185,7 @@ const Footer = () => {
                 <div className="absolute inset-0 scanlines opacity-20 pointer-events-none rounded-sm"></div>
               </div>
               <p className="text-xs font-orbitron">
-                {t('footer.dev_by')} <span className="font-pixel text-[10px] text-primary">Matheus Marinho</span>
+                Desenvolvido por <span className="font-pixel text-[10px] text-primary">Matheus Marinho</span>
               </p>
             </div>
           </div>

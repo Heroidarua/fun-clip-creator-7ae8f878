@@ -1,5 +1,5 @@
-import { Outlet, Link, createRootRoute, HeadContent, Scripts, useRouterState } from "@tanstack/react-router";
-import { useEffect, Suspense } from "react";
+import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,8 +8,6 @@ import Navigation from "@/components/Navigation";
 import BackToTop from "@/components/BackToTop";
 import ProtectionLayer from "@/components/ProtectionLayer";
 import { registerSW } from "@/lib/registerSW";
-import "@/lib/i18n";
-import { useTranslation } from "react-i18next";
 
 import appCss from "../styles.css?url";
 
@@ -117,20 +115,13 @@ export const Route = createRootRoute({
 });
 
 function RootShell({ children }: { children: React.ReactNode }) {
-  const { i18n } = useTranslation();
-  
-  // Garantir que o idioma seja detectado antes da primeira renderização
-  const lang = i18n.language?.split('-')[0] || "pt";
-
   return (
-    <html lang={lang} className="light">
+    <html lang="pt-BR" className="light">
       <head>
         <HeadContent />
       </head>
       <body>
-        <Suspense fallback={<div className="min-h-screen bg-background" />}>
-          {children}
-        </Suspense>
+        {children}
         <Scripts />
       </body>
     </html>
