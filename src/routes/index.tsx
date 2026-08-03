@@ -1,18 +1,46 @@
-/* Quando clicar em baixar o usuário está sendo redirecionado para outra página e isso não pode acontecer, precisa baixar com essa lógica do código python 
+/* from pytube import YouTube
+import os
 
-def download_youtube_video(url):
+def download_youtube_video(url, output_path=None):
     try:
+        print(f"Tentando acessar: {url}")
         yt = YouTube(url)
-        video = yt.streams.get_highest_resolution()
-        print(f"Baixando: {yt.title}")
-        video.download()
+        
+        # Exibir informações do vídeo
+        print(f"Título: {yt.title}")
+        print(f"Duração: {yt.length} segundos")
+        print(f"Autor: {yt.author}")
+        
+        # Selecionar stream com melhor qualidade
+        streams = yt.streams.filter(progressive=True, file_extension='mp4')
+        if not streams:
+            print("Nenhum stream progressivo encontrado.")
+            return False
+            
+        best_stream = streams.order_by('resolution').desc().first()
+        print(f"Qualidade selecionada: {best_stream.resolution}")
+        
+        # Baixar o vídeo
+        print("Iniciando download...")
+        if output_path:
+            if not os.path.exists(output_path):
+                os.makedirs(output_path)
+            best_stream.download(output_path=output_path)
+        else:
+            best_stream.download()
+            
         print("Download concluído!")
+        return True
+        
     except Exception as e:
-        print(f"Erro ao baixar o vídeo: {e}")
+        print(f"Erro ao baixar o vídeo: {str(e)}")
+        return False
 
+# Exemplo de uso
 if __name__ == "__main__":
-    url = input("Insira o URL do vídeo do YouTube: ")
-    download_youtube_video(url) */
+    url = input("URL do vídeo do YouTube: ")
+    output_path = input("Caminho de saída (Enter para pasta atual): ").strip() or None
+    download_youtube_video(url, output_path) */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";
