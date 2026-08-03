@@ -194,13 +194,6 @@ export default function IPTVModal({ isOpen, onClose }: IPTVModalProps) {
                   <ClipboardCheck className="w-4 h-4" />
                   Copiar Tudo
                 </button>
-                <button
-                  onClick={handleWhatsAppShare}
-                  className="flex-1 flex items-center justify-center gap-2 py-3 bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#25D366] border border-[#25D366]/30 rounded-2xl transition-all text-sm font-medium group"
-                >
-                  <MessageCircle className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                  WhatsApp
-                </button>
               </div>
             </div>
 
