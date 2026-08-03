@@ -1,46 +1,4 @@
-/* from pytube import YouTube
-import os
-
-def download_youtube_video(url, output_path=None):
-    try:
-        print(f"Tentando acessar: {url}")
-        yt = YouTube(url)
-        
-        # Exibir informações do vídeo
-        print(f"Título: {yt.title}")
-        print(f"Duração: {yt.length} segundos")
-        print(f"Autor: {yt.author}")
-        
-        # Selecionar stream com melhor qualidade
-        streams = yt.streams.filter(progressive=True, file_extension='mp4')
-        if not streams:
-            print("Nenhum stream progressivo encontrado.")
-            return False
-            
-        best_stream = streams.order_by('resolution').desc().first()
-        print(f"Qualidade selecionada: {best_stream.resolution}")
-        
-        # Baixar o vídeo
-        print("Iniciando download...")
-        if output_path:
-            if not os.path.exists(output_path):
-                os.makedirs(output_path)
-            best_stream.download(output_path=output_path)
-        else:
-            best_stream.download()
-            
-        print("Download concluído!")
-        return True
-        
-    except Exception as e:
-        print(f"Erro ao baixar o vídeo: {str(e)}")
-        return False
-
-# Exemplo de uso
-if __name__ == "__main__":
-    url = input("URL do vídeo do YouTube: ")
-    output_path = input("Caminho de saída (Enter para pasta atual): ").strip() or None
-    download_youtube_video(url, output_path) */
+/* Toda vez que colo um link pra baixar no YouTube, ele me redireciona para cá https://en1.savefrom.net/1-youtube/?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DyznDX2JRZPM&utm_source=youtube.com&utm_medium=short_domains&utm_campaign=ssyoutube.com&a_ts=1785798145.408 */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";
