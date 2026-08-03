@@ -3,6 +3,7 @@ import { Home, Wrench, Gamepad2, Globe2, Tv, Radio, PlayCircle, BookOpen, Layout
 import { useState, useEffect } from "react";
 import IPTVModal from "./IPTVModal";
 import ThemeToggle from "./ThemeToggle";
+import { useTranslation } from "react-i18next";
 import {
   Tooltip,
   TooltipContent,
@@ -10,24 +11,26 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-const ITEMS = [
-  { to: "/", label: "Home", icon: Home, desc: "Início" },
-  { to: "/ferramentas", label: "Ferramentas", icon: Wrench, desc: "Utilidades" },
-  { to: "/jogos", label: "Jogos", icon: Gamepad2, desc: "Diversão" },
-  { to: "/nasa", label: "NASA", icon: Globe2, desc: "Espaço" },
-  { to: "/mais-sbt", label: "+SBT", icon: Tv, desc: "TV Ao Vivo" },
-  { to: "/iptv", label: "IPTV", icon: Radio, desc: "Canais" },
-  { to: "/player", label: "IPTV 1.0", icon: PlayCircle, desc: "Premium" },
-  { to: "/blog", label: "Blog", icon: BookOpen, desc: "Notícias" },
-  { to: "/dashboard", label: "Painel", icon: LayoutDashboard, desc: "Admin" },
-] as const;
 
 export default function SidebarNav() {
+  const { t } = useTranslation();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [iptvModalOpen, setIptvModalOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
+  const ITEMS = [
+    { to: "/", label: t('nav.home'), icon: Home, desc: "Início" },
+    { to: "/ferramentas", label: t('nav.tools'), icon: Wrench, desc: "Utilidades" },
+    { to: "/jogos", label: t('nav.games'), icon: Gamepad2, desc: "Diversão" },
+    { to: "/nasa", label: t('nav.nasa'), icon: Globe2, desc: "Espaço" },
+    { to: "/mais-sbt", label: t('nav.sbt'), icon: Tv, desc: "TV Ao Vivo" },
+    { to: "/iptv", label: t('nav.iptv'), icon: Radio, desc: "Canais" },
+    { to: "/player", label: t('nav.iptv_premium'), icon: PlayCircle, desc: "Premium" },
+    { to: "/blog", label: t('nav.blog'), icon: BookOpen, desc: "Notícias" },
+    { to: "/dashboard", label: "Painel", icon: LayoutDashboard, desc: "Admin" },
+  ] as const;
+
   const isActive = (to: string) =>
     to === "/" ? pathname === "/" : pathname === to || pathname.startsWith(to + "/");
 

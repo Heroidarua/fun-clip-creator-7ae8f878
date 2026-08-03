@@ -1,7 +1,9 @@
 import developerPhoto from "@/assets/developer-photo.jpg";
 import { Mail, Gamepad2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const AboutSection = () => {
+  const { t } = useTranslation();
   return (
     <section className="relative py-16 sm:py-20 bg-background overflow-hidden">
       {/* Futuristic Grid Background */}
@@ -44,9 +46,9 @@ const AboutSection = () => {
             <span className="font-pixel text-[10px] text-primary tracking-[0.2em] uppercase">Player 1</span>
           </div>
           <h2 className="font-pixel text-xl sm:text-2xl text-foreground mb-2">
-            QUEM <span className="text-primary">CRIOU</span>
+            {t('about.title')}
           </h2>
-          <p className="text-muted-foreground font-orbitron text-sm">O desenvolvedor por trás do sos01</p>
+          <p className="text-muted-foreground font-orbitron text-sm">{t('about.subtitle')}</p>
         </div>
         
         {/* Developer Card */}
@@ -109,14 +111,12 @@ const AboutSection = () => {
                 
                 {/* Title Badge */}
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/5 border border-accent/20 rounded-full mb-4 backdrop-blur-sm">
-                  <span className="font-pixel text-[8px] text-accent tracking-wider">FUNDADOR & DESENVOLVEDOR</span>
+                  <span className="font-pixel text-[8px] text-accent tracking-wider uppercase">{t('about.founder')}</span>
                 </div>
                 
                 {/* Description */}
                 <p className="text-muted-foreground font-orbitron text-sm text-center mb-6 leading-relaxed">
-                  Desenvolvedor web brasileiro, criador do sos01.com.br — uma plataforma 100% gratuita 
-                  que reúne ferramentas de download sos01, utilitários com IA, jogos retrô e quadrinhos. 
-                  Apaixonado por tecnologia, nostalgia gamer e por criar o ecossistema sos01.com.br.
+                  {t('about.description')}
                 </p>
                 
                 {/* Social Link */}
