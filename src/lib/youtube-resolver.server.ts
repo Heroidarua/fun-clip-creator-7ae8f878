@@ -150,12 +150,12 @@ async function fetchYtStream(videoId: string, key: string): Promise<YouTubeRespo
 async function fetchY2Mate(videoId: string): Promise<YouTubeResponse | null> {
   try {
     const analyze = await fetch("https://www.y2mate.com/mates/analyzeV2/ajax", {
-      method: "POST", signal: withTimeout(6500),
+      method: "POST", signal: withTimeout(7500),
       headers: {
         "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
         "User-Agent": BROWSER_UA, Origin: "https://www.y2mate.com", Referer: "https://www.y2mate.com/", Accept: "*/*",
       },
-      body: new URLSearchParams({ k_query: `https://www.youtube.com/watch?v=${videoId}`, k_page: "home", hl: "en", q_auto: "0" }).toString(),
+      body: new URLSearchParams({ k_query: `https://www.youtube.com/watch?v=${videoId}`, k_page: "home", hl: "pt", q_auto: "0" }).toString(),
     });
     
     if (!analyze.ok) return null;
