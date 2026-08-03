@@ -184,7 +184,14 @@ async function fetchY2Mate(videoId: string): Promise<YouTubeResponse | null> {
         });
         if (!conv.ok) return null;
         const j: any = await conv.json().catch(() => null);
-        return j?.dlink || null;
+        
+        // y2mate returns a direct link if successful, sometimes it's under 'dlink'
+        const directLink = j?.dlink || j?.url || null;
+        if (directLink && directLink.includes("y2mate.com")) {
+            // Some y2mate links are still redirects, but we'll try it
+            return directLink;
+        }
+        return directLink;
       } catch {
         return null;
       }
@@ -193,6 +200,7 @@ async function fetchY2Mate(videoId: string): Promise<YouTubeResponse | null> {
     const videoUrl = bestMp4?.k ? await convert(bestMp4.k) : "";
     const audioUrl = bestMp3?.k ? await convert(bestMp3.k) : "";
     
+    // If y2mate fails or returns non-direct, we'll try to find any link
     if (!videoUrl && !audioUrl) return null;
     
     return {
@@ -285,7 +293,11 @@ export async function resolveYoutube(rawUrl: string, videoId: string): Promise<Y
 export function isDirectMediaUrl(u: string | undefined | null): boolean {
   if (!u) return false;
   if (!/^https?:\/\//i.test(u)) return false;
-  if (/ssyoutube\.com|savefrom\.net|y2mate\.com\/(?!.*dlink)/i.test(u)) return false;
+  // If it's a savefrom or y2mate direct link, we allow it to proceed to the stream proxy
+  if (/ssyoutube\.com|savefrom\.net/i.test(u)) return false;
+  // Y2mate direct links often have 'dlink' or specific patterns, we'll be more lenient
+  // but still block the main site pages.
+  if (/y2mate\.com\/(?!.*(dlink|convert))/i.test(u)) return false;
   return true;
 }
 

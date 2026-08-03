@@ -59,12 +59,17 @@ export const Route = createFileRoute("/api/download-youtube-stream")({
 
           if (!isDirectMediaUrl(mediaUrl)) {
             // Se não for um link direto, tenta extrair novamente com um fallback agressivo
-            console.log("URL não direta detectada, tentando fallback...");
+            console.log("URL não direta detectada:", mediaUrl);
+            
+            // If it's a known download page like savefrom, we return the data to let the client handle it
+            // or we could return an error that guides the user.
+            // But here, the user wants it to WORK.
             return Response.json(
               {
                 success: false,
                 error:
-                  "Não foi possível extrair a mídia direta. Tente outro vídeo ou aguarde alguns minutos.",
+                  "O YouTube bloqueou o download direto. Tente colar o link novamente ou use o botão 'Baixar' que abrirá em uma nova aba.",
+                fallback_url: data?.download_page_url || mediaUrl
               },
               { status: 502, headers: corsHeaders({ "Content-Type": "application/json" }) },
             );
