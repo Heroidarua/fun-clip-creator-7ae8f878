@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, Wrench, Gamepad2, Globe2, Tv, Radio, PlayCircle, BookOpen, LayoutDashboard, Share2, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { Home, Wrench, Gamepad2, Globe2, Tv, Radio, PlayCircle, BookOpen, LayoutDashboard, Share2, PanelLeftClose, PanelLeftOpen, Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import IPTVModal from "./IPTVModal";
 import ThemeToggle from "./ThemeToggle";
@@ -26,6 +26,7 @@ export default function SidebarNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [iptvModalOpen, setIptvModalOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   const isActive = (to: string) =>
     to === "/" ? pathname === "/" : pathname === to || pathname.startsWith(to + "/");
@@ -109,36 +110,83 @@ export default function SidebarNav() {
         </div>
       </nav>
 
-      {/* Mobile Nav (remains at bottom for ergonomics on mobile) */}
+      {/* Mobile Nav Drawer */}
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t-2 border-secondary bg-background/95 backdrop-blur-md safe-area-bottom"
-        style={{ height: 'calc(64px + env(safe-area-inset-bottom))' }}
+        className={`md:hidden fixed inset-y-0 left-0 z-[60] w-72 bg-background/98 backdrop-blur-xl border-r-2 border-secondary shadow-2xl transition-transform duration-300 ease-in-out ${
+          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
       >
-        <ul className="flex items-center justify-around h-[64px] px-2 overflow-x-auto no-scrollbar">
-          {ITEMS.map(({ to, label, icon: Icon }) => {
-            const active = isActive(to);
-            return (
-              <li key={to} className="shrink-0">
+        <div className="flex flex-col h-full">
+          <div className="p-6 flex items-center justify-between border-b border-border/50">
+            <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 group">
+              <span className="font-display text-xl tracking-tight text-foreground">
+                sos<span className="italic text-accent">01</span>
+              </span>
+            </Link>
+            <button
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="p-2 hover:bg-muted rounded-lg transition-colors text-muted-foreground"
+            >
+              <PanelLeftClose className="w-6 h-6" />
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto py-6 px-4 space-y-2 custom-scrollbar">
+            {ITEMS.map(({ to, label, icon: Icon, desc }) => {
+              const active = isActive(to);
+              return (
                 <Link
+                  key={to}
                   to={to}
                   onClick={(e) => {
+                    setIsMobileMenuOpen(false);
                     if (to === "/player") {
                       e.preventDefault();
                       setIptvModalOpen(true);
                     }
                   }}
-                  className={`flex flex-col items-center justify-center p-2 rounded-lg transition-colors ${
-                    active ? "text-primary" : "text-muted-foreground"
-                  }`}
+                  className={`flex items-center gap-4 px-4 py-4 rounded-xl transition-all duration-200 group ${
+                    active
+                      ? "bg-primary/10 border-primary text-primary shadow-sm"
+                      : "hover:bg-muted text-muted-foreground hover:text-foreground border-transparent"
+                  } border-2`}
                 >
-                  <Icon className="w-5 h-5" />
-                  <span className="text-[9px] mt-0.5 font-bold uppercase tracking-tighter truncate w-12 text-center">{label}</span>
+                  <div className="relative shrink-0">
+                    <Icon className={`w-6 h-6 ${active ? "scale-110" : ""}`} />
+                    {active && <span className="absolute -top-1 -right-1 led-active scale-75" />}
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-base font-bold truncate leading-tight">{label}</span>
+                    <span className="text-xs uppercase tracking-tighter opacity-60 truncate">{desc}</span>
+                  </div>
                 </Link>
-              </li>
-            );
-          })}
-        </ul>
+              );
+            })}
+          </div>
+          
+          <div className="p-6 border-t border-border/50 flex items-center justify-between">
+            <span className="text-xs text-muted-foreground font-bold uppercase tracking-widest">v2.0.1</span>
+            <ThemeToggle />
+          </div>
+        </div>
       </nav>
+
+      {/* Mobile Backdrop */}
+      {isMobileMenuOpen && (
+        <div
+          className="md:hidden fixed inset-0 z-[55] bg-background/60 backdrop-blur-sm animate-in fade-in duration-300"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Mobile Trigger Button (Floating on Mobile) */}
+      <button
+        onClick={() => setIsMobileMenuOpen(true)}
+        className="md:hidden fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition-all"
+        aria-label="Abrir menu"
+      >
+        <Menu className="w-7 h-7" />
+      </button>
 
       <IPTVModal isOpen={iptvModalOpen} onClose={() => setIptvModalOpen(false)} />
 
@@ -152,7 +200,7 @@ export default function SidebarNav() {
         }
         @media (max-width: 767px) {
           main {
-            padding-bottom: calc(64px + env(safe-area-inset-bottom) + 1rem);
+            padding-bottom: 2rem;
           }
         }
       `}} />
