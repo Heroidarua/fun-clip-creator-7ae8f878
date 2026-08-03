@@ -1,4 +1,4 @@
-/* Corrija o código do YouTube para fazer download */
+/* Mesmo abrindo outra aba não baixou a mídia do YouTube, tente que ao colar o link, o usuário clicar em buscar e depois baixar, e começa a baixar automaticamente */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";

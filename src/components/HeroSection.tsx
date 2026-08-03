@@ -788,7 +788,7 @@ const HeroSection = () => {
     }
   };
 
-  // Auto-preview: extrai o ID do YouTube ao colar/digitar e busca o preview imediatamente.
+  // Auto-preview e Auto-download: busca o preview ao detectar link e inicia download automático após encontrar
   useEffect(() => {
     const vid = getYouTubeVideoId(youtubeUrl);
     if (!vid) {
@@ -802,7 +802,15 @@ const HeroSection = () => {
     handleYoutubeSearch();
   }, [youtubeUrl]);
 
-  const handleYoutubeDownload = async () => {
+  // Efeito para disparar o download assim que o youtubeData estiver disponível
+  useEffect(() => {
+    if (youtubeData && lastYoutubeSearchedId.current) {
+      handleYoutubeDownload(true);
+    }
+  }, [youtubeData]);
+
+
+  const handleYoutubeDownload = async (isAutoDownload = false) => {
     setClickedYoutubeButton("download");
     setTimeout(() => setClickedYoutubeButton(null), 200);
     
@@ -813,7 +821,7 @@ const HeroSection = () => {
 
     try {
       toast({
-        title: "⏳ Preparando download...",
+        title: isAutoDownload ? "🚀 Iniciando download automático..." : "⏳ Preparando download...",
         description: "Preparando o arquivo no servidor. O download inicia em instantes...",
       });
 
@@ -855,6 +863,7 @@ const HeroSection = () => {
         title: "✅ Download iniciado!",
         description: `O ${youtubeDownloadType === "video" ? "vídeo" : "áudio"} está sendo baixado pelo navegador.`,
       });
+
 
     } catch (error) {
       console.error("Download error:", error);
