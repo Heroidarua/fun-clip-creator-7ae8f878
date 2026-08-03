@@ -1,0 +1,32 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "search": "Search",
+    "download": "Download",
+    "paste": "Paste",
+    "back": "Back",
+    "home": "Home"
+  },
+  "nav": {
+    "tools": "Tools",
+    "games": "Games",
+    "nasa": "🌎 NASA",
+    "sbt": "+SBT 📺",
+    "iptv": "IPTV",
+    "iptv_premium": "IPTV 1.0 🎬",
+    "blog": "Blog",
+    "prices": "Prices"
+  },
+  "hero": {
+    "title": "Download videos without watermark",
+    "subtitle": "TikTok, Instagram, YouTube, Kwai, Facebook and Pinterest — All in one place.",
+    "placeholder": "Paste link here...",
+    "auto_download_msg": "Automatic download started!",
+    "searching": "Searching media..."
+  },
+  "footer": {
+    "rights": "All rights reserved.",
+    "about": "SOS01 is a free digital utility platform."
+  }
+}

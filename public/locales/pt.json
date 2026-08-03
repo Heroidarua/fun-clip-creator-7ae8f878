@@ -1,0 +1,32 @@
+{
+  "common": {
+    "loading": "Carregando...",
+    "error": "Erro",
+    "search": "Procurar",
+    "download": "Baixar",
+    "paste": "Colar",
+    "back": "Voltar",
+    "home": "Início"
+  },
+  "nav": {
+    "tools": "Ferramentas",
+    "games": "Jogos",
+    "nasa": "🌎 NASA",
+    "sbt": "+SBT 📺",
+    "iptv": "IPTV",
+    "iptv_premium": "IPTV 1.0 🎬",
+    "blog": "Blog",
+    "prices": "Preços"
+  },
+  "hero": {
+    "title": "Baixe vídeos sem marca d'água",
+    "subtitle": "TikTok, Instagram, YouTube, Kwai, Facebook e Pinterest — Tudo em um só lugar.",
+    "placeholder": "Cole o link aqui...",
+    "auto_download_msg": "Download automático iniciado!",
+    "searching": "Buscando mídia..."
+  },
+  "footer": {
+    "rights": "Todos os direitos reservados.",
+    "about": "O SOS01 é uma plataforma gratuita de utilidades digitais."
+  }
+}
