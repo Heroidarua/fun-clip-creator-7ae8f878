@@ -31,8 +31,12 @@ const MetadataRemoverIframeTool = () => {
           src="https://ianonymous3000.github.io/metadata-remover/"
           className="w-full h-full border-none relative z-0"
           title="Removedor de Metadados Profissional"
-          onLoad={() => setLoading(false)}
-          allow="clipboard-write; clipboard-read; browse"
+          onLoad={() => {
+            console.log("Iframe loaded");
+            setLoading(false);
+          }}
+          allow="clipboard-write; clipboard-read; camera; microphone"
+          loading="eager"
         />
 
       </div>
