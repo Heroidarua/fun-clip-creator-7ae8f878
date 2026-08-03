@@ -41,7 +41,7 @@ const Footer = () => {
     },
     {
       question: "O sos01.com.br armazena conteúdo?",
-      answer: "Não. O sos01.com.br não hospeda ou armazena qualquer conteúdo de terceiros. Apenas fornecemos ferramentas técnicas sos01."
+      answer: "Não. O sos01.com.br não hospeda ou armazena qualquer conteúdo de terceiros. Apenas fornecemos ferramentas técnicas do sos01.com.br."
     }
   ];
 
