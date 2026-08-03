@@ -164,9 +164,8 @@ export default function SidebarNav() {
             })}
           </div>
           
-          <div className="p-6 border-t border-border/50 flex items-center justify-between">
+          <div className="p-6 border-t border-border/50 flex items-center justify-center">
             <span className="text-xs text-muted-foreground font-bold uppercase tracking-widest">v2.0.1</span>
-            <ThemeToggle />
           </div>
         </div>
       </nav>
