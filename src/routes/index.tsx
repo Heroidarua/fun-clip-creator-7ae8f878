@@ -1,4 +1,4 @@
-/* Remova o compartilhamento de credenciais */
+/* Diminua o neon das fontes */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";
