@@ -1618,6 +1618,7 @@ const HeroSection = () => {
                       title={kwaiData.title}
                       author={kwaiData.author}
                       duration={kwaiData.duration}
+                      mediaUrl={kwaiData.proxy_url || kwaiData.video_url}
                     />
                   </div>
 
