@@ -23,25 +23,23 @@ const MetadataRemoverIframeTool = () => {
         {loading && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-card gap-3 z-10">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            <p className="text-xs text-muted-foreground font-pixel">INICIANDO AMBIENTE SEGURO...</p>
+            <p className="text-xs text-muted-foreground font-pixel text-center px-4">INICIANDO AMBIENTE SEGURO...</p>
           </div>
         )}
         
         <iframe
           src="https://ianonymous3000.github.io/metadata-remover/"
-          className="w-full h-full border-none"
+          style={{ width: '100%', height: '100%', border: 'none' }}
+          className="w-full h-full border-none relative z-[1]"
           title="Removedor de Metadados Profissional"
-          onLoad={() => setLoading(false)}
-          allow="clipboard-write; clipboard-read"
+          onLoad={() => {
+            console.log("Iframe loaded");
+            setLoading(false);
+          }}
+          allow="clipboard-write; clipboard-read; camera; microphone"
+          loading="eager"
         />
 
-        {/* Overlay de Interação (opcional, para estética) */}
-        <div className="absolute top-4 right-4 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
-          <div className="bg-background/80 backdrop-blur-sm px-3 py-1.5 rounded-full border border-border flex items-center gap-2 shadow-sm">
-            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Live Environment</span>
-          </div>
-        </div>
       </div>
 
       {/* Instruções Rápidas */}
