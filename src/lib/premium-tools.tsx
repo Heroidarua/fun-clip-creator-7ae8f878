@@ -40,7 +40,7 @@ export const PREMIUM_TOOLS: PremiumTool[] = [
     description: "Limpe EXIF, GPS e dados privados de imagens e documentos localmente.",
     icon: ShieldCheck,
     color: "210 100% 50%",
-    component: lazy(() => import("@/components/tools/premium/MetadataRemoverTool")),
+    component: lazy(() => import("@/components/tools/premium/MetadataRemoverIframeTool")),
     status: "ready",
   },
   {
