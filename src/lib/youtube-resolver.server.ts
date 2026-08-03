@@ -31,6 +31,125 @@ function withTimeout(ms = 6500): AbortSignal | undefined {
     : undefined;
 }
 
+/**
+ * Extração nativa via InnerTube (API interna do YouTube).
+ * Clientes de app (iOS/Android) devolvem URLs diretas de googlevideo.com
+ * sem cifra de assinatura, permitindo o proxy do próprio backend do SOS01.
+ */
+const INNERTUBE_CLIENTS = [
+  {
+    name: "IOS",
+    userAgent:
+      "com.google.ios.youtube/19.45.4 (iPhone16,2; U; CPU iOS 18_1_0 like Mac OS X;)",
+    context: {
+      client: {
+        clientName: "IOS",
+        clientVersion: "19.45.4",
+        deviceModel: "iPhone16,2",
+        osName: "iPhone",
+        osVersion: "18.1.0.22B83",
+        hl: "pt",
+        gl: "BR",
+      },
+    },
+    clientNameHeader: "5",
+  },
+  {
+    name: "ANDROID",
+    userAgent: "com.google.android.youtube/19.44.38 (Linux; U; Android 14) gzip",
+    context: {
+      client: {
+        clientName: "ANDROID",
+        clientVersion: "19.44.38",
+        androidSdkVersion: 34,
+        osName: "Android",
+        osVersion: "14",
+        hl: "pt",
+        gl: "BR",
+      },
+    },
+    clientNameHeader: "3",
+  },
+] as const;
+
+const INNERTUBE_KEY = "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8";
+
+function pickInnertubeFormats(player: any) {
+  const streaming = player?.streamingData || {};
+  const formats: any[] = [
+    ...(streaming.formats || []),
+    ...(streaming.adaptiveFormats || []),
+  ].filter((f) => typeof f?.url === "string" && f.url.startsWith("http"));
+
+  const muxed = formats
+    .filter((f) => /video\/mp4/.test(f.mimeType || "") && /avc1/.test(f.mimeType || "") && /mp4a/.test(f.mimeType || ""))
+    .sort((a, b) => (b.height || 0) - (a.height || 0));
+  const videoOnly = formats
+    .filter((f) => /video\/mp4/.test(f.mimeType || ""))
+    .sort((a, b) => (b.height || 0) - (a.height || 0));
+  const audioOnly = formats
+    .filter((f) => /audio\/(mp4|mpeg)/.test(f.mimeType || ""))
+    .sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0));
+
+  return {
+    video: muxed[0]?.url || videoOnly[0]?.url || "",
+    audio: audioOnly[0]?.url || "",
+  };
+}
+
+async function fetchInnerTube(videoId: string): Promise<YouTubeResponse | null> {
+  for (const client of INNERTUBE_CLIENTS) {
+    try {
+      const r = await fetch(
+        `https://www.youtube.com/youtubei/v1/player?key=${INNERTUBE_KEY}&prettyPrint=false`,
+        {
+          method: "POST",
+          signal: withTimeout(8000),
+          headers: {
+            "Content-Type": "application/json",
+            "User-Agent": client.userAgent,
+            "X-YouTube-Client-Name": client.clientNameHeader,
+            "X-YouTube-Client-Version": client.context.client.clientVersion,
+            Origin: "https://www.youtube.com",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            videoId,
+            context: client.context,
+            contentCheckOk: true,
+            racyCheckOk: true,
+          }),
+        },
+      );
+      if (!r.ok) continue;
+      const player: any = await r.json().catch(() => null);
+      const status = player?.playabilityStatus?.status;
+      if (!player || (status && status !== "OK")) continue;
+
+      const { video, audio } = pickInnertubeFormats(player);
+      if (!video && !audio) continue;
+
+      const details = player.videoDetails || {};
+      const thumbs: any[] = details.thumbnail?.thumbnails || [];
+      console.log(`✅ InnerTube (${client.name}) extraiu links diretos`);
+      return {
+        success: true,
+        data: {
+          video_url: video || audio,
+          audio_url: audio || "",
+          thumbnail: thumbs[thumbs.length - 1]?.url || fallbackThumbnail(videoId),
+          title: (details.title || "YouTube Video").substring(0, 120),
+          author: details.author || "YouTube",
+          duration: Number(details.lengthSeconds || 0),
+        },
+      };
+    } catch (e) {
+      console.warn(`InnerTube ${client.name} falhou:`, (e as Error).message);
+    }
+  }
+  return null;
+}
+
 async function fetchMediaDownloader(videoId: string, key: string): Promise<YouTubeResponse | null> {
   const r = await fetch(
     `https://youtube-media-downloader.p.rapidapi.com/v2/video/details?videoId=${videoId}&urlAccess=normal&videos=auto&audios=auto`,
