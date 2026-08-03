@@ -57,25 +57,81 @@ const MediaPreviewOverlay = ({
   title,
   author,
   duration,
+  mediaUrl,
 }: {
   title: string;
   author: string;
   duration?: number;
-}) => (
-  <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-background via-background/85 to-transparent p-4 text-left">
-    <div className="mb-3 flex justify-center">
-      <div className="flex h-12 w-12 items-center justify-center rounded-full border border-primary/50 bg-background/85 text-primary shadow-[0_0_20px_hsl(var(--primary)/0.2)]">
-        <Play className="ml-0.5 h-5 w-5 fill-current" />
+  mediaUrl?: string;
+}) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const togglePlay = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!videoRef.current || !mediaUrl) return;
+
+    if (isPlaying) {
+      videoRef.current.pause();
+    } else {
+      videoRef.current.play().catch(console.error);
+    }
+    setIsPlaying(!isPlaying);
+  };
+
+  return (
+    <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-background via-background/40 to-transparent p-4 text-left">
+      {/* Mini Player */}
+      {mediaUrl && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/20 group">
+          <video
+            ref={videoRef}
+            src={mediaUrl}
+            className={`w-full h-full object-contain transition-opacity duration-300 ${isPlaying ? 'opacity-100' : 'opacity-0'}`}
+            loop
+            muted
+            playsInline
+          />
+          
+          {!isPlaying && (
+            <button
+              onClick={togglePlay}
+              className="z-20 flex h-14 w-14 items-center justify-center rounded-full border-2 border-primary/50 bg-background/80 text-primary shadow-[0_0_20px_hsl(var(--primary)/0.4)] hover:scale-110 transition-transform cursor-pointer"
+            >
+              <Play className="ml-1 h-6 w-6 fill-current" />
+            </button>
+          )}
+
+          {isPlaying && (
+            <button
+              onClick={togglePlay}
+              className="absolute top-4 right-4 z-20 p-2 rounded-full bg-background/60 text-primary hover:bg-background/80"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Media Info Overlay */}
+      <div className={`relative z-10 transition-opacity duration-300 ${isPlaying ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+        {!mediaUrl && (
+          <div className="mb-3 flex justify-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full border border-primary/50 bg-background/85 text-primary shadow-[0_0_20px_hsl(var(--primary)/0.2)]">
+              <Play className="ml-0.5 h-5 w-5 fill-current" />
+            </div>
+          </div>
+        )}
+        <p className="font-pixel text-[10px] text-primary">PRÉVIA PRONTA</p>
+        <p className="mt-2 line-clamp-2 font-orbitron text-sm text-foreground">{title}</p>
+        <div className="mt-2 flex items-center justify-between gap-3 font-retro text-xs text-muted-foreground">
+          <span className="truncate">@{author}</span>
+          {typeof duration === 'number' && duration > 0 ? <span>{Math.round(duration)}s</span> : null}
+        </div>
       </div>
     </div>
-    <p className="font-pixel text-[10px] text-primary">PRÉVIA PRONTA</p>
-    <p className="mt-2 line-clamp-2 font-orbitron text-sm text-foreground">{title}</p>
-    <div className="mt-2 flex items-center justify-between gap-3 font-retro text-xs text-muted-foreground">
-      <span className="truncate">@{author}</span>
-      {typeof duration === 'number' && duration > 0 ? <span>{Math.round(duration)}s</span> : null}
-    </div>
-  </div>
-);
+  );
+};
 
 
 interface VideoData {
@@ -1194,6 +1250,7 @@ const HeroSection = () => {
                       title={videoData.title}
                       author={videoData.author}
                       duration={videoData.duration}
+                      mediaUrl={videoData.proxy_video_url || videoData.video_urls?.hd}
                     />
                   </div>
 
@@ -1415,6 +1472,7 @@ const HeroSection = () => {
                             title={instagramData.title}
                             author={instagramData.author}
                             duration={instagramData.duration}
+                            mediaUrl={currentItem.proxy_url || currentItem.media_url}
                           />
                         </div>
                       ) : (
@@ -1561,6 +1619,7 @@ const HeroSection = () => {
                       title={kwaiData.title}
                       author={kwaiData.author}
                       duration={kwaiData.duration}
+                      mediaUrl={kwaiData.proxy_url || kwaiData.video_url}
                     />
                   </div>
 
@@ -1707,6 +1766,7 @@ const HeroSection = () => {
                       title={youtubeData.title}
                       author={youtubeData.author}
                       duration={youtubeData.duration}
+                      mediaUrl={youtubeData.video_url}
                     />
                   </div>
 
@@ -1880,6 +1940,7 @@ const HeroSection = () => {
                       title={facebookData.title}
                       author={facebookData.author}
                       duration={facebookData.duration}
+                      mediaUrl={facebookData.proxy_url || facebookData.video_url}
                     />
                   </div>
 
@@ -2019,6 +2080,7 @@ const HeroSection = () => {
                     <MediaPreviewOverlay
                       title={pinterestData.title}
                       author={pinterestData.author}
+                      mediaUrl={pinterestData.media_type === 'video' ? (pinterestData.proxy_url || pinterestData.video_url) : undefined}
                     />
                   </div>
 

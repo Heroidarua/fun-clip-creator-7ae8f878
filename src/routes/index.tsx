@@ -1,4 +1,4 @@
-/* Quando colar o link do vídeo do YouTube precisa aparecer o preview do vídeo */
+/* Adicionar um modo de reprodução rápida no preview (mini player) para eu conferir o vídeo antes de iniciar o download. */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";
