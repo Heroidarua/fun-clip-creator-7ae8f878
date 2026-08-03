@@ -22,22 +22,22 @@ export const Route = createFileRoute("/")({
         {
           question: "O que é o SOS01?",
           answer:
-            "O SOS01 é uma plataforma 100% gratuita de utilidades digitais: downloaders de vídeo, biblioteca de quadrinhos, jogos retrô e utilitários com IA, sem cadastro e sem custos.",
+            "O SOS01.com.br é uma plataforma 100% gratuita de utilidades digitais: downloaders de vídeo, biblioteca de quadrinhos, jogos retrô e utilitários com IA, sem cadastro e sem custos.",
         },
         {
           question: "É realmente grátis?",
           answer:
-            "Sim. Todas as ferramentas são gratuitas, sem cadastro, sem período de teste e sem cobrança.",
+            "Sim. Todas as ferramentas do sos01.com.br são gratuitas, sem cadastro, sem período de teste e sem cobrança.",
         },
         {
           question: "Preciso instalar algum aplicativo?",
           answer:
-            "Não. Tudo funciona direto no navegador, em celular, tablet ou computador.",
+            "Não. Tudo no sos01.com.br funciona direto no navegador, em celular, tablet ou computador.",
         },
         {
           question: "O SOS01 armazena os conteúdos baixados?",
           answer:
-            "Não. O SOS01 atua apenas como interface técnica para acessar conteúdos públicos de terceiros.",
+            "Não. O sos01.com.br atua apenas como interface técnica para acessar conteúdos públicos de terceiros.",
         },
       ],
       schema: [

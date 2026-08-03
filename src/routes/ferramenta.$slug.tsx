@@ -22,6 +22,27 @@ export const Route = createFileRoute("/ferramenta/$slug")({
   head: ({ params }) => {
     const tool = PREMIUM_TOOLS.find((t) => t.slug === params.slug);
     if (!tool) return {};
+    
+    // SEO Customizado para o Removedor de Metadados
+    if (tool.slug === 'remover-metadados') {
+      return buildToolSeo({
+        path: `/ferramenta/${tool.slug}`,
+        title: "Removedor de Metadados Online — Limpar EXIF e GPS Grátis | SOS01",
+        description: "Remova metadados, localização GPS e informações privadas de imagens (JPG, PNG) e documentos (PDF, Word) 100% no seu navegador com o sos01.com.br.",
+        keywords: [
+          "remover metadados", "remover exif", "apagar gps da foto", "limpar metadados", 
+          "metadata remover", "remover localização da imagem", "remover metadados pdf", 
+          "metadata cleaner", "remover dados privados online"
+        ],
+        toolName: tool.name,
+        breadcrumb: [
+          { name: "Início", path: "/" },
+          { name: "Ferramentas", path: "/ferramentas" },
+          { name: tool.name, path: `/ferramenta/${tool.slug}` },
+        ],
+      });
+    }
+
     const title = `${tool.name} Online Grátis | SOS01`;
     return buildToolSeo({
       path: `/ferramenta/${tool.slug}`,
