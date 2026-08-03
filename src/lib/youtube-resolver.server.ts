@@ -40,39 +40,41 @@ const INNERTUBE_CLIENTS = [
   {
     name: "IOS",
     userAgent:
-      "com.google.ios.youtube/19.45.4 (iPhone16,2; U; CPU iOS 18_1_0 like Mac OS X;)",
+      "com.google.ios.youtube/20.03.02 (iPhone16,2; U; CPU iOS 18_2_1 like Mac OS X;)",
+    clientNameHeader: "5",
     context: {
       client: {
         clientName: "IOS",
-        clientVersion: "19.45.4",
+        clientVersion: "20.03.02",
+        deviceMake: "Apple",
         deviceModel: "iPhone16,2",
         osName: "iPhone",
-        osVersion: "18.1.0.22B83",
+        osVersion: "18.2.1.22C161",
         hl: "pt",
         gl: "BR",
       },
     },
-    clientNameHeader: "5",
   },
   {
-    name: "ANDROID",
-    userAgent: "com.google.android.youtube/19.44.38 (Linux; U; Android 14) gzip",
+    name: "ANDROID_VR",
+    userAgent:
+      "com.google.android.apps.youtube.vr.oculus/1.62.27 (Linux; U; Android 12; GB) gzip",
+    clientNameHeader: "28",
     context: {
       client: {
-        clientName: "ANDROID",
-        clientVersion: "19.44.38",
-        androidSdkVersion: 34,
+        clientName: "ANDROID_VR",
+        clientVersion: "1.62.27",
+        deviceMake: "Oculus",
+        deviceModel: "Quest 3",
         osName: "Android",
-        osVersion: "14",
+        osVersion: "12",
+        androidSdkVersion: 32,
         hl: "pt",
         gl: "BR",
       },
     },
-    clientNameHeader: "3",
   },
 ] as const;
-
-const INNERTUBE_KEY = "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8";
 
 function pickInnertubeFormats(player: any) {
   const streaming = player?.streamingData || {};
@@ -101,7 +103,7 @@ async function fetchInnerTube(videoId: string): Promise<YouTubeResponse | null> 
   for (const client of INNERTUBE_CLIENTS) {
     try {
       const r = await fetch(
-        `https://www.youtube.com/youtubei/v1/player?key=${INNERTUBE_KEY}&prettyPrint=false`,
+        "https://www.youtube.com/youtubei/v1/player?prettyPrint=false",
         {
           method: "POST",
           signal: withTimeout(8000),
