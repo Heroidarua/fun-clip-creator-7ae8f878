@@ -87,8 +87,9 @@ function pickInnertubeFormats(player: any) {
   const muxed = progressive
     .filter((f) => /video\/mp4/.test(f.mimeType || "") && /mp4a/.test(f.mimeType || ""))
     .sort((a, b) => (b.height || 0) - (a.height || 0));
+  // Sem progressivo, usa o melhor MP4 adaptativo limitado a 1080p (arquivo menor)
   const videoOnly = adaptive
-    .filter((f) => /video\/mp4/.test(f.mimeType || ""))
+    .filter((f) => /video\/mp4/.test(f.mimeType || "") && (f.height || 0) <= 1080)
     .sort((a, b) => (b.height || 0) - (a.height || 0));
   const audioOnly = formats
     .filter((f) => /audio\/(mp4|mpeg)/.test(f.mimeType || ""))
@@ -97,10 +98,12 @@ function pickInnertubeFormats(player: any) {
   return {
     video: muxed[0]?.url || videoOnly[0]?.url || "",
     audio: audioOnly[0]?.url || "",
+    hasMuxed: Boolean(muxed[0]?.url),
   };
 }
 
 async function fetchInnerTube(videoId: string): Promise<YouTubeResponse | null> {
+  let fallbackResult: YouTubeResponse | null = null;
   for (const client of INNERTUBE_CLIENTS) {
     try {
       const r = await fetch(
@@ -129,13 +132,12 @@ async function fetchInnerTube(videoId: string): Promise<YouTubeResponse | null> 
       const status = player?.playabilityStatus?.status;
       if (!player || (status && status !== "OK")) continue;
 
-      const { video, audio } = pickInnertubeFormats(player);
+      const { video, audio, hasMuxed } = pickInnertubeFormats(player);
       if (!video && !audio) continue;
 
       const details = player.videoDetails || {};
       const thumbs: any[] = details.thumbnail?.thumbnails || [];
-      console.log(`✅ InnerTube (${client.name}) extraiu links diretos`);
-      return {
+      const result: YouTubeResponse = {
         success: true,
         data: {
           video_url: video || audio,
@@ -146,11 +148,17 @@ async function fetchInnerTube(videoId: string): Promise<YouTubeResponse | null> 
           duration: Number(details.lengthSeconds || 0),
         },
       };
+      // Prioriza cliente que oferece vídeo com áudio embutido
+      if (hasMuxed) {
+        console.log(`✅ InnerTube (${client.name}) extraiu link direto com áudio`);
+        return result;
+      }
+      fallbackResult = fallbackResult || result;
     } catch (e) {
       console.warn(`InnerTube ${client.name} falhou:`, (e as Error).message);
     }
   }
-  return null;
+  return fallbackResult;
 }
 
 async function fetchMediaDownloader(videoId: string, key: string): Promise<YouTubeResponse | null> {
