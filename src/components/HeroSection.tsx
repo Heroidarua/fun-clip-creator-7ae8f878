@@ -3,6 +3,7 @@ import { Clipboard, Search, Download, Headphones, Gamepad2, Book, Music, Camera,
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 import { useDownloaderStatus } from "@/hooks/useDownloaderStatus";
 
@@ -159,6 +160,7 @@ interface YouTubeData {
 
 
 const HeroSection = () => {
+  const { t } = useTranslation();
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
