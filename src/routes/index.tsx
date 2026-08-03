@@ -1,4 +1,4 @@
-/* Mesmo abrindo outra aba não baixou a mídia do YouTube, tente que ao colar o link, o usuário clicar em buscar e depois baixar, e começa a baixar automaticamente */
+/* Não pega, a ferramenta de donwload do YouTube precisa baixar direitamente do sos01 encontre uma solução, para baixar igual as outras ferramentas de download */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";
