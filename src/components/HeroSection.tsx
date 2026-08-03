@@ -1940,6 +1940,7 @@ const HeroSection = () => {
                       title={facebookData.title}
                       author={facebookData.author}
                       duration={facebookData.duration}
+                      mediaUrl={facebookData.proxy_url || facebookData.video_url}
                     />
                   </div>
 
