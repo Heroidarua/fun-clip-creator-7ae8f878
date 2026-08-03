@@ -1250,6 +1250,7 @@ const HeroSection = () => {
                       title={videoData.title}
                       author={videoData.author}
                       duration={videoData.duration}
+                      mediaUrl={videoData.proxy_video_url || videoData.video_urls?.hd}
                     />
                   </div>
 
