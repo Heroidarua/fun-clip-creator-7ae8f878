@@ -120,63 +120,9 @@ const Header = () => {
             </div>
           </Link>
 
-          {/* Desktop nav */}
-          <TooltipProvider delayDuration={0} disableHoverableContent>
-            <nav
-              aria-label="Navegação principal"
-              className="hidden lg:flex items-center gap-0.5 p-1 rounded-full border border-border/60 bg-card/50"
-            >
-              {NAV.map((item) => {
-                const active = isActive(item.to);
-                const Icon = item.icon;
-                return (
-                  <Tooltip key={item.to}>
-                    <TooltipTrigger asChild>
-                      <Link
-                        to={item.to}
-                        onClick={(e) => {
-                          if (item.to === "/player") {
-                            e.preventDefault();
-                            setIptvModalOpen(true);
-                          }
-                        }}
-                        aria-current={active ? "page" : undefined}
-                        aria-label={`${item.label} — ${item.desc}`}
-                        className={`relative inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
-                          active
-                            ? "bg-foreground text-background"
-                            : "text-foreground/80 hover:text-foreground hover:bg-muted"
-                        }`}
-                      >
-                        <Icon className="w-3.5 h-3.5" aria-hidden="true" />
-                        {item.label}
-                      </Link>
-                    </TooltipTrigger>
-                    <TooltipContent
-                      side="bottom"
-                      sideOffset={10}
-                      collisionPadding={12}
-                      className="pointer-events-none"
-                    >
-                      <span className="font-medium">{item.label}</span>
-                      <span className="block text-[10px] opacity-80">{item.desc}</span>
-                    </TooltipContent>
-                  </Tooltip>
-                );
-              })}
-            </nav>
-          </TooltipProvider>
 
           {/* Actions */}
           <div className="flex items-center gap-1.5 sm:gap-2">
-            <button
-              onClick={handleShare}
-              className="hidden md:inline-flex items-center justify-center w-10 h-10 rounded-full border border-border hover:border-foreground/40 text-foreground/80 hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-              aria-label="Compartilhar"
-              title="Compartilhar"
-            >
-              <Share2 className="w-4 h-4" aria-hidden="true" />
-            </button>
             <InstallAppButton />
             <div className="hidden sm:block"><NotificationBell /></div>
 
