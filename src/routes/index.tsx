@@ -1,4 +1,4 @@
-/* Não pega, a ferramenta de donwload do YouTube precisa baixar direitamente do sos01 encontre uma solução, para baixar igual as outras ferramentas de download */
+/* Tente para ver se o próprio servidor da lovable consegue extrair a mia do YouTube */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";

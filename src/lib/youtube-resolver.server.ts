@@ -166,7 +166,7 @@ async function fetchY2Mate(videoId: string): Promise<YouTubeResponse | null> {
     const mp4 = info?.links?.mp4 || {};
     const mp3 = info?.links?.mp3 || {};
     
-    // Sort keys to get highest quality
+    // Procura por resoluções mp4 e seleciona a melhor que tenha um token 'k'
     const mp4Keys = Object.keys(mp4).sort((a, b) => parseInt(b) - parseInt(a));
     const mp3Keys = Object.keys(mp3).sort((a, b) => parseInt(b) - parseInt(a));
     
@@ -186,8 +186,15 @@ async function fetchY2Mate(videoId: string): Promise<YouTubeResponse | null> {
         if (!conv.ok) return null;
         const j: any = await conv.json().catch(() => null);
         
-        // y2mate returns a direct link in 'dlink'
-        return j?.dlink || j?.url || null;
+        // O y2mate agora retorna o link direto no campo 'dlink'
+        let finalUrl = j?.dlink || j?.url || null;
+        
+        // Tenta limpar o link se ele vier escapado ou com parâmetros extras que o y2mate às vezes coloca
+        if (finalUrl && typeof finalUrl === 'string') {
+          finalUrl = finalUrl.replace(/\\/g, '');
+        }
+        
+        return finalUrl;
       } catch {
         return null;
       }
