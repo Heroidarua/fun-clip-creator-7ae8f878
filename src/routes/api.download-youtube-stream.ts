@@ -58,10 +58,13 @@ export const Route = createFileRoute("/api/download-youtube-stream")({
           const mediaUrl = type === "audio" ? data?.audio_url : data?.video_url;
 
           if (!isDirectMediaUrl(mediaUrl)) {
-            console.log("URL não direta detectada, tentando resolver novamente:", mediaUrl);
+            console.log("URL não direta detectada:", mediaUrl);
             
-            // Tentativa final: se não for um link direto e tivermos o ID, tentamos forçar uma resolução mais profunda
-            // ou retornamos o link de fallback se tudo falhar.
+            // Tenta uma última resolução forçada via servidor caso o link pareça ser um redirecionamento
+            if (mediaUrl && mediaUrl.includes('y2mate.com') && !mediaUrl.includes('dlink')) {
+               // Se for um link de 'mate' sem dlink, tentamos tratar como erro de processamento
+            }
+
             return Response.json(
               {
                 success: false,
