@@ -175,7 +175,7 @@ async function fetchY2Mate(videoId: string): Promise<YouTubeResponse | null> {
     async function convert(k: string): Promise<string | null> {
       try {
         const conv = await fetch("https://www.y2mate.com/mates/convertV2/index", {
-          method: "POST", signal: withTimeout(6500),
+          method: "POST", signal: withTimeout(7500),
           headers: {
             "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
             "User-Agent": BROWSER_UA, Origin: "https://www.y2mate.com", Referer: "https://www.y2mate.com/", Accept: "*/*",

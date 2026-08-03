@@ -78,7 +78,7 @@ export const Route = createFileRoute("/api/download-youtube-stream")({
           };
           if (range) upstreamHeaders["Range"] = range;
 
-          const upstream = await fetch(mediaUrl!, { headers: upstreamHeaders });
+          const upstream = await fetch(mediaUrl!, { headers: upstreamHeaders, signal: AbortSignal.timeout(20000) });
           if (!upstream.ok || !upstream.body) {
             return Response.json(
               { success: false, error: `Falha ao baixar (HTTP ${upstream.status}).` },
