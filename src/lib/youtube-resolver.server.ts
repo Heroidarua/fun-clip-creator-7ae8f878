@@ -157,42 +157,58 @@ async function fetchY2Mate(videoId: string): Promise<YouTubeResponse | null> {
       },
       body: new URLSearchParams({ k_query: `https://www.youtube.com/watch?v=${videoId}`, k_page: "home", hl: "en", q_auto: "0" }).toString(),
     });
+    
     if (!analyze.ok) return null;
     const info: any = await analyze.json().catch(() => null);
     if (!info || info.status !== "ok") return null;
+    
     const vid = info.vid;
     const mp4 = info?.links?.mp4 || {};
     const mp3 = info?.links?.mp3 || {};
     const mp4Entries = Object.values(mp4) as any[];
+    
+    // Find best quality video with audio
     const progressive = mp4Entries.find((m) => /mp4/i.test(m?.f || "") && /^\d+p$/i.test(m?.q || "") && /audio/i.test(m?.q_text || ""));
     const bestMp4 = progressive || mp4Entries.sort((a, b) => (parseInt(b?.q || "0") || 0) - (parseInt(a?.q || "0") || 0))[0];
-    const bestMp3 = Object.values(mp3)[0] as any;
+    const bestMp3 = (Object.values(mp3) as any[]).sort((a, b) => (parseInt(b?.q || "0") || 0) - (parseInt(a?.q || "0") || 0))[0];
+
     async function convert(k: string): Promise<string | null> {
-      const conv = await fetch("https://www.y2mate.com/mates/convertV2/index", {
-        method: "POST", signal: withTimeout(6500),
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-          "User-Agent": BROWSER_UA, Origin: "https://www.y2mate.com", Referer: "https://www.y2mate.com/", Accept: "*/*",
-        },
-        body: new URLSearchParams({ vid, k }).toString(),
-      });
-      if (!conv.ok) return null;
-      const j: any = await conv.json().catch(() => null);
-      return j?.dlink || null;
+      try {
+        const conv = await fetch("https://www.y2mate.com/mates/convertV2/index", {
+          method: "POST", signal: withTimeout(6500),
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+            "User-Agent": BROWSER_UA, Origin: "https://www.y2mate.com", Referer: "https://www.y2mate.com/", Accept: "*/*",
+          },
+          body: new URLSearchParams({ vid, k }).toString(),
+        });
+        if (!conv.ok) return null;
+        const j: any = await conv.json().catch(() => null);
+        return j?.dlink || null;
+      } catch {
+        return null;
+      }
     }
+
     const videoUrl = bestMp4?.k ? await convert(bestMp4.k) : "";
     const audioUrl = bestMp3?.k ? await convert(bestMp3.k) : "";
+    
     if (!videoUrl && !audioUrl) return null;
+    
     return {
       success: true,
       data: {
-        video_url: videoUrl || "", audio_url: audioUrl || "",
+        video_url: videoUrl || "", 
+        audio_url: audioUrl || "",
         thumbnail: fallbackThumbnail(videoId),
-        title: info.title || "YouTube Video", author: info.a || "YouTube",
-        duration: Number(info.t || 0), download_page_url: saveFromUrl(videoId),
+        title: info.title || "YouTube Video", 
+        author: info.a || "YouTube",
+        duration: Number(info.t || 0), 
+        download_page_url: saveFromUrl(videoId),
       },
     };
-  } catch {
+  } catch (error) {
+    console.error("fetchY2Mate error:", error);
     return null;
   }
 }
