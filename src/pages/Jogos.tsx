@@ -13,14 +13,14 @@ import { useFavoriteGames } from "@/hooks/useFavoriteGames";
 // ---------- helpers ----------
 type Category = "Todos" | "Luta" | "Plataforma" | "Corrida" | "Ação" | "Tiro" | "Arcade";
 
-const CATEGORIES: { id: Category; label: string; icon: string }[] = [
-  { id: "Todos", label: "Todos", icon: "✨" },
-  { id: "Luta", label: "Luta", icon: "🥊" },
-  { id: "Plataforma", label: "Plataforma", icon: "🍄" },
-  { id: "Corrida", label: "Corrida", icon: "🏁" },
-  { id: "Ação", label: "Ação", icon: "💥" },
-  { id: "Tiro", label: "Tiro", icon: "🎯" },
-  { id: "Arcade", label: "Arcade", icon: "🕹️" },
+const CATEGORIES: { id: Category; label: string; icon: string; description: string }[] = [
+  { id: "Todos", label: "Tudo", icon: "✨", description: "Explorar toda a biblioteca" },
+  { id: "Luta", label: "Luta", icon: "🥊", description: "Combate e artes marciais" },
+  { id: "Plataforma", label: "Aventura", icon: "🍄", description: "Plataformas e exploração" },
+  { id: "Corrida", label: "Velocidade", icon: "🏁", description: "Carros e corridas clássicas" },
+  { id: "Ação", label: "Ação", icon: "💥", description: "Combate intenso e arcade" },
+  { id: "Tiro", label: "Shoot'em Up", icon: "🎯", description: "Ação balística clássica" },
+  { id: "Arcade", label: "Clássicos", icon: "🕹️", description: "O puro suco dos 8/16 bits" },
 ];
 
 function categoryOf(g: Game): Category {
@@ -193,25 +193,23 @@ function GameRow({
 }) {
   if (!list.length) return null;
   return (
-    <section className="mb-10">
-      <div className="flex items-end justify-between mb-4 px-1">
-        <div className="flex items-center gap-2.5">
-          <span className="grid place-items-center w-9 h-9 rounded-lg bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))]">
-            {icon}
+    <section>
+      <div className="flex items-center gap-2.5 mb-6 px-1">
+        <span className="grid place-items-center w-8 h-8 rounded-lg bg-[hsl(var(--primary)/0.1)] text-[hsl(var(--primary))] shrink-0">
+          {icon}
+        </span>
+        <h2 className="font-display text-2xl text-[hsl(var(--foreground))] leading-none">
+          {title}
+        </h2>
+        {badge && (
+          <span className="font-silkscreen text-[9px] tracking-wider px-1.5 py-0.5 rounded bg-[hsl(var(--accent)/0.1)] text-[hsl(var(--accent))]">
+            {badge}
           </span>
-          <h2 className="font-display text-2xl sm:text-3xl text-[hsl(var(--foreground))] leading-none">
-            {title}
-          </h2>
-          {badge && (
-            <span className="font-silkscreen text-[10px] tracking-wider px-2 py-1 rounded bg-[hsl(var(--accent)/0.15)] text-[hsl(var(--accent))]">
-              {badge}
-            </span>
-          )}
-        </div>
+        )}
       </div>
-      <div className="grid gap-4 sm:gap-5 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+      <div className="grid gap-4 sm:gap-5 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
         {list.map((g, i) => (
-          <div key={g.id} className="animate-fade-in" style={{ animationDelay: `${Math.min(i * 30, 240)}ms` }}>
+          <div key={g.id} className="animate-fade-in" style={{ animationDelay: `${Math.min(i * 15, 200)}ms` }}>
             <GameCard
               game={g}
               onPlay={() => onPlay(g)}
@@ -341,165 +339,143 @@ export default function Jogos() {
           </div>
         </section>
 
-        {/* ---- Sticky search + category chips ---- */}
-        <div className="sticky top-16 z-30 bg-[hsl(var(--background))]/85 backdrop-blur-md border-y border-[hsl(var(--border))]">
-          <div className="container mx-auto px-4 py-3 space-y-3">
-            <div className="relative">
-              <Search className={`absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors ${searchFocused ? "text-[hsl(var(--primary))]" : "text-[hsl(var(--muted-foreground))]"}`} />
-              <Input
-                ref={searchRef}
-                type="text"
-                placeholder="Buscar jogo..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onFocus={() => setSearchFocused(true)}
-                onBlur={() => setSearchFocused(false)}
-                className={`pl-11 pr-10 h-11 rounded-xl border-2 bg-[hsl(var(--card))] text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))] transition-all ${
-                  searchFocused
-                    ? "border-[hsl(var(--primary))] shadow-[0_0_0_4px_hsl(var(--primary)/0.18),0_0_22px_hsl(var(--primary)/0.35)]"
-                    : "border-[hsl(var(--border))]"
-                }`}
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => { setSearchQuery(""); searchRef.current?.focus(); }}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 grid place-items-center w-7 h-7 rounded-full bg-[hsl(var(--muted))] text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--primary)/0.15)] hover:text-[hsl(var(--primary))]"
-                  aria-label="Limpar busca"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
+        {/* ---- Category Grid & Search ---- */}
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid lg:grid-cols-[280px_1fr] gap-8">
+            {/* Sidebar Filters */}
+            <aside className="space-y-6">
+              <div className="relative group">
+                <Search className={`absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors ${searchFocused ? "text-[hsl(var(--primary))]" : "text-[hsl(var(--muted-foreground))]"}`} />
+                <Input
+                  ref={searchRef}
+                  type="text"
+                  placeholder="Buscar jogo..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={() => setSearchFocused(true)}
+                  onBlur={() => setSearchFocused(false)}
+                  className={`pl-11 pr-10 h-12 rounded-xl border-2 bg-[hsl(var(--card))] text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))] transition-all ${
+                    searchFocused
+                      ? "border-[hsl(var(--primary))] shadow-[0_0_0_4px_hsl(var(--primary)/0.18)]"
+                      : "border-[hsl(var(--border))]"
+                  }`}
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => { setSearchQuery(""); searchRef.current?.focus(); }}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 grid place-items-center w-7 h-7 rounded-full bg-[hsl(var(--muted))] text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--primary)/0.15)] hover:text-[hsl(var(--primary))]"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
 
-            <div className="-mx-4 px-4 overflow-x-auto scrollbar-thin">
-              <div className="flex items-center gap-2 w-max pb-1">
-                {CATEGORIES.map((c) => {
-                  const active = category === c.id;
-                  return (
-                    <button
-                      key={c.id}
-                      onClick={() => setCategory(c.id)}
-                      className={`shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full font-silkscreen text-[11px] tracking-wider transition-all duration-200 border ${
-                        active
-                          ? "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] border-[hsl(var(--primary))] shadow-[0_4px_0_hsl(var(--secondary))]"
-                          : "bg-[hsl(var(--card))] text-[hsl(var(--foreground))] border-[hsl(var(--border))] hover:border-[hsl(var(--primary))] hover:text-[hsl(var(--primary))]"
-                      }`}
-                    >
-                      <span className="text-sm leading-none">{c.icon}</span>
-                      {c.label.toUpperCase()}
-                    </button>
-                  );
-                })}
-                <button
-                  onClick={() => setCategory("Todos")}
-                  className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-[11px] font-silkscreen tracking-wider text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))]"
-                  aria-label="Limpar filtros"
-                >
-                  <Filter className="w-3.5 h-3.5" />
-                  RESET
-                </button>
+              <div className="space-y-2">
+                <h3 className="font-silkscreen text-[11px] tracking-wider text-[hsl(var(--muted-foreground))] px-2 mb-3">
+                  CATEGORIAS
+                </h3>
+                <nav className="space-y-1">
+                  {CATEGORIES.map((c) => {
+                    const active = category === c.id;
+                    return (
+                      <button
+                        key={c.id}
+                        onClick={() => setCategory(c.id)}
+                        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 border ${
+                          active
+                            ? "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] border-[hsl(var(--primary))] shadow-[0_4px_0_hsl(var(--secondary))]"
+                            : "bg-[hsl(var(--card))] text-[hsl(var(--foreground))] border-transparent hover:border-[hsl(var(--border))] hover:bg-[hsl(var(--muted)/0.3)]"
+                        }`}
+                      >
+                        <span className="text-lg leading-none">{c.icon}</span>
+                        <div className="text-left">
+                          <p className="font-silkscreen text-[11px] leading-none tracking-wider">{c.label.toUpperCase()}</p>
+                          <p className={`text-[9px] mt-1 ${active ? "text-white/60" : "text-[hsl(var(--muted-foreground))]"}`}>
+                            {c.description}
+                          </p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </nav>
+              </div>
+            </aside>
+
+            {/* Main Content Area */}
+            <div className="space-y-12">
+              {/* Sections go here */}
+
+              {/* Content Sections */}
+              <div className="space-y-12">
+                {/* Featured / Carousel Style for specific sections */}
+                {!searchQuery && category === "Todos" && (
+                  <div className="space-y-10">
+                    <GameRow
+                      title="Continuar"
+                      icon={<Clock className="w-4 h-4" />}
+                      games={recent}
+                      onPlay={playGame}
+                      isFavorite={isFavorite}
+                      toggleFavorite={toggleFavorite}
+                    />
+
+                    <GameRow
+                      title="Populares"
+                      icon={<Flame className="w-4 h-4" />}
+                      badge="HOT"
+                      games={popular}
+                      onPlay={playGame}
+                      isFavorite={isFavorite}
+                      toggleFavorite={toggleFavorite}
+                    />
+                  </div>
+                )}
+
+                {/* All / Filtered Grid */}
+                <section>
+                  <div className="flex items-center justify-between mb-6 px-1">
+                    <div className="flex items-center gap-3">
+                      <h2 className="font-display text-3xl text-[hsl(var(--foreground))] leading-none">
+                        {category === "Todos" ? "Todos os Jogos" : category}
+                      </h2>
+                      <span className="font-silkscreen text-[10px] tracking-wider px-2 py-1 rounded bg-[hsl(var(--muted))] text-[hsl(var(--muted-foreground))]">
+                        {filtered.length}
+                      </span>
+                    </div>
+                  </div>
+
+                  {filtered.length > 0 ? (
+                    <div className="grid gap-4 sm:gap-6 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+                      {filtered.map((g, i) => (
+                        <div key={g.id} className="animate-fade-in" style={{ animationDelay: `${Math.min(i * 15, 200)}ms` }}>
+                          <GameCard
+                            game={g}
+                            onPlay={() => playGame(g)}
+                            isFavorite={isFavorite(g.id)}
+                            onToggleFavorite={() => toggleFavorite(g.id)}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-20 rounded-3xl border-2 border-dashed border-[hsl(var(--border))] bg-[hsl(var(--card))/0.5]">
+                      <div className="mx-auto w-16 h-16 grid place-items-center rounded-2xl bg-[hsl(var(--primary)/0.1)] text-[hsl(var(--primary))] mb-4">
+                        <Gamepad2 className="w-8 h-8" />
+                      </div>
+                      <h3 className="font-display text-2xl text-[hsl(var(--foreground))] mb-1">Nada encontrado</h3>
+                      <p className="text-sm text-[hsl(var(--muted-foreground))]">Tente outra busca ou categoria.</p>
+                      <Button
+                        onClick={() => { setSearchQuery(""); setCategory("Todos"); }}
+                        className="mt-6 font-silkscreen text-[11px] tracking-wider h-10 px-6"
+                      >
+                        LIMPAR FILTROS
+                      </Button>
+                    </div>
+                  )}
+                </section>
               </div>
             </div>
           </div>
-        </div>
-
-        {/* ---- Content ---- */}
-        <div className="container mx-auto px-4 pt-6">
-          {/* Continue Playing */}
-          {!searchQuery && category === "Todos" && (
-            <GameRow
-              title="Continuar Jogando"
-              icon={<Clock className="w-4 h-4" />}
-              games={recent}
-              onPlay={playGame}
-              isFavorite={isFavorite}
-              toggleFavorite={toggleFavorite}
-            />
-          )}
-
-          {/* Popular */}
-          {!searchQuery && category === "Todos" && (
-            <GameRow
-              title="Jogos Populares"
-              icon={<Flame className="w-4 h-4" />}
-              badge="HOT"
-              games={popular}
-              onPlay={playGame}
-              isFavorite={isFavorite}
-              toggleFavorite={toggleFavorite}
-            />
-          )}
-
-          {/* Community favorites */}
-          {!searchQuery && category === "Todos" && (
-            <GameRow
-              title="Favoritos da Comunidade"
-              icon={<Trophy className="w-4 h-4" />}
-              games={community}
-              onPlay={playGame}
-              isFavorite={isFavorite}
-              toggleFavorite={toggleFavorite}
-            />
-          )}
-
-          {/* Latest */}
-          {!searchQuery && category === "Todos" && (
-            <GameRow
-              title="Últimos Adicionados"
-              icon={<Sparkles className="w-4 h-4" />}
-              badge="NOVO"
-              games={latest}
-              onPlay={playGame}
-              isFavorite={isFavorite}
-              toggleFavorite={toggleFavorite}
-            />
-          )}
-
-          {/* All / filtered */}
-          <section className="mb-10">
-            <div className="flex items-end justify-between mb-4 px-1">
-              <div className="flex items-center gap-2.5">
-                <span className="grid place-items-center w-9 h-9 rounded-lg bg-[hsl(var(--accent)/0.15)] text-[hsl(var(--accent))]">
-                  <Gamepad2 className="w-4 h-4" />
-                </span>
-                <h2 className="font-display text-2xl sm:text-3xl text-[hsl(var(--foreground))] leading-none">
-                  {category === "Todos" ? "Todos os Jogos" : category}
-                </h2>
-              </div>
-              <span className="font-silkscreen text-[10px] tracking-wider text-[hsl(var(--muted-foreground))]">
-                {filtered.length} {filtered.length === 1 ? "JOGO" : "JOGOS"}
-              </span>
-            </div>
-
-            {filtered.length > 0 ? (
-              <div className="grid gap-4 sm:gap-5 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-                {filtered.map((g, i) => (
-                  <div key={g.id} className="animate-fade-in" style={{ animationDelay: `${Math.min(i * 20, 240)}ms` }}>
-                    <GameCard
-                      game={g}
-                      onPlay={() => playGame(g)}
-                      isFavorite={isFavorite(g.id)}
-                      onToggleFavorite={() => toggleFavorite(g.id)}
-                    />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-16 rounded-2xl border border-dashed border-[hsl(var(--border))] bg-[hsl(var(--card))]">
-                <div className="mx-auto w-16 h-16 grid place-items-center rounded-2xl bg-[hsl(var(--primary)/0.1)] text-[hsl(var(--primary))] mb-4">
-                  <Gamepad2 className="w-8 h-8" />
-                </div>
-                <h3 className="font-display text-2xl text-[hsl(var(--foreground))] mb-1">Nenhum jogo encontrado</h3>
-                <p className="text-sm text-[hsl(var(--muted-foreground))]">Tente outra busca ou categoria.</p>
-                <Button
-                  onClick={() => { setSearchQuery(""); setCategory("Todos"); }}
-                  className="mt-4 font-silkscreen text-[11px] tracking-wider"
-                >
-                  LIMPAR FILTROS
-                </Button>
-              </div>
-            )}
-          </section>
         </div>
       </main>
 
