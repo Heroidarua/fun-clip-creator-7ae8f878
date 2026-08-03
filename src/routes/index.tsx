@@ -1,4 +1,4 @@
-/* Código para baixar vídeos do YouTube em python: from pytube import YouTube
+/* Quando clicar em baixar o usuário está sendo redirecionado para outra página e isso não pode acontecer, precisa baixar com essa lógica do código python 
 
 def download_youtube_video(url):
     try:

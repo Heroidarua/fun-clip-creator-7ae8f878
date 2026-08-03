@@ -851,14 +851,19 @@ const HeroSection = () => {
       }
       try { probe.body?.cancel(); } catch { /* ignore */ }
 
-      // 2) Download nativo do navegador (streaming, sem estourar memória em vídeos grandes).
+      // 2) Download nativo do navegador via Blob para forçar o download direto sem redirecionar
+      const response = await fetch(streamUrl);
+      if (!response.ok) throw new Error(`Falha na stream: ${response.status}`);
+      
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.href = streamUrl;
+      link.href = blobUrl;
       link.download = `${filename}.${extension}`;
-      link.rel = 'noopener';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
 
       toast({
         title: "✅ Download iniciado!",
