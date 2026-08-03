@@ -1,4 +1,4 @@
-import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { Outlet, Link, createRootRoute, HeadContent, Scripts, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -8,6 +8,8 @@ import Navigation from "@/components/Navigation";
 import BackToTop from "@/components/BackToTop";
 import ProtectionLayer from "@/components/ProtectionLayer";
 import { registerSW } from "@/lib/registerSW";
+import "@/lib/i18n";
+import { useTranslation } from "react-i18next";
 
 import appCss from "../styles.css?url";
 
@@ -115,8 +117,9 @@ export const Route = createRootRoute({
 });
 
 function RootShell({ children }: { children: React.ReactNode }) {
+  const { i18n } = useTranslation();
   return (
-    <html lang="pt-BR" className="light">
+    <html lang={i18n.language || "pt-BR"} className="light">
       <head>
         <HeadContent />
       </head>

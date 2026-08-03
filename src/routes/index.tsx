@@ -1,4 +1,4 @@
-/* Remova o compartilhamento de credenciais */
+/* Implemente um sistema completo de internacionalização (i18n) e SEO multilíngue em todo o site. */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";
