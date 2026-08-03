@@ -1692,19 +1692,24 @@ const HeroSection = () => {
                   </div>
                   
                   {/* Video Preview */}
-                  <div className="w-full mb-4 border-2 bg-background/50" style={{ borderColor: 'hsl(0 100% 50% / 0.3)' }}>
-                    <img 
+                  <div
+                    className="relative w-full mb-4 border-2 border-[hsl(0,100%,50%)]/30 bg-background/50 overflow-hidden min-h-[220px] bg-center bg-no-repeat bg-cover"
+                    style={{ backgroundImage: `url(${youtubeData.thumbnail})` }}
+                    aria-label={`Capa do vídeo ${youtubeData.title}`}
+                  >
+                    <div className="absolute inset-0 bg-background/10 backdrop-blur-[1px]" />
+                    <img
                       src={youtubeData.thumbnail}
-                      alt="YouTube Video Thumbnail"
-                      className="w-full max-h-[400px] object-contain"
+                      alt={`Capa do vídeo ${youtubeData.title}`}
+                      className="w-full h-[220px] object-contain opacity-0 pointer-events-none"
+                    />
+                    <MediaPreviewOverlay
+                      title={youtubeData.title}
+                      author={youtubeData.author}
+                      duration={youtubeData.duration}
                     />
                   </div>
 
-                  {/* Video Info */}
-                  <div className="mb-4 text-center">
-                    <h3 className="font-retro text-lg text-foreground mb-1 line-clamp-2">{youtubeData.title}</h3>
-                    <p className="font-retro text-sm text-muted-foreground">{youtubeData.author}</p>
-                  </div>
 
                   {/* Download type selector */}
                   <div className="mb-4">
