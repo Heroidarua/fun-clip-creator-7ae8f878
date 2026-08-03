@@ -79,16 +79,6 @@ export default function IPTVModal({ isOpen, onClose }: IPTVModalProps) {
     window.open(IPTV_CREDENTIALS.url, "_blank");
   };
   
-  const handleWhatsAppShare = () => {
-    const message = encodeURIComponent(
-      `📺 *Credenciais IPTV SOS01*\n\n` +
-      `👤 *Login:* ${IPTV_CREDENTIALS.login}\n` +
-      `🔑 *Senha:* ${IPTV_CREDENTIALS.senha}\n\n` +
-      `🔗 *Acesse aqui:* ${IPTV_CREDENTIALS.url}\n\n` +
-      `SOS01.com.br - Ferramentas e Entretenimento Grátis!`
-    );
-    window.open(`https://api.whatsapp.com/send?text=${message}`, "_blank");
-  };
 
   return (
     <AnimatePresence>
