@@ -242,10 +242,13 @@ export async function resolveYoutube(rawUrl: string, videoId: string): Promise<Y
     providers.push({ name: "social-all-in-one", run: () => fetchSocialAllInOne(rawUrl, videoId, key) });
     providers.push({ name: "auto-all-in-one", run: () => fetchAutoAllInOne(rawUrl, videoId, key) });
   }
+
   for (const p of providers) {
     try {
       const res = await p.run();
       if (res?.success && res.data && (res.data.video_url || res.data.audio_url)) {
+        // If Y2Mate returned a result but it's just the fallback thumbnail, 
+        // try to see if it has a real one or keep searching if needed.
         console.log(`✅ YouTube via ${p.name}`);
         return res;
       }
@@ -253,7 +256,10 @@ export async function resolveYoutube(rawUrl: string, videoId: string): Promise<Y
       console.warn(`⚠️ YouTube provider ${p.name} falhou:`, (e as Error).message);
     }
   }
-  return fetchYoutubePreview(videoId);
+
+  // Final fallback: fetch preview if all else fails
+  const preview = await fetchYoutubePreview(videoId);
+  return preview;
 }
 
 export function isDirectMediaUrl(u: string | undefined | null): boolean {
