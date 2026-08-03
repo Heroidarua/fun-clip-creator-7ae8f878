@@ -828,6 +828,14 @@ const HeroSection = () => {
         let msg = `Falha ao baixar (HTTP ${probe.status}).`;
         try {
           const j = await probe.json();
+          if (j?.fallback_url) {
+            toast({
+              title: "Redirecionando...",
+              description: "O YouTube bloqueou o acesso direto. Abrindo página de download alternativa.",
+            });
+            window.open(j.fallback_url, '_blank');
+            return;
+          }
           if (j?.error) msg = j.error;
         } catch { /* resposta não-JSON */ }
         throw new Error(msg);
