@@ -1,4 +1,10 @@
-/* O preview mini precisa ser exibido igual como tivesse no YouTube, com áudio etc */
+/* FROM python:3.9-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+EXPOSE 8000
+CMD ["python", "backend.py"] */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";
