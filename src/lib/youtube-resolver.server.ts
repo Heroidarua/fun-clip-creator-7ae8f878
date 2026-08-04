@@ -429,7 +429,7 @@ export function isDirectMediaUrl(u: string | undefined | null): boolean {
   if (!/^https?:\/\//i.test(u)) return false;
   
   // Known download landing pages that require user interaction
-  if (/ssyoutube\.com|savefrom\.net|en\.y2mate\.com\/youtube/i.test(u)) return false;
+  if (!u || /ssyoutube\.com|savefrom\.net|en\.y2mate\.com\/youtube/i.test(u)) return false;
   
   // If it's a known direct media source or a y2mate delivery link, allow it
   if (u.includes("googlevideo.com") || u.includes("y2mate.com") || u.includes("dlink") || u.includes(".mp4") || u.includes(".m4a")) return true;
