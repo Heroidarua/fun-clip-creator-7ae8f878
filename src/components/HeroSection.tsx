@@ -270,6 +270,7 @@ const HeroSection = () => {
   const [youtubeProgress, setYoutubeProgress] = useState(0);
   const [youtubeData, setYoutubeData] = useState<YouTubeData | null>(null);
   const [youtubeDownloadType, setYoutubeDownloadType] = useState<"video" | "audio">("video");
+  const [youtubeOpenInNewTab, setYoutubeOpenInNewTab] = useState(false);
   const [clickedYoutubeButton, setClickedYoutubeButton] = useState<string | null>(null);
   const lastYoutubeSearchedId = useRef<string | null>(null);
 
