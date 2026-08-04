@@ -1,4 +1,4 @@
-/* Ao clicar em baixar na opção da ferramenta do YouTube ele vai reproduzir em outra aba */
+/* Na ferramenta de metadados deixe apenas o iframe puro, pois ele com layout do site não está dando para adicionar os arquivos */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";
