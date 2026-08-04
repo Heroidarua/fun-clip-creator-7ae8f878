@@ -1831,6 +1831,19 @@ const HeroSection = () => {
                     </div>
                   </div>
 
+                  {/* Abrir em outra aba */}
+                  <label className="flex items-center justify-center gap-2 mb-4 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={youtubeOpenInNewTab}
+                      onChange={(e) => setYoutubeOpenInNewTab(e.target.checked)}
+                      className="w-4 h-4 accent-[hsl(0,100%,50%)] cursor-pointer"
+                    />
+                    <span className="font-pixel text-[9px] text-muted-foreground">
+                      ABRIR EM OUTRA ABA AO BAIXAR
+                    </span>
+                  </label>
+
                   <Button
                     onClick={() => handleYoutubeDownload(false)}
                     className={`w-full h-12 font-pixel text-xs text-white border-2 border-[hsl(var(--retro-cyan))] shadow-[4px_4px_0_hsl(var(--retro-cyan))] hover:shadow-[2px_2px_0_hsl(var(--retro-cyan))] hover:translate-x-[2px] hover:translate-y-[2px] transition-all rounded-sm ${
