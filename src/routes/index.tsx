@@ -1,4 +1,4 @@
-/* Na ferramenta de metadados deixe apenas o iframe puro, pois ele com layout do site não está dando para adicionar os arquivos */
+/* Deixe apenas o site original do removedor de metadados */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";
