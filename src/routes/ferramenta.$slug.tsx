@@ -69,6 +69,9 @@ function ToolPage() {
       </div>
     );
   }
+  const Icon = tool.icon;
+  const Component = tool.component;
+
   if (slug === 'remover-metadados') {
     return (
       <div className="fixed inset-0 z-[9999] bg-background overflow-hidden flex flex-col">
@@ -88,7 +91,7 @@ function ToolPage() {
           <Suspense fallback={
             <div className="flex flex-col items-center justify-center h-full gap-3">
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
-              <p className="text-xs text-muted-foreground font-pixel">CARREGANDO AMBIENTE SEGURO...</p>
+              <p className="text-xs text-muted-foreground font-pixel uppercase tracking-widest">CARREGANDO AMBIENTE SEGURO...</p>
             </div>
           }>
             <Component />
@@ -97,9 +100,6 @@ function ToolPage() {
       </div>
     );
   }
-
-  const Icon = tool.icon;
-  const Component = tool.component;
 
   return (
     <div className="min-h-screen bg-background font-orbitron">
