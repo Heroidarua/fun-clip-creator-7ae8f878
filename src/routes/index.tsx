@@ -1,4 +1,4 @@
-/* <div>
+/* Ajeite a reprodução do preview do YouTube para que ele realmente reproduza ao colar o link */
   <input id="urlInput" placeholder="Cole URL do YouTube">
   <button onclick="downloadVideo()">Download</button>
   <div id="result"></div>
