@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, Wrench, Gamepad2, Globe2, Tv, Radio, PlayCircle, BookOpen, LayoutDashboard, Share2, PanelLeftClose, PanelLeftOpen, Menu, X } from "lucide-react";
+import { Home, Wrench, Gamepad2, Globe2, Tv, Radio, PlayCircle, BookOpen, Share2, PanelLeftClose, PanelLeftOpen, Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import IPTVModal from "./IPTVModal";
 import ThemeToggle from "./ThemeToggle";
@@ -19,7 +19,6 @@ const ITEMS = [
   { to: "/iptv", label: "IPTV", icon: Radio, desc: "Canais" },
   { to: "/player", label: "IPTV 1.0", icon: PlayCircle, desc: "Premium" },
   { to: "/blog", label: "Blog", icon: BookOpen, desc: "Notícias" },
-  { to: "/dashboard", label: "Painel", icon: LayoutDashboard, desc: "Admin" },
 ] as const;
 
 export default function SidebarNav() {
