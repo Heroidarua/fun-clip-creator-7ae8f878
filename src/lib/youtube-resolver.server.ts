@@ -18,7 +18,8 @@ const BROWSER_UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
 function saveFromUrl(videoId: string): string {
-  return `https://ssyoutube.com/watch?v=${encodeURIComponent(videoId)}`;
+  // Retorna string vazia para evitar redirecionamento para o ssyoutube quando não há link direto
+  return "";
 }
 
 export function fallbackThumbnail(videoId: string): string {
