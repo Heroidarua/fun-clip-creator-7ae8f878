@@ -1,4 +1,4 @@
-/* Adicionar um modo de reprodução rápida no preview (mini player) para eu conferir o vídeo antes de iniciar o download. */
+/* Ajuste para aparecer o preview mini do vídeo para ser reproduzindo */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";
