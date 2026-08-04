@@ -942,7 +942,20 @@ const HeroSection = () => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      URL.revokeObjectURL(blobUrl);
+
+      if (youtubeOpenInNewTab) {
+        const opened = window.open(blobUrl, '_blank');
+        if (!opened) {
+          toast({
+            title: "Pop-up bloqueado",
+            description: "Libere os pop-ups do site para abrir o vídeo em outra aba.",
+          });
+        }
+        // Mantém o blob vivo por um tempo para a nova aba conseguir carregar.
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+      } else {
+        URL.revokeObjectURL(blobUrl);
+      }
 
       toast({
         title: "✅ Download iniciado!",
