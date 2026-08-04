@@ -1,4 +1,4 @@
-/* Deixe apenas o site original do removedor de metadados */
+/* Remova a ferramenta de removedor de metadados */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";
