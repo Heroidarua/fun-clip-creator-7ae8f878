@@ -94,12 +94,14 @@ const MediaPreviewOverlay = ({
           />
           
           {!isPlaying && (
-            <button
-              onClick={togglePlay}
-              className="z-20 flex h-14 w-14 items-center justify-center rounded-full border-2 border-primary/50 bg-background/80 text-primary shadow-[0_0_20px_hsl(var(--primary)/0.4)] hover:scale-110 transition-transform cursor-pointer"
-            >
-              <Play className="ml-1 h-6 w-6 fill-current" />
-            </button>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <button
+                onClick={togglePlay}
+                className="z-20 flex h-14 w-14 items-center justify-center rounded-full border-2 border-primary/50 bg-background/80 text-primary shadow-[0_0_20px_hsl(var(--primary)/0.4)] hover:scale-110 transition-transform cursor-pointer"
+              >
+                <Play className="ml-1 h-6 w-6 fill-current" />
+              </button>
+            </div>
           )}
 
           {isPlaying && (
