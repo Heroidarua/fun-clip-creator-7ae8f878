@@ -1,4 +1,4 @@
-/* Colocar um player de reprodução ao preview */
+/* Ao clicar em baixar na opção da ferramenta do YouTube ele vai reproduzir em outra aba */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";
