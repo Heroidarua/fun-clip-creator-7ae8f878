@@ -270,6 +270,7 @@ const HeroSection = () => {
   const [youtubeProgress, setYoutubeProgress] = useState(0);
   const [youtubeData, setYoutubeData] = useState<YouTubeData | null>(null);
   const [youtubeDownloadType, setYoutubeDownloadType] = useState<"video" | "audio">("video");
+  const [youtubeOpenInNewTab, setYoutubeOpenInNewTab] = useState(false);
   const [clickedYoutubeButton, setClickedYoutubeButton] = useState<string | null>(null);
   const lastYoutubeSearchedId = useRef<string | null>(null);
 
@@ -941,7 +942,20 @@ const HeroSection = () => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      URL.revokeObjectURL(blobUrl);
+
+      if (youtubeOpenInNewTab) {
+        const opened = window.open(blobUrl, '_blank');
+        if (!opened) {
+          toast({
+            title: "Pop-up bloqueado",
+            description: "Libere os pop-ups do site para abrir o vídeo em outra aba.",
+          });
+        }
+        // Mantém o blob vivo por um tempo para a nova aba conseguir carregar.
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+      } else {
+        URL.revokeObjectURL(blobUrl);
+      }
 
       toast({
         title: "✅ Download iniciado!",
@@ -1816,6 +1830,19 @@ const HeroSection = () => {
                       </Button>
                     </div>
                   </div>
+
+                  {/* Abrir em outra aba */}
+                  <label className="flex items-center justify-center gap-2 mb-4 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={youtubeOpenInNewTab}
+                      onChange={(e) => setYoutubeOpenInNewTab(e.target.checked)}
+                      className="w-4 h-4 accent-[hsl(0,100%,50%)] cursor-pointer"
+                    />
+                    <span className="font-pixel text-[9px] text-muted-foreground">
+                      ABRIR EM OUTRA ABA AO BAIXAR
+                    </span>
+                  </label>
 
                   <Button
                     onClick={() => handleYoutubeDownload(false)}
