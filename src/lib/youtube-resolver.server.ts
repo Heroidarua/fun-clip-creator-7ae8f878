@@ -18,7 +18,8 @@ const BROWSER_UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
 function saveFromUrl(videoId: string): string {
-  return `https://ssyoutube.com/watch?v=${encodeURIComponent(videoId)}`;
+  // Retorna string vazia para evitar redirecionamento para o ssyoutube quando não há link direto
+  return "";
 }
 
 export function fallbackThumbnail(videoId: string): string {
@@ -355,7 +356,7 @@ async function fetchY2Mate(videoId: string): Promise<YouTubeResponse | null> {
 
 async function fetchYoutubePreview(videoId: string): Promise<YouTubeResponse> {
   const canonicalUrl = `https://www.youtube.com/watch?v=${videoId}`;
-  const downloadPageUrl = saveFromUrl(videoId);
+  const downloadPageUrl = "";
   try {
     const r = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(canonicalUrl)}&format=json`, {
       signal: withTimeout(4000),
@@ -428,7 +429,7 @@ export function isDirectMediaUrl(u: string | undefined | null): boolean {
   if (!/^https?:\/\//i.test(u)) return false;
   
   // Known download landing pages that require user interaction
-  if (/ssyoutube\.com|savefrom\.net|en\.y2mate\.com\/youtube/i.test(u)) return false;
+  if (!u || /ssyoutube\.com|savefrom\.net|en\.y2mate\.com\/youtube/i.test(u)) return false;
   
   // If it's a known direct media source or a y2mate delivery link, allow it
   if (u.includes("googlevideo.com") || u.includes("y2mate.com") || u.includes("dlink") || u.includes(".mp4") || u.includes(".m4a")) return true;

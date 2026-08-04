@@ -1,4 +1,4 @@
-/* Ajuste para aparecer o preview mini do vídeo para ser reproduzindo */
+/* Remova esse redirecionamento https://ssyoutube.com/watch?v=9gtfCIhao-E quando clica pra baixar o vídeo */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";

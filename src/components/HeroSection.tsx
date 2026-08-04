@@ -899,9 +899,8 @@ const HeroSection = () => {
               title: "Atenção",
               description: "O YouTube bloqueou o download direto. Estamos tentando uma rota alternativa...",
             });
-            // Tenta abrir o link de fallback se o direto falhar
-            window.open(j.fallback_url, '_blank');
-            return;
+            // Não redirecionar para sites externos, apenas exibir erro se o proxy falhar
+            throw new Error("O YouTube bloqueou o download direto para este vídeo específico.");
           }
           if (j?.error) msg = j.error;
         } catch { /* resposta não-JSON */ }
