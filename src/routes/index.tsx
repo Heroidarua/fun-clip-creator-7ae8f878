@@ -1,41 +1,11 @@
-/* from flask import Flask, request, send_file, jsonify
-import subprocess
-import os
-import uuid
-
-app = Flask(__name__)
-DOWNLOAD_DIR = "downloads"
-
-@app.route('/api/download', methods=['POST'])
-def download_video():
-    data = request.json
-    url = data.get('url')
-    if not url:
-        return jsonify({"error": "URL é obrigatória"}), 400
-    
-    try:
-        video_id = str(uuid.uuid4())[:8]
-        filename = f"{video_id}.mp4"
-        filepath = os.path.join(DOWNLOAD_DIR, filename)
-        
-        os.makedirs(DOWNLOAD_DIR, exist_ok=True)
-        
-        cmd = ["youtube-dl", "-f", "best[ext=mp4]", "-o", filepath, url]
-        subprocess.run(cmd, check=True)
-        
-        return jsonify({"url": f"/api/download/{filename}"})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/api/download/<filename>')
-def serve_file(filename):
-    filepath = os.path.join(DOWNLOAD_DIR, filename)
-    if not os.path.exists(filepath):
-        return jsonify({"error": "Arquivo não encontrado"}), 404
-    return send_file(filepath, as_attachment=True)
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000) */
+/* version: '3'
+services:
+  youtube-downloader:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./downloads:/app/downloads */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";
