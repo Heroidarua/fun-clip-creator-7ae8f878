@@ -17,7 +17,6 @@ import {
   ScanLine,
   ShieldAlert,
   Languages,
-  ShieldCheck,
   type LucideIcon,
 } from "lucide-react";
 
