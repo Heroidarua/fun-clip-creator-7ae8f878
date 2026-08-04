@@ -1,4 +1,4 @@
-/* Remova a ferramenta de removedor de metadados */
+/* Substitua o nome de texto de um botão "IPTV" PARA "PLUTO TV" */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";

@@ -16,7 +16,7 @@ const ITEMS = [
   { to: "/jogos", label: "Jogos", icon: Gamepad2, desc: "Diversão" },
   { to: "/nasa", label: "NASA", icon: Globe2, desc: "Espaço" },
   { to: "/mais-sbt", label: "+SBT", icon: Tv, desc: "TV Ao Vivo" },
-  { to: "/iptv", label: "IPTV", icon: Radio, desc: "Canais" },
+  { to: "/iptv", label: "PLUTO TV", icon: Radio, desc: "Canais" },
   { to: "/player", label: "IPTV 1.0", icon: PlayCircle, desc: "Premium" },
   { to: "/blog", label: "Blog", icon: BookOpen, desc: "Notícias" },
 ] as const;
