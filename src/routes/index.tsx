@@ -1,11 +1,28 @@
-/* version: '3'
-services:
-  youtube-downloader:
-    build: .
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./downloads:/app/downloads */
+/* <div>
+  <input id="urlInput" placeholder="Cole URL do YouTube">
+  <button onclick="downloadVideo()">Download</button>
+  <div id="result"></div>
+</div>
+
+<script>
+async function downloadVideo() {
+  const url = document.getElementById('urlInput').value;
+  const result = document.getElementById('result');
+  
+  try {
+    const response = await fetch('https://seu-dominio.lovable.dev/api/download', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({url})
+    });
+    
+    const data = await response.json();
+    result.innerHTML = `<a href="${data.url}" download>Baixar</a>`;
+  } catch (error) {
+    result.innerHTML = `Erro: ${error.message}`;
+  }
+}
+</script> */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";
