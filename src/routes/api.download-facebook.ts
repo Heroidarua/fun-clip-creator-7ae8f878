@@ -29,22 +29,25 @@ interface MediaResponse {
 const UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
+// Facebook responds with the canonical URL (reel/watch/videos) when the request
+// comes from a crawler UA — normal browser UAs get a 400 on /share/ links.
+const BOT_UA =
+  "facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)";
+
 function isValidFacebookUrl(url: string): boolean {
   return /^https?:\/\/([a-z0-9-]+\.)*(facebook\.com|fb\.com|fb\.watch|m\.facebook\.com)/i.test(url);
 }
 
-// Resolve /share/v/<id>/ and other short links to the canonical /reel/ or /watch/ URL.
-// Many providers reject the short share form.
+// Resolve /share/<x>/<id>/ and fb.watch short links to the canonical
+// /reel/ or /watch/ URL. Many providers reject the short share form.
 async function resolveFacebookUrl(url: string): Promise<string> {
   try {
-    if (!/\/share\/(v|r|p|video|reel)\//i.test(url) && !/fb\.watch/i.test(url)) {
-      return url;
-    }
+    if (!/\/share\//i.test(url) && !/fb\.watch/i.test(url)) return url;
     const r = await fetch(url, {
       method: "GET",
       redirect: "follow",
       headers: {
-        "User-Agent": UA,
+        "User-Agent": BOT_UA,
         "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
       },
     });
@@ -55,22 +58,59 @@ async function resolveFacebookUrl(url: string): Promise<string> {
   return url;
 }
 
+// Extract the numeric video id from any canonical Facebook video URL.
+function extractVideoId(url: string): string | null {
+  const patterns = [
+    /\/reel\/(\d+)/i,
+    /\/videos\/(?:[^/]+\/)?(\d+)/i,
+    /\/watch\/?\?v=(\d+)/i,
+    /[?&]v=(\d+)/i,
+    /\/video\.php\?v=(\d+)/i,
+  ];
+  for (const p of patterns) {
+    const m = url.match(p);
+    if (m?.[1]) return m[1];
+  }
+  return null;
+}
+
+// Snapsave only returns a direct media link for some URL shapes. The classic
+// /video.php?v=<id> form is the one that consistently yields a playable file
+// (reel/ and watch/ forms fall back to a server-side "render" we can't use).
+function buildCandidateUrls(rawUrl: string, canonical: string): string[] {
+  const list = [canonical, rawUrl];
+  const id = extractVideoId(canonical) || extractVideoId(rawUrl);
+  if (id) {
+    list.unshift(`https://www.facebook.com/video.php?v=${id}`);
+    list.push(`https://www.facebook.com/watch/?v=${id}`);
+  }
+  return Array.from(new Set(list.filter(Boolean)));
+}
+
 // Provider 0: Snapsave (shared helper). Cloudflare-safe (no eval).
-async function fetchSnapsave(url: string): Promise<MediaResponse | null> {
-  const res = await callSnapsave(url);
-  if (!res) return null;
-  const video = res.medias.find((m) => m.type === "video");
-  if (!video) return null;
-  return {
-    success: true,
-    data: {
-      media_url: video.url,
-      media_type: "video",
-      thumbnail: video.thumbnail || res.thumbnail || "",
-      title: (res.title || "Facebook Video").substring(0, 100),
-      author: "Facebook",
-    },
-  };
+// Tries every URL shape until one returns an actual video file.
+async function fetchSnapsave(candidates: string[]): Promise<MediaResponse | null> {
+  let thumbnail = "";
+  let title = "";
+  for (const candidate of candidates) {
+    const res = await callSnapsave(candidate);
+    if (!res) continue;
+    thumbnail = thumbnail || res.thumbnail || "";
+    title = title || res.title || "";
+    const video = res.medias.find((m) => m.type === "video");
+    if (!video) continue;
+    return {
+      success: true,
+      data: {
+        media_url: video.url,
+        media_type: "video",
+        thumbnail: video.thumbnail || thumbnail,
+        title: (title || "Facebook Video").substring(0, 100),
+        author: "Facebook",
+      },
+    };
+  }
+  return null;
 }
 
 // Provider 1: social-download-all-in-one (covers FB/IG/TT/YT)
@@ -176,10 +216,11 @@ function addProxyUrls(data: MediaData, routePath: string): MediaData {
 
 async function downloadFacebookMedia(rawUrl: string, functionUrl: string, rapidApiKey: string): Promise<MediaResponse> {
   const url = await resolveFacebookUrl(rawUrl);
+  const candidates = buildCandidateUrls(rawUrl, url);
   const key = rapidApiKey.trim();
   const providers: Array<{ name: string; run: () => Promise<MediaResponse | null> }> = [];
   // Snapsave is free and currently the most reliable; try it first.
-  providers.push({ name: "snapsave", run: () => fetchSnapsave(url) });
+  providers.push({ name: "snapsave", run: () => fetchSnapsave(candidates) });
   if (key) {
     providers.push({ name: "social-all-in-one", run: () => fetchSocialAllInOne(url, key) });
     providers.push({ name: "auto-all-in-one", run: () => fetchAutoAllInOne(url, key) });
