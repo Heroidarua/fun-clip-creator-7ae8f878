@@ -1,4 +1,4 @@
-/* Remova esse redirecionamento https://ssyoutube.com/watch?v=9gtfCIhao-E quando clica pra baixar o vídeo */
+/* O preview mini precisa ser exibido igual como tivesse no YouTube, com áudio etc */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";
