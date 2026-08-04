@@ -17,7 +17,6 @@ import {
   ScanLine,
   ShieldAlert,
   Languages,
-  ShieldCheck,
   type LucideIcon,
 } from "lucide-react";
 
@@ -34,15 +33,6 @@ export type PremiumTool = {
 const Placeholder = lazy(() => import("@/components/tools/premium/Placeholder"));
 
 export const PREMIUM_TOOLS: PremiumTool[] = [
-  {
-    slug: "remover-metadados",
-    name: "Removedor de Metadados",
-    description: "Limpe EXIF, GPS e dados privados de imagens e documentos localmente.",
-    icon: ShieldCheck,
-    color: "210 100% 50%",
-    component: lazy(() => import("@/components/tools/premium/MetadataRemoverIframeTool")),
-    status: "ready",
-  },
   {
     slug: "ocr",
     name: "OCR Imagem → Texto",

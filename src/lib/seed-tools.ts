@@ -18,7 +18,7 @@ const tools = [
   { platform: "qr-code", label: "Gerador de QR Code", category: "utility", status: "active" },
   { platform: "watermark", label: "Marca d'água", category: "utility", status: "active" },
   { platform: "password", label: "Gerador de Senhas", category: "utility", status: "active" },
-  { platform: "remover-metadados", label: "Removedor de Metadados", category: "utility", status: "active" },
+  
   { platform: "image-to-pdf", label: "Imagem para PDF", category: "utility", status: "active" },
   { platform: "pdf-signer", label: "Assinador de PDF", category: "utility", status: "active" },
   { platform: "meu-ip", label: "Meu IP", category: "utility", status: "active" },

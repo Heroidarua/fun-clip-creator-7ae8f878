@@ -1,5 +1,5 @@
 import { useState, lazy, Suspense, ComponentType } from "react";
-import { Music, Eraser, Image, QrCode, Link2, Wrench, Stamp, KeyRound, UserSquare2, Sparkles, FileImage, PenTool, Languages, FileText, Loader2, Brain, Image as ImageIcon, Settings2, Play, ShieldCheck } from "lucide-react";
+import { Music, Eraser, Image, QrCode, Link2, Wrench, Stamp, KeyRound, UserSquare2, Sparkles, FileImage, PenTool, Languages, FileText, Loader2, Brain, Image as ImageIcon, Settings2, Play } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import FeatureGate from "@/components/FeatureGate";
@@ -18,7 +18,7 @@ const ImageToPdfConverter = lazy(() => import("@/components/tools/ImageToPdfConv
 const AITextGenerator     = lazy(() => import("@/components/tools/AITextGenerator"));
 const AutoTranslator      = lazy(() => import("@/components/tools/AutoTranslator"));
 const TextSummarizer      = lazy(() => import("@/components/tools/TextSummarizer"));
-const MetadataRemover     = lazy(() => import("@/components/tools/premium/MetadataRemoverIframeTool"));
+
 
 const ToolFallback = () => (
   <div className="flex items-center justify-center gap-2 py-10 text-muted-foreground">
@@ -151,19 +151,6 @@ const UtilityToolsSection = () => {
       Component: PasswordGenerator,
       trackKey: "password",
       featureKey: "password",
-      category: "utilidades",
-    },
-    {
-      id: "metadata-remover",
-      title: "REMOVEDOR DE METADADOS",
-      subtitle: "Limpe dados privados de arquivos",
-      icon: <ShieldCheck className="w-5 h-5" />,
-      color: "hsl(210, 100%, 50%)",
-      borderColor: "hsl(210 100% 50% / 0.5)",
-      bgColor: "hsl(210, 100%, 50%, 0.2)",
-      Component: MetadataRemover,
-      trackKey: "metadata",
-      featureKey: "remover-metadados",
       category: "utilidades",
     },
     {
