@@ -356,7 +356,7 @@ async function fetchY2Mate(videoId: string): Promise<YouTubeResponse | null> {
 
 async function fetchYoutubePreview(videoId: string): Promise<YouTubeResponse> {
   const canonicalUrl = `https://www.youtube.com/watch?v=${videoId}`;
-  const downloadPageUrl = saveFromUrl(videoId);
+  const downloadPageUrl = "";
   try {
     const r = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(canonicalUrl)}&format=json`, {
       signal: withTimeout(4000),
