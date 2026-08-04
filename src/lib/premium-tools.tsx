@@ -35,15 +35,6 @@ const Placeholder = lazy(() => import("@/components/tools/premium/Placeholder"))
 
 export const PREMIUM_TOOLS: PremiumTool[] = [
   {
-    slug: "remover-metadados",
-    name: "Removedor de Metadados",
-    description: "Limpe EXIF, GPS e dados privados de imagens e documentos localmente.",
-    icon: ShieldCheck,
-    color: "210 100% 50%",
-    component: lazy(() => import("@/components/tools/premium/MetadataRemoverIframeTool")),
-    status: "ready",
-  },
-  {
     slug: "ocr",
     name: "OCR Imagem → Texto",
     description: "Extraia texto de imagens (PNG, JPG, WEBP) em português ou inglês.",

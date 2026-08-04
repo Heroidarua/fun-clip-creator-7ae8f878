@@ -23,25 +23,6 @@ export const Route = createFileRoute("/ferramenta/$slug")({
     const tool = PREMIUM_TOOLS.find((t) => t.slug === params.slug);
     if (!tool) return {};
     
-    // SEO Customizado para o Removedor de Metadados
-    if (tool.slug === 'remover-metadados') {
-      return buildToolSeo({
-        path: `/ferramenta/${tool.slug}`,
-        title: "Removedor de Metadados Online — Limpar EXIF e GPS Grátis | SOS01",
-        description: "Remova metadados, localização GPS e informações privadas de imagens (JPG, PNG) e documentos (PDF, Word) 100% no seu navegador com o sos01.com.br.",
-        keywords: [
-          "remover metadados", "remover exif", "apagar gps da foto", "limpar metadados", 
-          "metadata remover", "remover localização da imagem", "remover metadados pdf", 
-          "metadata cleaner", "remover dados privados online"
-        ],
-        toolName: tool.name,
-        breadcrumb: [
-          { name: "Início", path: "/" },
-          { name: "Ferramentas", path: "/ferramentas" },
-          { name: tool.name, path: `/ferramenta/${tool.slug}` },
-        ],
-      });
-    }
 
     const title = `${tool.name} Online Grátis | SOS01`;
     return buildToolSeo({
@@ -72,34 +53,6 @@ function ToolPage() {
   const Icon = tool.icon;
   const Component = tool.component;
 
-  if (slug === 'remover-metadados') {
-    return (
-      <div className="fixed inset-0 z-[9999] bg-background overflow-hidden flex flex-col">
-        <div className="flex items-center justify-between px-4 py-2 bg-card border-b border-border h-14 shrink-0">
-          <Link 
-            to="/" 
-            className="flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" /> VOLTAR PARA O SOS01
-          </Link>
-          <div className="flex items-center gap-2 text-primary">
-            <Icon className="w-4 h-4" />
-            <span className="text-[10px] font-bold uppercase tracking-wider">{tool.name}</span>
-          </div>
-        </div>
-        <div className="flex-1 w-full bg-black relative">
-          <Suspense fallback={
-            <div className="flex flex-col items-center justify-center h-full gap-3">
-              <Loader2 className="w-8 h-8 animate-spin text-primary" />
-              <p className="text-xs text-muted-foreground font-pixel uppercase tracking-widest">CARREGANDO AMBIENTE SEGURO...</p>
-            </div>
-          }>
-            <Component />
-          </Suspense>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-background font-orbitron">
