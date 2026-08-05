@@ -136,13 +136,23 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality = "best") {
     if (hd.length) muxed = hd;
   }
 
-  // Sem progressivo, usa MP4 adaptativo limitado a 1080p (arquivo menor)
+  // Sem progressivo (vídeo sem áudio embutido): o proxy precisa transferir o
+  // arquivo inteiro, então limitamos o tamanho para não estourar o servidor.
+  const MAX_BYTES = 45 * 1024 * 1024;
+  const size = (f: any) => Number(f.contentLength || 0);
   let videoOnly = adaptive
     .filter((f) => /video\/mp4/.test(f.mimeType || "") && (f.height || 0) <= 1080)
     .sort(quality === "worst" ? asc : desc);
   if (quality === "high") {
     const hd = videoOnly.filter((f) => (f.height || 0) >= 720);
     if (hd.length) videoOnly = hd;
+  }
+  const fitsSize = videoOnly.filter((f) => size(f) > 0 && size(f) <= MAX_BYTES);
+  if (fitsSize.length) {
+    videoOnly = fitsSize;
+  } else if (videoOnly.length) {
+    // Nenhum cabe no limite: usa o menor disponível
+    videoOnly = [...videoOnly].sort((a, b) => size(a) - size(b));
   }
 
   const audioOnly = formats
