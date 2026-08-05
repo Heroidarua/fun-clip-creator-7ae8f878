@@ -60,6 +60,20 @@ export const Route = createFileRoute("/api/download-youtube-stream")({
           const data = resolved?.data;
           const mediaUrl = type === "audio" ? data?.audio_url : data?.video_url;
 
+          // Alguns vídeos (clipes musicais, conteúdo licenciado) só têm faixas
+          // separadas e protegidas: o YouTube libera apenas os primeiros MB.
+          // Nesses casos avisamos em vez de entregar um arquivo quebrado.
+          if (data && data.muxed === false) {
+            return Response.json(
+              {
+                success: false,
+                error:
+                  "O YouTube protegeu este vídeo e só libera trechos parciais. Tente outro vídeo — a maioria funciona normalmente.",
+              },
+              { status: 422, headers: corsHeaders({ "Content-Type": "application/json" }) },
+            );
+          }
+
           if (!isDirectMediaUrl(mediaUrl)) {
             console.log("URL não direta detectada:", mediaUrl);
             
@@ -110,10 +124,12 @@ export const Route = createFileRoute("/api/download-youtube-stream")({
           const len = upstream.headers.get("content-length");
           if (len) headers["Content-Length"] = len;
           const contentRange = upstream.headers.get("content-range");
-          if (contentRange) headers["Content-Range"] = contentRange;
+          // Só repassa semântica de Range quando o navegador pediu; caso contrário
+          // devolve 200 com o arquivo completo.
+          if (range && contentRange) headers["Content-Range"] = contentRange;
 
           return new Response(upstream.body, {
-            status: upstream.status === 206 ? 206 : 200,
+            status: range && upstream.status === 206 ? 206 : 200,
             headers,
           });
         } catch (error: any) {
