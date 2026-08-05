@@ -86,7 +86,8 @@ export const Route = createFileRoute("/api/download-youtube-stream")({
             Referer: "https://www.youtube.com/",
             Accept: "*/*",
           };
-          if (range) upstreamHeaders["Range"] = range;
+          // As faixas adaptativas do YouTube só respondem com Range; sem ele devolvem 403.
+          upstreamHeaders["Range"] = range || "bytes=0-";
 
           const upstream = await fetch(mediaUrl!, { headers: upstreamHeaders, signal: AbortSignal.timeout(20000) });
           if (!upstream.ok || !upstream.body) {
@@ -110,10 +111,12 @@ export const Route = createFileRoute("/api/download-youtube-stream")({
           const len = upstream.headers.get("content-length");
           if (len) headers["Content-Length"] = len;
           const contentRange = upstream.headers.get("content-range");
-          if (contentRange) headers["Content-Range"] = contentRange;
+          // Só repassa semântica de Range quando o navegador pediu; caso contrário
+          // devolve 200 com o arquivo completo.
+          if (range && contentRange) headers["Content-Range"] = contentRange;
 
           return new Response(upstream.body, {
-            status: upstream.status === 206 ? 206 : 200,
+            status: range && upstream.status === 206 ? 206 : 200,
             headers,
           });
         } catch (error: any) {
