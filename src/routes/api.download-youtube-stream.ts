@@ -36,6 +36,9 @@ export const Route = createFileRoute("/api/download-youtube-stream")({
           const rawUrl = (u.searchParams.get("url") || "").trim();
           const type =
             (u.searchParams.get("type") || "video") === "audio" ? "audio" : "video";
+          const q = (u.searchParams.get("quality") || "best").toLowerCase();
+          const quality: "best" | "high" | "worst" =
+            q === "high" || q === "hd" ? "high" : q === "worst" || q === "low" ? "worst" : "best";
 
           if (!rawUrl || rawUrl.length > 2048) {
             return Response.json(
@@ -53,7 +56,7 @@ export const Route = createFileRoute("/api/download-youtube-stream")({
 
           const videoId = parsed.videoId!;
           const canonicalUrl = parsed.canonicalUrl || rawUrl;
-          const resolved = await resolveYoutube(canonicalUrl, videoId);
+          const resolved = await resolveYoutube(canonicalUrl, videoId, quality);
           const data = resolved?.data;
           const mediaUrl = type === "audio" ? data?.audio_url : data?.video_url;
 
@@ -78,7 +81,8 @@ export const Route = createFileRoute("/api/download-youtube-stream")({
 
           const range = request.headers.get("range");
           const upstreamHeaders: Record<string, string> = {
-            "User-Agent": BROWSER_UA,
+            // Usa o mesmo User-Agent do cliente que gerou o link, senão o googlevideo devolve 403
+            "User-Agent": data?.media_ua || BROWSER_UA,
             Referer: "https://www.youtube.com/",
             Accept: "*/*",
           };

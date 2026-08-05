@@ -6,7 +6,16 @@ export interface YouTubeData {
   author: string;
   duration: number;
   download_page_url?: string;
+  /** User-Agent que deve ser usado ao baixar as URLs acima (evita 403 no googlevideo). */
+  media_ua?: string;
+  /** Altura do vídeo escolhido, quando conhecida. */
+  height?: number;
+  /** true quando o arquivo de vídeo já contém áudio embutido. */
+  muxed?: boolean;
 }
+
+/** Equivalente às expressões de formato do yt-dlp (best / 720p+ / worst). */
+export type YouTubeQuality = "best" | "high" | "worst";
 
 export interface YouTubeResponse {
   success: boolean;
@@ -75,35 +84,89 @@ const INNERTUBE_CLIENTS = [
       },
     },
   },
+  {
+    name: "TVHTML5_EMBED",
+    userAgent:
+      "Mozilla/5.0 (PlayStation; PlayStation 4/12.00) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Safari/605.1.15",
+    clientNameHeader: "85",
+    context: {
+      client: {
+        clientName: "TVHTML5_SIMPLY_EMBEDDED_PLAYER",
+        clientVersion: "2.0",
+        hl: "pt",
+        gl: "BR",
+      },
+      thirdParty: { embedUrl: "https://www.youtube.com/" },
+    },
+  },
+  {
+    name: "MWEB",
+    userAgent:
+      "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1",
+    clientNameHeader: "2",
+    context: {
+      client: {
+        clientName: "MWEB",
+        clientVersion: "2.20240726.01.00",
+        hl: "pt",
+        gl: "BR",
+      },
+    },
+  },
 ] as const;
 
-function pickInnertubeFormats(player: any) {
+function pickInnertubeFormats(player: any, quality: YouTubeQuality = "best") {
   const streaming = player?.streamingData || {};
   const hasUrl = (f: any) => typeof f?.url === "string" && f.url.startsWith("http");
   const progressive: any[] = (streaming.formats || []).filter(hasUrl);
   const adaptive: any[] = (streaming.adaptiveFormats || []).filter(hasUrl);
   const formats = [...progressive, ...adaptive];
 
+  const desc = (a: any, b: any) => (b.height || 0) - (a.height || 0);
+  const asc = (a: any, b: any) => (a.height || 0) - (b.height || 0);
+
   // Progressivo (vídeo + áudio no mesmo arquivo) é o que o navegador reproduz direto
-  const muxed = progressive
+  let muxed = progressive
     .filter((f) => /video\/mp4/.test(f.mimeType || "") && /mp4a/.test(f.mimeType || ""))
-    .sort((a, b) => (b.height || 0) - (a.height || 0));
-  // Sem progressivo, usa o melhor MP4 adaptativo limitado a 1080p (arquivo menor)
-  const videoOnly = adaptive
+    .sort(quality === "worst" ? asc : desc);
+
+  // Espelha `best[height>=720]` do yt-dlp: prioriza >=720p quando existir
+  if (quality === "high") {
+    const hd = muxed.filter((f) => (f.height || 0) >= 720);
+    if (hd.length) muxed = hd;
+  }
+
+  // Sem progressivo, usa MP4 adaptativo limitado a 1080p (arquivo menor)
+  let videoOnly = adaptive
     .filter((f) => /video\/mp4/.test(f.mimeType || "") && (f.height || 0) <= 1080)
-    .sort((a, b) => (b.height || 0) - (a.height || 0));
+    .sort(quality === "worst" ? asc : desc);
+  if (quality === "high") {
+    const hd = videoOnly.filter((f) => (f.height || 0) >= 720);
+    if (hd.length) videoOnly = hd;
+  }
+
   const audioOnly = formats
     .filter((f) => /audio\/(mp4|mpeg)/.test(f.mimeType || ""))
-    .sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0));
+    .sort((a, b) =>
+      quality === "worst"
+        ? (a.bitrate || 0) - (b.bitrate || 0)
+        : (b.bitrate || 0) - (a.bitrate || 0),
+    );
+
+  const chosen = muxed[0] || videoOnly[0];
 
   return {
-    video: muxed[0]?.url || videoOnly[0]?.url || "",
+    video: chosen?.url || "",
     audio: audioOnly[0]?.url || "",
     hasMuxed: Boolean(muxed[0]?.url),
+    height: Number(chosen?.height || 0),
   };
 }
 
-async function fetchInnerTube(videoId: string): Promise<YouTubeResponse | null> {
+async function fetchInnerTube(
+  videoId: string,
+  quality: YouTubeQuality = "best",
+): Promise<YouTubeResponse | null> {
   let fallbackResult: YouTubeResponse | null = null;
   for (const client of INNERTUBE_CLIENTS) {
     try {
@@ -133,7 +196,7 @@ async function fetchInnerTube(videoId: string): Promise<YouTubeResponse | null> 
       const status = player?.playabilityStatus?.status;
       if (!player || (status && status !== "OK")) continue;
 
-      const { video, audio, hasMuxed } = pickInnertubeFormats(player);
+      const { video, audio, hasMuxed, height } = pickInnertubeFormats(player, quality);
       if (!video && !audio) continue;
 
       const details = player.videoDetails || {};
@@ -147,11 +210,16 @@ async function fetchInnerTube(videoId: string): Promise<YouTubeResponse | null> 
           title: (details.title || "YouTube Video").substring(0, 120),
           author: details.author || "YouTube",
           duration: Number(details.lengthSeconds || 0),
+          media_ua: client.userAgent,
+          height,
+          muxed: hasMuxed,
         },
       };
       // Prioriza cliente que oferece vídeo com áudio embutido
       if (hasMuxed) {
-        console.log(`✅ InnerTube (${client.name}) extraiu link direto com áudio`);
+        console.log(
+          `✅ InnerTube (${client.name}) extraiu link direto com áudio (${height || "?"}p, ${quality})`,
+        );
         return result;
       }
       fallbackResult = fallbackResult || result;
@@ -386,12 +454,16 @@ async function fetchYoutubePreview(videoId: string): Promise<YouTubeResponse> {
   }
 }
 
-export async function resolveYoutube(rawUrl: string, videoId: string): Promise<YouTubeResponse> {
+export async function resolveYoutube(
+  rawUrl: string,
+  videoId: string,
+  quality: YouTubeQuality = "best",
+): Promise<YouTubeResponse> {
   const key = (process.env.RAPIDAPI_KEY || "").trim();
   const providers: Array<{ name: string; run: () => Promise<YouTubeResponse | null> }> = [];
   
   // Extração nativa pelo próprio backend (links diretos googlevideo)
-  providers.push({ name: "innertube", run: () => fetchInnerTube(videoId) });
+  providers.push({ name: "innertube", run: () => fetchInnerTube(videoId, quality) });
   providers.push({ name: "y2mate", run: () => fetchY2Mate(videoId) });
 
   if (key) {
