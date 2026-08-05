@@ -141,7 +141,13 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality = "best") {
   const MAX_BYTES = 45 * 1024 * 1024;
   const size = (f: any) => Number(f.contentLength || 0);
   let videoOnly = adaptive
-    .filter((f) => /video\/mp4/.test(f.mimeType || "") && (f.height || 0) <= 1080)
+    // Somente H.264 (avc1): AV1/VP9 não tocam em muitos players e celulares
+    .filter(
+      (f) =>
+        /video\/mp4/.test(f.mimeType || "") &&
+        /avc1/.test(f.mimeType || "") &&
+        (f.height || 0) <= 1080,
+    )
     .sort(quality === "worst" ? asc : desc);
   if (quality === "high") {
     const hd = videoOnly.filter((f) => (f.height || 0) >= 720);
