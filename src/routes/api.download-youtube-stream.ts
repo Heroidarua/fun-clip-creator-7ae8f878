@@ -100,8 +100,7 @@ export const Route = createFileRoute("/api/download-youtube-stream")({
             Referer: "https://www.youtube.com/",
             Accept: "*/*",
           };
-          // As faixas adaptativas do YouTube só respondem com Range; sem ele devolvem 403.
-          upstreamHeaders["Range"] = range || "bytes=0-";
+          if (range) upstreamHeaders["Range"] = range;
 
           const upstream = await fetch(mediaUrl!, { headers: upstreamHeaders, signal: AbortSignal.timeout(20000) });
           if (!upstream.ok || !upstream.body) {
