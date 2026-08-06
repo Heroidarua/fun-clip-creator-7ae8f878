@@ -40,6 +40,14 @@ const ALLOWED_HOST_PATTERNS: RegExp[] = [
   /(^|\.)pinterest\.[a-z.]+$/i,
   /(^|\.)pinimg\.com$/i,
   /(^|\.)pin\.it$/i,
+  // YouTube / Piped
+  /(^|\.)googlevideo\.com$/i,
+  /(^|\.)youtube\.com$/i,
+  /(^|\.)piped\.video$/i,
+  /(^|\.)piped\.yt$/i,
+  /(^|\.)kavin\.rocks$/i,
+  /(^|\.)adminforge\.de$/i,
+  /(^|\.)leptons\.xyz$/i,
 ];
 
 export function isSafeProxyUrl(raw: string): boolean {
