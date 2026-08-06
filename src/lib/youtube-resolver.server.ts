@@ -537,11 +537,7 @@ async function fetchYoutubePreview(videoId: string): Promise<YouTubeResponse> {
   }
 }
 
-export async function resolveYoutube(
-  rawUrl: string,
-  videoId: string,
-  quality: YouTubeQuality = "best",
-): Promise<YouTubeResponse> {
+function buildProviders(rawUrl: string, videoId: string, quality: YouTubeQuality) {
   const key = (process.env.RAPIDAPI_KEY || "").trim();
   const providers: Array<{ name: string; run: () => Promise<YouTubeResponse | null> }> = [];
   
@@ -560,6 +556,15 @@ export async function resolveYoutube(
     providers.push({ name: "social-all-in-one", run: () => fetchSocialAllInOne(rawUrl, videoId, key) });
     providers.push({ name: "auto-all-in-one", run: () => fetchAutoAllInOne(rawUrl, videoId, key) });
   }
+  return providers;
+}
+
+export async function resolveYoutube(
+  rawUrl: string,
+  videoId: string,
+  quality: YouTubeQuality = "best",
+): Promise<YouTubeResponse> {
+  const providers = buildProviders(rawUrl, videoId, quality);
 
   for (const p of providers) {
     try {
@@ -578,6 +583,29 @@ export async function resolveYoutube(
   // Final fallback: fetch preview if all else fails
   const preview = await fetchYoutubePreview(videoId);
   return preview;
+}
+
+/**
+ * Percorre os provedores um a um, entregando cada resultado para o chamador.
+ * Permite que o proxy tente o próximo link quando o YouTube devolve 403
+ * (link expirado / atrelado a outro IP ou User-Agent).
+ */
+export async function* resolveYoutubeCandidates(
+  rawUrl: string,
+  videoId: string,
+  quality: YouTubeQuality = "best",
+): AsyncGenerator<YouTubeData> {
+  for (const p of buildProviders(rawUrl, videoId, quality)) {
+    try {
+      const res = await p.run();
+      if (res?.success && res.data && (res.data.video_url || res.data.audio_url)) {
+        console.log(`▶️ YouTube candidato: ${p.name}`);
+        yield res.data;
+      }
+    } catch (e) {
+      console.warn(`⚠️ YouTube provider ${p.name} falhou:`, (e as Error).message);
+    }
+  }
 }
 
 export function isDirectMediaUrl(u: string | undefined | null): boolean {
