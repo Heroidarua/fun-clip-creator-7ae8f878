@@ -363,6 +363,73 @@ async function fetchYtStream(videoId: string, key: string): Promise<YouTubeRespo
 }
 
 async function fetchY2Mate(videoId: string): Promise<YouTubeResponse | null> {
+  return fetchY2MateInner(videoId);
+}
+
+/** Instâncias públicas do Piped — a primeira que responder é usada. */
+const PIPED_INSTANCES = [
+  "https://pipedapi.kavin.rocks",
+  "https://pipedapi.adminforge.de",
+  "https://api.piped.yt",
+  "https://pipedapi.leptons.xyz",
+];
+
+async function fetchPiped(
+  videoId: string,
+  quality: YouTubeQuality = "best",
+): Promise<YouTubeResponse | null> {
+  for (const instance of PIPED_INSTANCES) {
+    try {
+      const r = await fetch(`${instance}/streams/${videoId}`, {
+        signal: withTimeout(7000),
+        headers: { Accept: "application/json", "User-Agent": BROWSER_UA },
+      });
+      if (!r.ok) continue;
+      const j: any = await r.json().catch(() => null);
+      if (!j || j.error) continue;
+
+      const videoStreams: any[] = Array.isArray(j.videoStreams) ? j.videoStreams : [];
+      const audioStreams: any[] = Array.isArray(j.audioStreams) ? j.audioStreams : [];
+
+      const height = (s: any) => parseInt(String(s?.quality || "0"), 10) || 0;
+      const muxed = videoStreams
+        .filter((s) => !s.videoOnly && /mp4/i.test(s.mimeType || s.format || ""))
+        .sort((a, b) => height(b) - height(a));
+
+      let chosen = muxed[0];
+      if (quality === "worst" && muxed.length) chosen = muxed[muxed.length - 1];
+      if (quality === "high") chosen = muxed.find((s) => height(s) >= 720) || muxed[0];
+
+      const bestAudio = [...audioStreams]
+        .sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0))
+        .find((s) => /mp4|m4a/i.test(s.mimeType || s.format || "")) || audioStreams[0];
+
+      const videoUrl = chosen?.url || "";
+      const audioUrl = bestAudio?.url || "";
+      if (!videoUrl && !audioUrl) continue;
+
+      return {
+        success: true,
+        data: {
+          video_url: videoUrl,
+          audio_url: audioUrl,
+          thumbnail: j.thumbnailUrl || fallbackThumbnail(videoId),
+          title: (j.title || "YouTube Video").substring(0, 120),
+          author: j.uploader || "YouTube",
+          duration: Number(j.duration || 0),
+          media_ua: BROWSER_UA,
+          height: chosen ? height(chosen) : undefined,
+          muxed: !!chosen,
+        },
+      };
+    } catch {
+      /* tenta a próxima instância */
+    }
+  }
+  return null;
+}
+
+async function fetchY2MateInner(videoId: string): Promise<YouTubeResponse | null> {
   try {
     const analyze = await fetch("https://www.y2mate.com/mates/analyzeV2/ajax", {
       method: "POST", signal: withTimeout(7500),
@@ -480,6 +547,7 @@ export async function resolveYoutube(
   
   // Extração nativa pelo próprio backend (links diretos googlevideo)
   providers.push({ name: "innertube", run: () => fetchInnerTube(videoId, quality) });
+  providers.push({ name: "piped", run: () => fetchPiped(videoId, quality) });
   providers.push({ name: "y2mate", run: () => fetchY2Mate(videoId) });
 
   if (key) {
