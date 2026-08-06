@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { parseYouTubeUrl } from "@/lib/youtube-url";
 import {
-  resolveYoutube,
+  resolveYoutubeCandidates,
   isDirectMediaUrl,
   BROWSER_UA,
 } from "@/lib/youtube-resolver.server";
+import type { YouTubeData } from "@/lib/youtube-resolver.server";
 
 function corsHeaders(extra: Record<string, string> = {}): Record<string, string> {
   return {
@@ -56,56 +57,74 @@ export const Route = createFileRoute("/api/download-youtube-stream")({
 
           const videoId = parsed.videoId!;
           const canonicalUrl = parsed.canonicalUrl || rawUrl;
-          const resolved = await resolveYoutube(canonicalUrl, videoId, quality);
-          const data = resolved?.data;
-          const mediaUrl = type === "audio" ? data?.audio_url : data?.video_url;
+          const range = request.headers.get("range");
 
-          // Alguns vídeos (clipes musicais, conteúdo licenciado) só têm faixas
-          // separadas e protegidas: o YouTube libera apenas os primeiros MB.
-          // Nesses casos avisamos em vez de entregar um arquivo quebrado.
-          if (data && data.muxed === false) {
-            return Response.json(
-              {
-                success: false,
-                error:
-                  "O YouTube protegeu este vídeo e só libera trechos parciais. Tente outro vídeo — a maioria funciona normalmente.",
-              },
-              { status: 422, headers: corsHeaders({ "Content-Type": "application/json" }) },
-            );
-          }
+          // Tenta cada provedor até um link realmente entregar o arquivo.
+          // Links do googlevideo podem expirar ou responder 403 conforme o
+          // User-Agent/IP; nesses casos passamos para o próximo candidato.
+          let upstream: Response | null = null;
+          let data: YouTubeData | null = null;
+          let lastStatus = 0;
+          let sawPartialOnly = false;
+          let fallbackPage = "";
 
-          if (!isDirectMediaUrl(mediaUrl)) {
-            console.log("URL não direta detectada:", mediaUrl);
-            
-            // Tenta uma última resolução forçada via servidor caso o link pareça ser um redirecionamento
-            if (mediaUrl && mediaUrl.includes('y2mate.com') && !mediaUrl.includes('dlink')) {
-               // Se for um link de 'mate' sem dlink, tentamos tratar como erro de processamento
+          for await (const candidate of resolveYoutubeCandidates(canonicalUrl, videoId, quality)) {
+            const mediaUrl = type === "audio" ? candidate.audio_url : candidate.video_url;
+
+            if (type === "video" && candidate.muxed === false) {
+              sawPartialOnly = true;
+              continue;
+            }
+            if (!isDirectMediaUrl(mediaUrl)) {
+              fallbackPage = fallbackPage || candidate.download_page_url || mediaUrl || "";
+              continue;
             }
 
+            for (const ua of [candidate.media_ua || BROWSER_UA, BROWSER_UA]) {
+              const upstreamHeaders: Record<string, string> = {
+                "User-Agent": ua,
+                Referer: "https://www.youtube.com/",
+                Accept: "*/*",
+              };
+              if (range) upstreamHeaders["Range"] = range;
+              try {
+                const res = await fetch(mediaUrl!, {
+                  headers: upstreamHeaders,
+                  signal: AbortSignal.timeout(20000),
+                });
+                if (res.ok && res.body) {
+                  upstream = res;
+                  data = candidate;
+                  break;
+                }
+                lastStatus = res.status;
+                console.warn(`Candidato falhou (HTTP ${res.status})`);
+              } catch (e) {
+                console.warn("Candidato falhou:", (e as Error).message);
+              }
+            }
+            if (upstream) break;
+          }
+
+          if (!upstream || !upstream.body) {
+            if (sawPartialOnly) {
+              return Response.json(
+                {
+                  success: false,
+                  error:
+                    "O YouTube protegeu este vídeo e só libera trechos parciais. Tente outro vídeo — a maioria funciona normalmente.",
+                },
+                { status: 422, headers: corsHeaders({ "Content-Type": "application/json" }) },
+              );
+            }
             return Response.json(
               {
                 success: false,
                 error:
-                  "O YouTube protegeu este conteúdo. Clique em 'Baixar' para usar o link alternativo.",
-                fallback_url: data?.download_page_url || mediaUrl
+                  "Não foi possível baixar este vídeo agora. Tente novamente em alguns instantes ou escolha outra qualidade.",
+                ...(lastStatus ? { upstream_status: lastStatus } : {}),
+                ...(fallbackPage ? { fallback_url: fallbackPage } : {}),
               },
-              { status: 502, headers: corsHeaders({ "Content-Type": "application/json" }) },
-            );
-          }
-
-          const range = request.headers.get("range");
-          const upstreamHeaders: Record<string, string> = {
-            // Usa o mesmo User-Agent do cliente que gerou o link, senão o googlevideo devolve 403
-            "User-Agent": data?.media_ua || BROWSER_UA,
-            Referer: "https://www.youtube.com/",
-            Accept: "*/*",
-          };
-          if (range) upstreamHeaders["Range"] = range;
-
-          const upstream = await fetch(mediaUrl!, { headers: upstreamHeaders, signal: AbortSignal.timeout(20000) });
-          if (!upstream.ok || !upstream.body) {
-            return Response.json(
-              { success: false, error: `Falha ao baixar (HTTP ${upstream.status}).` },
               { status: 502, headers: corsHeaders({ "Content-Type": "application/json" }) },
             );
           }
