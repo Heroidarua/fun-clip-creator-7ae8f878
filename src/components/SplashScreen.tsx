@@ -140,7 +140,7 @@ export default function SplashScreen() {
           }}
         >
           <img
-            src={appIcon.url}
+            src={appIcon?.url ?? "/favicon.png"}
             alt=""
             width={512}
             height={472}
