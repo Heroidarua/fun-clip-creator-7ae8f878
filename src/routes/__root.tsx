@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/hooks/useTheme";
 import Navigation from "@/components/Navigation";
 import BackToTop from "@/components/BackToTop";
 import ProtectionLayer from "@/components/ProtectionLayer";
+import SplashScreen from "@/components/SplashScreen";
 import { registerSW } from "@/lib/registerSW";
 
 import appCss from "../styles.css?url";
@@ -138,6 +139,7 @@ function RootComponent() {
         <Toaster />
         <Sonner />
         <ProtectionLayer />
+        <SplashScreen />
         <Outlet />
         <Navigation />
         <BackToTop />
