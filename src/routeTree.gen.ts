@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermosRouteImport } from './routes/termos'
 import { Route as SobreRouteImport } from './routes/sobre'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as PrecosRouteImport } from './routes/precos'
 import { Route as PlayerRouteImport } from './routes/player'
@@ -65,6 +66,11 @@ const TermosRoute = TermosRouteImport.update({
 const SobreRoute = SobreRouteImport.update({
   id: '/sobre',
   path: '/sobre',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacidadeRoute = PrivacidadeRouteImport.update({
@@ -323,6 +329,7 @@ export interface FileRoutesByFullPath {
   '/player': typeof PlayerRoute
   '/precos': typeof PrecosRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
   '/api/download-facebook': typeof ApiDownloadFacebookRoute
@@ -371,6 +378,7 @@ export interface FileRoutesByTo {
   '/player': typeof PlayerRoute
   '/precos': typeof PrecosRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
   '/api/download-facebook': typeof ApiDownloadFacebookRoute
@@ -421,6 +429,7 @@ export interface FileRoutesById {
   '/player': typeof PlayerRoute
   '/precos': typeof PrecosRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
   '/api/download-facebook': typeof ApiDownloadFacebookRoute
@@ -472,6 +481,7 @@ export interface FileRouteTypes {
     | '/player'
     | '/precos'
     | '/privacidade'
+    | '/sitemap.xml'
     | '/sobre'
     | '/termos'
     | '/api/download-facebook'
@@ -520,6 +530,7 @@ export interface FileRouteTypes {
     | '/player'
     | '/precos'
     | '/privacidade'
+    | '/sitemap.xml'
     | '/sobre'
     | '/termos'
     | '/api/download-facebook'
@@ -569,6 +580,7 @@ export interface FileRouteTypes {
     | '/player'
     | '/precos'
     | '/privacidade'
+    | '/sitemap.xml'
     | '/sobre'
     | '/termos'
     | '/api/download-facebook'
@@ -619,6 +631,7 @@ export interface RootRouteChildren {
   PlayerRoute: typeof PlayerRoute
   PrecosRoute: typeof PrecosRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SobreRoute: typeof SobreRoute
   TermosRoute: typeof TermosRoute
   ApiDownloadFacebookRoute: typeof ApiDownloadFacebookRoute
@@ -651,6 +664,13 @@ declare module '@tanstack/react-router' {
       path: '/sobre'
       fullPath: '/sobre'
       preLoaderRoute: typeof SobreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacidade': {
@@ -1024,6 +1044,7 @@ const rootRouteChildren: RootRouteChildren = {
   PlayerRoute: PlayerRoute,
   PrecosRoute: PrecosRoute,
   PrivacidadeRoute: PrivacidadeRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   SobreRoute: SobreRoute,
   TermosRoute: TermosRoute,
   ApiDownloadFacebookRoute: ApiDownloadFacebookRoute,
