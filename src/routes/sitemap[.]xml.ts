@@ -33,7 +33,10 @@ function discoverRoutePaths(): string[] {
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
-      GET: async () => {
+      GET: async ({ request }) => {
+        const requestUrl = new URL(request.url);
+        const baseUrl = `${requestUrl.protocol}//${requestUrl.host}`;
+
         const routePaths = discoverRoutePaths();
         const toolPaths = INDEXABLE_TOOL_SLUGS.map((slug) => `/ferramenta/${slug}`);
         const categoryPaths = TOOL_CATEGORIES.map((c) => `/categoria/${c.id}`);
@@ -43,7 +46,7 @@ export const Route = createFileRoute("/sitemap.xml")({
         );
 
         const urls = all.map(
-          (p) => `  <url>\n    <loc>${BASE_URL}${p === "/" ? "/" : p}</loc>\n  </url>`,
+          (p) => `  <url>\n    <loc>${baseUrl}${p === "/" ? "/" : p}</loc>\n  </url>`,
         );
 
         const xml = [

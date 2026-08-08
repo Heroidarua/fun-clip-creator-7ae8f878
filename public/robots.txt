@@ -10,4 +10,4 @@ Disallow: /auth
 Disallow: /dashboard
 Disallow: /api/
 
-Sitemap: https://sos01.com.br/sitemap.xml
+Sitemap: /sitemap.xml
