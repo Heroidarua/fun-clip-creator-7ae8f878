@@ -45,7 +45,6 @@ import { Route as BlogComoBaixarVideosTiktokSemMarcaRouteImport } from './routes
 import { Route as BlogComoBaixarVideosKwaiRouteImport } from './routes/blog.como-baixar-videos-kwai'
 import { Route as BlogBibliotecaQuadrinhosRouteImport } from './routes/blog.biblioteca-quadrinhos'
 import { Route as ApiRemoveBgRouteImport } from './routes/api.remove-bg'
-import { Route as ApiPlayerMediaRouteImport } from './routes/api.player-media'
 import { Route as ApiPlayerCatalogRouteImport } from './routes/api.player-catalog'
 import { Route as ApiManageFeatureStatusRouteImport } from './routes/api.manage-feature-status'
 import { Route as ApiManageAnnouncementsRouteImport } from './routes/api.manage-announcements'
@@ -247,11 +246,6 @@ const ApiRemoveBgRoute = ApiRemoveBgRouteImport.update({
   path: '/api/remove-bg',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPlayerMediaRoute = ApiPlayerMediaRouteImport.update({
-  id: '/api/player-media',
-  path: '/api/player-media',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiPlayerCatalogRoute = ApiPlayerCatalogRouteImport.update({
   id: '/api/player-catalog',
   path: '/api/player-catalog',
@@ -349,7 +343,6 @@ export interface FileRoutesByFullPath {
   '/api/manage-announcements': typeof ApiManageAnnouncementsRoute
   '/api/manage-feature-status': typeof ApiManageFeatureStatusRoute
   '/api/player-catalog': typeof ApiPlayerCatalogRoute
-  '/api/player-media': typeof ApiPlayerMediaRoute
   '/api/remove-bg': typeof ApiRemoveBgRoute
   '/blog/biblioteca-quadrinhos': typeof BlogBibliotecaQuadrinhosRoute
   '/blog/como-baixar-videos-kwai': typeof BlogComoBaixarVideosKwaiRoute
@@ -399,7 +392,6 @@ export interface FileRoutesByTo {
   '/api/manage-announcements': typeof ApiManageAnnouncementsRoute
   '/api/manage-feature-status': typeof ApiManageFeatureStatusRoute
   '/api/player-catalog': typeof ApiPlayerCatalogRoute
-  '/api/player-media': typeof ApiPlayerMediaRoute
   '/api/remove-bg': typeof ApiRemoveBgRoute
   '/blog/biblioteca-quadrinhos': typeof BlogBibliotecaQuadrinhosRoute
   '/blog/como-baixar-videos-kwai': typeof BlogComoBaixarVideosKwaiRoute
@@ -451,7 +443,6 @@ export interface FileRoutesById {
   '/api/manage-announcements': typeof ApiManageAnnouncementsRoute
   '/api/manage-feature-status': typeof ApiManageFeatureStatusRoute
   '/api/player-catalog': typeof ApiPlayerCatalogRoute
-  '/api/player-media': typeof ApiPlayerMediaRoute
   '/api/remove-bg': typeof ApiRemoveBgRoute
   '/blog/biblioteca-quadrinhos': typeof BlogBibliotecaQuadrinhosRoute
   '/blog/como-baixar-videos-kwai': typeof BlogComoBaixarVideosKwaiRoute
@@ -504,7 +495,6 @@ export interface FileRouteTypes {
     | '/api/manage-announcements'
     | '/api/manage-feature-status'
     | '/api/player-catalog'
-    | '/api/player-media'
     | '/api/remove-bg'
     | '/blog/biblioteca-quadrinhos'
     | '/blog/como-baixar-videos-kwai'
@@ -554,7 +544,6 @@ export interface FileRouteTypes {
     | '/api/manage-announcements'
     | '/api/manage-feature-status'
     | '/api/player-catalog'
-    | '/api/player-media'
     | '/api/remove-bg'
     | '/blog/biblioteca-quadrinhos'
     | '/blog/como-baixar-videos-kwai'
@@ -605,7 +594,6 @@ export interface FileRouteTypes {
     | '/api/manage-announcements'
     | '/api/manage-feature-status'
     | '/api/player-catalog'
-    | '/api/player-media'
     | '/api/remove-bg'
     | '/blog/biblioteca-quadrinhos'
     | '/blog/como-baixar-videos-kwai'
@@ -657,7 +645,6 @@ export interface RootRouteChildren {
   ApiManageAnnouncementsRoute: typeof ApiManageAnnouncementsRoute
   ApiManageFeatureStatusRoute: typeof ApiManageFeatureStatusRoute
   ApiPlayerCatalogRoute: typeof ApiPlayerCatalogRoute
-  ApiPlayerMediaRoute: typeof ApiPlayerMediaRoute
   ApiRemoveBgRoute: typeof ApiRemoveBgRoute
   FerramentaSlugRoute: typeof FerramentaSlugRoute
   ApiPublicPinterestDownloadRoute: typeof ApiPublicPinterestDownloadRoute
@@ -917,13 +904,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiRemoveBgRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/player-media': {
-      id: '/api/player-media'
-      path: '/api/player-media'
-      fullPath: '/api/player-media'
-      preLoaderRoute: typeof ApiPlayerMediaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/player-catalog': {
       id: '/api/player-catalog'
       path: '/api/player-catalog'
@@ -1078,7 +1058,6 @@ const rootRouteChildren: RootRouteChildren = {
   ApiManageAnnouncementsRoute: ApiManageAnnouncementsRoute,
   ApiManageFeatureStatusRoute: ApiManageFeatureStatusRoute,
   ApiPlayerCatalogRoute: ApiPlayerCatalogRoute,
-  ApiPlayerMediaRoute: ApiPlayerMediaRoute,
   ApiRemoveBgRoute: ApiRemoveBgRoute,
   FerramentaSlugRoute: FerramentaSlugRoute,
   ApiPublicPinterestDownloadRoute: ApiPublicPinterestDownloadRoute,

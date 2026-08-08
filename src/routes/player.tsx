@@ -16,8 +16,8 @@ export const Route = createFileRoute("/player")({
     ...seo,
     links: [
       ...(seo.links ?? []),
-      { rel: "preconnect", href: "https://archive.org", crossOrigin: "anonymous" },
-      { rel: "dns-prefetch", href: "https://archive.org" },
+      { rel: "preconnect", href: "https://wplayer.link", crossOrigin: "anonymous" },
+      { rel: "dns-prefetch", href: "https://wplayer.link" },
     ],
   }),
 });
