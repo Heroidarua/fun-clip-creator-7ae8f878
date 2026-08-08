@@ -14,8 +14,10 @@ import AutoTranslator from "@/components/tools/AutoTranslator";
 import TextSummarizer from "@/components/tools/TextSummarizer";
 import FeatureGate from "@/components/FeatureGate";
 import ToolsIndex from "@/components/ToolsIndex";
+import Breadcrumbs from "@/components/Breadcrumbs";
+import { TOOL_CATEGORIES, categoryPath, toolPath, PREMIUM_TOOLS_SEO } from "@/config/seo";
 import SiteSearch from "@/components/SiteSearch";
-import { Wrench, Music, Eraser, Image, QrCode, Stamp, KeyRound, UserSquare2, Link2, Sparkles, PenTool, Languages, FileText, ArrowRight } from "lucide-react";
+import { Wrench, Music, Eraser, Image, QrCode, Stamp, KeyRound, UserSquare2, Link2, Sparkles, PenTool, Languages, FileText, ArrowRight, Crown } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { PREMIUM_TOOLS } from "@/lib/premium-tools";
 
@@ -25,6 +27,15 @@ const Ferramentas = () => {
       <Header />
       
       <main className="container mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto">
+          <Breadcrumbs
+            items={[
+              { name: "Início", path: "/" },
+              { name: "Ferramentas", path: "/ferramentas" },
+            ]}
+          />
+        </div>
+
         {/* Hero Section */}
         <ScrollReveal>
           <div className="text-center mb-12">
@@ -43,6 +54,52 @@ const Ferramentas = () => {
               <SiteSearch />
             </div>
           </div>
+        </ScrollReveal>
+
+        {/* Links internos por categoria */}
+        <ScrollReveal delay={0.05}>
+          <nav aria-label="Categorias de ferramentas" className="max-w-6xl mx-auto mb-10">
+            <h2 className="font-pixel text-xs text-foreground mb-3">Navegue por categoria</h2>
+            <ul className="flex flex-wrap gap-2">
+              {TOOL_CATEGORIES.map((category) => (
+                <li key={category.id}>
+                  <Link
+                    to={categoryPath(category.id)}
+                    className="inline-block rounded-sm border-2 border-border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-primary/60 hover:text-primary"
+                  >
+                    {category.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </ScrollReveal>
+
+        {/* Ferramentas premium em destaque — links internos indexáveis */}
+        <ScrollReveal delay={0.08}>
+          <section className="max-w-6xl mx-auto mb-10">
+            <h2 className="font-pixel text-xs text-foreground mb-3">
+              Ferramentas premium com página própria
+            </h2>
+            <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {PREMIUM_TOOLS_SEO.map((tool) => (
+                <li key={tool.slug}>
+                  <Link
+                    to={toolPath(tool.slug)}
+                    className="group flex items-start gap-2 rounded-sm border border-amber-400/40 bg-amber-400/5 p-3 transition-colors hover:border-amber-400"
+                  >
+                    <Crown className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" aria-hidden="true" />
+                    <span>
+                      <strong className="text-sm font-semibold text-foreground">{tool.name}</strong>
+                      <span className="mt-1 block text-xs text-muted-foreground">
+                        {tool.description}
+                      </span>
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
         </ScrollReveal>
 
         {/* Featured Tool - Pixel Avatar */}
