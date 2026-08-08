@@ -45,6 +45,7 @@ export const Route = createRootRoute({
       { name: "description", content: "Baixe vídeos sem marca d'água, use utilitários com IA e jogue clássicos retrô no SOS01. Tudo grátis e sem cadastro." },
       { name: "author", content: "SOS01" },
       { name: "google-site-verification", content: "5l-rVqfXcn4T34LaN745WLoHu7M2T8zGVtxBjMGiUDc" },
+      { name: "google-site-verification", content: "fTNqmbM4ozLXJQzrV1FfWsRTt4HltunWN0FGihdBsWs" },
       { property: "og:site_name", content: "SOS01" },
       { property: "og:locale", content: "pt_BR" },
       { property: "og:type", content: "website" },
