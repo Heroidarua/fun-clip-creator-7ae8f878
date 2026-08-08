@@ -17,10 +17,18 @@ type Particle = {
 export default function SplashScreen() {
   const [visible, setVisible] = useState(true);
   const [fading, setFading] = useState(false);
+  const [imgError, setImgError] = useState(false);
+
+  // Normaliza o base path para suportar apps servidas num subpath.
+  // Exponha NEXT_PUBLIC_BASE_PATH = "my-subpath" (sem slashes) em ambiente se necessário.
+  const normalizedBase = process.env.NEXT_PUBLIC_BASE_PATH
+    ? `/${String(process.env.NEXT_PUBLIC_BASE_PATH).replace(/^\/+|\/+$/g, "")}`
+    : "";
 
   // Usar sempre um caminho público para máxima compatibilidade.
-  // Coloque o arquivo `app-icon.png` na pasta `public/` do projeto.
-  const appIconSrc = "/app-icon.png";
+  // Coloque o arquivo `app-icon.png` na pasta `public/` do projeto para que esse caminho resolva.
+  const appIconSrc = `${normalizedBase || ""}/app-icon.png`;
+  const fallbackIconSrc = `${normalizedBase || ""}/favicon.png`;
 
   const particles = useMemo<Particle[]>(() => {
     const rand = (min: number, max: number) => min + Math.random() * (max - min);
@@ -146,12 +154,13 @@ export default function SplashScreen() {
             }}
           >
             <img
-              src={appIconSrc}
+              src={imgError ? fallbackIconSrc : appIconSrc}
               alt="SOS01"
               width={512}
               height={472}
               className="block h-auto w-[min(48vw,220px)] select-none drop-shadow-[0_0_35px_rgba(40,182,255,.6)]"
               draggable={false}
+              onError={() => setImgError(true)}
             />
           </div>
         </div>
