@@ -127,13 +127,13 @@ const ComicsSection = () => {
           <div className="relative text-center mb-8">
             <img
               src={batmanGif}
-              alt="Batman pixelado"
+              alt="Batman pixelado" loading="lazy" decoding="async"
               className="absolute left-0 sm:left-6 -top-4 w-12 h-12 sm:w-14 sm:h-14 drop-shadow-[0_0_10px_rgba(255,255,0,0.5)]"
               style={{ imageRendering: "pixelated" }}
             />
             <img
               src={supermanGif}
-              alt="Superman pixelado"
+              alt="Superman pixelado" loading="lazy" decoding="async"
               className="absolute right-0 sm:right-6 -top-4 w-12 h-12 sm:w-14 sm:h-14 drop-shadow-[0_0_10px_rgba(0,100,255,0.5)]"
               style={{ imageRendering: "pixelated" }}
             />

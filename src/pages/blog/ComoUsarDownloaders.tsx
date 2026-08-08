@@ -39,19 +39,19 @@ const ComoUsarDownloaders = () => {
             </h3>
             <div className="flex flex-wrap gap-4">
               <div className="flex items-center gap-2">
-                <img src={tiktokIcon} alt="TikTok" className="w-6 h-6" />
+                <img src={tiktokIcon} alt="TikTok" loading="lazy" decoding="async" className="w-6 h-6" />
                 <span className="text-muted-foreground">TikTok</span>
               </div>
               <div className="flex items-center gap-2">
-                <img src={instagramIcon} alt="Instagram" className="w-6 h-6" />
+                <img src={instagramIcon} alt="Instagram" loading="lazy" decoding="async" className="w-6 h-6" />
                 <span className="text-muted-foreground">Instagram</span>
               </div>
               <div className="flex items-center gap-2">
-                <img src={kwaiIcon} alt="Kwai" className="w-6 h-6" />
+                <img src={kwaiIcon} alt="Kwai" loading="lazy" decoding="async" className="w-6 h-6" />
                 <span className="text-muted-foreground">Kwai</span>
               </div>
               <div className="flex items-center gap-2">
-                <img src={youtubeIcon} alt="YouTube" className="w-6 h-6" />
+                <img src={youtubeIcon} alt="YouTube" loading="lazy" decoding="async" className="w-6 h-6" />
                 <span className="text-muted-foreground">YouTube</span>
               </div>
             </div>

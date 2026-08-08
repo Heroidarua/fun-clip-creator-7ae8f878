@@ -179,7 +179,7 @@ const Footer = () => {
               <div className="relative w-8 h-8">
                 <img 
                   src={developerPhoto} 
-                  alt="Matheus Marinho"
+                  alt="Matheus Marinho" loading="lazy" decoding="async"
                   className="w-full h-full object-cover rounded-sm border-2 border-primary/50"
                 />
                 <div className="absolute inset-0 scanlines opacity-20 pointer-events-none rounded-sm"></div>
