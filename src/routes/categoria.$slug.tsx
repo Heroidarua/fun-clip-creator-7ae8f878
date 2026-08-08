@@ -2,14 +2,17 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { ArrowUpRight } from "lucide-react";
-import { buildSeo } from "@/lib/seo";
+import { ArrowUpRight, Crown } from "lucide-react";
+import ToolsIndex from "@/components/ToolsIndex";
+import { buildSeo, absoluteUrl } from "@/lib/seo";
 import {
   TOOL_CATEGORIES,
   getCategory,
   toolsByCategory,
   toolPath,
   categoryPath,
+  isPremiumTool,
+  PREMIUM_TOOLS_SEO,
   type ToolCategoryId,
 } from "@/config/seo";
 
@@ -32,6 +35,18 @@ export const Route = createFileRoute("/categoria/$slug")({
         { name: "Início", path: "/" },
         { name: "Ferramentas", path: "/ferramentas" },
         { name: category.label, path: categoryPath(category.id) },
+      ],
+      schema: [
+        {
+          "@type": "ItemList",
+          name: category.title,
+          itemListElement: toolsByCategory(category.id as ToolCategoryId).map((tool, index) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            name: tool.name,
+            url: absoluteUrl(toolPath(tool.slug)),
+          })),
+        },
       ],
     });
   },
@@ -70,6 +85,11 @@ function CategoryPage() {
               >
                 <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
                   {tool.name}
+                  {isPremiumTool(tool.slug) && (
+                    <span className="inline-flex items-center gap-1 rounded-sm border border-amber-400/60 bg-amber-400/10 px-1.5 py-0.5 text-[10px] font-bold uppercase text-amber-500">
+                      <Crown className="h-3 w-3" aria-hidden="true" /> Premium
+                    </span>
+                  )}
                   <ArrowUpRight
                     className="h-4 w-4 shrink-0 text-primary transition-transform group-hover:translate-x-0.5"
                     aria-hidden="true"
@@ -79,6 +99,30 @@ function CategoryPage() {
               </Link>
             </li>
           ))}
+        </ul>
+
+        <h2 className="mt-10 mb-4 font-pixel text-sm text-foreground">
+          Ferramentas premium em destaque
+        </h2>
+        <ul className="grid gap-3 sm:grid-cols-2">
+          {PREMIUM_TOOLS_SEO.filter((t) => t.slug !== undefined)
+            .slice(0, 6)
+            .map((tool) => (
+              <li key={tool.slug}>
+                <Link
+                  to={toolPath(tool.slug)}
+                  className="group flex items-start gap-2 rounded-sm border border-amber-400/40 bg-amber-400/5 p-3 text-sm text-foreground transition-colors hover:border-amber-400"
+                >
+                  <Crown className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" aria-hidden="true" />
+                  <span>
+                    <strong className="font-semibold">{tool.name}</strong>
+                    <span className="mt-1 block text-xs text-muted-foreground">
+                      {tool.description}
+                    </span>
+                  </span>
+                </Link>
+              </li>
+            ))}
         </ul>
 
         <h2 className="mt-10 mb-4 font-pixel text-sm text-foreground">Outras categorias</h2>
@@ -94,6 +138,8 @@ function CategoryPage() {
             </li>
           ))}
         </ul>
+
+        <ToolsIndex title="Todas as ferramentas do SOS01" />
       </main>
       <Footer />
     </div>
