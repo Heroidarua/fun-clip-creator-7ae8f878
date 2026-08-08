@@ -16,12 +16,13 @@ type Particle = {
 };
 
 export default function SplashScreen() {
-  const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(true);
   const [fading, setFading] = useState(false);
 
   const particles = useMemo<Particle[]>(() => {
-    const rand = (min: number, max: number) => min + Math.random() * (max - min);
+    const rand = (min: number, max: number) =>
+      min + Math.random() * (max - min);
+
     return Array.from({ length: 22 }, () => ({
       left: rand(2, 98),
       top: rand(5, 95),
@@ -34,39 +35,34 @@ export default function SplashScreen() {
   }, []);
 
   useEffect(() => {
-    setMounted(true);
-    if (typeof window !== "undefined") {
-      try {
-        if (sessionStorage.getItem("sos01-splash-seen")) {
-          setVisible(false);
-          return;
-        }
-        sessionStorage.setItem("sos01-splash-seen", "1");
-      } catch {
-        /* ignore */
-      }
-    }
-    const prev = document.body.style.overflow;
+    const previousOverflow = document.body.style.overflow;
+
     document.body.style.overflow = "hidden";
-    const t1 = window.setTimeout(() => setFading(true), TOTAL_MS);
-    const t2 = window.setTimeout(() => setVisible(false), TOTAL_MS + FADE_MS);
+
+    const fadeTimer = window.setTimeout(() => {
+      setFading(true);
+    }, TOTAL_MS);
+
+    const hideTimer = window.setTimeout(() => {
+      setVisible(false);
+      document.body.style.overflow = previousOverflow;
+    }, TOTAL_MS + FADE_MS);
+
     return () => {
-      window.clearTimeout(t1);
-      window.clearTimeout(t2);
-      document.body.style.overflow = prev;
+      window.clearTimeout(fadeTimer);
+      window.clearTimeout(hideTimer);
+      document.body.style.overflow = previousOverflow;
     };
   }, []);
 
-  useEffect(() => {
-    if (!visible) document.body.style.overflow = "";
-  }, [visible]);
-
-  if (!mounted || !visible) return null;
+  if (!visible) {
+    return null;
+  }
 
   return (
     <div
       aria-hidden="true"
-      className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden"
+      className="fixed inset-0 z-[99999] flex items-center justify-center overflow-hidden"
       style={{
         backgroundColor: BG,
         opacity: fading ? 0 : 1,
@@ -75,43 +71,86 @@ export default function SplashScreen() {
       }}
     >
       <style>{`
-@keyframes sos01-splash-in {
-  0% { opacity: 0; transform: scale(.7); }
-  100% { opacity: 1; transform: scale(1); }
-}
-@keyframes sos01-splash-breathe {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.03); }
-}
-@keyframes sos01-splash-glow {
-  0%, 100% { opacity: .45; transform: scale(1); }
-  50% { opacity: .85; transform: scale(1.08); }
-}
-@keyframes sos01-splash-particle {
-  0% { opacity: 0; transform: translate3d(0,0,0); }
-  20% { opacity: .8; }
-  80% { opacity: .5; }
-  100% { opacity: 0; transform: translate3d(var(--drift), -60px, 0); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .sos01-splash-anim, .sos01-splash-glow, .sos01-splash-particle { animation: none !important; }
-}
+        @keyframes sos01-splash-in {
+          0% {
+            opacity: 0;
+            transform: scale(0.7);
+          }
+
+          100% {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        @keyframes sos01-splash-breathe {
+          0%,
+          100% {
+            transform: scale(1);
+          }
+
+          50% {
+            transform: scale(1.03);
+          }
+        }
+
+        @keyframes sos01-splash-glow {
+          0%,
+          100% {
+            opacity: 0.45;
+            transform: scale(1);
+          }
+
+          50% {
+            opacity: 0.85;
+            transform: scale(1.08);
+          }
+        }
+
+        @keyframes sos01-splash-particle {
+          0% {
+            opacity: 0;
+            transform: translate3d(0, 0, 0);
+          }
+
+          20% {
+            opacity: 0.8;
+          }
+
+          80% {
+            opacity: 0.5;
+          }
+
+          100% {
+            opacity: 0;
+            transform: translate3d(var(--drift), -60px, 0);
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .sos01-splash-anim,
+          .sos01-splash-breathe,
+          .sos01-splash-glow,
+          .sos01-splash-particle {
+            animation: none !important;
+          }
+        }
       `}</style>
 
-      {particles.map((p, i) => (
+      {particles.map((particle, index) => (
         <span
-          key={i}
+          key={index}
           className="sos01-splash-particle pointer-events-none absolute rounded-full"
           style={{
-            left: `${p.left}%`,
-            top: `${p.top}%`,
-            width: p.size,
-            height: p.size,
-            background: p.color,
-            boxShadow: `0 0 ${p.size * 3}px ${p.color}`,
+            left: `${particle.left}%`,
+            top: `${particle.top}%`,
+            width: `${particle.size}px`,
+            height: `${particle.size}px`,
+            background: particle.color,
+            boxShadow: `0 0 ${particle.size * 3}px ${particle.color}`,
             opacity: 0,
-            ["--drift" as string]: `${p.drift}px`,
-            animation: `sos01-splash-particle ${p.duration}s ease-in-out ${p.delay}s infinite`,
+            ["--drift" as string]: `${particle.drift}px`,
+            animation: `sos01-splash-particle ${particle.duration}s ease-in-out ${particle.delay}s infinite`,
             willChange: "transform, opacity",
           }}
         />
@@ -126,29 +165,41 @@ export default function SplashScreen() {
             background:
               "radial-gradient(circle, rgba(40,182,255,.55) 0%, rgba(40,182,255,.18) 45%, rgba(40,182,255,0) 70%)",
             filter: "blur(6px)",
-            animation: "sos01-splash-glow 2.2s ease-in-out .3s infinite",
+            animation:
+              "sos01-splash-glow 2.2s ease-in-out .3s infinite",
             willChange: "transform, opacity",
           }}
         />
+
         <div
           className="sos01-splash-anim relative"
           style={{
             opacity: 0,
             animation:
-              "sos01-splash-in 700ms cubic-bezier(.22,1,.36,1) 300ms forwards, sos01-splash-breathe 2s ease-in-out 1000ms infinite",
+              "sos01-splash-in 700ms cubic-bezier(.22,1,.36,1) 300ms forwards",
             willChange: "transform, opacity",
           }}
         >
-          <img
-            src={appIcon?.url ?? "/favicon.png"}
-            alt=""
-            width={512}
-            height={472}
-            className="block h-auto w-[min(48vw,220px)] select-none drop-shadow-[0_0_35px_rgba(40,182,255,.6)]"
-            draggable={false}
-          />
+          <div
+            className="sos01-splash-breathe"
+            style={{
+              animation:
+                "sos01-splash-breathe 2s ease-in-out 1000ms infinite",
+              willChange: "transform",
+            }}
+          >
+            <img
+              src={appIcon.url}
+              alt="SOS01"
+              width={512}
+              height={472}
+              className="block h-auto w-[min(48vw,220px)] select-none drop-shadow-[0_0_35px_rgba(40,182,255,.6)]"
+              draggable={false}
+            />
+          </div>
         </div>
       </div>
     </div>
   );
 }
+```
