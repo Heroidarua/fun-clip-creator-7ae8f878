@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "deploy": "CI=true vite build && wrangler deploy",
     "cf-typegen": "wrangler types",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "validate:sitemap": "node scripts/validate-sitemap.mjs"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.25.5",
