@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import appIcon from "@/assets/app-icon.png.asset.json";
+import appIconJson from "@/assets/app-icon.png.asset.json";
 
 const BG = "#124F7D";
 const TOTAL_MS = 3200;
@@ -19,9 +19,28 @@ export default function SplashScreen() {
   const [visible, setVisible] = useState(true);
   const [fading, setFading] = useState(false);
 
+  // Resolve a URL segura para o ícone do app com fallbacks:
+  // 1) usar appIconJson.url se disponível (asset JSON gerado pelo pipeline)
+  // 2) tentar construir uma URL relativa para src/assets/app-icon.png (bundlers como Vite suportam)
+  // 3) fallback para /favicon.png
+  const appIconSrc = (() => {
+    try {
+      if (appIconJson && typeof appIconJson === "object" && (appIconJson as any).url) {
+        return (appIconJson as any).url as string;
+      }
+
+      try {
+        return new URL("../assets/app-icon.png", import.meta.url).href;
+      } catch {
+        return "/favicon.png";
+      }
+    } catch {
+      return "/favicon.png";
+    }
+  })();
+
   const particles = useMemo<Particle[]>(() => {
-    const rand = (min: number, max: number) =>
-      min + Math.random() * (max - min);
+    const rand = (min: number, max: number) => min + Math.random() * (max - min);
 
     return Array.from({ length: 22 }, () => ({
       left: rand(2, 98),
@@ -72,68 +91,25 @@ export default function SplashScreen() {
     >
       <style>{`
         @keyframes sos01-splash-in {
-          0% {
-            opacity: 0;
-            transform: scale(0.7);
-          }
-
-          100% {
-            opacity: 1;
-            transform: scale(1);
-          }
+          0% { opacity: 0; transform: scale(.7); }
+          100% { opacity: 1; transform: scale(1); }
         }
-
         @keyframes sos01-splash-breathe {
-          0%,
-          100% {
-            transform: scale(1);
-          }
-
-          50% {
-            transform: scale(1.03);
-          }
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.03); }
         }
-
         @keyframes sos01-splash-glow {
-          0%,
-          100% {
-            opacity: 0.45;
-            transform: scale(1);
-          }
-
-          50% {
-            opacity: 0.85;
-            transform: scale(1.08);
-          }
+          0%, 100% { opacity: .45; transform: scale(1); }
+          50% { opacity: .85; transform: scale(1.08); }
         }
-
         @keyframes sos01-splash-particle {
-          0% {
-            opacity: 0;
-            transform: translate3d(0, 0, 0);
-          }
-
-          20% {
-            opacity: 0.8;
-          }
-
-          80% {
-            opacity: 0.5;
-          }
-
-          100% {
-            opacity: 0;
-            transform: translate3d(var(--drift), -60px, 0);
-          }
+          0% { opacity: 0; transform: translate3d(0,0,0); }
+          20% { opacity: .8; }
+          80% { opacity: .5; }
+          100% { opacity: 0; transform: translate3d(var(--drift), -60px, 0); }
         }
-
         @media (prefers-reduced-motion: reduce) {
-          .sos01-splash-anim,
-          .sos01-splash-breathe,
-          .sos01-splash-glow,
-          .sos01-splash-particle {
-            animation: none !important;
-          }
+          .sos01-splash-anim, .sos01-splash-glow, .sos01-splash-particle { animation: none !important; }
         }
       `}</style>
 
@@ -165,8 +141,7 @@ export default function SplashScreen() {
             background:
               "radial-gradient(circle, rgba(40,182,255,.55) 0%, rgba(40,182,255,.18) 45%, rgba(40,182,255,0) 70%)",
             filter: "blur(6px)",
-            animation:
-              "sos01-splash-glow 2.2s ease-in-out .3s infinite",
+            animation: "sos01-splash-glow 2.2s ease-in-out .3s infinite",
             willChange: "transform, opacity",
           }}
         />
@@ -175,21 +150,19 @@ export default function SplashScreen() {
           className="sos01-splash-anim relative"
           style={{
             opacity: 0,
-            animation:
-              "sos01-splash-in 700ms cubic-bezier(.22,1,.36,1) 300ms forwards",
+            animation: "sos01-splash-in 700ms cubic-bezier(.22,1,.36,1) 300ms forwards",
             willChange: "transform, opacity",
           }}
         >
           <div
             className="sos01-splash-breathe"
             style={{
-              animation:
-                "sos01-splash-breathe 2s ease-in-out 1000ms infinite",
+              animation: "sos01-splash-breathe 2s ease-in-out 1000ms infinite",
               willChange: "transform",
             }}
           >
             <img
-              src={appIcon.url}
+              src={appIconSrc}
               alt="SOS01"
               width={512}
               height={472}
@@ -202,4 +175,3 @@ export default function SplashScreen() {
     </div>
   );
 }
-```
