@@ -207,10 +207,19 @@ async function fetchAutoAllInOne(url: string, key: string): Promise<MediaRespons
   };
 }
 
-// Provider 3: HTML scrape (last resort)
+// Provider 3: HTML scrape (last resort). Reads the exact video page, so the
+// stream always belongs to the pasted link.
 async function tryHtmlScrape(url: string): Promise<MediaResponse | null> {
+  const targets = [url, url.replace("://www.facebook.com", "://m.facebook.com")];
+  for (const target of targets) {
+    const res = await scrapeOne(target);
+    if (res) return res;
+  }
+  return null;
+}
+
+async function scrapeOne(target: string): Promise<MediaResponse | null> {
   try {
-    const target = url.replace("://www.facebook.com", "://mbasic.facebook.com");
     const r = await fetch(target, {
       headers: {
         "User-Agent": UA,
