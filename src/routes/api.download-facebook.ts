@@ -260,18 +260,22 @@ function addProxyUrls(data: MediaData, routePath: string): MediaData {
   return data;
 }
 
-async function downloadFacebookMedia(rawUrl: string, functionUrl: string, rapidApiKey: string): Promise<MediaResponse> {
-  const url = await resolveFacebookUrl(rawUrl);
+async function downloadFacebookMedia(inputUrl: string, functionUrl: string, rapidApiKey: string): Promise<MediaResponse> {
+  const rawUrl = cleanFacebookUrl(inputUrl);
+  const url = cleanFacebookUrl(await resolveFacebookUrl(rawUrl));
   const candidates = buildCandidateUrls(rawUrl, url);
+  const exactUrl = candidates[0] || url;
+  console.log(`🎯 Facebook alvo: ${exactUrl}`);
   const key = rapidApiKey.trim();
   const providers: Array<{ name: string; run: () => Promise<MediaResponse | null> }> = [];
-  // Snapsave is free and currently the most reliable; try it first.
+  // Direct page scrape first: it can only return the video of this exact URL.
+  providers.push({ name: "html-scrape", run: () => tryHtmlScrape(exactUrl) });
+  // Snapsave is free and currently the most reliable fallback.
   providers.push({ name: "snapsave", run: () => fetchSnapsave(candidates) });
   if (key) {
-    providers.push({ name: "social-all-in-one", run: () => fetchSocialAllInOne(url, key) });
-    providers.push({ name: "auto-all-in-one", run: () => fetchAutoAllInOne(url, key) });
+    providers.push({ name: "social-all-in-one", run: () => fetchSocialAllInOne(exactUrl, key) });
+    providers.push({ name: "auto-all-in-one", run: () => fetchAutoAllInOne(exactUrl, key) });
   }
-  providers.push({ name: "html-scrape", run: () => tryHtmlScrape(url) });
 
   for (const p of providers) {
     try {
