@@ -94,7 +94,6 @@ const Header = () => {
                 style={{
                   transformStyle: 'preserve-3d',
                   transform: 'rotateY(-12deg) rotateX(6deg)',
-                  boxShadow: 'var(--shadow-cartridge)',
                 }}
               >
                 <img
