@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight } from "lucide-react";
-import { TOOL_CATEGORIES, TOOLS_SEO, toolPath, categoryPath, toolsByCategory } from "@/config/seo";
+import { TOOL_CATEGORIES, TOOLS_SEO, toolPath, categoryPath, toolsByCategory, isPremiumTool } from "@/config/seo";
 
 /**
  * Índice de links internos reais para todas as páginas de ferramenta,
@@ -45,7 +45,14 @@ export default function ToolsIndex({
                         className="mt-0.5 h-3.5 w-3.5 shrink-0 transition-transform group-hover:translate-x-0.5"
                         aria-hidden="true"
                       />
-                      {tool.name}
+                      <span>
+                        {tool.name}
+                        {isPremiumTool(tool.slug) && (
+                          <span className="ml-1.5 rounded-sm border border-amber-400/60 bg-amber-400/10 px-1 py-0.5 text-[9px] font-bold uppercase text-amber-500">
+                            Premium
+                          </span>
+                        )}
+                      </span>
                     </Link>
                   </li>
                 ))}
