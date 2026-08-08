@@ -26,19 +26,19 @@
   </url>
 
   <url>
-    <loc>https://sos01.com.br/player</loc>
+    <loc>https://sos01.com.br/iptv</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://sos01.com.br/iptv</loc>
+    <loc>https://sos01.com.br/plutotv</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://sos01.com.br/mais-sbt</loc>
+    <loc>https://sos01.com.br/+sbt</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
