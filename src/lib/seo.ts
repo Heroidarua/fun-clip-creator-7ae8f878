@@ -45,6 +45,12 @@ export type SeoInput = {
   /** Schema.org extra (Article, SoftwareApplication, VideoObject...) */
   schema?: Record<string, unknown>[];
   article?: { publishedTime?: string; modifiedTime?: string; section?: string };
+  /**
+   * Versões em outros idiomas desta página (preparação para SEO internacional).
+   * Ex.: [{ hrefLang: "en", path: "/en/tools" }]. Quando informado, também é
+   * emitido o x-default apontando para a versão atual.
+   */
+  alternates?: { hrefLang: string; path: string }[];
 };
 
 type MetaTag = Record<string, string>;
@@ -121,6 +127,14 @@ export function buildSeo(input: SeoInput): {
   }
 
   const links: LinkTag[] = input.noindex ? [] : [{ rel: "canonical", href: url }];
+
+  if (!input.noindex && input.alternates?.length) {
+    links.push({ rel: "alternate", hrefLang: SITE.locale.replace("_", "-"), href: url });
+    for (const alt of input.alternates) {
+      links.push({ rel: "alternate", hrefLang: alt.hrefLang, href: absoluteUrl(alt.path) });
+    }
+    links.push({ rel: "alternate", hrefLang: "x-default", href: url });
+  }
 
   const graphs: Record<string, unknown>[] = [];
 
