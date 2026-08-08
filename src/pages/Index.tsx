@@ -16,6 +16,7 @@ const HowToUse              = lazy(() => import("@/components/HowToUse"));
 const AboutSection          = lazy(() => import("@/components/AboutSection"));
 const TechnicalInfoSection  = lazy(() => import("@/components/TechnicalInfoSection"));
 const FAQ                   = lazy(() => import("@/components/FAQ"));
+const ToolsIndex            = lazy(() => import("@/components/ToolsIndex"));
 const SectionDivider = () => (
   <div aria-hidden className="relative h-px w-full max-w-5xl mx-auto my-6 sm:my-10 px-4 sm:px-6">
     <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
@@ -62,6 +63,11 @@ const Index = () => {
           <SectionDivider />
           <FAQ />
           <TechnicalInfoSection />
+
+          {/* 8. Índice de links internos — descoberta de todas as ferramentas */}
+          <div className="container mx-auto max-w-6xl px-4 pb-12">
+            <ToolsIndex />
+          </div>
         </Suspense>
       </main>
       <Footer />

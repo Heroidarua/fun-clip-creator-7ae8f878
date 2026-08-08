@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
-import { PREMIUM_TOOLS } from "@/lib/premium-tools";
+import { INDEXABLE_TOOL_SLUGS } from "@/lib/tools-registry";
+import { TOOL_CATEGORIES, SITE_CONFIG } from "@/config/seo";
 
-const BASE_URL = "https://sos01.com.br";
+const BASE_URL = SITE_CONFIG.url;
 
 // Rotas nao indexaveis (privadas, internas, erro)
-const EXCLUDED = new Set(["/admin", "/auth", "/dashboard", "/perfil"]);
+const EXCLUDED = new Set(["/admin", "/auth", "/dashboard", "/perfil", "/not-found"]);
 
 /** Converte nomes de arquivo de rota em caminhos publicos, automaticamente. */
 function discoverRoutePaths(): string[] {
@@ -34,11 +35,10 @@ export const Route = createFileRoute("/sitemap.xml")({
     handlers: {
       GET: async () => {
         const routePaths = discoverRoutePaths();
-        const toolPaths = PREMIUM_TOOLS.filter((t) => t.status === "ready").map(
-          (t) => `/ferramenta/${t.slug}`,
-        );
+        const toolPaths = INDEXABLE_TOOL_SLUGS.map((slug) => `/ferramenta/${slug}`);
+        const categoryPaths = TOOL_CATEGORIES.map((c) => `/categoria/${c.id}`);
 
-        const all = [...new Set([...routePaths, ...toolPaths])].sort((a, b) =>
+        const all = [...new Set([...routePaths, ...toolPaths, ...categoryPaths])].sort((a, b) =>
           a === "/" ? -1 : b === "/" ? 1 : a.localeCompare(b),
         );
 

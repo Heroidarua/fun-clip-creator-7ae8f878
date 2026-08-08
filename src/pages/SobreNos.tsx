@@ -136,7 +136,7 @@ const SobreNos = () => {
               <div className="flex items-center gap-4 mt-4 bg-muted/30 rounded-lg p-4 border border-border">
                 <img 
                   src={developerPhoto} 
-                  alt="Matheus Marinho - Fundador"
+                  alt="Matheus Marinho - Fundador" loading="lazy" decoding="async"
                   className="w-16 h-16 rounded-lg object-cover border-2 border-primary/30"
                 />
                 <div>

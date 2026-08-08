@@ -85,7 +85,7 @@ const AboutSection = () => {
                     {/* Photo */}
                     <img 
                       src={developerPhoto} 
-                      alt="Matheus Marinho - Desenvolvedor do sos01"
+                      alt="Matheus Marinho - Desenvolvedor do sos01" loading="lazy" decoding="async"
                       className="relative w-full h-full object-cover rounded-lg"
                     />
                     

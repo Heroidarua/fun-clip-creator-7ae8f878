@@ -1,14 +1,15 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight } from "lucide-react";
+import { toolPath } from "@/config/seo";
 
 type RelatedLink = { label: string; to: string };
 
 const DEFAULT_LINKS: RelatedLink[] = [
-  { label: "Downloader de TikTok", to: "/" },
-  { label: "Downloader de Instagram", to: "/" },
-  { label: "Downloader de YouTube", to: "/" },
-  { label: "Converter MP4 para MP3", to: "/ferramentas" },
-  { label: "Gerador de QR Code", to: "/ferramentas" },
+  { label: "Converter MP4 para MP3", to: toolPath("conversor-mp4-mp3") },
+  { label: "Removedor de fundo de imagem", to: toolPath("removedor-de-fundo") },
+  { label: "Gerador de QR Code", to: toolPath("gerador-qrcode") },
+  { label: "Gerador de senhas fortes", to: toolPath("gerador-de-senha") },
+  { label: "Tradutor automático", to: toolPath("tradutor") },
   { label: "Jogos retrô grátis", to: "/jogos" },
 ];
 

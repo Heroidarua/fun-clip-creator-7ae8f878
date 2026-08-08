@@ -1,5 +1,8 @@
 User-agent: *
 Allow: /
+Allow: /assets/
+Allow: /*.css$
+Allow: /*.js$
 
 Disallow: /admin
 Disallow: /perfil

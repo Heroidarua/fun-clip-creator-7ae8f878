@@ -13,6 +13,7 @@ import AITextGenerator from "@/components/tools/AITextGenerator";
 import AutoTranslator from "@/components/tools/AutoTranslator";
 import TextSummarizer from "@/components/tools/TextSummarizer";
 import FeatureGate from "@/components/FeatureGate";
+import ToolsIndex from "@/components/ToolsIndex";
 import { Wrench, Music, Eraser, Image, QrCode, Stamp, KeyRound, UserSquare2, Link2, Sparkles, PenTool, Languages, FileText, ArrowRight, Crown } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { PREMIUM_TOOLS } from "@/lib/premium-tools";
@@ -312,6 +313,8 @@ const Ferramentas = () => {
             </div>
           </div>
         </ScrollReveal>
+
+        <ToolsIndex />
       </main>
 
       <Footer />

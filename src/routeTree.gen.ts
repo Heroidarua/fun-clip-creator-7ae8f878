@@ -33,6 +33,7 @@ import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as FerramentaSlugRouteImport } from './routes/ferramenta.$slug'
+import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
 import { Route as BlogJogosRetroGratisRouteImport } from './routes/blog.jogos-retro-gratis'
 import { Route as BlogGuiaCompletoClipsaveRouteImport } from './routes/blog.guia-completo-clipsave'
 import { Route as BlogFerramentasGratuitasRouteImport } from './routes/blog.ferramentas-gratuitas'
@@ -176,6 +177,11 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
 const FerramentaSlugRoute = FerramentaSlugRouteImport.update({
   id: '/ferramenta/$slug',
   path: '/ferramenta/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriaSlugRoute = CategoriaSlugRouteImport.update({
+  id: '/categoria/$slug',
+  path: '/categoria/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogJogosRetroGratisRoute = BlogJogosRetroGratisRouteImport.update({
@@ -355,6 +361,7 @@ export interface FileRoutesByFullPath {
   '/blog/ferramentas-gratuitas': typeof BlogFerramentasGratuitasRoute
   '/blog/guia-completo-clipsave': typeof BlogGuiaCompletoClipsaveRoute
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
+  '/categoria/$slug': typeof CategoriaSlugRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/blog/': typeof BlogIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
@@ -404,6 +411,7 @@ export interface FileRoutesByTo {
   '/blog/ferramentas-gratuitas': typeof BlogFerramentasGratuitasRoute
   '/blog/guia-completo-clipsave': typeof BlogGuiaCompletoClipsaveRoute
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
+  '/categoria/$slug': typeof CategoriaSlugRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/blog': typeof BlogIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
@@ -455,6 +463,7 @@ export interface FileRoutesById {
   '/blog/ferramentas-gratuitas': typeof BlogFerramentasGratuitasRoute
   '/blog/guia-completo-clipsave': typeof BlogGuiaCompletoClipsaveRoute
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
+  '/categoria/$slug': typeof CategoriaSlugRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/blog/': typeof BlogIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
@@ -507,6 +516,7 @@ export interface FileRouteTypes {
     | '/blog/ferramentas-gratuitas'
     | '/blog/guia-completo-clipsave'
     | '/blog/jogos-retro-gratis'
+    | '/categoria/$slug'
     | '/ferramenta/$slug'
     | '/blog/'
     | '/api/public/pinterest-download'
@@ -556,6 +566,7 @@ export interface FileRouteTypes {
     | '/blog/ferramentas-gratuitas'
     | '/blog/guia-completo-clipsave'
     | '/blog/jogos-retro-gratis'
+    | '/categoria/$slug'
     | '/ferramenta/$slug'
     | '/blog'
     | '/api/public/pinterest-download'
@@ -606,6 +617,7 @@ export interface FileRouteTypes {
     | '/blog/ferramentas-gratuitas'
     | '/blog/guia-completo-clipsave'
     | '/blog/jogos-retro-gratis'
+    | '/categoria/$slug'
     | '/ferramenta/$slug'
     | '/blog/'
     | '/api/public/pinterest-download'
@@ -646,6 +658,7 @@ export interface RootRouteChildren {
   ApiManageFeatureStatusRoute: typeof ApiManageFeatureStatusRoute
   ApiPlayerCatalogRoute: typeof ApiPlayerCatalogRoute
   ApiRemoveBgRoute: typeof ApiRemoveBgRoute
+  CategoriaSlugRoute: typeof CategoriaSlugRoute
   FerramentaSlugRoute: typeof FerramentaSlugRoute
   ApiPublicPinterestDownloadRoute: typeof ApiPublicPinterestDownloadRoute
 }
@@ -818,6 +831,13 @@ declare module '@tanstack/react-router' {
       path: '/ferramenta/$slug'
       fullPath: '/ferramenta/$slug'
       preLoaderRoute: typeof FerramentaSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categoria/$slug': {
+      id: '/categoria/$slug'
+      path: '/categoria/$slug'
+      fullPath: '/categoria/$slug'
+      preLoaderRoute: typeof CategoriaSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog/jogos-retro-gratis': {
@@ -1059,6 +1079,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiManageFeatureStatusRoute: ApiManageFeatureStatusRoute,
   ApiPlayerCatalogRoute: ApiPlayerCatalogRoute,
   ApiRemoveBgRoute: ApiRemoveBgRoute,
+  CategoriaSlugRoute: CategoriaSlugRoute,
   FerramentaSlugRoute: FerramentaSlugRoute,
   ApiPublicPinterestDownloadRoute: ApiPublicPinterestDownloadRoute,
 }
