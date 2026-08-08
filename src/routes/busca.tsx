@@ -8,12 +8,13 @@ import { ArrowUpRight } from "lucide-react";
 import { buildSeo } from "@/lib/seo";
 import { searchSite, POPULAR_QUERIES, SEARCH_INDEX } from "@/lib/search-index";
 
-type BuscaSearch = { q: string };
+type BuscaSearch = { q?: string };
 
 export const Route = createFileRoute("/busca")({
-  validateSearch: (search: Record<string, unknown>): BuscaSearch => ({
-    q: typeof search.q === "string" ? search.q.slice(0, 80) : "",
-  }),
+  validateSearch: (search: Record<string, unknown>): BuscaSearch => {
+    const q = typeof search.q === "string" ? search.q.slice(0, 80).trim() : "";
+    return q ? { q } : {};
+  },
   component: BuscaPage,
   head: ({ match }) => {
     const q = (match.search as BuscaSearch)?.q ?? "";
@@ -53,7 +54,7 @@ export const Route = createFileRoute("/busca")({
 });
 
 function BuscaPage() {
-  const { q } = Route.useSearch();
+  const { q = "" } = Route.useSearch();
   const results = q.trim() ? searchSite(q, 40) : [];
 
   return (
