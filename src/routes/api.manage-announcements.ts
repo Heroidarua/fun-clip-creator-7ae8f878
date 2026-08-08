@@ -156,7 +156,7 @@ export const Route = createFileRoute("/api/manage-announcements")({
             }
 
             case "get-marquee": {
-              const { data, error } = await supabaseAdmin
+              const { data, error } = await (supabaseAdmin as any)
                 .from("marquee_settings")
                 .select("*")
                 .limit(1)
@@ -189,7 +189,7 @@ export const Route = createFileRoute("/api/manage-announcements")({
                 );
               }
 
-              const { data: existing } = await supabaseAdmin
+              const { data: existing } = await (supabaseAdmin as any)
                 .from("marquee_settings")
                 .select("id")
                 .limit(1)
@@ -203,8 +203,8 @@ export const Route = createFileRoute("/api/manage-announcements")({
               };
 
               const { error } = existing?.id
-                ? await supabaseAdmin.from("marquee_settings").update(values).eq("id", existing.id)
-                : await supabaseAdmin.from("marquee_settings").insert({ ...values, singleton: true });
+                ? await (supabaseAdmin as any).from("marquee_settings").update(values).eq("id", existing.id)
+                : await (supabaseAdmin as any).from("marquee_settings").insert({ ...values, singleton: true });
 
               if (error) throw error;
               return Response.json(
