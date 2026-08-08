@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import appIconJson from "@/assets/app-icon.png.asset.json";
 
 const BG = "#124F7D";
 const TOTAL_MS = 3200;
@@ -19,25 +18,9 @@ export default function SplashScreen() {
   const [visible, setVisible] = useState(true);
   const [fading, setFading] = useState(false);
 
-  // Resolve a URL segura para o ícone do app com fallbacks:
-  // 1) usar appIconJson.url se disponível (asset JSON gerado pelo pipeline)
-  // 2) tentar construir uma URL relativa para src/assets/app-icon.png (bundlers como Vite suportam)
-  // 3) fallback para /favicon.png
-  const appIconSrc = (() => {
-    try {
-      if (appIconJson && typeof appIconJson === "object" && (appIconJson as any).url) {
-        return (appIconJson as any).url as string;
-      }
-
-      try {
-        return new URL("../assets/app-icon.png", import.meta.url).href;
-      } catch {
-        return "/favicon.png";
-      }
-    } catch {
-      return "/favicon.png";
-    }
-  })();
+  // Usar sempre um caminho público para máxima compatibilidade.
+  // Coloque o arquivo `app-icon.png` na pasta `public/` do projeto.
+  const appIconSrc = "/app-icon.png";
 
   const particles = useMemo<Particle[]>(() => {
     const rand = (min: number, max: number) => min + Math.random() * (max - min);
@@ -56,6 +39,7 @@ export default function SplashScreen() {
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
 
+    // Force esconder scroll enquanto o splash está visível
     document.body.style.overflow = "hidden";
 
     const fadeTimer = window.setTimeout(() => {
