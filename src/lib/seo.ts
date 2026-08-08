@@ -3,13 +3,14 @@
  * Usado por todas as rotas via `head: () => buildSeo({ ... })`.
  */
 
+import { SITE_CONFIG } from "@/config/seo";
+
 export const SITE = {
-  name: "SOS01",
-  url: "https://sos01.com.br",
-  locale: "pt_BR",
-  twitter: "@sos01",
-  defaultImage:
-    "https://storage.googleapis.com/gpt-engineer-file-uploads/W9nvJ5xZlFOuhB2wUyS0coPiyM22/social-images/social-1782694696983-1000953354.webp",
+  name: SITE_CONFIG.name,
+  url: SITE_CONFIG.url,
+  locale: SITE_CONFIG.locale,
+  twitter: SITE_CONFIG.twitter,
+  defaultImage: SITE_CONFIG.defaultImage,
   defaultKeywords: [
     "sos01",
     "sos01.com.br",
