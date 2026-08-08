@@ -38,6 +38,27 @@ function isValidFacebookUrl(url: string): boolean {
   return /^https?:\/\/([a-z0-9-]+\.)*(facebook\.com|fb\.com|fb\.watch|m\.facebook\.com)/i.test(url);
 }
 
+// Tracking params break some providers and never identify the video.
+const TRACKING_PARAMS = [
+  "fbclid", "mibextid", "rdid", "share_url", "extid", "__cft__[0]", "__tn__",
+  "comment_id", "notif_id", "notif_t", "ref", "refsrc", "_rdr", "idorvanity",
+];
+
+function cleanFacebookUrl(input: string): string {
+  try {
+    const u = new URL(input.trim());
+    u.hostname = u.hostname.replace(/^(m|mbasic|web|fb)\./i, "www.");
+    for (const p of TRACKING_PARAMS) u.searchParams.delete(p);
+    for (const key of Array.from(u.searchParams.keys())) {
+      if (/^__cft__/i.test(key)) u.searchParams.delete(key);
+    }
+    u.hash = "";
+    return u.toString().replace(/\?$/, "");
+  } catch {
+    return input.trim();
+  }
+}
+
 // Resolve /share/<x>/<id>/ and fb.watch short links to the canonical
 // /reel/ or /watch/ URL. Many providers reject the short share form.
 async function resolveFacebookUrl(url: string): Promise<string> {
@@ -51,8 +72,18 @@ async function resolveFacebookUrl(url: string): Promise<string> {
         "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
       },
     });
+    // IMPORTANT: keep the query string — /watch/?v=<id> loses the video id
+    // when stripped, which made the providers return a random video.
     if (r.url && /facebook\.com\/(reel|watch|video|.+\/videos)/i.test(r.url)) {
-      return r.url.split("?")[0];
+      return cleanFacebookUrl(r.url);
+    }
+    // Some share links only expose the canonical URL inside the HTML.
+    const html = await r.text();
+    const canonical =
+      html.match(/<link[^>]+rel="canonical"[^>]+href="([^"]+)"/i)?.[1] ||
+      html.match(/<meta[^>]+property="og:url"[^>]+content="([^"]+)"/i)?.[1];
+    if (canonical && /facebook\.com\/(reel|watch|video|.+\/videos)/i.test(canonical)) {
+      return cleanFacebookUrl(canonical.replace(/&amp;/g, "&"));
     }
   } catch {}
   return url;
@@ -78,11 +109,17 @@ function extractVideoId(url: string): string | null {
 // /video.php?v=<id> form is the one that consistently yields a playable file
 // (reel/ and watch/ forms fall back to a server-side "render" we can't use).
 function buildCandidateUrls(rawUrl: string, canonical: string): string[] {
-  const list = [canonical, rawUrl];
   const id = extractVideoId(canonical) || extractVideoId(rawUrl);
+  const list: string[] = [];
   if (id) {
-    list.unshift(`https://www.facebook.com/video.php?v=${id}`);
-    list.push(`https://www.facebook.com/watch/?v=${id}`);
+    // Every candidate carries the exact video id, so providers can never
+    // return a different video from the same page/profile.
+    if (/\/reel\//i.test(canonical) || /\/reel\//i.test(rawUrl)) {
+      list.push(`https://www.facebook.com/reel/${id}`);
+    }
+    list.push(canonical, `https://www.facebook.com/watch/?v=${id}`, `https://www.facebook.com/video.php?v=${id}`);
+  } else {
+    list.push(canonical, rawUrl);
   }
   return Array.from(new Set(list.filter(Boolean)));
 }
