@@ -359,6 +359,118 @@ export default function Admin() {
           </Button>
         </div>
 
+        <div className="bg-card border border-border rounded-xl p-6 mb-8">
+          <h2 className="font-semibold mb-1 flex items-center gap-2 text-primary">
+            <Megaphone size={18} />
+            Letreiro de Avisos
+          </h2>
+          <p className="text-sm text-muted-foreground mb-5">
+            Personalize como o letreiro rolante exibe os avisos na página inicial.
+          </p>
+
+          <div className="grid gap-5 sm:grid-cols-2">
+            <div>
+              <label className="text-sm font-medium block mb-2">
+                Velocidade — {marquee.speed}s por ciclo{" "}
+                <span className="text-muted-foreground font-normal">
+                  ({marquee.speed <= 15 ? "rápido" : marquee.speed >= 45 ? "lento" : "médio"})
+                </span>
+              </label>
+              <input
+                type="range"
+                min={5}
+                max={120}
+                step={1}
+                value={marquee.speed}
+                onChange={(e) => setMarquee({ ...marquee, speed: Number(e.target.value) })}
+                className="w-full accent-primary"
+              />
+              <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
+                <span>Mais rápido</span>
+                <span>Mais lento</span>
+              </div>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium block mb-2">Cor</label>
+              <div className="flex flex-wrap gap-2">
+                {MARQUEE_COLOR_OPTIONS.map((option) => {
+                  const palette = MARQUEE_COLOR_STYLES[option.value];
+                  const selected = marquee.color === option.value;
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      title={option.label}
+                      onClick={() => setMarquee({ ...marquee, color: option.value })}
+                      className={`w-9 h-9 rounded-lg border-2 transition-transform ${
+                        selected ? "scale-110 border-foreground" : "border-border hover:scale-105"
+                      }`}
+                      style={{ background: palette.solid }}
+                      aria-label={option.label}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium block mb-2">Direção</label>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { value: "rtl", label: "Direita → Esquerda" },
+                  { value: "ltr", label: "Esquerda → Direita" },
+                ].map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => setMarquee({ ...marquee, direction: option.value as MarqueeSettings["direction"] })}
+                    className={`px-3 py-2 rounded-lg border text-sm transition-colors ${
+                      marquee.direction === option.value
+                        ? "border-primary bg-primary/10 text-primary font-semibold"
+                        : "border-border hover:bg-muted"
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between rounded-lg border border-border p-3">
+              <div className="pr-3">
+                <div className="text-sm font-medium">Pausar ao passar o mouse</div>
+                <div className="text-xs text-muted-foreground">
+                  Quando ativo, o letreiro para enquanto o cursor estiver sobre ele.
+                </div>
+              </div>
+              <Switch
+                checked={marquee.pause_on_hover}
+                onCheckedChange={(checked) => setMarquee({ ...marquee, pause_on_hover: checked })}
+              />
+            </div>
+          </div>
+
+          <div className="mt-5 rounded-lg border border-border overflow-hidden">
+            <div
+              className="flex w-max animate-marquee whitespace-nowrap text-sm py-2"
+              style={{
+                animationDuration: `${marquee.speed}s`,
+                animationDirection: marquee.direction === "ltr" ? "reverse" : "normal",
+                color: MARQUEE_COLOR_STYLES[marquee.color]?.solid,
+                background: MARQUEE_COLOR_STYLES[marquee.color]?.bg,
+              }}
+            >
+              <span className="px-6">Prévia do letreiro de avisos • SOS01 •</span>
+              <span className="px-6">Prévia do letreiro de avisos • SOS01 •</span>
+            </div>
+          </div>
+
+          <Button onClick={saveMarquee} disabled={marqueeSaving} className="mt-4 w-full sm:w-auto">
+            {marqueeSaving ? "Salvando..." : "Salvar configurações"}
+          </Button>
+        </div>
+
         <form onSubmit={handleSubmit} className="bg-card border border-border rounded-xl p-6 mb-8">
           <h2 className="font-semibold mb-4 flex items-center gap-2">
             {editingId ? <Edit size={18} /> : <Plus size={18} />}
