@@ -727,7 +727,7 @@ body {
     animation: marquee-scroll 28s linear infinite;
   }
 
-  .animate-marquee:hover {
+  .animate-marquee.marquee-pausable:hover {
     animation-play-state: paused;
   }
 
