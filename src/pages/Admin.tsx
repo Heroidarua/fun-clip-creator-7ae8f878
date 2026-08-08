@@ -5,9 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { Lock, Plus, Trash2, Edit, Eye, EyeOff, ArrowLeft, RefreshCw } from "lucide-react";
+import { Lock, Plus, Trash2, Edit, Eye, EyeOff, ArrowLeft, RefreshCw, Megaphone } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Switch } from "@/components/ui/switch";
+import {
+  DEFAULT_MARQUEE_SETTINGS,
+  MARQUEE_COLOR_OPTIONS,
+  MARQUEE_COLOR_STYLES,
+  type MarqueeSettings,
+} from "@/lib/marquee-settings";
 
 type Announcement = {
   id: string;
@@ -36,6 +42,8 @@ export default function Admin() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [marquee, setMarquee] = useState<MarqueeSettings>(DEFAULT_MARQUEE_SETTINGS);
+  const [marqueeSaving, setMarqueeSaving] = useState(false);
 
   const invokeManageAnnouncements = async (body: any) => {
     const resp = await fetch('/api/manage-announcements', {
@@ -90,6 +98,26 @@ export default function Admin() {
     setStatusLoading(null);
   };
 
+  const fetchMarquee = async (pwd: string) => {
+    try {
+      const { data } = await invokeManageAnnouncements({ action: "get-marquee", password: pwd });
+      if (data?.data) setMarquee({ ...DEFAULT_MARQUEE_SETTINGS, ...data.data });
+    } catch {
+      /* mantém padrões */
+    }
+  };
+
+  const saveMarquee = async () => {
+    setMarqueeSaving(true);
+    try {
+      await invokeManageAnnouncements({ action: "save-marquee", password, data: marquee });
+      toast({ title: "Letreiro atualizado!", description: "As configurações foram salvas." });
+    } catch (e: any) {
+      toast({ title: "Erro ao salvar", description: e?.message, variant: "destructive" });
+    }
+    setMarqueeSaving(false);
+  };
+
   const authenticate = async () => {
     setLoading(true);
     try {
@@ -97,6 +125,7 @@ export default function Admin() {
       setIsAuthenticated(true);
       setAnnouncements(data.data || []);
       fetchDownloaderStatuses();
+      fetchMarquee(password);
       toast({ title: "Login realizado com sucesso!" });
     } catch {
       toast({ title: "Senha incorreta", variant: "destructive" });
