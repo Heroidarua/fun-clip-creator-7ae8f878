@@ -14,6 +14,7 @@ import AutoTranslator from "@/components/tools/AutoTranslator";
 import TextSummarizer from "@/components/tools/TextSummarizer";
 import FeatureGate from "@/components/FeatureGate";
 import ToolsIndex from "@/components/ToolsIndex";
+import SiteSearch from "@/components/SiteSearch";
 import { Wrench, Music, Eraser, Image, QrCode, Stamp, KeyRound, UserSquare2, Link2, Sparkles, PenTool, Languages, FileText, ArrowRight, Crown } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { PREMIUM_TOOLS } from "@/lib/premium-tools";
@@ -38,6 +39,9 @@ const Ferramentas = () => {
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Ferramentas gratuitas para converter, baixar, editar e criar conteúdo
             </p>
+            <div className="mt-6 max-w-xl mx-auto">
+              <SiteSearch />
+            </div>
           </div>
         </ScrollReveal>
 

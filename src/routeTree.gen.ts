@@ -26,6 +26,7 @@ import { Route as DmcaRouteImport } from './routes/dmca'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContatoRouteImport } from './routes/contato'
 import { Route as ComoUsarRouteImport } from './routes/como-usar'
+import { Route as BuscaRouteImport } from './routes/busca'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -142,6 +143,11 @@ const ContatoRoute = ContatoRouteImport.update({
 const ComoUsarRoute = ComoUsarRouteImport.update({
   id: '/como-usar',
   path: '/como-usar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuscaRoute = BuscaRouteImport.update({
+  id: '/busca',
+  path: '/busca',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogRoute = BlogRouteImport.update({
@@ -321,6 +327,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/blog': typeof BlogRouteWithChildren
+  '/busca': typeof BuscaRoute
   '/como-usar': typeof ComoUsarRoute
   '/contato': typeof ContatoRoute
   '/dashboard': typeof DashboardRoute
@@ -371,6 +378,7 @@ export interface FileRoutesByTo {
   '/$': typeof SplatRoute
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
+  '/busca': typeof BuscaRoute
   '/como-usar': typeof ComoUsarRoute
   '/contato': typeof ContatoRoute
   '/dashboard': typeof DashboardRoute
@@ -423,6 +431,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/blog': typeof BlogRouteWithChildren
+  '/busca': typeof BuscaRoute
   '/como-usar': typeof ComoUsarRoute
   '/contato': typeof ContatoRoute
   '/dashboard': typeof DashboardRoute
@@ -476,6 +485,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/blog'
+    | '/busca'
     | '/como-usar'
     | '/contato'
     | '/dashboard'
@@ -526,6 +536,7 @@ export interface FileRouteTypes {
     | '/$'
     | '/admin'
     | '/auth'
+    | '/busca'
     | '/como-usar'
     | '/contato'
     | '/dashboard'
@@ -577,6 +588,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/blog'
+    | '/busca'
     | '/como-usar'
     | '/contato'
     | '/dashboard'
@@ -629,6 +641,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
   BlogRoute: typeof BlogRouteWithChildren
+  BuscaRoute: typeof BuscaRoute
   ComoUsarRoute: typeof ComoUsarRoute
   ContatoRoute: typeof ContatoRoute
   DashboardRoute: typeof DashboardRoute
@@ -782,6 +795,13 @@ declare module '@tanstack/react-router' {
       path: '/como-usar'
       fullPath: '/como-usar'
       preLoaderRoute: typeof ComoUsarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/busca': {
+      id: '/busca'
+      path: '/busca'
+      fullPath: '/busca'
+      preLoaderRoute: typeof BuscaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog': {
@@ -1050,6 +1070,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
   BlogRoute: BlogRouteWithChildren,
+  BuscaRoute: BuscaRoute,
   ComoUsarRoute: ComoUsarRoute,
   ContatoRoute: ContatoRoute,
   DashboardRoute: DashboardRoute,
