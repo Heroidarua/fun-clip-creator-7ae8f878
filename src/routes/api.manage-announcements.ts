@@ -10,6 +10,8 @@ const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const MAX_TITLE = 120;
 const MAX_MESSAGE = 1000;
+const MARQUEE_COLORS = ["primary", "accent", "secondary", "success", "warning", "danger", "foreground"] as const;
+const MARQUEE_DIRECTIONS = ["rtl", "ltr"] as const;
 
 function cleanText(value: unknown, max: number): string | null {
   if (typeof value !== "string") return null;
@@ -145,6 +147,64 @@ export const Route = createFileRoute("/api/manage-announcements")({
                 .from("announcements")
                 .delete()
                 .eq("id", payload.id);
+
+              if (error) throw error;
+              return Response.json(
+                { success: true },
+                { headers: corsHeaders(request) }
+              );
+            }
+
+            case "get-marquee": {
+              const { data, error } = await (supabaseAdmin as any)
+                .from("marquee_settings")
+                .select("*")
+                .limit(1)
+                .maybeSingle();
+
+              if (error) throw error;
+              return Response.json(
+                { data },
+                { headers: corsHeaders(request) }
+              );
+            }
+
+            case "save-marquee": {
+              const speed = Number(payload?.speed);
+              const color = String(payload?.color ?? "");
+              const direction = String(payload?.direction ?? "");
+              const pauseOnHover = payload?.pause_on_hover;
+
+              if (
+                !Number.isFinite(speed) ||
+                speed < 5 ||
+                speed > 120 ||
+                !MARQUEE_COLORS.includes(color as (typeof MARQUEE_COLORS)[number]) ||
+                !MARQUEE_DIRECTIONS.includes(direction as (typeof MARQUEE_DIRECTIONS)[number]) ||
+                typeof pauseOnHover !== "boolean"
+              ) {
+                return Response.json(
+                  { error: "Parâmetros inválidos" },
+                  { status: 400, headers: corsHeaders(request) }
+                );
+              }
+
+              const { data: existing } = await (supabaseAdmin as any)
+                .from("marquee_settings")
+                .select("id")
+                .limit(1)
+                .maybeSingle();
+
+              const values = {
+                speed: Math.round(speed),
+                color,
+                direction,
+                pause_on_hover: pauseOnHover,
+              };
+
+              const { error } = existing?.id
+                ? await (supabaseAdmin as any).from("marquee_settings").update(values).eq("id", existing.id)
+                : await (supabaseAdmin as any).from("marquee_settings").insert({ ...values, singleton: true });
 
               if (error) throw error;
               return Response.json(

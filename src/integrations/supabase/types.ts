@@ -119,6 +119,39 @@ export type Database = {
         }
         Relationships: []
       }
+      marquee_settings: {
+        Row: {
+          color: string
+          created_at: string
+          direction: string
+          id: string
+          pause_on_hover: boolean
+          singleton: boolean
+          speed: number
+          updated_at: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          direction?: string
+          id?: string
+          pause_on_hover?: boolean
+          singleton?: boolean
+          speed?: number
+          updated_at?: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          direction?: string
+          id?: string
+          pause_on_hover?: boolean
+          singleton?: boolean
+          speed?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string
