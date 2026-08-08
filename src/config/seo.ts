@@ -1020,6 +1020,24 @@ export const TOOLS_SEO_BY_SLUG: Record<string, ToolSeo> = Object.fromEntries(
 
 export const getToolSeo = (slug: string): ToolSeo | undefined => TOOLS_SEO_BY_SLUG[slug];
 
+/** Slugs das ferramentas premium (páginas próprias, indexáveis). */
+export const PREMIUM_TOOL_SLUGS = [
+  "ocr",
+  "tts",
+  "stt",
+  "pdf-signer",
+  "scanner",
+  "cores",
+  "idioma",
+  "meu-ip",
+  "velocidade",
+] as const;
+
+export const isPremiumTool = (slug: string) =>
+  (PREMIUM_TOOL_SLUGS as readonly string[]).includes(slug);
+
+export const PREMIUM_TOOLS_SEO = TOOLS_SEO.filter((t) => isPremiumTool(t.slug));
+
 export const toolPath = (slug: string) => `/ferramenta/${slug}`;
 export const categoryPath = (id: string) => `/categoria/${id}`;
 
