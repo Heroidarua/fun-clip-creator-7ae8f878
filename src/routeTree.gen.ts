@@ -58,6 +58,9 @@ import { Route as ApiDownloadPinterestRouteImport } from './routes/api.download-
 import { Route as ApiDownloadKwaiRouteImport } from './routes/api.download-kwai'
 import { Route as ApiDownloadInstagramRouteImport } from './routes/api.download-instagram'
 import { Route as ApiDownloadFacebookRouteImport } from './routes/api.download-facebook'
+import { Route as ApiYoutubeInfoRouteImport } from './routes/api.youtube.info'
+import { Route as ApiYoutubeFileRouteImport } from './routes/api.youtube.file'
+import { Route as ApiYoutubeDownloadRouteImport } from './routes/api.youtube.download'
 import { Route as ApiPublicPinterestDownloadRouteImport } from './routes/api.public.pinterest-download'
 
 const TermosRoute = TermosRouteImport.update({
@@ -314,6 +317,21 @@ const ApiDownloadFacebookRoute = ApiDownloadFacebookRouteImport.update({
   path: '/api/download-facebook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiYoutubeInfoRoute = ApiYoutubeInfoRouteImport.update({
+  id: '/api/youtube/info',
+  path: '/api/youtube/info',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiYoutubeFileRoute = ApiYoutubeFileRouteImport.update({
+  id: '/api/youtube/file',
+  path: '/api/youtube/file',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiYoutubeDownloadRoute = ApiYoutubeDownloadRouteImport.update({
+  id: '/api/youtube/download',
+  path: '/api/youtube/download',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPinterestDownloadRoute =
   ApiPublicPinterestDownloadRouteImport.update({
     id: '/api/public/pinterest-download',
@@ -372,6 +390,9 @@ export interface FileRoutesByFullPath {
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/blog/': typeof BlogIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
+  '/api/youtube/download': typeof ApiYoutubeDownloadRoute
+  '/api/youtube/file': typeof ApiYoutubeFileRoute
+  '/api/youtube/info': typeof ApiYoutubeInfoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -423,6 +444,9 @@ export interface FileRoutesByTo {
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/blog': typeof BlogIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
+  '/api/youtube/download': typeof ApiYoutubeDownloadRoute
+  '/api/youtube/file': typeof ApiYoutubeFileRoute
+  '/api/youtube/info': typeof ApiYoutubeInfoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -476,6 +500,9 @@ export interface FileRoutesById {
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/blog/': typeof BlogIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
+  '/api/youtube/download': typeof ApiYoutubeDownloadRoute
+  '/api/youtube/file': typeof ApiYoutubeFileRoute
+  '/api/youtube/info': typeof ApiYoutubeInfoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -530,6 +557,9 @@ export interface FileRouteTypes {
     | '/ferramenta/$slug'
     | '/blog/'
     | '/api/public/pinterest-download'
+    | '/api/youtube/download'
+    | '/api/youtube/file'
+    | '/api/youtube/info'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -581,6 +611,9 @@ export interface FileRouteTypes {
     | '/ferramenta/$slug'
     | '/blog'
     | '/api/public/pinterest-download'
+    | '/api/youtube/download'
+    | '/api/youtube/file'
+    | '/api/youtube/info'
   id:
     | '__root__'
     | '/'
@@ -633,6 +666,9 @@ export interface FileRouteTypes {
     | '/ferramenta/$slug'
     | '/blog/'
     | '/api/public/pinterest-download'
+    | '/api/youtube/download'
+    | '/api/youtube/file'
+    | '/api/youtube/info'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -674,6 +710,9 @@ export interface RootRouteChildren {
   CategoriaSlugRoute: typeof CategoriaSlugRoute
   FerramentaSlugRoute: typeof FerramentaSlugRoute
   ApiPublicPinterestDownloadRoute: typeof ApiPublicPinterestDownloadRoute
+  ApiYoutubeDownloadRoute: typeof ApiYoutubeDownloadRoute
+  ApiYoutubeFileRoute: typeof ApiYoutubeFileRoute
+  ApiYoutubeInfoRoute: typeof ApiYoutubeInfoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1021,6 +1060,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiDownloadFacebookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/youtube/info': {
+      id: '/api/youtube/info'
+      path: '/api/youtube/info'
+      fullPath: '/api/youtube/info'
+      preLoaderRoute: typeof ApiYoutubeInfoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/youtube/file': {
+      id: '/api/youtube/file'
+      path: '/api/youtube/file'
+      fullPath: '/api/youtube/file'
+      preLoaderRoute: typeof ApiYoutubeFileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/youtube/download': {
+      id: '/api/youtube/download'
+      path: '/api/youtube/download'
+      fullPath: '/api/youtube/download'
+      preLoaderRoute: typeof ApiYoutubeDownloadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/pinterest-download': {
       id: '/api/public/pinterest-download'
       path: '/api/public/pinterest-download'
@@ -1103,6 +1163,9 @@ const rootRouteChildren: RootRouteChildren = {
   CategoriaSlugRoute: CategoriaSlugRoute,
   FerramentaSlugRoute: FerramentaSlugRoute,
   ApiPublicPinterestDownloadRoute: ApiPublicPinterestDownloadRoute,
+  ApiYoutubeDownloadRoute: ApiYoutubeDownloadRoute,
+  ApiYoutubeFileRoute: ApiYoutubeFileRoute,
+  ApiYoutubeInfoRoute: ApiYoutubeInfoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
