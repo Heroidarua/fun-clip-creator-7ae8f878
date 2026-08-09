@@ -889,12 +889,13 @@ const HeroSection = () => {
     handleYoutubeSearch();
   }, [youtubeUrl]);
 
-  // Efeito para disparar o download assim que o youtubeData estiver disponível
-  useEffect(() => {
-    if (youtubeData && lastYoutubeSearchedId.current) {
-      handleYoutubeDownload(true);
-    }
-  }, [youtubeData]);
+  // Após encontrar o vídeo, o usuário escolhe a qualidade antes de baixar.
+
+  const selectYoutubeType = (type: "video" | "audio") => {
+    setYoutubeDownloadType(type);
+    const first = youtubeFormats.find((f) => f.type === type);
+    if (first) setYoutubeQuality(first.id);
+  };
 
 
   const handleYoutubeDownload = async (isAutoDownload = false) => {
