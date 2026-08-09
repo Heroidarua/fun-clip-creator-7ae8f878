@@ -18,6 +18,8 @@ function discoverRoutePaths(): string[] {
     if (name === "__root" || name.startsWith("api.") || name.includes("$")) continue;
 
     let path = "/" + name.split(".").join("/");
+    // Segmentos com sufixo "_" (rotas nao aninhadas) nao aparecem na URL final
+    path = path.replace(/_(?=\/)/g, "");
     path = path.replace(/\/index$/, "");
     if (path === "") path = "/";
     if (EXCLUDED.has(path)) continue;

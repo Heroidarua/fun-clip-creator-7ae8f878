@@ -36,6 +36,7 @@ function discoverRoutePaths() {
     if (name.includes("$") || name.includes("[")) continue;
 
     let path = "/" + name.split(/[./]/).join("/");
+    path = path.replace(/_(?=\/)/g, "");
     path = path.replace(/\/index$/, "");
     if (path === "") path = "/";
     if (EXCLUDED.has(path)) continue;
