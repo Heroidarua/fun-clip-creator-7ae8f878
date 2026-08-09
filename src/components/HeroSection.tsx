@@ -821,31 +821,24 @@ const HeroSection = () => {
     }, 200);
 
     try {
-      console.log("Chamando API YouTube com URL:", normalizedUrl);
-      
-      const resp = await fetch(apiUrl('/api/download-youtube'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: normalizedUrl }),
-      });
-      const data = await resp.json();
+      const info = await fetchYoutubeInfo(normalizedUrl);
+      youtubeInfoRef.current = info;
 
       setYoutubeProgress(100);
       clearInterval(progressInterval);
 
-      if (data && data.success) {
-        setYoutubeData(data.data);
-        toast({
-          title: "Vídeo encontrado!",
-          description: "Pronto para download.",
-        });
-      } else {
-        toast({
-          title: "Erro ao processar",
-          description: data.error || "Não foi possível processar o vídeo do YouTube.",
-          variant: "destructive",
-        });
-      }
+      setYoutubeData({
+        video_url: info.url,
+        audio_url: info.formats.some((f) => f.type === "audio") ? info.url : undefined,
+        thumbnail: info.thumbnail,
+        title: info.title,
+        author: info.author,
+        duration: info.duration,
+      });
+      toast({
+        title: "Vídeo encontrado!",
+        description: "Pronto para download.",
+      });
     } catch (error: any) {
       console.error("Erro completo:", error);
       clearInterval(progressInterval);
