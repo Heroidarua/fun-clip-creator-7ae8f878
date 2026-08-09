@@ -4,7 +4,6 @@ import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { setConsent } from "@/lib/consent";
 import { useConsent } from "@/hooks/useConsent";
-import { loadAdsterraScripts } from "@/lib/adsterra";
 
 const ANALYTICS_ID = "G-JD2L3ZPP4T";
 
@@ -22,8 +21,6 @@ const loadTrackingScripts = () => {
   const analyticsInit = document.createElement("script");
   analyticsInit.text = `window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', '${ANALYTICS_ID}');`;
   document.head.appendChild(analyticsInit);
-
-  loadAdsterraScripts();
 };
 
 const CookieConsent = () => {
