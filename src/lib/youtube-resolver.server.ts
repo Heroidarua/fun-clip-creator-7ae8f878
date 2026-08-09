@@ -180,6 +180,7 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality = "best") {
 }
 
 async function fetchInnerTube(
+  // eslint-disable-next-line no-use-before-define
   videoId: string,
   quality: YouTubeQuality = "best",
 ): Promise<YouTubeResponse | null> {
