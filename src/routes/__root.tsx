@@ -8,6 +8,7 @@ import Navigation from "@/components/Navigation";
 import BackToTop from "@/components/BackToTop";
 import ProtectionLayer from "@/components/ProtectionLayer";
 import SplashScreen from "@/components/SplashScreen";
+import CookieConsent from "@/components/CookieConsent";
 import { registerSW } from "@/lib/registerSW";
 
 import appCss from "../styles.css?url";
@@ -83,17 +84,6 @@ export const Route = createRootRoute({
           "(function(){try{var t=localStorage.getItem('sos01-theme');var l=['dark','light','sepia','ocean','forest'];if(t&&l.indexOf(t)>-1){var e=document.documentElement;e.classList.remove.apply(e.classList,l);e.classList.add(t);}}catch(e){}})();",
       },
       {
-        async: true,
-        src: "https://www.googletagmanager.com/gtag/js?id=G-JD2L3ZPP4T",
-      },
-      {
-        async: true,
-        src: "https://undergocutlery.com/ce/9f/a8/ce9fa89fa5d51adb96107d4eafe47857.js",
-      },
-      {
-        children: "window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-JD2L3ZPP4T');",
-      },
-      {
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
@@ -130,7 +120,6 @@ function RootShell({ children }: { children: React.ReactNode }) {
       <body>
         {children}
         <Scripts />
-        <script src="https://undergocutlery.com/ae/0d/31/ae0d31b2adaec34d918bbe58f11842c2.js" />
       </body>
     </html>
   );
@@ -150,6 +139,7 @@ function RootComponent() {
         <Outlet />
         <Navigation />
         <BackToTop />
+        <CookieConsent />
       </TooltipProvider>
     </ThemeProvider>
   );
