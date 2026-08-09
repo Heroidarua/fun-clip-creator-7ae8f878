@@ -281,6 +281,8 @@ const HeroSection = () => {
   const [clickedYoutubeButton, setClickedYoutubeButton] = useState<string | null>(null);
   const lastYoutubeSearchedId = useRef<string | null>(null);
   const youtubeInfoRef = useRef<YoutubeInfo | null>(null);
+  const [youtubeFormats, setYoutubeFormats] = useState<YoutubeFormat[]>([]);
+  const [youtubeQuality, setYoutubeQuality] = useState<string>("");
 
   // Facebook states
   const [facebookUrl, setFacebookUrl] = useState("");
