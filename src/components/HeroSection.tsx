@@ -892,58 +892,33 @@ const HeroSection = () => {
     
     if (!youtubeData) return;
 
-    const extension = youtubeDownloadType === "video" ? "mp4" : "m4a";
-    const filename = youtubeData.title?.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_') || 'youtube_video';
+    const info = youtubeInfoRef.current;
+    const canonical =
+      info?.url || parseYouTubeUrl(youtubeUrl)?.canonicalUrl || youtubeUrl.trim();
+    const wantedType = youtubeDownloadType;
+    const format = info?.formats.find((f) => f.type === wantedType);
 
     try {
       toast({
         title: isAutoDownload ? "🚀 Iniciando download automático..." : "⏳ Preparando download...",
-        description: "Preparando o arquivo no servidor. O download inicia em instantes...",
+        description: "Baixando o arquivo. Isso pode levar alguns instantes...",
       });
 
-      const canonical = parseYouTubeUrl(youtubeUrl)?.canonicalUrl || youtubeUrl.trim();
-      const streamUrl =
-        apiUrl('/api/download-youtube-stream') +
-        `?url=${encodeURIComponent(canonical)}&type=${youtubeDownloadType}`;
+      setYoutubeLoading(true);
+      setYoutubeProgress(0);
 
-      // 1) Valida o link (pede só o 1º byte) para mostrar erro amigável em vez de JSON na tela.
-      const probe = await fetch(streamUrl, { headers: { Range: 'bytes=0-0' } });
-      if (!probe.ok) {
-        let msg = `Falha ao baixar (HTTP ${probe.status}).`;
-        try {
-          const j = await probe.clone().json();
-          if (j?.error) msg = j.error;
-        } catch { /* resposta não-JSON */ }
-        throw new Error(msg);
-      }
-      try { await probe.body?.cancel(); } catch { /* ignore */ }
-
-      // 2) Download nativo: o servidor já envia Content-Disposition: attachment,
-      // então o navegador transmite direto (sem carregar o arquivo inteiro na
-      // memória e sem revogar o blob antes da hora, o que cancelava o download).
-      const link = document.createElement('a');
-      link.href = streamUrl;
-      link.download = `${filename}.${extension}`;
-      link.rel = 'noopener';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      if (youtubeOpenInNewTab) {
-        const opened = window.open(streamUrl, '_blank', 'noopener');
-        if (!opened) {
-          toast({
-            title: "Pop-up bloqueado",
-            description: "Libere os pop-ups do site para abrir o vídeo em outra aba.",
-          });
-        }
-      }
+      await downloadYoutubeMedia({
+        url: canonical,
+        type: wantedType,
+        quality: format?.quality || "best",
+        title: youtubeData.title || "youtube",
+        onProgress: (p) => setYoutubeProgress(p ?? 0),
+      });
 
       toast({
-        title: "✅ Download iniciado!",
-        description: `O ${youtubeDownloadType === "video" ? "vídeo" : "áudio"} está sendo baixado pelo navegador.`,
+        title: "✅ Download concluído!",
+        description: `O ${wantedType === "video" ? "vídeo" : "áudio"} foi salvo no seu dispositivo.`,
       });
-
 
     } catch (error) {
       console.error("Download error:", error);
@@ -952,6 +927,9 @@ const HeroSection = () => {
         description: error instanceof Error ? error.message : "Não foi possível processar o download. Tente novamente.",
         variant: "destructive",
       });
+    } finally {
+      setYoutubeLoading(false);
+      setYoutubeProgress(0);
     }
   };
 
