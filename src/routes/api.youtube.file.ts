@@ -105,6 +105,7 @@ export const Route = createFileRoute("/api/youtube/file")({
           let contentType = "";
           let total = 0;
           let title = ticket.title;
+          const dbg: any[] = [];
 
           for await (const candidate of resolveYoutubeCandidates(
             canonical,
@@ -113,7 +114,7 @@ export const Route = createFileRoute("/api/youtube/file")({
           )) {
             const mediaUrl =
               ticket.type === "audio" ? candidate.audio_url : candidate.video_url;
-            if (!isDirectMediaUrl(mediaUrl)) continue;
+            if (!isDirectMediaUrl(mediaUrl)) { dbg.push({ skip: String(mediaUrl).slice(0, 40) }); continue; }
 
             const baseHeaders: Record<string, string> = {
               "User-Agent": candidate.media_ua || BROWSER_UA,
@@ -125,7 +126,7 @@ export const Route = createFileRoute("/api/youtube/file")({
                 headers: { ...baseHeaders, Range: `bytes=${rangeStart}-${firstEnd}` },
                 signal: AbortSignal.timeout(YT_PROCESS_TIMEOUT_MS),
               });
-              console.log("yt upstream", res.status, res.headers.get("content-range"));
+              dbg.push({ st: res.status, cr: res.headers.get("content-range"), ua: baseHeaders["User-Agent"]?.slice(0,20) });
               if (res.ok && res.body) {
                 total = parseTotal(res.headers.get("content-range")) ||
                   rangeStart + Number(res.headers.get("content-length") || 0);
@@ -148,7 +149,7 @@ export const Route = createFileRoute("/api/youtube/file")({
                 break;
               }
             } catch (e) {
-              console.error("yt candidate fail", (e as any)?.message);
+              dbg.push({ err: String((e as any)?.message) });
             }
           }
 
@@ -158,6 +159,7 @@ export const Route = createFileRoute("/api/youtube/file")({
                 success: false,
                 error:
                   "Não foi possível processar este vídeo. Verifique a URL e tente novamente.",
+                dbg,
               },
               { status: 502, headers: JSON_HEADERS },
             );
