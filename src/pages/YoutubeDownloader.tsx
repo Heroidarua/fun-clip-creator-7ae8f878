@@ -154,7 +154,18 @@ export default function YoutubeDownloaderPage() {
       }
       setProgress(100);
     } catch (e) {
-      setError((e as Error).message || GENERIC_ERROR);
+      const err = e as Error & { directUrl?: string };
+      if (err.message === TOO_LARGE) {
+        if (err.directUrl && format.type === "audio") {
+          window.location.href = err.directUrl;
+        } else {
+          setError(
+            "Este arquivo passa de 100 MB e não pode ser processado no navegador. Escolha uma qualidade menor.",
+          );
+        }
+      } else {
+        setError(err.message || GENERIC_ERROR);
+      }
     } finally {
       setDownloading(false);
     }
