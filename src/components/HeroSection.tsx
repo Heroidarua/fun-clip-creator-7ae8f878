@@ -277,7 +277,6 @@ const HeroSection = () => {
   const [youtubeProgress, setYoutubeProgress] = useState(0);
   const [youtubeData, setYoutubeData] = useState<YouTubeData | null>(null);
   const [youtubeDownloadType, setYoutubeDownloadType] = useState<"video" | "audio">("video");
-  const [youtubeOpenInNewTab, setYoutubeOpenInNewTab] = useState(false);
   const [clickedYoutubeButton, setClickedYoutubeButton] = useState<string | null>(null);
   const youtubeInfoRef = useRef<YoutubeInfo | null>(null);
   const [youtubeFormats, setYoutubeFormats] = useState<YoutubeFormat[]>([]);
@@ -1834,19 +1833,6 @@ const HeroSection = () => {
                       </p>
                     </div>
                   )}
-
-                  {/* Abrir em outra aba */}
-                  <label className="flex items-center justify-center gap-2 mb-4 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      checked={youtubeOpenInNewTab}
-                      onChange={(e) => setYoutubeOpenInNewTab(e.target.checked)}
-                      className="w-4 h-4 accent-[hsl(0,100%,50%)] cursor-pointer"
-                    />
-                    <span className="font-pixel text-[9px] text-muted-foreground">
-                      ABRIR EM OUTRA ABA AO BAIXAR
-                    </span>
-                  </label>
 
                   <Button
                     onClick={() => handleYoutubeDownload(false)}
