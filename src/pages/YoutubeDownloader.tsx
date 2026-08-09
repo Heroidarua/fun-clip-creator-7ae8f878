@@ -16,8 +16,21 @@ import { AlertCircle, Download, RotateCcw, Trash2 } from "lucide-react";
 
 const GENERIC_ERROR =
   "Não foi possível processar este vídeo. Verifique a URL e tente novamente.";
-/** Acima deste tamanho o navegador baixa direto (sem manter em memória). */
-const STREAM_TO_MEMORY_LIMIT = 200 * 1024 * 1024;
+
+function safeName(title: string) {
+  return title.replace(/[\\/:*?"<>|]+/g, " ").trim().slice(0, 100) || "youtube";
+}
+
+function saveBlob(blob: Blob, filename: string) {
+  const objectUrl = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = objectUrl;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
+}
 
 export default function YoutubeDownloaderPage() {
   const [url, setUrl] = useState("");
@@ -26,7 +39,48 @@ export default function YoutubeDownloaderPage() {
   const [analyzing, setAnalyzing] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [progress, setProgress] = useState<number | null>(null);
+  const [stage, setStage] = useState("Preparando seu download...");
   const [error, setError] = useState("");
+
+  const fetchStream = useCallback(
+    async (
+      videoUrl: string,
+      container: "mp4" | "m4a",
+      quality: string,
+      onRatio: (r: number | null) => void,
+    ): Promise<{ bytes: Uint8Array; contentType: string }> => {
+      const ticket = await requestYoutubeDownload(videoUrl, container, quality);
+      const res = await fetch(absoluteDownloadUrl(ticket.downloadUrl));
+      if (!res.ok || !res.body) {
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.error || GENERIC_ERROR);
+      }
+      const total = Number(res.headers.get("content-length") || 0);
+      const reader = res.body.getReader();
+      const chunks: Uint8Array[] = [];
+      let received = 0;
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        if (value) {
+          chunks.push(value);
+          received += value.length;
+          onRatio(total ? received / total : null);
+        }
+      }
+      const bytes = new Uint8Array(received);
+      let offset = 0;
+      for (const c of chunks) {
+        bytes.set(c, offset);
+        offset += c.length;
+      }
+      return {
+        bytes,
+        contentType: res.headers.get("content-type") || "application/octet-stream",
+      };
+    },
+    [],
+  );
 
   const analyze = useCallback(async () => {
     if (!url.trim() || analyzing) return;
@@ -61,52 +115,38 @@ export default function YoutubeDownloaderPage() {
     setError("");
     setProgress(null);
     try {
-      const ticket = await requestYoutubeDownload(info.url, format.container, format.quality);
-      const fileUrl = absoluteDownloadUrl(ticket.downloadUrl);
-
-      const res = await fetch(fileUrl);
-      if (!res.ok) {
-        const data = await res.json().catch(() => null);
-        throw new Error(data?.error || GENERIC_ERROR);
+      if (format.type === "audio") {
+        setStage("Baixando o áudio...");
+        const audio = await fetchStream(info.url, "m4a", format.quality, (r) =>
+          setProgress(r == null ? null : Math.round(r * 100)),
+        );
+        saveBlob(
+          new Blob([audio.bytes.slice().buffer as ArrayBuffer], { type: audio.contentType }),
+          `${safeName(info.title)}.m4a`,
+        );
+      } else {
+        setStage("Baixando o vídeo...");
+        const video = await fetchStream(info.url, "mp4", format.quality, (r) =>
+          setProgress(r == null ? null : Math.round(r * 60)),
+        );
+        setStage("Baixando o áudio...");
+        const audio = await fetchStream(info.url, "m4a", "best", (r) =>
+          setProgress(60 + (r == null ? 0 : Math.round(r * 20))),
+        );
+        setStage("Juntando áudio e vídeo (isso pode levar alguns segundos)...");
+        const { muxVideoAndAudio } = await import("@/lib/youtube-mux");
+        const blob = await muxVideoAndAudio(video.bytes, audio.bytes, (ratio) =>
+          setProgress(80 + Math.min(20, Math.round((ratio || 0) * 20))),
+        );
+        saveBlob(blob, `${safeName(info.title)}.mp4`);
       }
-
-      const total = Number(res.headers.get("content-length") || 0);
-      if (!res.body || (total && total > STREAM_TO_MEMORY_LIMIT)) {
-        window.location.href = fileUrl;
-        return;
-      }
-
-      const reader = res.body.getReader();
-      const chunks: Uint8Array[] = [];
-      let received = 0;
-      for (;;) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        if (value) {
-          chunks.push(value);
-          received += value.length;
-          if (total) setProgress(Math.round((received / total) * 100));
-        }
-      }
-
-      const blob = new Blob(chunks as BlobPart[], {
-        type: res.headers.get("content-type") || "application/octet-stream",
-      });
-      const objectUrl = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = objectUrl;
-      a.download = `${info.title.replace(/[\\/:*?"<>|]+/g, " ").trim().slice(0, 100) || "youtube"}.${format.container}`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
       setProgress(100);
     } catch (e) {
       setError((e as Error).message || GENERIC_ERROR);
     } finally {
       setDownloading(false);
     }
-  }, [info, selected, downloading]);
+  }, [info, selected, downloading, fetchStream]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -175,7 +215,7 @@ export default function YoutubeDownloaderPage() {
               />
 
               {downloading && (
-                <YoutubeDownloadProgress label="Preparando seu download..." progress={progress} />
+                <YoutubeDownloadProgress label={stage} progress={progress} />
               )}
 
               <div className="flex flex-wrap gap-2">
