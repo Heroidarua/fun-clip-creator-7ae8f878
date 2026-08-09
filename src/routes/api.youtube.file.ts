@@ -18,7 +18,7 @@ function sanitizeFilename(name: string, fallback: string): string {
 }
 
 /** O CDN do YouTube recusa faixas abertas (bytes=0-); usamos blocos fixos. */
-const CHUNK_BYTES = 6 * 1024 * 1024;
+const CHUNK_BYTES = 1_000_000;
 
 function parseTotal(contentRange: string | null): number {
   const m = /\/(\d+)$/.exec(contentRange || "");
@@ -105,7 +105,6 @@ export const Route = createFileRoute("/api/youtube/file")({
           let contentType = "";
           let total = 0;
           let title = ticket.title;
-          const dbg: any[] = [];
 
           for await (const candidate of resolveYoutubeCandidates(
             canonical,
@@ -114,7 +113,7 @@ export const Route = createFileRoute("/api/youtube/file")({
           )) {
             const mediaUrl =
               ticket.type === "audio" ? candidate.audio_url : candidate.video_url;
-            if (!isDirectMediaUrl(mediaUrl)) { dbg.push({ skip: String(mediaUrl).slice(0, 40) }); continue; }
+            if (!isDirectMediaUrl(mediaUrl)) continue;
 
             const baseHeaders: Record<string, string> = {
               "User-Agent": candidate.media_ua || BROWSER_UA,
@@ -126,7 +125,7 @@ export const Route = createFileRoute("/api/youtube/file")({
                 headers: { ...baseHeaders, Range: `bytes=${rangeStart}-${firstEnd}` },
                 signal: AbortSignal.timeout(YT_PROCESS_TIMEOUT_MS),
               });
-              dbg.push({ st: res.status, cr: res.headers.get("content-range"), ua: baseHeaders["User-Agent"]?.slice(0,20) });
+              
               if (res.ok && res.body) {
                 total = parseTotal(res.headers.get("content-range")) ||
                   rangeStart + Number(res.headers.get("content-length") || 0);
@@ -148,8 +147,8 @@ export const Route = createFileRoute("/api/youtube/file")({
                 title = title || candidate.title;
                 break;
               }
-            } catch (e) {
-              dbg.push({ err: String((e as any)?.message) });
+            } catch {
+              /* tenta o próximo candidato */
             }
           }
 
@@ -159,7 +158,6 @@ export const Route = createFileRoute("/api/youtube/file")({
                 success: false,
                 error:
                   "Não foi possível processar este vídeo. Verifique a URL e tente novamente.",
-                dbg,
               },
               { status: 502, headers: JSON_HEADERS },
             );
