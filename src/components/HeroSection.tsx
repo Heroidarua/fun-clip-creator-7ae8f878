@@ -1788,7 +1788,7 @@ const HeroSection = () => {
                     <div className="flex gap-3 justify-center">
                       <Button
                         variant={youtubeDownloadType === "video" ? "default" : "outline"}
-                        onClick={() => setYoutubeDownloadType("video")}
+                        onClick={() => selectYoutubeType("video")}
                         className={`font-pixel text-[10px] rounded-sm ${youtubeDownloadType === "video" ? "border-2 border-[hsl(var(--retro-cyan))]" : "border-2 border-muted-foreground/50"}`}
                         style={youtubeDownloadType === "video" ? { backgroundColor: 'hsl(0, 100%, 50%)' } : {}}
                       >
@@ -1796,7 +1796,7 @@ const HeroSection = () => {
                       </Button>
                       <Button
                         variant={youtubeDownloadType === "audio" ? "default" : "outline"}
-                        onClick={() => setYoutubeDownloadType("audio")}
+                        onClick={() => selectYoutubeType("audio")}
                         disabled={!youtubeData.audio_url}
                         className={`font-pixel text-[10px] rounded-sm ${youtubeDownloadType === "audio" ? "border-2 border-[hsl(var(--retro-cyan))]" : "border-2 border-muted-foreground/50"}`}
                         style={youtubeDownloadType === "audio" ? { backgroundColor: 'hsl(0, 100%, 50%)' } : {}}
@@ -1805,6 +1805,50 @@ const HeroSection = () => {
                       </Button>
                     </div>
                   </div>
+
+                  {/* Seletor de qualidade/resolução */}
+                  {youtubeFormats.some((f) => f.type === youtubeDownloadType) && (
+                    <div className="mb-4">
+                      <h3 className="font-pixel text-[10px] text-center mb-3 text-muted-foreground">
+                        {youtubeDownloadType === "video" ? "SELECIONE A RESOLUÇÃO:" : "SELECIONE A QUALIDADE:"}
+                      </h3>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        {youtubeFormats
+                          .filter((f) => f.type === youtubeDownloadType)
+                          .map((f) => {
+                            const tooBig =
+                              !!f.estimatedBytes && f.estimatedBytes > BROWSER_PROCESS_LIMIT;
+                            const active = youtubeQuality === f.id;
+                            return (
+                              <button
+                                key={f.id}
+                                type="button"
+                                onClick={() => setYoutubeQuality(f.id)}
+                                aria-pressed={active}
+                                className={`flex flex-col items-center justify-center gap-1 px-2 py-2 rounded-sm border-2 transition-all ${
+                                  active
+                                    ? "border-[hsl(var(--retro-cyan))] bg-[hsl(0,100%,50%)]/15"
+                                    : "border-muted-foreground/40 hover:border-muted-foreground/70"
+                                }`}
+                              >
+                                <span className="font-pixel text-[10px] text-foreground">{f.label}</span>
+                                <span className="font-orbitron text-[10px] text-muted-foreground">
+                                  {formatBytes(f.estimatedBytes)}
+                                </span>
+                                {tooBig && (
+                                  <span className="font-orbitron text-[9px] text-yellow-400">
+                                    acima de 100 MB
+                                  </span>
+                                )}
+                              </button>
+                            );
+                          })}
+                      </div>
+                      <p className="font-orbitron text-[10px] text-center mt-2 text-muted-foreground">
+                        Arquivos acima de 100 MB podem falhar no navegador — prefira uma resolução menor.
+                      </p>
+                    </div>
+                  )}
 
                   {/* Abrir em outra aba */}
                   <label className="flex items-center justify-center gap-2 mb-4 cursor-pointer select-none">
