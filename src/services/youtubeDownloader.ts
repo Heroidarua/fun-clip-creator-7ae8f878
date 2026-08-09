@@ -23,12 +23,24 @@ const GENERIC_ERROR =
   "Não foi possível processar este vídeo. Verifique a URL e tente novamente.";
 
 async function postJson<T>(path: string, body: unknown): Promise<T> {
-  const res = await fetch(`${apiBase()}${path}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${apiBase()}${path}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  } catch {
+    throw new Error(
+      "Não foi possível conectar ao servidor da ferramenta. Verifique sua conexão e tente novamente em instantes.",
+    );
+  }
   const data = await res.json().catch(() => null);
+  if (!data) {
+    throw new Error(
+      "O serviço de download está temporariamente indisponível. Tente novamente em alguns minutos.",
+    );
+  }
   if (!res.ok || !data?.success) {
     throw new Error(data?.error || GENERIC_ERROR);
   }
