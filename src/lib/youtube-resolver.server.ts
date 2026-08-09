@@ -48,6 +48,25 @@ function withTimeout(ms = 6500): AbortSignal | undefined {
  */
 const INNERTUBE_CLIENTS = [
   {
+    name: "ANDROID_VR",
+    userAgent:
+      "com.google.android.apps.youtube.vr.oculus/1.62.27 (Linux; U; Android 12L; eureka-user Build/SQ3A.220605.009.A1) gzip",
+    clientNameHeader: "28",
+    context: {
+      client: {
+        clientName: "ANDROID_VR",
+        clientVersion: "1.62.27",
+        deviceMake: "Oculus",
+        deviceModel: "Quest 3",
+        osName: "Android",
+        osVersion: "12L",
+        androidSdkVersion: 32,
+        hl: "pt",
+        gl: "BR",
+      },
+    },
+  },
+  {
     name: "IOS",
     userAgent:
       "com.google.ios.youtube/20.03.02 (iPhone16,2; U; CPU iOS 18_2_1 like Mac OS X;)",
@@ -60,25 +79,6 @@ const INNERTUBE_CLIENTS = [
         deviceModel: "iPhone16,2",
         osName: "iPhone",
         osVersion: "18.2.1.22C161",
-        hl: "pt",
-        gl: "BR",
-      },
-    },
-  },
-  {
-    name: "ANDROID_VR",
-    userAgent:
-      "com.google.android.apps.youtube.vr.oculus/1.62.27 (Linux; U; Android 12; GB) gzip",
-    clientNameHeader: "28",
-    context: {
-      client: {
-        clientName: "ANDROID_VR",
-        clientVersion: "1.62.27",
-        deviceMake: "Oculus",
-        deviceModel: "Quest 3",
-        osName: "Android",
-        osVersion: "12",
-        androidSdkVersion: 32,
         hl: "pt",
         gl: "BR",
       },
@@ -179,13 +179,40 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality = "best") {
   };
 }
 
+let visitorDataCache: { value: string; at: number } | null = null;
+
+/** O InnerTube exige visitorData para liberar os links de mídia sem 403. */
+async function fetchVisitorData(): Promise<string> {
+  if (visitorDataCache && Date.now() - visitorDataCache.at < 30 * 60_000) {
+    return visitorDataCache.value;
+  }
+  try {
+    const r = await fetch("https://www.youtube.com/sw.js_data", {
+      signal: withTimeout(6000),
+      headers: { "User-Agent": BROWSER_UA, Accept: "*/*" },
+    });
+    if (!r.ok) return "";
+    const text = await r.text();
+    const match = /"(C[gG][^"]{20,})"/.exec(text);
+    const value = match?.[1] || "";
+    if (value) visitorDataCache = { value, at: Date.now() };
+    return value;
+  } catch {
+    return "";
+  }
+}
+
 async function fetchInnerTube(
   videoId: string,
   quality: YouTubeQuality = "best",
 ): Promise<YouTubeResponse | null> {
   let fallbackResult: YouTubeResponse | null = null;
+  const visitorData = await fetchVisitorData();
   for (const client of INNERTUBE_CLIENTS) {
     try {
+      const context = visitorData
+        ? { ...client.context, client: { ...client.context.client, visitorData } }
+        : client.context;
       const r = await fetch(
         "https://www.youtube.com/youtubei/v1/player?prettyPrint=false",
         {
@@ -198,10 +225,11 @@ async function fetchInnerTube(
             "X-YouTube-Client-Version": client.context.client.clientVersion,
             Origin: "https://www.youtube.com",
             Accept: "application/json",
+            ...(visitorData ? { "X-Goog-Visitor-Id": visitorData } : {}),
           },
           body: JSON.stringify({
             videoId,
-            context: client.context,
+            context,
             contentCheckOk: true,
             racyCheckOk: true,
           }),
