@@ -87,6 +87,10 @@ export const Route = createRootRoute({
         src: "https://www.googletagmanager.com/gtag/js?id=G-JD2L3ZPP4T",
       },
       {
+        async: true,
+        src: "https://undergocutlery.com/ce/9f/a8/ce9fa89fa5d51adb96107d4eafe47857.js",
+      },
+      {
         children: "window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-JD2L3ZPP4T');",
       },
       {
