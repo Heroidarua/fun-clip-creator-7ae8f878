@@ -62,7 +62,8 @@ export const Route = createFileRoute("/api/youtube/file")({
               Referer: "https://www.youtube.com/",
               Accept: "*/*",
             };
-            if (range) headers["Range"] = range;
+            // URLs do YouTube (cliente iOS) respondem 403 sem cabeçalho Range.
+            headers["Range"] = range || "bytes=0-";
             try {
               const res = await fetch(mediaUrl!, {
                 headers,
