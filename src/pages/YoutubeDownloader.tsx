@@ -68,8 +68,12 @@ export default function YoutubeDownloaderPage() {
       const total = Number(res.headers.get("content-length") || 0);
       if (total > BROWSER_PROCESS_LIMIT) {
         await res.body.cancel().catch(() => {});
-        const err = new Error(TOO_LARGE);
-        (err as Error & { directUrl?: string }).directUrl = fileUrl;
+        const err = new Error(TOO_LARGE) as Error & {
+          directUrl?: string;
+          muxed?: boolean;
+        };
+        err.directUrl = fileUrl;
+        err.muxed = res.headers.get("x-yt-muxed") !== "0";
         throw err;
       }
       const reader = res.body.getReader();
@@ -145,7 +149,7 @@ export default function YoutubeDownloaderPage() {
       } else {
         setStage("Baixando o vídeo...");
         const video = await fetchStream(info.url, "mp4", format.quality, (r) =>
-          setProgress(r == null ? null : Math.round(r * (60))),
+          setProgress(r == null ? null : Math.round(r * 60)),
         );
         if (video.muxed) {
           saveBlob(
@@ -169,9 +173,9 @@ export default function YoutubeDownloaderPage() {
       }
       setProgress(100);
     } catch (e) {
-      const err = e as Error & { directUrl?: string };
+      const err = e as Error & { directUrl?: string; muxed?: boolean };
       if (err.message === TOO_LARGE) {
-        if (err.directUrl && format.type === "audio") {
+        if (err.directUrl && (format.type === "audio" || err.muxed)) {
           window.location.href = err.directUrl;
         } else {
           setError(
