@@ -105,6 +105,7 @@ export const Route = createFileRoute("/api/youtube/file")({
           let contentType = "";
           let total = 0;
           let title = ticket.title;
+          let muxed = false;
 
           for await (const candidate of resolveYoutubeCandidates(
             canonical,
@@ -136,6 +137,7 @@ export const Route = createFileRoute("/api/youtube/file")({
                   );
                 }
                 contentType = res.headers.get("content-type") || "";
+                muxed = candidate.muxed !== false;
                 body = chunkedStream(
                   mediaUrl!,
                   baseHeaders,
