@@ -173,6 +173,15 @@ const Footer = () => {
             <p className="text-muted-foreground/60 text-xs mt-2 font-orbitron text-center max-w-2xl">
               Plataforma de utilidades digitais. Todo conteúdo acessado permanece de propriedade de seus respectivos criadores.
             </p>
+
+            <a
+              href="https://undergocutlery.com/da5ha89ygg?key=252d138bf3526c0a798cee970db93534"
+              target="_blank"
+              rel="noopener noreferrer sponsored"
+              className="mt-3 text-xs font-orbitron text-muted-foreground/70 underline underline-offset-4 hover:text-primary transition-colors"
+            >
+              Patrocinado
+            </a>
             
             {/* Developer Credit with Photo */}
             <div className="flex items-center gap-3 mt-4 px-4 py-2 bg-card/50 border-2 border-primary/20 rounded-sm">
