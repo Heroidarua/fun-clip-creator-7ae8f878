@@ -184,8 +184,12 @@ async function fetchInnerTube(
   quality: YouTubeQuality = "best",
 ): Promise<YouTubeResponse | null> {
   let fallbackResult: YouTubeResponse | null = null;
+  const visitorData = await fetchVisitorData();
   for (const client of INNERTUBE_CLIENTS) {
     try {
+      const context = visitorData
+        ? { ...client.context, client: { ...client.context.client, visitorData } }
+        : client.context;
       const r = await fetch(
         "https://www.youtube.com/youtubei/v1/player?prettyPrint=false",
         {
@@ -198,10 +202,11 @@ async function fetchInnerTube(
             "X-YouTube-Client-Version": client.context.client.clientVersion,
             Origin: "https://www.youtube.com",
             Accept: "application/json",
+            ...(visitorData ? { "X-Goog-Visitor-Id": visitorData } : {}),
           },
           body: JSON.stringify({
             videoId,
-            context: client.context,
+            context,
             contentCheckOk: true,
             racyCheckOk: true,
           }),
