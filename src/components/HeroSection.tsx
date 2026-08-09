@@ -275,6 +275,7 @@ const HeroSection = () => {
   const [youtubeOpenInNewTab, setYoutubeOpenInNewTab] = useState(false);
   const [clickedYoutubeButton, setClickedYoutubeButton] = useState<string | null>(null);
   const lastYoutubeSearchedId = useRef<string | null>(null);
+  const youtubeInfoRef = useRef<YoutubeInfo | null>(null);
 
   // Facebook states
   const [facebookUrl, setFacebookUrl] = useState("");
