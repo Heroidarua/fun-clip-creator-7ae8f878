@@ -279,7 +279,6 @@ const HeroSection = () => {
   const [youtubeDownloadType, setYoutubeDownloadType] = useState<"video" | "audio">("video");
   const [youtubeOpenInNewTab, setYoutubeOpenInNewTab] = useState(false);
   const [clickedYoutubeButton, setClickedYoutubeButton] = useState<string | null>(null);
-  const lastYoutubeSearchedId = useRef<string | null>(null);
   const youtubeInfoRef = useRef<YoutubeInfo | null>(null);
   const [youtubeFormats, setYoutubeFormats] = useState<YoutubeFormat[]>([]);
   const [youtubeQuality, setYoutubeQuality] = useState<string>("");
