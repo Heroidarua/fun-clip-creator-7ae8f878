@@ -900,14 +900,31 @@ const HeroSection = () => {
     const filename = youtubeData.title?.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_') || 'youtube_video';
 
     try {
+      toast({
+        title: isAutoDownload ? "🚀 Iniciando download automático..." : "⏳ Preparando download...",
+        description: "Preparando o arquivo no servidor. O download inicia em instantes...",
+      });
+
       const canonical = parseYouTubeUrl(youtubeUrl)?.canonicalUrl || youtubeUrl.trim();
       const streamUrl =
         apiUrl('/api/download-youtube-stream') +
-        `?url=${encodeURIComponent(canonical)}&type=${youtubeDownloadType}&filename=${encodeURIComponent(`${filename}.${extension}`)}`;
+        `?url=${encodeURIComponent(canonical)}&type=${youtubeDownloadType}`;
 
-      // 1) Dispara o download IMEDIATAMENTE (sem await antes), ainda dentro do
-      // gesto do usuário. O servidor envia Content-Disposition: attachment,
-      // então o navegador transmite o arquivo direto.
+      // 1) Valida o link (pede só o 1º byte) para mostrar erro amigável em vez de JSON na tela.
+      const probe = await fetch(streamUrl, { headers: { Range: 'bytes=0-0' } });
+      if (!probe.ok) {
+        let msg = `Falha ao baixar (HTTP ${probe.status}).`;
+        try {
+          const j = await probe.clone().json();
+          if (j?.error) msg = j.error;
+        } catch { /* resposta não-JSON */ }
+        throw new Error(msg);
+      }
+      try { await probe.body?.cancel(); } catch { /* ignore */ }
+
+      // 2) Download nativo: o servidor já envia Content-Disposition: attachment,
+      // então o navegador transmite direto (sem carregar o arquivo inteiro na
+      // memória e sem revogar o blob antes da hora, o que cancelava o download).
       const link = document.createElement('a');
       link.href = streamUrl;
       link.download = `${filename}.${extension}`;
@@ -915,27 +932,6 @@ const HeroSection = () => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-
-      toast({
-        title: isAutoDownload ? "🚀 Download automático iniciado!" : "⬇️ Download iniciado!",
-        description: `O ${youtubeDownloadType === "video" ? "vídeo" : "áudio"} está sendo baixado pelo navegador.`,
-      });
-
-      // 2) Verificação em segundo plano: se o servidor falhar, avisa o usuário.
-      void (async () => {
-        try {
-          const probe = await fetch(streamUrl, { headers: { Range: 'bytes=0-0' } });
-          if (!probe.ok) {
-            let msg = `Falha ao baixar (HTTP ${probe.status}).`;
-            try {
-              const j = await probe.clone().json();
-              if (j?.error) msg = j.error;
-            } catch { /* resposta não-JSON */ }
-            toast({ title: "❌ Erro no download", description: msg, variant: "destructive" });
-          }
-          try { await probe.body?.cancel(); } catch { /* ignore */ }
-        } catch { /* ignore */ }
-      })();
 
       if (youtubeOpenInNewTab) {
         const opened = window.open(streamUrl, '_blank', 'noopener');
@@ -946,6 +942,13 @@ const HeroSection = () => {
           });
         }
       }
+
+      toast({
+        title: "✅ Download iniciado!",
+        description: `O ${youtubeDownloadType === "video" ? "vídeo" : "áudio"} está sendo baixado pelo navegador.`,
+      });
+
+
     } catch (error) {
       console.error("Download error:", error);
       toast({
