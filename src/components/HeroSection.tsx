@@ -279,7 +279,6 @@ const HeroSection = () => {
   const [youtubeDownloadType, setYoutubeDownloadType] = useState<"video" | "audio">("video");
   const [youtubeOpenInNewTab, setYoutubeOpenInNewTab] = useState(false);
   const [clickedYoutubeButton, setClickedYoutubeButton] = useState<string | null>(null);
-  const lastYoutubeSearchedId = useRef<string | null>(null);
   const youtubeInfoRef = useRef<YoutubeInfo | null>(null);
   const [youtubeFormats, setYoutubeFormats] = useState<YoutubeFormat[]>([]);
   const [youtubeQuality, setYoutubeQuality] = useState<string>("");
@@ -773,7 +772,7 @@ const HeroSection = () => {
       if (vid) {
         toast({
           title: "✅ Link colado!",
-          description: "Buscando o vídeo automaticamente...",
+          description: "Clique em 'Buscar' para carregar o vídeo.",
         });
       } else {
         toast({
@@ -874,20 +873,6 @@ const HeroSection = () => {
       }, 500);
     }
   };
-
-  // Auto-preview e Auto-download: busca o preview ao detectar link e inicia download automático após encontrar
-  useEffect(() => {
-    const vid = getYouTubeVideoId(youtubeUrl);
-    if (!vid) {
-      lastYoutubeSearchedId.current = null;
-      if (youtubeData) setYoutubeData(null);
-      return;
-    }
-    if (lastYoutubeSearchedId.current === vid) return;
-    if (youtubeLoading) return;
-    lastYoutubeSearchedId.current = vid;
-    handleYoutubeSearch();
-  }, [youtubeUrl]);
 
   // Após encontrar o vídeo, o usuário escolhe a qualidade antes de baixar.
 
