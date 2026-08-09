@@ -125,6 +125,7 @@ export const Route = createFileRoute("/api/youtube/file")({
                 headers: { ...baseHeaders, Range: `bytes=${rangeStart}-${firstEnd}` },
                 signal: AbortSignal.timeout(YT_PROCESS_TIMEOUT_MS),
               });
+              console.log("yt upstream", res.status, res.headers.get("content-range"));
               if (res.ok && res.body) {
                 total = parseTotal(res.headers.get("content-range")) ||
                   rangeStart + Number(res.headers.get("content-length") || 0);
@@ -146,8 +147,8 @@ export const Route = createFileRoute("/api/youtube/file")({
                 title = title || candidate.title;
                 break;
               }
-            } catch {
-              /* tenta o próximo candidato */
+            } catch (e) {
+              console.error("yt candidate fail", (e as any)?.message);
             }
           }
 
