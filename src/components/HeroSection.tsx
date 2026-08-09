@@ -1083,8 +1083,8 @@ const HeroSection = () => {
           </div>
           
           <h1 className="font-pixel text-lg sm:text-xl md:text-2xl lg:text-3xl mb-4 tracking-wider leading-relaxed">
-            <span className="block text-primary neon-text mb-2">VOCÊ NÃO VAI ACREDITAR NO QUE TEM AQUI.</span>
-            <span className="block text-[hsl(var(--accent))]">Ferramentas, jogos, HQs, mangás e muito mais. Explore por sua conta.</span>
+            <span className="block text-primary neon-text mb-2">SOS 01.</span>
+            <span className="block text-[hsl(var(--accent))]">Ferramentas Online Grátis, Jogos e Serviços</span>
           </h1>
           
           <p className="font-retro text-xl sm:text-2xl text-[hsl(var(--retro-red))] mb-6">
