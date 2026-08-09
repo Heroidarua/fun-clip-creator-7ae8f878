@@ -133,7 +133,10 @@ export const Route = createFileRoute("/api/download-youtube-stream")({
           const contentType =
             upstream.headers.get("content-type") ||
             (type === "audio" ? "audio/mp4" : "video/mp4");
-          const filename = `${sanitizeFilename(data?.title || "", "youtube")}.${ext}`;
+          const requestedName = (u.searchParams.get("filename") || "").trim();
+          const filename = requestedName
+            ? sanitizeFilename(requestedName.replace(/\.[a-z0-9]{2,4}$/i, ""), "youtube") + `.${ext}`
+            : `${sanitizeFilename(data?.title || "", "youtube")}.${ext}`;
           const headers: Record<string, string> = corsHeaders({
             "Content-Type": contentType,
             "Content-Disposition": `attachment; filename="${filename.replace(/[^\x20-\x7E]/g, "_").replace(/"/g, "")}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
