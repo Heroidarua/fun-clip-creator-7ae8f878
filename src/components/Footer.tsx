@@ -6,11 +6,17 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import developerPhoto from "@/assets/developer-photo.jpg";
 import { useConsent } from "@/hooks/useConsent";
 import { ADSTERRA_CONFIG } from "@/lib/adsterra";
+import { useDownloaderStatus } from "@/hooks/useDownloaderStatus";
 
 const Footer = () => {
   const [faqOpen, setFaqOpen] = useState(false);
   const [comoUsarOpen, setComoUsarOpen] = useState(false);
   const { hasAccepted } = useConsent();
+  const { isActive, loading: adsLoading } = useDownloaderStatus();
+  const smartlinkOn =
+    ADSTERRA_CONFIG.smartlink.enabled &&
+    !adsLoading &&
+    isActive(ADSTERRA_CONFIG.smartlink.featureKey);
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -177,7 +183,7 @@ const Footer = () => {
               Plataforma de utilidades digitais. Todo conteúdo acessado permanece de propriedade de seus respectivos criadores.
             </p>
 
-            {hasAccepted && (
+            {hasAccepted && smartlinkOn && (
               <a
                 href={ADSTERRA_CONFIG.smartlink.url}
                 target="_blank"
