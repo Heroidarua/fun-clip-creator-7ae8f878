@@ -269,10 +269,9 @@ export default function Admin() {
                 downloader: { title: "📥 Downloaders", items: [] },
                 ai:         { title: "🤖 Ferramentas com IA", items: [] },
                 utility:    { title: "🛠️ Utilitários", items: [] },
-                ads:        { title: "📢 Anúncios (Adsterra)", items: [] },
                 other:      { title: "Outros", items: [] },
               };
-              downloaderStatuses.forEach((d) => {
+              downloaderStatuses.filter((d) => d.category !== "ads").forEach((d) => {
                 const key = (d.category || "other") in groups ? (d.category as string) : "other";
                 groups[key].items.push(d);
               });

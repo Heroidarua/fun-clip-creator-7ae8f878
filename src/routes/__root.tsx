@@ -9,7 +9,6 @@ import BackToTop from "@/components/BackToTop";
 import ProtectionLayer from "@/components/ProtectionLayer";
 import SplashScreen from "@/components/SplashScreen";
 import CookieConsent from "@/components/CookieConsent";
-import AdsterraAds from "@/components/AdsterraAds";
 import { registerSW } from "@/lib/registerSW";
 
 import appCss from "../styles.css?url";
@@ -141,7 +140,6 @@ function RootComponent() {
         <Navigation />
         <BackToTop />
         <CookieConsent />
-        <AdsterraAds />
       </TooltipProvider>
     </ThemeProvider>
   );

@@ -4,20 +4,9 @@ import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import developerPhoto from "@/assets/developer-photo.jpg";
-import { useConsent } from "@/hooks/useConsent";
-import { ADSTERRA_CONFIG } from "@/lib/adsterra";
-import { useDownloaderStatus } from "@/hooks/useDownloaderStatus";
-
 const Footer = () => {
   const [faqOpen, setFaqOpen] = useState(false);
   const [comoUsarOpen, setComoUsarOpen] = useState(false);
-  const { hasAccepted } = useConsent();
-  const { isActive, loading: adsLoading } = useDownloaderStatus();
-  const smartlinkOn =
-    ADSTERRA_CONFIG.smartlink.enabled &&
-    !adsLoading &&
-    isActive(ADSTERRA_CONFIG.smartlink.featureKey);
-
   const handleShare = async () => {
     if (navigator.share) {
       try {
@@ -183,17 +172,6 @@ const Footer = () => {
               Plataforma de utilidades digitais. Todo conteúdo acessado permanece de propriedade de seus respectivos criadores.
             </p>
 
-            {hasAccepted && smartlinkOn && (
-              <a
-                href={ADSTERRA_CONFIG.smartlink.url}
-                target="_blank"
-                rel="noopener noreferrer sponsored"
-                className="mt-3 text-xs font-orbitron text-muted-foreground/70 underline underline-offset-4 hover:text-primary transition-colors"
-              >
-                Patrocinado
-              </a>
-            )}
-            
             {/* Developer Credit with Photo */}
             <div className="flex items-center gap-3 mt-4 px-4 py-2 bg-card/50 border-2 border-primary/20 rounded-sm">
               <div className="relative w-8 h-8">
