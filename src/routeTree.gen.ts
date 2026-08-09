@@ -47,6 +47,7 @@ import { Route as BlogComoBaixarVideosYoutubeRouteImport } from './routes/blog.c
 import { Route as BlogComoBaixarVideosTiktokSemMarcaRouteImport } from './routes/blog.como-baixar-videos-tiktok-sem-marca'
 import { Route as BlogComoBaixarVideosKwaiRouteImport } from './routes/blog.como-baixar-videos-kwai'
 import { Route as BlogBibliotecaQuadrinhosRouteImport } from './routes/blog.biblioteca-quadrinhos'
+import { Route as ApiYtdebugRouteImport } from './routes/api.ytdebug'
 import { Route as ApiRemoveBgRouteImport } from './routes/api.remove-bg'
 import { Route as ApiPlayerCatalogRouteImport } from './routes/api.player-catalog'
 import { Route as ApiManageFeatureStatusRouteImport } from './routes/api.manage-feature-status'
@@ -263,6 +264,11 @@ const BlogBibliotecaQuadrinhosRoute =
     path: '/biblioteca-quadrinhos',
     getParentRoute: () => BlogRoute,
   } as any)
+const ApiYtdebugRoute = ApiYtdebugRouteImport.update({
+  id: '/api/ytdebug',
+  path: '/api/ytdebug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiRemoveBgRoute = ApiRemoveBgRouteImport.update({
   id: '/api/remove-bg',
   path: '/api/remove-bg',
@@ -382,6 +388,7 @@ export interface FileRoutesByFullPath {
   '/api/manage-feature-status': typeof ApiManageFeatureStatusRoute
   '/api/player-catalog': typeof ApiPlayerCatalogRoute
   '/api/remove-bg': typeof ApiRemoveBgRoute
+  '/api/ytdebug': typeof ApiYtdebugRoute
   '/blog/biblioteca-quadrinhos': typeof BlogBibliotecaQuadrinhosRoute
   '/blog/como-baixar-videos-kwai': typeof BlogComoBaixarVideosKwaiRoute
   '/blog/como-baixar-videos-tiktok-sem-marca': typeof BlogComoBaixarVideosTiktokSemMarcaRoute
@@ -437,6 +444,7 @@ export interface FileRoutesByTo {
   '/api/manage-feature-status': typeof ApiManageFeatureStatusRoute
   '/api/player-catalog': typeof ApiPlayerCatalogRoute
   '/api/remove-bg': typeof ApiRemoveBgRoute
+  '/api/ytdebug': typeof ApiYtdebugRoute
   '/blog/biblioteca-quadrinhos': typeof BlogBibliotecaQuadrinhosRoute
   '/blog/como-baixar-videos-kwai': typeof BlogComoBaixarVideosKwaiRoute
   '/blog/como-baixar-videos-tiktok-sem-marca': typeof BlogComoBaixarVideosTiktokSemMarcaRoute
@@ -494,6 +502,7 @@ export interface FileRoutesById {
   '/api/manage-feature-status': typeof ApiManageFeatureStatusRoute
   '/api/player-catalog': typeof ApiPlayerCatalogRoute
   '/api/remove-bg': typeof ApiRemoveBgRoute
+  '/api/ytdebug': typeof ApiYtdebugRoute
   '/blog/biblioteca-quadrinhos': typeof BlogBibliotecaQuadrinhosRoute
   '/blog/como-baixar-videos-kwai': typeof BlogComoBaixarVideosKwaiRoute
   '/blog/como-baixar-videos-tiktok-sem-marca': typeof BlogComoBaixarVideosTiktokSemMarcaRoute
@@ -552,6 +561,7 @@ export interface FileRouteTypes {
     | '/api/manage-feature-status'
     | '/api/player-catalog'
     | '/api/remove-bg'
+    | '/api/ytdebug'
     | '/blog/biblioteca-quadrinhos'
     | '/blog/como-baixar-videos-kwai'
     | '/blog/como-baixar-videos-tiktok-sem-marca'
@@ -607,6 +617,7 @@ export interface FileRouteTypes {
     | '/api/manage-feature-status'
     | '/api/player-catalog'
     | '/api/remove-bg'
+    | '/api/ytdebug'
     | '/blog/biblioteca-quadrinhos'
     | '/blog/como-baixar-videos-kwai'
     | '/blog/como-baixar-videos-tiktok-sem-marca'
@@ -663,6 +674,7 @@ export interface FileRouteTypes {
     | '/api/manage-feature-status'
     | '/api/player-catalog'
     | '/api/remove-bg'
+    | '/api/ytdebug'
     | '/blog/biblioteca-quadrinhos'
     | '/blog/como-baixar-videos-kwai'
     | '/blog/como-baixar-videos-tiktok-sem-marca'
@@ -720,6 +732,7 @@ export interface RootRouteChildren {
   ApiManageFeatureStatusRoute: typeof ApiManageFeatureStatusRoute
   ApiPlayerCatalogRoute: typeof ApiPlayerCatalogRoute
   ApiRemoveBgRoute: typeof ApiRemoveBgRoute
+  ApiYtdebugRoute: typeof ApiYtdebugRoute
   CategoriaSlugRoute: typeof CategoriaSlugRoute
   FerramentaSlugRoute: typeof FerramentaSlugRoute
   FerramentasYoutubeDownloaderRoute: typeof FerramentasYoutubeDownloaderRoute
@@ -997,6 +1010,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogBibliotecaQuadrinhosRouteImport
       parentRoute: typeof BlogRoute
     }
+    '/api/ytdebug': {
+      id: '/api/ytdebug'
+      path: '/api/ytdebug'
+      fullPath: '/api/ytdebug'
+      preLoaderRoute: typeof ApiYtdebugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/remove-bg': {
       id: '/api/remove-bg'
       path: '/api/remove-bg'
@@ -1181,6 +1201,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiManageFeatureStatusRoute: ApiManageFeatureStatusRoute,
   ApiPlayerCatalogRoute: ApiPlayerCatalogRoute,
   ApiRemoveBgRoute: ApiRemoveBgRoute,
+  ApiYtdebugRoute: ApiYtdebugRoute,
   CategoriaSlugRoute: CategoriaSlugRoute,
   FerramentaSlugRoute: FerramentaSlugRoute,
   FerramentasYoutubeDownloaderRoute: FerramentasYoutubeDownloaderRoute,
