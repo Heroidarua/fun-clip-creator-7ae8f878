@@ -55,7 +55,6 @@ export const Route = createFileRoute("/api/youtube/file")({
           )) {
             const mediaUrl =
               ticket.type === "audio" ? candidate.audio_url : candidate.video_url;
-            if (ticket.type === "video" && candidate.muxed === false) continue;
             if (!isDirectMediaUrl(mediaUrl)) continue;
 
             const headers: Record<string, string> = {
