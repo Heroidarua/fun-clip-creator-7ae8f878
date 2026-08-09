@@ -145,8 +145,17 @@ export default function YoutubeDownloaderPage() {
       } else {
         setStage("Baixando o vídeo...");
         const video = await fetchStream(info.url, "mp4", format.quality, (r) =>
-          setProgress(r == null ? null : Math.round(r * 60)),
+          setProgress(r == null ? null : Math.round(r * (60))),
         );
+        if (video.muxed) {
+          saveBlob(
+            new Blob([video.bytes.slice().buffer as ArrayBuffer], { type: "video/mp4" }),
+            `${safeName(info.title)}.mp4`,
+          );
+          setProgress(100);
+          setDownloading(false);
+          return;
+        }
         setStage("Baixando o áudio...");
         const audio = await fetchStream(info.url, "m4a", "best", (r) =>
           setProgress(60 + (r == null ? 0 : Math.round(r * 20))),
