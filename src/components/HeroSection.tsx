@@ -915,46 +915,32 @@ const HeroSection = () => {
       if (!probe.ok) {
         let msg = `Falha ao baixar (HTTP ${probe.status}).`;
         try {
-          const j = await probe.json();
-          if (j?.fallback_url) {
-            toast({
-              title: "Atenção",
-              description: "O YouTube bloqueou o download direto. Estamos tentando uma rota alternativa...",
-            });
-            // Não redirecionar para sites externos, apenas exibir erro se o proxy falhar
-            throw new Error("O YouTube bloqueou o download direto para este vídeo específico.");
-          }
+          const j = await probe.clone().json();
           if (j?.error) msg = j.error;
         } catch { /* resposta não-JSON */ }
         throw new Error(msg);
       }
-      try { probe.body?.cancel(); } catch { /* ignore */ }
+      try { await probe.body?.cancel(); } catch { /* ignore */ }
 
-      // 2) Download nativo do navegador via Blob para forçar o download direto sem redirecionar
-      const response = await fetch(streamUrl);
-      if (!response.ok) throw new Error(`Falha na stream: ${response.status}`);
-      
-      const blob = await response.blob();
-      const blobUrl = URL.createObjectURL(blob);
+      // 2) Download nativo: o servidor já envia Content-Disposition: attachment,
+      // então o navegador transmite direto (sem carregar o arquivo inteiro na
+      // memória e sem revogar o blob antes da hora, o que cancelava o download).
       const link = document.createElement('a');
-      link.href = blobUrl;
+      link.href = streamUrl;
       link.download = `${filename}.${extension}`;
+      link.rel = 'noopener';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
 
       if (youtubeOpenInNewTab) {
-        const opened = window.open(blobUrl, '_blank');
+        const opened = window.open(streamUrl, '_blank', 'noopener');
         if (!opened) {
           toast({
             title: "Pop-up bloqueado",
             description: "Libere os pop-ups do site para abrir o vídeo em outra aba.",
           });
         }
-        // Mantém o blob vivo por um tempo para a nova aba conseguir carregar.
-        setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
-      } else {
-        URL.revokeObjectURL(blobUrl);
       }
 
       toast({
