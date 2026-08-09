@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import developerPhoto from "@/assets/developer-photo.jpg";
 import { useConsent } from "@/hooks/useConsent";
+import { ADSTERRA_CONFIG } from "@/lib/adsterra";
 
 const Footer = () => {
   const [faqOpen, setFaqOpen] = useState(false);
@@ -178,7 +179,7 @@ const Footer = () => {
 
             {hasAccepted && (
               <a
-                href="https://undergocutlery.com/da5ha89ygg?key=252d138bf3526c0a798cee970db93534"
+                href={ADSTERRA_CONFIG.smartlink.url}
                 target="_blank"
                 rel="noopener noreferrer sponsored"
                 className="mt-3 text-xs font-orbitron text-muted-foreground/70 underline underline-offset-4 hover:text-primary transition-colors"

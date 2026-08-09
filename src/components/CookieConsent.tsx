@@ -4,13 +4,9 @@ import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { setConsent } from "@/lib/consent";
 import { useConsent } from "@/hooks/useConsent";
+import { loadAdsterraScripts } from "@/lib/adsterra";
 
 const ANALYTICS_ID = "G-JD2L3ZPP4T";
-
-const AD_SCRIPTS = [
-  "https://undergocutlery.com/ce/9f/a8/ce9fa89fa5d51adb96107d4eafe47857.js",
-  "https://undergocutlery.com/ae/0d/31/ae0d31b2adaec34d918bbe58f11842c2.js",
-];
 
 let scriptsLoaded = false;
 
@@ -27,12 +23,7 @@ const loadTrackingScripts = () => {
   analyticsInit.text = `window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', '${ANALYTICS_ID}');`;
   document.head.appendChild(analyticsInit);
 
-  AD_SCRIPTS.forEach((src) => {
-    const script = document.createElement("script");
-    script.async = true;
-    script.src = src;
-    document.body.appendChild(script);
-  });
+  loadAdsterraScripts();
 };
 
 const CookieConsent = () => {
