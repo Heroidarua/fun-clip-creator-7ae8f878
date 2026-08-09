@@ -179,6 +179,29 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality = "best") {
   };
 }
 
+let visitorDataCache: { value: string; at: number } | null = null;
+
+/** O InnerTube exige visitorData para liberar os links de mídia sem 403. */
+async function fetchVisitorData(): Promise<string> {
+  if (visitorDataCache && Date.now() - visitorDataCache.at < 30 * 60_000) {
+    return visitorDataCache.value;
+  }
+  try {
+    const r = await fetch("https://www.youtube.com/sw.js_data", {
+      signal: withTimeout(6000),
+      headers: { "User-Agent": BROWSER_UA, Accept: "*/*" },
+    });
+    if (!r.ok) return "";
+    const text = await r.text();
+    const match = /"(C[gG][^"]{20,})"/.exec(text);
+    const value = match?.[1] || "";
+    if (value) visitorDataCache = { value, at: Date.now() };
+    return value;
+  } catch {
+    return "";
+  }
+}
+
 async function fetchInnerTube(
   videoId: string,
   quality: YouTubeQuality = "best",
