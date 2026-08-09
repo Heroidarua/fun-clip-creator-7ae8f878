@@ -265,6 +265,7 @@ export default function Admin() {
                 downloader: { title: "📥 Downloaders", items: [] },
                 ai:         { title: "🤖 Ferramentas com IA", items: [] },
                 utility:    { title: "🛠️ Utilitários", items: [] },
+                ads:        { title: "📢 Anúncios (Adsterra)", items: [] },
                 other:      { title: "Outros", items: [] },
               };
               downloaderStatuses.forEach((d) => {
