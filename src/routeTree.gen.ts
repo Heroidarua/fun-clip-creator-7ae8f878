@@ -33,6 +33,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as FerramentasYoutubeDownloaderRouteImport } from './routes/ferramentas_.youtube-downloader'
 import { Route as FerramentaSlugRouteImport } from './routes/ferramenta.$slug'
 import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
 import { Route as BlogJogosRetroGratisRouteImport } from './routes/blog.jogos-retro-gratis'
@@ -58,6 +59,9 @@ import { Route as ApiDownloadPinterestRouteImport } from './routes/api.download-
 import { Route as ApiDownloadKwaiRouteImport } from './routes/api.download-kwai'
 import { Route as ApiDownloadInstagramRouteImport } from './routes/api.download-instagram'
 import { Route as ApiDownloadFacebookRouteImport } from './routes/api.download-facebook'
+import { Route as ApiYoutubeInfoRouteImport } from './routes/api.youtube.info'
+import { Route as ApiYoutubeFileRouteImport } from './routes/api.youtube.file'
+import { Route as ApiYoutubeDownloadRouteImport } from './routes/api.youtube.download'
 import { Route as ApiPublicPinterestDownloadRouteImport } from './routes/api.public.pinterest-download'
 
 const TermosRoute = TermosRouteImport.update({
@@ -180,6 +184,12 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
   path: '/',
   getParentRoute: () => BlogRoute,
 } as any)
+const FerramentasYoutubeDownloaderRoute =
+  FerramentasYoutubeDownloaderRouteImport.update({
+    id: '/ferramentas_/youtube-downloader',
+    path: '/ferramentas/youtube-downloader',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const FerramentaSlugRoute = FerramentaSlugRouteImport.update({
   id: '/ferramenta/$slug',
   path: '/ferramenta/$slug',
@@ -314,6 +324,21 @@ const ApiDownloadFacebookRoute = ApiDownloadFacebookRouteImport.update({
   path: '/api/download-facebook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiYoutubeInfoRoute = ApiYoutubeInfoRouteImport.update({
+  id: '/api/youtube/info',
+  path: '/api/youtube/info',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiYoutubeFileRoute = ApiYoutubeFileRouteImport.update({
+  id: '/api/youtube/file',
+  path: '/api/youtube/file',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiYoutubeDownloadRoute = ApiYoutubeDownloadRouteImport.update({
+  id: '/api/youtube/download',
+  path: '/api/youtube/download',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPinterestDownloadRoute =
   ApiPublicPinterestDownloadRouteImport.update({
     id: '/api/public/pinterest-download',
@@ -370,8 +395,12 @@ export interface FileRoutesByFullPath {
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
+  '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/blog/': typeof BlogIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
+  '/api/youtube/download': typeof ApiYoutubeDownloadRoute
+  '/api/youtube/file': typeof ApiYoutubeFileRoute
+  '/api/youtube/info': typeof ApiYoutubeInfoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -421,8 +450,12 @@ export interface FileRoutesByTo {
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
+  '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/blog': typeof BlogIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
+  '/api/youtube/download': typeof ApiYoutubeDownloadRoute
+  '/api/youtube/file': typeof ApiYoutubeFileRoute
+  '/api/youtube/info': typeof ApiYoutubeInfoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -474,8 +507,12 @@ export interface FileRoutesById {
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
+  '/ferramentas_/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/blog/': typeof BlogIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
+  '/api/youtube/download': typeof ApiYoutubeDownloadRoute
+  '/api/youtube/file': typeof ApiYoutubeFileRoute
+  '/api/youtube/info': typeof ApiYoutubeInfoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -528,8 +565,12 @@ export interface FileRouteTypes {
     | '/blog/jogos-retro-gratis'
     | '/categoria/$slug'
     | '/ferramenta/$slug'
+    | '/ferramentas/youtube-downloader'
     | '/blog/'
     | '/api/public/pinterest-download'
+    | '/api/youtube/download'
+    | '/api/youtube/file'
+    | '/api/youtube/info'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -579,8 +620,12 @@ export interface FileRouteTypes {
     | '/blog/jogos-retro-gratis'
     | '/categoria/$slug'
     | '/ferramenta/$slug'
+    | '/ferramentas/youtube-downloader'
     | '/blog'
     | '/api/public/pinterest-download'
+    | '/api/youtube/download'
+    | '/api/youtube/file'
+    | '/api/youtube/info'
   id:
     | '__root__'
     | '/'
@@ -631,8 +676,12 @@ export interface FileRouteTypes {
     | '/blog/jogos-retro-gratis'
     | '/categoria/$slug'
     | '/ferramenta/$slug'
+    | '/ferramentas_/youtube-downloader'
     | '/blog/'
     | '/api/public/pinterest-download'
+    | '/api/youtube/download'
+    | '/api/youtube/file'
+    | '/api/youtube/info'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -673,7 +722,11 @@ export interface RootRouteChildren {
   ApiRemoveBgRoute: typeof ApiRemoveBgRoute
   CategoriaSlugRoute: typeof CategoriaSlugRoute
   FerramentaSlugRoute: typeof FerramentaSlugRoute
+  FerramentasYoutubeDownloaderRoute: typeof FerramentasYoutubeDownloaderRoute
   ApiPublicPinterestDownloadRoute: typeof ApiPublicPinterestDownloadRoute
+  ApiYoutubeDownloadRoute: typeof ApiYoutubeDownloadRoute
+  ApiYoutubeFileRoute: typeof ApiYoutubeFileRoute
+  ApiYoutubeInfoRoute: typeof ApiYoutubeInfoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -845,6 +898,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/blog/'
       preLoaderRoute: typeof BlogIndexRouteImport
       parentRoute: typeof BlogRoute
+    }
+    '/ferramentas_/youtube-downloader': {
+      id: '/ferramentas_/youtube-downloader'
+      path: '/ferramentas/youtube-downloader'
+      fullPath: '/ferramentas/youtube-downloader'
+      preLoaderRoute: typeof FerramentasYoutubeDownloaderRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/ferramenta/$slug': {
       id: '/ferramenta/$slug'
@@ -1021,6 +1081,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiDownloadFacebookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/youtube/info': {
+      id: '/api/youtube/info'
+      path: '/api/youtube/info'
+      fullPath: '/api/youtube/info'
+      preLoaderRoute: typeof ApiYoutubeInfoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/youtube/file': {
+      id: '/api/youtube/file'
+      path: '/api/youtube/file'
+      fullPath: '/api/youtube/file'
+      preLoaderRoute: typeof ApiYoutubeFileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/youtube/download': {
+      id: '/api/youtube/download'
+      path: '/api/youtube/download'
+      fullPath: '/api/youtube/download'
+      preLoaderRoute: typeof ApiYoutubeDownloadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/pinterest-download': {
       id: '/api/public/pinterest-download'
       path: '/api/public/pinterest-download'
@@ -1102,7 +1183,11 @@ const rootRouteChildren: RootRouteChildren = {
   ApiRemoveBgRoute: ApiRemoveBgRoute,
   CategoriaSlugRoute: CategoriaSlugRoute,
   FerramentaSlugRoute: FerramentaSlugRoute,
+  FerramentasYoutubeDownloaderRoute: FerramentasYoutubeDownloaderRoute,
   ApiPublicPinterestDownloadRoute: ApiPublicPinterestDownloadRoute,
+  ApiYoutubeDownloadRoute: ApiYoutubeDownloadRoute,
+  ApiYoutubeFileRoute: ApiYoutubeFileRoute,
+  ApiYoutubeInfoRoute: ApiYoutubeInfoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
