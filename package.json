@@ -5,14 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "node scripts/generate-sitemap.mjs && CI=true vite build",
-    "build:dev": "node scripts/generate-sitemap.mjs && CI=true vite build --mode development",
+    "build": "node scripts/generate-sitemap.mjs && node scripts/check-sitemap.mjs && CI=true vite build",
+    "build:dev": "node scripts/generate-sitemap.mjs && node scripts/check-sitemap.mjs && CI=true vite build --mode development",
     "preview": "vite preview",
-    "deploy": "node scripts/generate-sitemap.mjs && CI=true vite build && wrangler deploy",
+    "deploy": "node scripts/generate-sitemap.mjs && node scripts/check-sitemap.mjs && CI=true vite build && wrangler deploy",
     "cf-typegen": "wrangler types",
     "lint": "eslint .",
     "validate:sitemap": "node scripts/validate-sitemap.mjs",
-    "generate:sitemap": "node scripts/generate-sitemap.mjs"
+    "generate:sitemap": "node scripts/generate-sitemap.mjs",
+    "check:sitemap": "node scripts/check-sitemap.mjs"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.25.5",
