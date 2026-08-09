@@ -908,7 +908,10 @@ const HeroSection = () => {
     const canonical =
       info?.url || parseYouTubeUrl(youtubeUrl)?.canonicalUrl || youtubeUrl.trim();
     const wantedType = youtubeDownloadType;
-    const format = info?.formats.find((f) => f.type === wantedType);
+    const format =
+      youtubeFormats.find((f) => f.id === youtubeQuality && f.type === wantedType) ||
+      youtubeFormats.find((f) => f.type === wantedType) ||
+      info?.formats.find((f) => f.type === wantedType);
 
     try {
       toast({
