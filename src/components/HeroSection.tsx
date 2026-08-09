@@ -1120,10 +1120,15 @@ const HeroSection = () => {
         <div className="w-full max-w-xs sm:max-w-md md:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-2">
           <div className="pixel-card rounded-sm p-5 sm:p-6 lg:p-8">
             {/* Section header */}
-            <div className="flex flex-col items-center gap-2 mb-6">
-              <div className="flex items-center gap-3">
-                <img src={tiktokIcon} alt="TikTok" className="w-6 h-6 rounded-lg" />
-                <h2 className="font-pixel text-xs sm:text-sm text-primary">LINK DO TIKTOK </h2>
+            <div className="mb-5 flex items-center justify-between gap-3 border-b border-foreground/10 pb-4">
+              <div className="flex items-center gap-3 text-left">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-foreground/5 ring-1 ring-foreground/10">
+                  <img src={tiktokIcon} alt="TikTok" className="w-5 h-5 rounded-md" />
+                </span>
+                <div>
+                  <h2 className="font-pixel text-xs sm:text-sm text-primary">LINK DO TIKTOK</h2>
+                  <p className="mt-1 text-[11px] text-muted-foreground">Cole o link e baixe sem marca d'água</p>
+                </div>
               </div>
               <StatusBadge isActive={isActive('tiktok')} />
             </div>
@@ -1300,10 +1305,15 @@ const HeroSection = () => {
           {/* Instagram Section */}
           <div className="pixel-card rounded-sm p-5 sm:p-6 lg:p-8 mt-6" style={{ borderColor: 'hsl(var(--retro-magenta) / 0.5)' }}>
             {/* Section header */}
-            <div className="flex flex-col items-center gap-2 mb-6">
-              <div className="flex items-center gap-3">
-                <img src={instagramIcon} alt="Instagram" className="w-6 h-6 rounded-lg" />
-                <h2 className="font-pixel text-xs sm:text-sm text-[hsl(var(--retro-magenta))]">LINK DO INSTAGRAM</h2>
+            <div className="mb-5 flex items-center justify-between gap-3 border-b border-foreground/10 pb-4">
+              <div className="flex items-center gap-3 text-left">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-foreground/5 ring-1 ring-foreground/10">
+                  <img src={instagramIcon} alt="Instagram" className="w-5 h-5 rounded-md" />
+                </span>
+                <div>
+                  <h2 className="font-pixel text-xs sm:text-sm text-[hsl(var(--retro-magenta))]">LINK DO INSTAGRAM</h2>
+                  <p className="mt-1 text-[11px] text-muted-foreground">Reels, fotos e stories em alta qualidade</p>
+                </div>
               </div>
               <StatusBadge isActive={isActive('instagram')} />
             </div>
@@ -1503,10 +1513,15 @@ const HeroSection = () => {
           {/* Kwai Section */}
           <div className="pixel-card rounded-sm p-5 sm:p-6 lg:p-8 mt-6" style={{ borderColor: 'hsl(var(--retro-orange) / 0.5)' }}>
             {/* Section header */}
-            <div className="flex flex-col items-center gap-2 mb-6">
-              <div className="flex items-center gap-3">
-                <img src={kwaiIcon} alt="Kwai" className="w-6 h-6 rounded-lg" />
-                <h2 className="font-pixel text-xs sm:text-sm text-[hsl(var(--retro-orange))]">LINK DO KWAI</h2>
+            <div className="mb-5 flex items-center justify-between gap-3 border-b border-foreground/10 pb-4">
+              <div className="flex items-center gap-3 text-left">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-foreground/5 ring-1 ring-foreground/10">
+                  <img src={kwaiIcon} alt="Kwai" className="w-5 h-5 rounded-md" />
+                </span>
+                <div>
+                  <h2 className="font-pixel text-xs sm:text-sm text-[hsl(var(--retro-orange))]">LINK DO KWAI</h2>
+                  <p className="mt-1 text-[11px] text-muted-foreground">Vídeos do Kwai em MP4</p>
+                </div>
               </div>
               <StatusBadge isActive={isActive('kwai')} />
             </div>
@@ -1639,10 +1654,15 @@ const HeroSection = () => {
           {/* YouTube Section */}
           <div className="pixel-card rounded-sm p-5 sm:p-6 lg:p-8 mt-6" style={{ borderColor: 'hsl(0 100% 50% / 0.5)' }}>
             {/* Section header */}
-            <div className="flex flex-col items-center gap-2 mb-6">
-              <div className="flex items-center gap-3">
-                <img src={youtubeIcon} alt="YouTube" className="w-6 h-6 rounded-lg" />
-                <h2 className="font-pixel text-xs sm:text-sm text-[hsl(0,100%,50%)]">LINK DO YOUTUBE</h2>
+            <div className="mb-5 flex items-center justify-between gap-3 border-b border-foreground/10 pb-4">
+              <div className="flex items-center gap-3 text-left">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-foreground/5 ring-1 ring-foreground/10">
+                  <img src={youtubeIcon} alt="YouTube" className="w-5 h-5 rounded-md" />
+                </span>
+                <div>
+                  <h2 className="font-pixel text-xs sm:text-sm text-[hsl(0,100%,50%)]">LINK DO YOUTUBE</h2>
+                  <p className="mt-1 text-[11px] text-muted-foreground">Escolha a resolução ou baixe só o áudio</p>
+                </div>
               </div>
               <StatusBadge isActive={isActive('youtube')} />
             </div>
@@ -1865,10 +1885,15 @@ const HeroSection = () => {
           {/* Facebook Section */}
           <div className="pixel-card rounded-sm p-5 sm:p-6 lg:p-8 mt-6" style={{ borderColor: 'hsl(217 89% 50% / 0.5)' }}>
             {/* Section header */}
-            <div className="flex flex-col items-center gap-2 mb-6">
-              <div className="flex items-center gap-3">
-                <img src={facebookIcon} alt="Facebook" className="w-6 h-6 rounded-lg" />
-                <h2 className="font-pixel text-xs sm:text-sm" style={{ color: 'hsl(217, 89%, 61%)' }}>LINK DO FACEBOOK</h2>
+            <div className="mb-5 flex items-center justify-between gap-3 border-b border-foreground/10 pb-4">
+              <div className="flex items-center gap-3 text-left">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-foreground/5 ring-1 ring-foreground/10">
+                  <img src={facebookIcon} alt="Facebook" className="w-5 h-5 rounded-md" />
+                </span>
+                <div>
+                  <h2 className="font-pixel text-xs sm:text-sm" style={{ color: 'hsl(217, 89%, 61%)' }}>LINK DO FACEBOOK</h2>
+                  <p className="mt-1 text-[11px] text-muted-foreground">Vídeos e Reels do Facebook</p>
+                </div>
               </div>
               <StatusBadge isActive={isActive('facebook')} />
             </div>
@@ -2005,14 +2030,19 @@ const HeroSection = () => {
           {/* Pinterest Section */}
           <div className="pixel-card rounded-sm p-5 sm:p-6 lg:p-8 mt-6" style={{ borderColor: 'hsl(351 83% 50% / 0.5)' }}>
             {/* Section header */}
-            <div className="flex flex-col items-center gap-2 mb-6">
-              <div className="flex items-center gap-3">
+            <div className="mb-5 flex items-center justify-between gap-3 border-b border-foreground/10 pb-4">
+              <div className="flex items-center gap-3 text-left">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-foreground/5 ring-1 ring-foreground/10">
                 <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'hsl(351, 83%, 47%)' }}>
                   <svg viewBox="0 0 24 24" className="w-4 h-4 text-white" fill="currentColor" aria-hidden="true">
                     <path d="M12 2C6.48 2 2 6.48 2 12c0 4.09 2.45 7.6 5.97 9.14-.08-.78-.16-1.97.03-2.82.18-.79 1.17-5.02 1.17-5.02s-.3-.6-.3-1.49c0-1.4.81-2.44 1.82-2.44.86 0 1.27.64 1.27 1.41 0 .86-.55 2.15-.83 3.34-.24 1 .5 1.81 1.49 1.81 1.79 0 3.16-1.89 3.16-4.61 0-2.41-1.73-4.1-4.21-4.1-2.87 0-4.55 2.15-4.55 4.37 0 .87.33 1.8.75 2.3.08.1.09.18.07.28-.07.31-.24 1-.27 1.13-.04.18-.14.22-.33.13-1.23-.57-2-2.37-2-3.81 0-3.1 2.25-5.95 6.49-5.95 3.41 0 6.06 2.43 6.06 5.68 0 3.39-2.14 6.12-5.11 6.12-1 0-1.94-.52-2.26-1.13l-.61 2.33c-.22.85-.82 1.92-1.22 2.57.92.28 1.89.44 2.91.44 5.52 0 10-4.48 10-10S17.52 2 12 2z"/>
                   </svg>
                 </div>
-                <h2 className="font-pixel text-xs sm:text-sm" style={{ color: 'hsl(351, 83%, 60%)' }}>LINK DO PINTEREST</h2>
+                </span>
+                <div>
+                  <h2 className="font-pixel text-xs sm:text-sm" style={{ color: 'hsl(351, 83%, 60%)' }}>LINK DO PINTEREST</h2>
+                  <p className="mt-1 text-[11px] text-muted-foreground">Pins, imagens e vídeos do Pinterest</p>
+                </div>
               </div>
               <StatusBadge isActive={isActive('pinterest')} />
             </div>
