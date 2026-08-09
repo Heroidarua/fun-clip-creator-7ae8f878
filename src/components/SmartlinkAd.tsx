@@ -1,6 +1,7 @@
 import { ExternalLink } from "lucide-react";
 import { ADSTERRA_CONFIG } from "@/lib/adsterra";
 import { useConsent } from "@/hooks/useConsent";
+import { useDownloaderStatus } from "@/hooks/useDownloaderStatus";
 import { cn } from "@/lib/utils";
 
 interface SmartlinkAdProps {
@@ -14,8 +15,14 @@ interface SmartlinkAdProps {
  */
 const SmartlinkAd = ({ label = "Ver oferta", className }: SmartlinkAdProps) => {
   const { hasAccepted } = useConsent();
+  const { isActive, loading } = useDownloaderStatus();
 
-  if (!ADSTERRA_CONFIG.smartlink.enabled || !hasAccepted) return null;
+  const enabled =
+    ADSTERRA_CONFIG.smartlink.enabled &&
+    !loading &&
+    isActive(ADSTERRA_CONFIG.smartlink.featureKey);
+
+  if (!enabled || !hasAccepted) return null;
 
   return (
     <aside
