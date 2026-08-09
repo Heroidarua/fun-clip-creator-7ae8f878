@@ -105,6 +105,7 @@ export const Route = createFileRoute("/api/youtube/file")({
           let contentType = "";
           let total = 0;
           let title = ticket.title;
+          let muxed = false;
 
           for await (const candidate of resolveYoutubeCandidates(
             canonical,
@@ -136,6 +137,7 @@ export const Route = createFileRoute("/api/youtube/file")({
                   );
                 }
                 contentType = res.headers.get("content-type") || "";
+                muxed = candidate.muxed !== false;
                 body = chunkedStream(
                   mediaUrl!,
                   baseHeaders,
@@ -173,6 +175,8 @@ export const Route = createFileRoute("/api/youtube/file")({
               .replace(/"/g, "")}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
             "Cache-Control": "no-store",
             "Accept-Ranges": "bytes",
+            "X-Yt-Muxed": muxed ? "1" : "0",
+            "Access-Control-Expose-Headers": "X-Yt-Muxed, Content-Length",
           });
           if (total) headers["Content-Length"] = String(total - rangeStart);
           if (clientRange && total) {
