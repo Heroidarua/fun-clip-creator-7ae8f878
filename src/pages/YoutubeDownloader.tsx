@@ -52,7 +52,12 @@ export default function YoutubeDownloaderPage() {
       container: "mp4" | "m4a",
       quality: string,
       onRatio: (r: number | null) => void,
-    ): Promise<{ bytes: Uint8Array; contentType: string; directUrl: string }> => {
+    ): Promise<{
+      bytes: Uint8Array;
+      contentType: string;
+      directUrl: string;
+      muxed: boolean;
+    }> => {
       const ticket = await requestYoutubeDownload(videoUrl, container, quality);
       const fileUrl = absoluteDownloadUrl(ticket.downloadUrl);
       const res = await fetch(fileUrl);
@@ -89,6 +94,7 @@ export default function YoutubeDownloaderPage() {
         bytes,
         contentType: res.headers.get("content-type") || "application/octet-stream",
         directUrl: fileUrl,
+        muxed: res.headers.get("x-yt-muxed") !== "0",
       };
     },
     [],
