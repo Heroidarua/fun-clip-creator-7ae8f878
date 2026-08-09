@@ -17,6 +17,61 @@ function sanitizeFilename(name: string, fallback: string): string {
   return cleaned || fallback;
 }
 
+/** O CDN do YouTube recusa faixas abertas (bytes=0-); usamos blocos fixos. */
+const CHUNK_BYTES = 6 * 1024 * 1024;
+
+function parseTotal(contentRange: string | null): number {
+  const m = /\/(\d+)$/.exec(contentRange || "");
+  return m ? Number(m[1]) : 0;
+}
+
+/** Transmite o arquivo inteiro pedindo blocos sequenciais ao CDN. */
+function chunkedStream(
+  mediaUrl: string,
+  baseHeaders: Record<string, string>,
+  start: number,
+  total: number,
+  first: Response,
+  firstEnd: number,
+): ReadableStream<Uint8Array> {
+  let cursor = firstEnd + 1;
+  let current: ReadableStreamDefaultReader<Uint8Array> | null =
+    first.body!.getReader();
+
+  return new ReadableStream<Uint8Array>({
+    async pull(controller) {
+      for (;;) {
+        if (current) {
+          const { done, value } = await current.read();
+          if (!done) {
+            controller.enqueue(value!);
+            return;
+          }
+          current = null;
+        }
+        if (cursor >= total) {
+          controller.close();
+          return;
+        }
+        const end = Math.min(cursor + CHUNK_BYTES - 1, total - 1);
+        const res = await fetch(mediaUrl, {
+          headers: { ...baseHeaders, Range: `bytes=${cursor}-${end}` },
+          signal: AbortSignal.timeout(YT_PROCESS_TIMEOUT_MS),
+        });
+        if (!res.ok || !res.body) {
+          controller.error(new Error("upstream chunk failed"));
+          return;
+        }
+        cursor = end + 1;
+        current = res.body.getReader();
+      }
+    },
+    cancel() {
+      current?.cancel().catch(() => {});
+    },
+  });
+}
+
 /**
  * Entrega o conteúdo referente a um link temporário assinado.
  * Nada é gravado em disco: o conteúdo é transmitido sob demanda e o token
@@ -44,8 +99,11 @@ export const Route = createFileRoute("/api/youtube/file")({
           );
 
           const canonical = `https://www.youtube.com/watch?v=${ticket.videoId}`;
-          const range = request.headers.get("range");
-          let upstream: Response | null = null;
+          const clientRange = request.headers.get("range");
+          const rangeStart = Number(/bytes=(\d+)-/.exec(clientRange || "")?.[1] || 0);
+          let body: ReadableStream<Uint8Array> | null = null;
+          let contentType = "";
+          let total = 0;
           let title = ticket.title;
 
           for await (const candidate of resolveYoutubeCandidates(
@@ -57,27 +115,34 @@ export const Route = createFileRoute("/api/youtube/file")({
               ticket.type === "audio" ? candidate.audio_url : candidate.video_url;
             if (!isDirectMediaUrl(mediaUrl)) continue;
 
-            const headers: Record<string, string> = {
+            const baseHeaders: Record<string, string> = {
               "User-Agent": candidate.media_ua || BROWSER_UA,
-              Referer: "https://www.youtube.com/",
               Accept: "*/*",
             };
-            // URLs do YouTube (cliente iOS) respondem 403 sem cabeçalho Range.
-            headers["Range"] = range || "bytes=0-";
             try {
+              const firstEnd = rangeStart + CHUNK_BYTES - 1;
               const res = await fetch(mediaUrl!, {
-                headers,
+                headers: { ...baseHeaders, Range: `bytes=${rangeStart}-${firstEnd}` },
                 signal: AbortSignal.timeout(YT_PROCESS_TIMEOUT_MS),
               });
               if (res.ok && res.body) {
-                const len = Number(res.headers.get("content-length") || 0);
-                if (len && len > YT_MAX_FILE_BYTES) {
+                total = parseTotal(res.headers.get("content-range")) ||
+                  rangeStart + Number(res.headers.get("content-length") || 0);
+                if (total > YT_MAX_FILE_BYTES) {
                   return Response.json(
                     { success: false, error: "Arquivo maior que o limite permitido (1 GB)." },
                     { status: 413, headers: JSON_HEADERS },
                   );
                 }
-                upstream = res;
+                contentType = res.headers.get("content-type") || "";
+                body = chunkedStream(
+                  mediaUrl!,
+                  baseHeaders,
+                  rangeStart,
+                  total,
+                  res,
+                  Math.min(firstEnd, total - 1),
+                );
                 title = title || candidate.title;
                 break;
               }
@@ -86,7 +151,7 @@ export const Route = createFileRoute("/api/youtube/file")({
             }
           }
 
-          if (!upstream?.body) {
+          if (!body) {
             return Response.json(
               {
                 success: false,
@@ -101,21 +166,20 @@ export const Route = createFileRoute("/api/youtube/file")({
           const filename = `${sanitizeFilename(title, "youtube")}.${ext}`;
           const headers: Record<string, string> = ytCors({
             "Content-Type":
-              upstream.headers.get("content-type") ||
-              (ticket.type === "audio" ? "audio/mp4" : "video/mp4"),
+              contentType || (ticket.type === "audio" ? "audio/mp4" : "video/mp4"),
             "Content-Disposition": `attachment; filename="${filename
               .replace(/[^\x20-\x7E]/g, "_")
               .replace(/"/g, "")}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
             "Cache-Control": "no-store",
             "Accept-Ranges": "bytes",
           });
-          const len = upstream.headers.get("content-length");
-          if (len) headers["Content-Length"] = len;
-          const contentRange = upstream.headers.get("content-range");
-          if (range && contentRange) headers["Content-Range"] = contentRange;
+          if (total) headers["Content-Length"] = String(total - rangeStart);
+          if (clientRange && total) {
+            headers["Content-Range"] = `bytes ${rangeStart}-${total - 1}/${total}`;
+          }
 
-          return new Response(upstream.body, {
-            status: range && upstream.status === 206 ? 206 : 200,
+          return new Response(body, {
+            status: clientRange ? 206 : 200,
             headers,
           });
         } catch (error: any) {
