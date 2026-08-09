@@ -8,6 +8,7 @@ import { toast } from "@/hooks/use-toast";
 import { Lock, Plus, Trash2, Edit, Eye, EyeOff, ArrowLeft, RefreshCw, Megaphone } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Switch } from "@/components/ui/switch";
+import AdminPwa from "@/components/AdminPwa";
 import {
   DEFAULT_MARQUEE_SETTINGS,
   MARQUEE_COLOR_OPTIONS,
@@ -220,6 +221,9 @@ export default function Admin() {
           <Link to="/" className="flex items-center justify-center gap-2 text-muted-foreground hover:text-foreground mt-4 text-sm">
             <ArrowLeft size={16} /> Voltar ao site
           </Link>
+          <div className="mt-4">
+            <AdminPwa />
+          </div>
         </div>
       </div>
     );
