@@ -4,10 +4,12 @@ import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import developerPhoto from "@/assets/developer-photo.jpg";
+import { useConsent } from "@/hooks/useConsent";
 
 const Footer = () => {
   const [faqOpen, setFaqOpen] = useState(false);
   const [comoUsarOpen, setComoUsarOpen] = useState(false);
+  const { hasAccepted } = useConsent();
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -174,14 +176,16 @@ const Footer = () => {
               Plataforma de utilidades digitais. Todo conteúdo acessado permanece de propriedade de seus respectivos criadores.
             </p>
 
-            <a
-              href="https://undergocutlery.com/da5ha89ygg?key=252d138bf3526c0a798cee970db93534"
-              target="_blank"
-              rel="noopener noreferrer sponsored"
-              className="mt-3 text-xs font-orbitron text-muted-foreground/70 underline underline-offset-4 hover:text-primary transition-colors"
-            >
-              Patrocinado
-            </a>
+            {hasAccepted && (
+              <a
+                href="https://undergocutlery.com/da5ha89ygg?key=252d138bf3526c0a798cee970db93534"
+                target="_blank"
+                rel="noopener noreferrer sponsored"
+                className="mt-3 text-xs font-orbitron text-muted-foreground/70 underline underline-offset-4 hover:text-primary transition-colors"
+              >
+                Patrocinado
+              </a>
+            )}
             
             {/* Developer Credit with Photo */}
             <div className="flex items-center gap-3 mt-4 px-4 py-2 bg-card/50 border-2 border-primary/20 rounded-sm">
