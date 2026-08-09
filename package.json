@@ -12,8 +12,7 @@
     "cf-typegen": "wrangler types",
     "lint": "eslint .",
     "validate:sitemap": "node scripts/validate-sitemap.mjs",
-    "generate:sitemap": "node scripts/generate-sitemap.mjs",
-    "prebuild": "node scripts/generate-sitemap.mjs"
+    "generate:sitemap": "node scripts/generate-sitemap.mjs"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.25.5",
