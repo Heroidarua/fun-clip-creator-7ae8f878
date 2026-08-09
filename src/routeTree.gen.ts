@@ -33,6 +33,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as FerramentasYoutubeDownloaderRouteImport } from './routes/ferramentas_.youtube-downloader'
 import { Route as FerramentaSlugRouteImport } from './routes/ferramenta.$slug'
 import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
 import { Route as BlogJogosRetroGratisRouteImport } from './routes/blog.jogos-retro-gratis'
@@ -183,6 +184,12 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
   path: '/',
   getParentRoute: () => BlogRoute,
 } as any)
+const FerramentasYoutubeDownloaderRoute =
+  FerramentasYoutubeDownloaderRouteImport.update({
+    id: '/ferramentas_/youtube-downloader',
+    path: '/ferramentas/youtube-downloader',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const FerramentaSlugRoute = FerramentaSlugRouteImport.update({
   id: '/ferramenta/$slug',
   path: '/ferramenta/$slug',
@@ -388,6 +395,7 @@ export interface FileRoutesByFullPath {
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
+  '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/blog/': typeof BlogIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/youtube/download': typeof ApiYoutubeDownloadRoute
@@ -442,6 +450,7 @@ export interface FileRoutesByTo {
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
+  '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/blog': typeof BlogIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/youtube/download': typeof ApiYoutubeDownloadRoute
@@ -498,6 +507,7 @@ export interface FileRoutesById {
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
+  '/ferramentas_/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/blog/': typeof BlogIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/youtube/download': typeof ApiYoutubeDownloadRoute
@@ -555,6 +565,7 @@ export interface FileRouteTypes {
     | '/blog/jogos-retro-gratis'
     | '/categoria/$slug'
     | '/ferramenta/$slug'
+    | '/ferramentas/youtube-downloader'
     | '/blog/'
     | '/api/public/pinterest-download'
     | '/api/youtube/download'
@@ -609,6 +620,7 @@ export interface FileRouteTypes {
     | '/blog/jogos-retro-gratis'
     | '/categoria/$slug'
     | '/ferramenta/$slug'
+    | '/ferramentas/youtube-downloader'
     | '/blog'
     | '/api/public/pinterest-download'
     | '/api/youtube/download'
@@ -664,6 +676,7 @@ export interface FileRouteTypes {
     | '/blog/jogos-retro-gratis'
     | '/categoria/$slug'
     | '/ferramenta/$slug'
+    | '/ferramentas_/youtube-downloader'
     | '/blog/'
     | '/api/public/pinterest-download'
     | '/api/youtube/download'
@@ -709,6 +722,7 @@ export interface RootRouteChildren {
   ApiRemoveBgRoute: typeof ApiRemoveBgRoute
   CategoriaSlugRoute: typeof CategoriaSlugRoute
   FerramentaSlugRoute: typeof FerramentaSlugRoute
+  FerramentasYoutubeDownloaderRoute: typeof FerramentasYoutubeDownloaderRoute
   ApiPublicPinterestDownloadRoute: typeof ApiPublicPinterestDownloadRoute
   ApiYoutubeDownloadRoute: typeof ApiYoutubeDownloadRoute
   ApiYoutubeFileRoute: typeof ApiYoutubeFileRoute
@@ -884,6 +898,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/blog/'
       preLoaderRoute: typeof BlogIndexRouteImport
       parentRoute: typeof BlogRoute
+    }
+    '/ferramentas_/youtube-downloader': {
+      id: '/ferramentas_/youtube-downloader'
+      path: '/ferramentas/youtube-downloader'
+      fullPath: '/ferramentas/youtube-downloader'
+      preLoaderRoute: typeof FerramentasYoutubeDownloaderRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/ferramenta/$slug': {
       id: '/ferramenta/$slug'
@@ -1162,6 +1183,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiRemoveBgRoute: ApiRemoveBgRoute,
   CategoriaSlugRoute: CategoriaSlugRoute,
   FerramentaSlugRoute: FerramentaSlugRoute,
+  FerramentasYoutubeDownloaderRoute: FerramentasYoutubeDownloaderRoute,
   ApiPublicPinterestDownloadRoute: ApiPublicPinterestDownloadRoute,
   ApiYoutubeDownloadRoute: ApiYoutubeDownloadRoute,
   ApiYoutubeFileRoute: ApiYoutubeFileRoute,
