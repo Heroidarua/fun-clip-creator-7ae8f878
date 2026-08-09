@@ -21,6 +21,10 @@ function safeName(title: string) {
   return title.replace(/[\\/:*?"<>|]+/g, " ").trim().slice(0, 100) || "youtube";
 }
 
+/** Até este tamanho o arquivo é processado no navegador; acima, baixa direto. */
+const BROWSER_PROCESS_LIMIT = 100 * 1024 * 1024;
+const TOO_LARGE = "TOO_LARGE";
+
 function saveBlob(blob: Blob, filename: string) {
   const objectUrl = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -48,14 +52,21 @@ export default function YoutubeDownloaderPage() {
       container: "mp4" | "m4a",
       quality: string,
       onRatio: (r: number | null) => void,
-    ): Promise<{ bytes: Uint8Array; contentType: string }> => {
+    ): Promise<{ bytes: Uint8Array; contentType: string; directUrl: string }> => {
       const ticket = await requestYoutubeDownload(videoUrl, container, quality);
-      const res = await fetch(absoluteDownloadUrl(ticket.downloadUrl));
+      const fileUrl = absoluteDownloadUrl(ticket.downloadUrl);
+      const res = await fetch(fileUrl);
       if (!res.ok || !res.body) {
         const data = await res.json().catch(() => null);
         throw new Error(data?.error || GENERIC_ERROR);
       }
       const total = Number(res.headers.get("content-length") || 0);
+      if (total > BROWSER_PROCESS_LIMIT) {
+        await res.body.cancel().catch(() => {});
+        const err = new Error(TOO_LARGE);
+        (err as Error & { directUrl?: string }).directUrl = fileUrl;
+        throw err;
+      }
       const reader = res.body.getReader();
       const chunks: Uint8Array[] = [];
       let received = 0;
@@ -77,6 +88,7 @@ export default function YoutubeDownloaderPage() {
       return {
         bytes,
         contentType: res.headers.get("content-type") || "application/octet-stream",
+        directUrl: fileUrl,
       };
     },
     [],
@@ -142,7 +154,18 @@ export default function YoutubeDownloaderPage() {
       }
       setProgress(100);
     } catch (e) {
-      setError((e as Error).message || GENERIC_ERROR);
+      const err = e as Error & { directUrl?: string };
+      if (err.message === TOO_LARGE) {
+        if (err.directUrl && format.type === "audio") {
+          window.location.href = err.directUrl;
+        } else {
+          setError(
+            "Este arquivo passa de 100 MB e não pode ser processado no navegador. Escolha uma qualidade menor.",
+          );
+        }
+      } else {
+        setError(err.message || GENERIC_ERROR);
+      }
     } finally {
       setDownloading(false);
     }
