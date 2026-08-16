@@ -36,7 +36,7 @@ function categoryOf(g: Game): Category {
   if (/(mario|sonic|kong|bomberman|kidd|mickey|donald|dizzy|picapau|monica|pocahontas|luigi|yoshi|rockman)/.test(t)) return "Plataforma";
   if (/(kart|top gear|gp rider|rider)/.test(t)) return "Corrida";
   if (/(1941|asteroids|duck hunt|battle city|popeye)/.test(t)) return "Tiro";
-  if (/(metal slug|spider|mask|power rangers|x-men|simpsons|alien|justice|dragonball|flintstones|saga|gta|theft)/.test(t)) return "Ação";
+  if (/(metal slug|spider|mask|power rangers|x-men|simpsons|alien|justice|dragonball|flintstones|saga|gta|theft)/.test(t)) return "Acao";
   return "Arcade";
 }
 
