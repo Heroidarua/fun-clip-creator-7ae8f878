@@ -7,6 +7,7 @@ import {
   signTicket,
   YT_LINK_TTL_SECONDS,
 } from "@/lib/youtube-tool.server";
+import { supabase } from "@/integrations/supabase/client";
 
 const JSON_HEADERS = ytCors({ "Content-Type": "application/json" });
 
@@ -56,6 +57,26 @@ export const Route = createFileRoute("/api/youtube/download")({
             );
           }
 
+          // Criar Job no banco de dados para processamento assíncrono
+          const { data: job, error: jobError } = await supabase
+            .from("youtube_download_jobs")
+            .insert({
+              video_id: parsed.videoId!,
+              source_url: parsed.canonicalUrl,
+              format: format,
+              quality: quality,
+              status: 'PENDING',
+              progress: 0
+            })
+            .select()
+            .single();
+
+          if (jobError || !job) {
+            console.error("Job creation error:", jobError);
+            throw new Error("Falha ao criar tarefa de download.");
+          }
+
+          // Gerar token para o download real
           const token = await signTicket({
             videoId: parsed.videoId!,
             type: format === "m4a" ? "audio" : "video",
@@ -63,12 +84,24 @@ export const Route = createFileRoute("/api/youtube/download")({
             title: "",
           });
 
+          const downloadUrl = `/api/youtube/file?token=${encodeURIComponent(token)}&jobId=${job.id}`;
+          
+          await supabase
+            .from("youtube_download_jobs")
+            .update({ 
+              status: 'COMPLETED', 
+              progress: 100, 
+              file_url: downloadUrl 
+            })
+            .eq("id", job.id);
+
           return Response.json(
             {
               success: true,
               status: "ready",
+              jobId: job.id,
               expiresIn: YT_LINK_TTL_SECONDS,
-              downloadUrl: `/api/youtube/file?token=${encodeURIComponent(token)}`,
+              downloadUrl: downloadUrl,
             },
             { headers: JSON_HEADERS },
           );
@@ -77,8 +110,7 @@ export const Route = createFileRoute("/api/youtube/download")({
           return Response.json(
             {
               success: false,
-              error:
-                "Não foi possível processar este vídeo. Verifique a URL e tente novamente.",
+              error: error.message || "Não foi possível processar este vídeo.",
             },
             { status: 500, headers: JSON_HEADERS },
           );
