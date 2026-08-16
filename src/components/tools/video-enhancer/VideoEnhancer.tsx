@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import { createEnhancementJob, getJobStatus } from "@/lib/video-enhancer/jobs.functions";
+import { setupStorage } from "@/lib/video-enhancer/setup.functions";
 import type { EnhancementMode, ResolutionTier } from "@/lib/video-enhancer/types";
 import { useServerFn } from "@tanstack/react-start";
 import { Link } from "@tanstack/react-router";
@@ -26,6 +27,7 @@ export default function VideoEnhancer() {
 
   const createJob = useServerFn(createEnhancementJob);
   const checkStatus = useServerFn(getJobStatus);
+  const initStorage = useServerFn(setupStorage);
 
   // Restaurar job pendente do localStorage
   useEffect(() => {
@@ -78,6 +80,9 @@ export default function VideoEnhancer() {
     
     setUploading(true);
     try {
+      // Garantir que o bucket existe antes de começar
+      await initStorage();
+      
       const job = await createJob({
         data: {
           filename: file.name,
