@@ -597,11 +597,11 @@ const HeroSection = () => {
       const index = itemIndex !== undefined ? itemIndex : selectedCarouselIndex;
       const item = instagramData.is_carousel && instagramData.carousel_items 
         ? instagramData.carousel_items[index] 
-        : { url: instagramData.media_url, type: instagramData.media_type };
+        : { media_url: instagramData.media_url, media_type: instagramData.media_type };
 
       const { downloadUrl } = await requestInstagramDownload(
-        (item as any).url || (item as any).media_url,
-        (item as any).type || (item as any).media_type,
+        item.media_url,
+        item.media_type,
         instagramData.title
       );
 
@@ -612,7 +612,12 @@ const HeroSection = () => {
       link.click();
       document.body.removeChild(link);
 
-      trackDownload('instagram');
+      if (typeof (window as any).gtag === 'function') {
+        (window as any).gtag('event', 'download', {
+          event_category: 'engagement',
+          event_label: 'instagram',
+        });
+      }
       toast({
         title: "Download iniciado!",
         description: "O arquivo está sendo processado pelo servidor.",
