@@ -25,9 +25,14 @@ function setToCache(key: string, data: any) {
   cache.set(key, { data, expiry: Date.now() + CACHE_TTL });
 }
 
-function getTypedGames(): Game[] {
-  const allGames = require('../data/games').games;
-  return (allGames as Game[]) || [];
+async function getTypedGames(): Promise<Game[]> {
+  try {
+    const dataModule = await import('../data/games');
+    return (dataModule.games as Game[]) || [];
+  } catch (error) {
+    console.error('Error loading games data:', error);
+    return [];
+  }
 }
 
 export async function fetchGames({ page = 1, limit = 24, search = '', category = 'Todos' }) {
