@@ -11,13 +11,23 @@ const JobOptionsSchema = z.object({
   }),
 });
 
+type CreateJobInput = {
+  filename: string;
+  size: number;
+  options: {
+    mode: 'light' | 'standard' | 'maximum';
+    targetResolution: 'auto' | '720p' | '1080p' | '1440p' | '4k';
+    audio: {
+      reduceNoise: boolean;
+      boostVoice: boolean;
+      normalize: boolean;
+    };
+  };
+};
+
 export const createEnhancementJob = createServerFn({ method: "POST" })
-  .validator((data: unknown) => z.object({
-    filename: z.string(),
-    size: z.number(),
-    options: JobOptionsSchema
-  }).parse(data))
-  .handler(async ({ data }) => {
+  .validator((data: CreateJobInput) => JobOptionsSchema.parse(data.options) && data)
+  .handler(async ({ data }: { data: CreateJobInput }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
     const { data: job, error } = await supabaseAdmin
@@ -38,8 +48,8 @@ export const createEnhancementJob = createServerFn({ method: "POST" })
   });
 
 export const getJobStatus = createServerFn({ method: "GET" })
-  .validator((data: unknown) => z.object({ jobId: z.string() }).parse(data))
-  .handler(async ({ data }) => {
+  .validator((data: { jobId: string }) => data)
+  .handler(async ({ data }: { data: { jobId: string } }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: job, error } = await supabaseAdmin
       .from("video_enhancement_jobs" as any)
