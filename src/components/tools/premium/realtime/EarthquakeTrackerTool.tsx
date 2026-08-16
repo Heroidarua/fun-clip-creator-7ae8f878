@@ -13,20 +13,20 @@ export default function EarthquakeTrackerTool() {
 
       <div className="relative aspect-video w-full border-2 border-border overflow-hidden rounded-sm bg-muted shadow-cartridge">
         <iframe
-          src="https://earthquake.usgs.gov/earthquakes/map/?extent=-77.91507,-158.55469&extent=79.94825,-16.17188"
+          src="https://www.volcanodiscovery.com/earthquakes/map.html"
           className="absolute inset-0 w-full h-full grayscale-[0.2]"
-          title="USGS Earthquake Map"
+          title="Earthquake Live Map"
         />
       </div>
 
       <a
-        href="https://earthquake.usgs.gov"
+        href="https://www.volcanodiscovery.com"
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center justify-center gap-2 text-[10px] font-pixel text-primary hover:underline"
       >
         <ExternalLink className="w-3 h-3" />
-        ABRIR NO USGS
+        ABRIR NO VOLCANO DISCOVERY
       </a>
     </div>
   );
