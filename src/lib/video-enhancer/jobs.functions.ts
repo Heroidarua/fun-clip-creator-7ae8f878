@@ -26,7 +26,11 @@ type CreateJobInput = {
 };
 
 export const createEnhancementJob = createServerFn({ method: "POST" })
-  .validator((data: CreateJobInput) => JobOptionsSchema.parse(data.options) && data)
+  .input(z.object({
+    filename: z.string(),
+    size: z.number(),
+    options: JobOptionsSchema
+  }))
   .handler(async ({ data }: { data: CreateJobInput }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
@@ -48,7 +52,7 @@ export const createEnhancementJob = createServerFn({ method: "POST" })
   });
 
 export const getJobStatus = createServerFn({ method: "GET" })
-  .validator((data: { jobId: string }) => data)
+  .input(z.object({ jobId: z.string() }))
   .handler(async ({ data }: { data: { jobId: string } }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: job, error } = await supabaseAdmin
