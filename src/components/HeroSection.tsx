@@ -504,7 +504,7 @@ const HeroSection = () => {
     if (!instagramUrl.trim()) {
       toast({
         title: "URL obrigatório",
-        description: "Por favor, insira um URL válido do Instagram (post, reel ou story).",
+        description: "Por favor, insira um URL válido do Instagram (vídeo, foto ou story).",
         variant: "destructive",
       });
       return;
@@ -541,22 +541,27 @@ const HeroSection = () => {
           ? `Carrossel com ${data.data.carousel_items.length} itens` 
           : (data.data.media_type === 'video' ? 'Vídeo' : 'Foto');
         toast({
-          title: `${isCarousel ? 'Mídia' : mediaTypeText} encontrada!`,
+          title: `${isCarousel ? 'Carrossel' : mediaTypeText} encontrado!`,
           description: isCarousel ? "Selecione o item que deseja baixar." : "Pronto para download.",
         });
       } else {
         toast({
           title: "Erro ao processar",
-          description: data.error || "Não foi possível processar este link. Verifique se o perfil é público e o link está correto.",
+          description: data.error || "Não foi possível processar a mídia do Instagram.",
           variant: "destructive",
         });
       }
     } catch (error: any) {
-      console.error("Erro completo Instagram:", error);
+      console.error("Erro completo:", error);
       clearInterval(progressInterval);
       
       let errorMessage = "Tente novamente em alguns momentos.";
-      if (error.message) errorMessage = error.message;
+      
+      if (error.message) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      }
       
       toast({
         title: "Erro de conexão",
