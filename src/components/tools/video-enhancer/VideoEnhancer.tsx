@@ -43,12 +43,10 @@ export default function VideoEnhancer() {
     setUploading(true);
     try {
       const job = await createJob({
-        data: {
-          filename: file.name,
-          size: file.size,
-          options
-        }
-      } as any) as any;
+        filename: file.name,
+        size: file.size,
+        options
+      });
       
       setJobId(job.id);
       setStatus(job);
@@ -58,8 +56,8 @@ export default function VideoEnhancer() {
       const interval = setInterval(async () => {
         try {
           const updatedJob = await checkStatus({ 
-            data: { jobId: job.id } 
-          } as any) as any;
+            jobId: job.id 
+          });
           setStatus(updatedJob);
           
           if (updatedJob.status === 'completed' || updatedJob.status === 'failed') {
@@ -101,7 +99,7 @@ export default function VideoEnhancer() {
                   <Upload className="w-8 h-8 text-primary" />
                 </div>
                 <div className="text-center">
-                  <p className="font-semibold">Clique para selecionar ou arraste o vídeo</p>
+                  <p className="font-semibold text-foreground">Clique para selecionar ou arraste o vídeo</p>
                   <p className="text-sm text-muted-foreground">MP4, MOV ou AVI (Máx. 500MB)</p>
                 </div>
                 <input
