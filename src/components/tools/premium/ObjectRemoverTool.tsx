@@ -69,7 +69,10 @@ export default function ObjectRemoverTool() {
     fabricCanvas.current = canvas;
 
     return () => {
-      canvas.dispose();
+      if (fabricCanvas.current) {
+        fabricCanvas.current.dispose();
+        fabricCanvas.current = null;
+      }
     };
   }, [preview, result, brushSize]);
 
