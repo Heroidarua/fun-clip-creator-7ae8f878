@@ -7,7 +7,7 @@ const GENERIC_ERROR =
   "Não foi possível processar este vídeo. Verifique a URL e tente novamente.";
 
 /** Acima deste tamanho o arquivo não é processado no navegador. */
-export const BROWSER_PROCESS_LIMIT = 100 * 1024 * 1024;
+export const BROWSER_PROCESS_LIMIT = 500 * 1024 * 1024; // Aumentado para 500MB para suportar melhor qualidade
 
 const TOO_LARGE = "TOO_LARGE";
 
@@ -150,7 +150,7 @@ export async function downloadYoutubeMedia({
         return;
       }
       throw new Error(
-        "Este arquivo passa de 100 MB e não pode ser processado no navegador. Escolha uma qualidade menor.",
+        "Este arquivo passa de 500 MB e não pode ser processado no navegador. Escolha uma qualidade menor.",
       );
     }
     throw new Error(err.message || GENERIC_ERROR);
