@@ -12,7 +12,15 @@ export const VideoAnalysisSchema = z.object({
   size: z.number(),
 });
 
-export type VideoAnalysis = z.infer<typeof VideoAnalysisSchema>;
+export type VideoAnalysis = {
+  width: number;
+  height: number;
+  fps: number;
+  duration: number;
+  codec: string;
+  bitrate: number;
+  size: number;
+};
 
 export type EnhancementMode = 'light' | 'standard' | 'maximum';
 export type ResolutionTier = 'auto' | '720p' | '1080p' | '1440p' | '4k';
