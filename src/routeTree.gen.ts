@@ -51,6 +51,7 @@ import { Route as ApiRemoveBgRouteImport } from './routes/api.remove-bg'
 import { Route as ApiPlayerCatalogRouteImport } from './routes/api.player-catalog'
 import { Route as ApiManageFeatureStatusRouteImport } from './routes/api.manage-feature-status'
 import { Route as ApiManageAnnouncementsRouteImport } from './routes/api.manage-announcements'
+import { Route as ApiGamesRouteImport } from './routes/api.games'
 import { Route as ApiFreeTextRouteImport } from './routes/api.free-text'
 import { Route as ApiDownloadYoutubeStreamRouteImport } from './routes/api.download-youtube-stream'
 import { Route as ApiDownloadYoutubeRouteImport } from './routes/api.download-youtube'
@@ -283,6 +284,11 @@ const ApiManageAnnouncementsRoute = ApiManageAnnouncementsRouteImport.update({
   path: '/api/manage-announcements',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiGamesRoute = ApiGamesRouteImport.update({
+  id: '/api/games',
+  path: '/api/games',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiFreeTextRoute = ApiFreeTextRouteImport.update({
   id: '/api/free-text',
   path: '/api/free-text',
@@ -378,6 +384,7 @@ export interface FileRoutesByFullPath {
   '/api/download-youtube': typeof ApiDownloadYoutubeRoute
   '/api/download-youtube-stream': typeof ApiDownloadYoutubeStreamRoute
   '/api/free-text': typeof ApiFreeTextRoute
+  '/api/games': typeof ApiGamesRoute
   '/api/manage-announcements': typeof ApiManageAnnouncementsRoute
   '/api/manage-feature-status': typeof ApiManageFeatureStatusRoute
   '/api/player-catalog': typeof ApiPlayerCatalogRoute
@@ -433,6 +440,7 @@ export interface FileRoutesByTo {
   '/api/download-youtube': typeof ApiDownloadYoutubeRoute
   '/api/download-youtube-stream': typeof ApiDownloadYoutubeStreamRoute
   '/api/free-text': typeof ApiFreeTextRoute
+  '/api/games': typeof ApiGamesRoute
   '/api/manage-announcements': typeof ApiManageAnnouncementsRoute
   '/api/manage-feature-status': typeof ApiManageFeatureStatusRoute
   '/api/player-catalog': typeof ApiPlayerCatalogRoute
@@ -490,6 +498,7 @@ export interface FileRoutesById {
   '/api/download-youtube': typeof ApiDownloadYoutubeRoute
   '/api/download-youtube-stream': typeof ApiDownloadYoutubeStreamRoute
   '/api/free-text': typeof ApiFreeTextRoute
+  '/api/games': typeof ApiGamesRoute
   '/api/manage-announcements': typeof ApiManageAnnouncementsRoute
   '/api/manage-feature-status': typeof ApiManageFeatureStatusRoute
   '/api/player-catalog': typeof ApiPlayerCatalogRoute
@@ -548,6 +557,7 @@ export interface FileRouteTypes {
     | '/api/download-youtube'
     | '/api/download-youtube-stream'
     | '/api/free-text'
+    | '/api/games'
     | '/api/manage-announcements'
     | '/api/manage-feature-status'
     | '/api/player-catalog'
@@ -603,6 +613,7 @@ export interface FileRouteTypes {
     | '/api/download-youtube'
     | '/api/download-youtube-stream'
     | '/api/free-text'
+    | '/api/games'
     | '/api/manage-announcements'
     | '/api/manage-feature-status'
     | '/api/player-catalog'
@@ -659,6 +670,7 @@ export interface FileRouteTypes {
     | '/api/download-youtube'
     | '/api/download-youtube-stream'
     | '/api/free-text'
+    | '/api/games'
     | '/api/manage-announcements'
     | '/api/manage-feature-status'
     | '/api/player-catalog'
@@ -716,6 +728,7 @@ export interface RootRouteChildren {
   ApiDownloadYoutubeRoute: typeof ApiDownloadYoutubeRoute
   ApiDownloadYoutubeStreamRoute: typeof ApiDownloadYoutubeStreamRoute
   ApiFreeTextRoute: typeof ApiFreeTextRoute
+  ApiGamesRoute: typeof ApiGamesRoute
   ApiManageAnnouncementsRoute: typeof ApiManageAnnouncementsRoute
   ApiManageFeatureStatusRoute: typeof ApiManageFeatureStatusRoute
   ApiPlayerCatalogRoute: typeof ApiPlayerCatalogRoute
@@ -1025,6 +1038,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiManageAnnouncementsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/games': {
+      id: '/api/games'
+      path: '/api/games'
+      fullPath: '/api/games'
+      preLoaderRoute: typeof ApiGamesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/free-text': {
       id: '/api/free-text'
       path: '/api/free-text'
@@ -1177,6 +1197,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiDownloadYoutubeRoute: ApiDownloadYoutubeRoute,
   ApiDownloadYoutubeStreamRoute: ApiDownloadYoutubeStreamRoute,
   ApiFreeTextRoute: ApiFreeTextRoute,
+  ApiGamesRoute: ApiGamesRoute,
   ApiManageAnnouncementsRoute: ApiManageAnnouncementsRoute,
   ApiManageFeatureStatusRoute: ApiManageFeatureStatusRoute,
   ApiPlayerCatalogRoute: ApiPlayerCatalogRoute,

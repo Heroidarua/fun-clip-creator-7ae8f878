@@ -2,12 +2,16 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import {
   Gamepad2, X, Search, Play, Heart, Shuffle, Clock,
-  Flame, Sparkles, Star, Filter, Trophy,
+  Flame, Sparkles, Star, Filter, Trophy, RotateCw
 } from "lucide-react";
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { games, Game } from "@/data/games";
+import { Game } from "@/data/games";
+import { getGames, getFeaturedGames, getRecentGames } from "@/lib/games.functions";
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { useInView } from "react-intersection-observer";
 import { useFavoriteGames } from "@/hooks/useFavoriteGames";
 
 // ---------- helpers ----------
@@ -241,41 +245,64 @@ export default function Jogos() {
     setFullscreenGame(g);
   }, []);
 
-  const byId = useMemo(() => new Map(games.map((g) => [g.id, g])), []);
-  const recent = useMemo(
-    () => recentIds.map((id) => byId.get(id)).filter(Boolean).slice(0, 6) as Game[],
-    [recentIds, byId]
-  );
-  const popular = useMemo(
-    () => POPULAR_IDS.map((id) => byId.get(id)).filter(Boolean) as Game[],
-    [byId]
-  );
-  const community = useMemo(
-    () => COMMUNITY_IDS.map((id) => byId.get(id)).filter(Boolean) as Game[],
-    [byId]
-  );
-  const latest = useMemo(
-    () => [...games].sort((a, b) => b.id - a.id).slice(0, 12),
-    []
-  );
+  const fetchGamesFn = useServerFn(getGames);
+  const fetchFeaturedFn = useServerFn(getFeaturedGames);
+  const fetchRecentFn = useServerFn(getRecentGames);
 
-  // Filtered "all games" grid
+  const isHydrated = typeof window !== 'undefined';
+
+  const { data: featured } = (typeof window !== 'undefined' ? useQuery({
+    queryKey: ["featured-games"],
+    queryFn: () => fetchFeaturedFn(),
+    staleTime: 1000 * 60 * 60,
+  }) : { data: undefined }) as any;
+
+  const { data: recent } = (typeof window !== 'undefined' && recentIds.length > 0 ? useQuery({
+    queryKey: ["recent-games", recentIds],
+    queryFn: () => fetchRecentFn({ data: { ids: recentIds } }),
+  }) : { data: undefined }) as any;
+
+  const {
+    data: infiniteData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading
+  } = (typeof window !== 'undefined' ? useInfiniteQuery({
+    queryKey: ["games", category, searchQuery],
+    queryFn: ({ pageParam = 1 }) => fetchGamesFn({ 
+      data: {
+        page: pageParam as number, 
+        search: searchQuery, 
+        category 
+      }
+    }),
+    getNextPageParam: (lastPage: any) => lastPage.hasMore ? lastPage.page + 1 : undefined,
+    initialPageParam: 1,
+  }) : { data: undefined, fetchNextPage: () => {}, hasNextPage: false, isFetchingNextPage: false, isLoading: false }) as any;
+
   const filtered = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
-    return games.filter((g) => {
-      if (category !== "Todos" && categoryOf(g) !== category) return false;
-      if (q && !g.title.toLowerCase().includes(q)) return false;
-      return true;
-    });
-  }, [searchQuery, category]);
+    // During build/SSR, return empty to avoid TanStack Query errors
+    if (typeof window === 'undefined') return [];
+    return (infiniteData?.pages || []).flatMap((page: any) => page.items) || [];
+  }, [infiniteData]);
+
+  const { ref: loadMoreRef, inView } = useInView();
+
+  useEffect(() => {
+    if (isHydrated && inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage, isHydrated]);
 
   const handleRandom = () => {
-    const pool = filtered.length ? filtered : games;
-    playGame(pool[Math.floor(Math.random() * pool.length)]);
+    if (filtered.length) {
+      playGame(filtered[Math.floor(Math.random() * filtered.length)]);
+    }
   };
 
   const handleContinue = () => {
-    if (recent[0]) playGame(recent[0]);
+    if (recent && recent[0]) playGame(recent[0]);
     else handleRandom();
   };
 
@@ -304,7 +331,7 @@ export default function Jogos() {
                 <Gamepad2 className="w-3.5 h-3.5" /> ARCADE
               </span>
               <span className="font-silkscreen text-[10px] tracking-wider text-[hsl(var(--muted-foreground))]">
-                {games.length} JOGOS · 100% GRÁTIS
+                2900+ JOGOS · 100% GRÁTIS
               </span>
             </div>
 
@@ -321,11 +348,11 @@ export default function Jogos() {
               <div className="flex flex-wrap gap-2 sm:justify-end">
                 <Button
                   onClick={handleContinue}
-                  disabled={!recent.length}
+                  disabled={!recent || recent.length === 0}
                   className="font-silkscreen tracking-wider text-xs gap-2 bg-[hsl(var(--secondary))] text-white hover:bg-[hsl(var(--secondary)/0.9)] shadow-[0_4px_0_hsl(var(--secondary)/0.5)] disabled:opacity-50"
                 >
                   <Clock className="w-4 h-4" />
-                  {recent[0] ? "CONTINUAR" : "SEM HISTÓRICO"}
+                  {recent && recent[0] ? "CONTINUAR" : "SEM HISTÓRICO"}
                 </Button>
                 <Button
                   onClick={handleRandom}
@@ -413,17 +440,17 @@ export default function Jogos() {
                     <GameRow
                       title="Continuar"
                       icon={<Clock className="w-4 h-4" />}
-                      games={recent}
+                      games={recent || []}
                       onPlay={playGame}
                       isFavorite={isFavorite}
                       toggleFavorite={toggleFavorite}
                     />
 
                     <GameRow
-                      title="Populares"
+                      title="Destaques"
                       icon={<Flame className="w-4 h-4" />}
                       badge="HOT"
-                      games={popular}
+                      games={featured || []}
                       onPlay={playGame}
                       isFavorite={isFavorite}
                       toggleFavorite={toggleFavorite}
@@ -446,7 +473,7 @@ export default function Jogos() {
 
                   {filtered.length > 0 ? (
                     <div className="grid gap-4 sm:gap-6 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-                      {filtered.map((g, i) => (
+                      {filtered.map((g: Game, i: number) => (
                         <div key={g.id} className="animate-fade-in" style={{ animationDelay: `${Math.min(i * 15, 200)}ms` }}>
                           <GameCard
                             game={g}
@@ -455,6 +482,23 @@ export default function Jogos() {
                             onToggleFavorite={() => toggleFavorite(g.id)}
                           />
                         </div>
+                      ))}
+                      {hasNextPage && (
+                        <div ref={loadMoreRef} className="col-span-full h-20 flex items-center justify-center">
+                          {isFetchingNextPage ? (
+                            <div className="flex items-center gap-2 font-silkscreen text-[10px] text-[hsl(var(--muted-foreground))]">
+                              <RotateCw className="w-4 h-4 animate-spin" /> CARREGANDO MAIS...
+                            </div>
+                          ) : (
+                            <div className="h-1 w-full bg-transparent" />
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ) : isLoading ? (
+                    <div className="grid gap-4 sm:gap-6 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+                      {[...Array(8)].map((_, i) => (
+                        <div key={i} className="aspect-[3/4] rounded-[14px] bg-[hsl(var(--card))] animate-pulse" />
                       ))}
                     </div>
                   ) : (
