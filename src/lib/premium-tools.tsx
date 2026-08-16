@@ -121,7 +121,7 @@ export const PREMIUM_TOOLS: PremiumTool[] = [
   { slug: "terremotos", name: "Terremotos em Tempo Real", description: "Monitoramento de tremores recentes no mundo.", icon: Activity, color: "0 80% 55%", component: lazy(() => import("@/components/tools/premium/realtime/EarthquakeTrackerTool")), status: "ready" },
   { slug: "ceu", name: "Céu em Tempo Real", description: "Mapa estelar e planetário interativo.", icon: Stars, color: "260 80% 60%", component: lazy(() => import("@/components/tools/premium/realtime/SkyTrackerTool")), status: "ready" },
   { slug: "financeira", name: "Calculadora Financeira", description: "Calcule juros compostos e operações básicas.", icon: Calculator, color: "140 80% 45%", component: lazy(() => import("@/components/tools/premium/CalculatorTool")), status: "ready" },
-  { slug: "remover-objetos", name: "Removedor de Objetos", description: "Remova elementos indesejados de fotos com IA.", icon: Eraser, color: "300 80% 60%", component: lazy(() => import("@/components/tools/premium/ObjectRemoverTool")), status: "ready" },
+  
   { slug: "vazamento-email", name: "Verificador de Vazamento", description: "Verifique se seus dados foram expostos online.", icon: ShieldAlert, color: "0 100% 50%", component: lazy(() => import("@/components/tools/premium/EmailLeakTool")), status: "ready" },
 ];
 
