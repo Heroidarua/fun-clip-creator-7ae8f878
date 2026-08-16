@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { Upload, Video, Settings2, Sparkles, Download, Loader2, Info, Clock, CheckCircle2, AlertTriangle } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { Upload, Video, Settings2, Sparkles, Download, Loader2, Info, Clock, CheckCircle2, AlertTriangle, XCircle, RefreshCcw, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
-import { createEnhancementJob, getJobStatus } from "@/lib/video-enhancer/jobs.functions";
+import { createEnhancementJob, getJobStatus, cancelEnhancementJob } from "@/lib/video-enhancer/jobs.functions";
 import { setupStorage } from "@/lib/video-enhancer/setup.functions";
 import type { EnhancementMode, ResolutionTier } from "@/lib/video-enhancer/types";
 import { useServerFn } from "@tanstack/react-start";
@@ -27,7 +27,10 @@ export default function VideoEnhancer() {
 
   const createJob = useServerFn(createEnhancementJob);
   const checkStatus = useServerFn(getJobStatus);
+  const cancelJob = useServerFn(cancelEnhancementJob);
   const initStorage = useServerFn(setupStorage);
+  
+  const pollingRef = useRef<NodeJS.Timeout | null>(null);
 
   // Restaurar job pendente do localStorage
   useEffect(() => {
@@ -50,6 +53,8 @@ export default function VideoEnhancer() {
   };
 
   const startPolling = (id: string) => {
+    if (pollingRef.current) clearInterval(pollingRef.current);
+    
     setUploading(true);
     const interval = setInterval(async () => {
       try {
@@ -59,12 +64,12 @@ export default function VideoEnhancer() {
         setStatus(updatedJob);
         
         if ((updatedJob as any).status === 'completed' || (updatedJob as any).status === 'failed') {
-          clearInterval(interval);
+          if (pollingRef.current) clearInterval(pollingRef.current);
           setUploading(false);
           localStorage.removeItem('pending_video_enhancement_id');
           if ((updatedJob as any).status === 'completed') {
             toast.success("Melhoria concluída com sucesso!");
-          } else {
+          } else if ((updatedJob as any).error_message !== 'Cancelado pelo usuário') {
             toast.error("Falha no processamento: " + (updatedJob as any).error_message);
           }
         }
@@ -72,7 +77,36 @@ export default function VideoEnhancer() {
         console.error("Polling error:", err);
       }
     }, 5000); 
-    return () => clearInterval(interval);
+    pollingRef.current = interval;
+    return () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+    };
+  };
+
+  const handleCancel = async () => {
+    if (!jobId) return;
+    
+    try {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+      await cancelJob({ data: { jobId } });
+      localStorage.removeItem('pending_video_enhancement_id');
+      setJobId(null);
+      setStatus(null);
+      setUploading(false);
+      toast.info("Processamento interrompido.");
+    } catch (error) {
+      console.error("Erro ao cancelar:", error);
+      toast.error("Erro ao cancelar o processamento.");
+    }
+  };
+
+  const handleReset = () => {
+    if (pollingRef.current) clearInterval(pollingRef.current);
+    localStorage.removeItem('pending_video_enhancement_id');
+    setJobId(null);
+    setFile(null);
+    setStatus(null);
+    setUploading(false);
   };
 
   const startEnhancement = async () => {
@@ -176,7 +210,10 @@ export default function VideoEnhancer() {
                     <p className="font-pixel text-xs truncate text-foreground">{file.name}</p>
                     <p className="text-[10px] text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                   </div>
-                  <Button variant="ghost" size="sm" onClick={() => setFile(null)} className="font-pixel text-[8px] text-destructive">Remover</Button>
+                  <Button variant="ghost" size="sm" onClick={() => setFile(null)} className="font-pixel text-[8px] text-destructive hover:bg-destructive/10">
+                    <Trash2 className="w-3 h-3 mr-1" />
+                    Remover
+                  </Button>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
@@ -283,7 +320,20 @@ export default function VideoEnhancer() {
                  <Video className="w-5 h-5 text-primary" />}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-pixel text-xs text-foreground truncate">{status?.original_filename || 'Vídeo'}</p>
+                <div className="flex items-center justify-between gap-2">
+                  <p className="font-pixel text-xs text-foreground truncate">{status?.original_filename || 'Vídeo'}</p>
+                  {status?.status !== 'completed' && status?.status !== 'failed' && (
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={handleCancel}
+                      className="h-6 px-2 font-pixel text-[8px] text-destructive hover:bg-destructive/10"
+                    >
+                      <XCircle className="w-3 h-3 mr-1" />
+                      PARAR
+                    </Button>
+                  )}
+                </div>
                 <div className="flex gap-2 mt-1">
                   <span className="text-[8px] text-muted-foreground uppercase bg-foreground/5 px-1">Modo: {status?.enhancement_mode}</span>
                   {status?.input_size && (
@@ -327,14 +377,16 @@ export default function VideoEnhancer() {
           )}
 
           {(status?.status === 'completed' || status?.status === 'failed') && (
-            <Button variant="outline" className="w-full font-pixel text-[8px] uppercase border-dashed" onClick={() => {
-              localStorage.removeItem('pending_video_enhancement_id');
-              setJobId(null);
-              setFile(null);
-              setStatus(null);
-            }}>
-              Melhorar outro vídeo
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button 
+                variant="outline" 
+                className="flex-1 font-pixel text-[8px] uppercase border-dashed" 
+                onClick={handleReset}
+              >
+                <RefreshCcw className="w-3 h-3 mr-2" />
+                Recomeçar / Novo Vídeo
+              </Button>
+            </div>
           )}
         </Card>
       )}
