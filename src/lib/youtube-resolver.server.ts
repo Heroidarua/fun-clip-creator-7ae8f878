@@ -15,7 +15,7 @@ export interface YouTubeData {
 }
 
 /** Equivalente às expressões de formato do yt-dlp (best / 720p+ / worst). */
-export type YouTubeQuality = "best" | "high" | "worst";
+export type YouTubeQuality = "best" | "4k" | "2k" | "1080p" | "high" | "worst";
 
 export interface YouTubeResponse {
   success: boolean;
@@ -130,15 +130,24 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality = "best") {
     .filter((f) => /video\/mp4/.test(f.mimeType || "") && /mp4a/.test(f.mimeType || ""))
     .sort(quality === "worst" ? asc : desc);
 
-  // Espelha `best[height>=720]` do yt-dlp: prioriza >=720p quando existir
-  if (quality === "high") {
+  // Espelha `best[height>=720]` do yt-dlp: prioriza resoluções maiores quando existir
+  if (quality === "4k") {
+    const q4k = muxed.filter((f) => (f.height || 0) >= 2160);
+    if (q4k.length) muxed = q4k;
+  } else if (quality === "2k") {
+    const q2k = muxed.filter((f) => (f.height || 0) >= 1440);
+    if (q2k.length) muxed = q2k;
+  } else if (quality === "1080p") {
+    const q1080 = muxed.filter((f) => (f.height || 0) >= 1080);
+    if (q1080.length) muxed = q1080;
+  } else if (quality === "high" || quality === "best") {
     const hd = muxed.filter((f) => (f.height || 0) >= 720);
     if (hd.length) muxed = hd;
   }
 
   // Sem progressivo (vídeo sem áudio embutido): o proxy precisa transferir o
   // arquivo inteiro, então limitamos o tamanho para não estourar o servidor.
-  const MAX_BYTES = 45 * 1024 * 1024;
+  const MAX_BYTES = 250 * 1024 * 1024; // Aumentado para suportar 1080p e 4K no proxy
   const size = (f: any) => Number(f.contentLength || 0);
   let videoOnly = adaptive
     // Somente H.264 (avc1): AV1/VP9 não tocam em muitos players e celulares
@@ -146,10 +155,20 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality = "best") {
       (f) =>
         /video\/mp4/.test(f.mimeType || "") &&
         /avc1/.test(f.mimeType || "") &&
-        (f.height || 0) <= 1080,
+        (f.height || 0) <= 2160,
     )
     .sort(quality === "worst" ? asc : desc);
-  if (quality === "high") {
+
+  if (quality === "4k") {
+    const q4k = videoOnly.filter((f) => (f.height || 0) >= 2160);
+    if (q4k.length) videoOnly = q4k;
+  } else if (quality === "2k") {
+    const q2k = videoOnly.filter((f) => (f.height || 0) >= 1440);
+    if (q2k.length) videoOnly = q2k;
+  } else if (quality === "1080p") {
+    const q1080 = videoOnly.filter((f) => (f.height || 0) >= 1080);
+    if (q1080.length) videoOnly = q1080;
+  } else if (quality === "high" || quality === "best") {
     const hd = videoOnly.filter((f) => (f.height || 0) >= 720);
     if (hd.length) videoOnly = hd;
   }

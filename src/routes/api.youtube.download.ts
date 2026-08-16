@@ -28,12 +28,18 @@ export const Route = createFileRoute("/api/youtube/download")({
           const rawUrl = typeof body?.url === "string" ? body.url.trim() : "";
           const format = body?.format === "m4a" ? "m4a" : "mp4";
           const requested = String(body?.quality || "best").toLowerCase();
-          const quality: "best" | "high" | "worst" =
-            requested === "720p" || requested === "high"
-              ? "high"
-              : requested === "worst" || requested === "low"
-                ? "worst"
-                : "best";
+          const quality: "best" | "4k" | "2k" | "1080p" | "high" | "worst" =
+            requested === "4k" || requested === "2160p"
+              ? "4k"
+              : requested === "2k" || requested === "1440p"
+                ? "2k"
+                : requested === "1080p"
+                  ? "1080p"
+                  : requested === "720p" || requested === "high"
+                    ? "high"
+                    : requested === "worst" || requested === "low"
+                      ? "worst"
+                      : "best";
 
           if (!rawUrl || rawUrl.length > 2048) {
             return Response.json(

@@ -1839,17 +1839,17 @@ const HeroSection = () => {
                                 <span className="font-orbitron text-[10px] text-muted-foreground">
                                   {formatBytes(f.estimatedBytes)}
                                 </span>
-                                {tooBig && (
-                                  <span className="font-orbitron text-[9px] text-yellow-400">
-                                    acima de 100 MB
-                                  </span>
-                                )}
+                                  {tooBig && (
+                                    <span className="font-orbitron text-[9px] text-yellow-400">
+                                      acima de 300 MB
+                                    </span>
+                                  )}
                               </button>
                             );
                           })}
                       </div>
                       <p className="font-orbitron text-[10px] text-center mt-2 text-muted-foreground">
-                        Arquivos acima de 100 MB podem falhar no navegador — prefira uma resolução menor.
+                        Arquivos acima de 300 MB podem falhar no navegador — prefira uma resolução menor ou formatos diretos.
                       </p>
                     </div>
                   )}
