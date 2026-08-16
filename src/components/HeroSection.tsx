@@ -2238,10 +2238,7 @@ const HeroSection = () => {
 
 
             {!isActive('video-enhancer') && <MaintenanceWarning />}
-            
-            <p className="mt-4 text-[10px] text-muted-foreground font-orbitron text-center italic">
-              * A melhoria de vídeo requer o upload direto do arquivo na página da ferramenta.
-            </p>
+
           </div>
 
       </div>
