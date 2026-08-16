@@ -1430,7 +1430,7 @@ const HeroSection = () => {
                             thumbnail: instagramData.thumbnail,
                           };
                       
-                      return (currentItem as any).type === 'video' || (currentItem as any).media_type === 'video' ? (
+                      return currentItem.media_type === 'video' ? (
                         <div
                           key={selectedCarouselIndex}
                           className="relative w-full min-h-[320px] bg-center bg-no-repeat bg-contain"
@@ -1447,13 +1447,13 @@ const HeroSection = () => {
                             title={instagramData.title}
                             author={instagramData.author}
                             duration={instagramData.duration}
-                            mediaUrl={(currentItem as any).url || (currentItem as any).media_url}
+                            mediaUrl={currentItem.media_url}
                           />
                         </div>
                       ) : (
                         <img 
                           key={selectedCarouselIndex}
-                          src={(currentItem as any).url || (currentItem as any).media_url}
+                          src={currentItem.media_url}
                           alt="Preview da foto"
                           className="w-full max-h-[400px] object-contain"
                         />
