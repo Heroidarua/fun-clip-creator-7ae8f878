@@ -20,6 +20,9 @@ export const createEnhancementJob = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
+    // Garantir que temos os dados mínimos
+    if (!data.filename) throw new Error("Filename is required");
+
     const { data: job, error } = await supabaseAdmin
       .from("video_enhancement_jobs" as any)
       .insert({
@@ -28,12 +31,16 @@ export const createEnhancementJob = createServerFn({ method: "POST" })
         enhancement_mode: data.options.mode,
         audio_enhancement: data.options.audio,
         status: 'queued',
+        progress: 0,
         expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
       } as any)
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error("Supabase insert error:", error);
+      throw error;
+    }
     return job as any;
   });
 

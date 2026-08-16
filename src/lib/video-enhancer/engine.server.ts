@@ -61,10 +61,16 @@ export async function processVideo(
   const vf = videoFilters.length > 0 ? `-vf "${videoFilters.join(',')}"` : "";
   const af = audioFilters.length > 0 ? `-af "${audioFilters.join(',')}"` : "";
   
-  // Preset de velocidade vs qualidade (slower = melhor compressão/qualidade)
-  const preset = options.mode === 'maximum' ? 'slower' : options.mode === 'standard' ? 'medium' : 'veryfast';
+  // Preset de velocidade vs qualidade
+  // Otimizado: presets mais rápidos para resoluções altas para reduzir o tempo de espera
+  let preset = 'veryfast';
+  if (options.mode === 'maximum') {
+    preset = target && (target.w > 1920) ? 'faster' : 'slower';
+  } else if (options.mode === 'standard') {
+    preset = target && (target.w > 1280) ? 'veryfast' : 'medium';
+  }
 
-  const command = `ffmpeg -i "${inputPath}" ${vf} ${af} -c:v libx264 -preset ${preset} -crf 18 -c:a aac -b:a 192k "${outputPath}" -y`;
+  const command = `ffmpeg -i "${inputPath}" ${vf} ${af} -c:v libx264 -preset ${preset} -crf 20 -c:a aac -b:a 192k "${outputPath}" -y`;
 
   console.log("Executing FFmpeg:", command);
 
