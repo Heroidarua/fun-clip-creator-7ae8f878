@@ -43,12 +43,15 @@ export default function VideoEnhancer() {
     setUploading(true);
     try {
       const job = await createJob({
-        filename: file.name,
-        size: file.size,
-        options
+        data: {
+          filename: file.name,
+          size: file.size,
+          options
+        }
       });
       
-      setJobId(job.id);
+      const id = (job as any).id;
+      setJobId(id);
       setStatus(job);
       toast.success("Vídeo enviado! Iniciando processamento...");
       
@@ -56,17 +59,17 @@ export default function VideoEnhancer() {
       const interval = setInterval(async () => {
         try {
           const updatedJob = await checkStatus({ 
-            jobId: job.id 
+            data: { jobId: id } 
           });
           setStatus(updatedJob);
           
-          if (updatedJob.status === 'completed' || updatedJob.status === 'failed') {
+          if ((updatedJob as any).status === 'completed' || (updatedJob as any).status === 'failed') {
             clearInterval(interval);
             setUploading(false);
-            if (updatedJob.status === 'completed') {
+            if ((updatedJob as any).status === 'completed') {
               toast.success("Melhoria concluída com sucesso!");
             } else {
-              toast.error("Falha no processamento: " + updatedJob.error_message);
+              toast.error("Falha no processamento: " + (updatedJob as any).error_message);
             }
           }
         } catch (err) {
