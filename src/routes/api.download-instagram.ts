@@ -38,17 +38,34 @@ interface MediaResponse {
 const UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
-// Resolve /share/ and other shortened links to canonical /p/ /reel/ /tv/.
+// Resolve /share/, /s/, stories and other shortened links to canonical /p/ /reel/ /tv/.
 async function resolveInstagramUrl(url: string): Promise<string> {
   try {
-    if (!/\/share\//i.test(url) && !/instagr\.am/i.test(url)) return url;
+    // If it's already a direct post/reel/tv link, just strip query params.
+    if (/instagram\.com\/(p|reel|reels|tv)\//i.test(url)) {
+      return url.split("?")[0];
+    }
+
     const r = await fetch(url, {
       method: "GET",
       redirect: "follow",
-      headers: { "User-Agent": UA, "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8" },
+      headers: { 
+        "User-Agent": UA, 
+        "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8"
+      },
     });
-    if (r.url && /instagram\.com\/.*(p|reel|reels|tv)\//i.test(r.url)) {
-      return r.url.split("?")[0];
+
+    if (r.url) {
+      // If it resolved to a canonical post/reel/tv, use that.
+      if (/instagram\.com\/.*(p|reel|reels|tv)\//i.test(r.url)) {
+        return r.url.split("?")[0];
+      }
+      // Support stories (often redirected to a specific highlight/story URL).
+      if (/instagram\.com\/stories\//i.test(r.url)) {
+        return r.url.split("?")[0];
+      }
+      return r.url;
     }
   } catch {}
   return url;
@@ -495,7 +512,7 @@ export const Route = createFileRoute("/api/download-instagram")({
 
         const url = requestUrl.searchParams.get("url");
         if (!url || !url.includes("instagram.com")) {
-          return new Response(JSON.stringify({ success: false, error: "URL inválida" }), {
+          return new Response(JSON.stringify({ success: false, error: "URL inválida. Certifique-se de que o link é do Instagram." }), {
             status: 400,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
@@ -519,7 +536,7 @@ export const Route = createFileRoute("/api/download-instagram")({
         }
 
         if (!url || !url.includes("instagram.com")) {
-          return new Response(JSON.stringify({ success: false, error: "URL inválida" }), {
+          return new Response(JSON.stringify({ success: false, error: "URL inválida. Certifique-se de que o link é do Instagram." }), {
             status: 400,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
