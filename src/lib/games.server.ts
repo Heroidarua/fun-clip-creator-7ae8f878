@@ -25,7 +25,8 @@ function setToCache(key: string, data: any) {
 }
 
 function getTypedGames(): Game[] {
-  return (games as Game[]) || [];
+  const allGames = require('../data/games').games;
+  return (allGames as Game[]) || [];
 }
 
 export async function fetchGames({ page = 1, limit = 24, search = '', category = 'Todos' }) {
