@@ -181,11 +181,12 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality | string = "b
   }
 
   const chosen = muxed[0] || videoOnly[0];
+  const chosenMuxed = Boolean(muxed[0]?.url);
 
   return {
-    video: chosen?.url || audioOnly[0]?.url || "",
-    audio: audioOnly[0]?.url || chosen?.url || "",
-    hasMuxed: Boolean(muxed[0]?.url),
+    video: chosen?.url || "",
+    audio: audioOnly[0]?.url || (chosenMuxed ? chosen?.url : "") || "",
+    hasMuxed: chosenMuxed,
     height: Number(chosen?.height || 0),
   };
 }
@@ -259,8 +260,8 @@ async function fetchInnerTube(
       const result: YouTubeResponse = {
         success: true,
         data: {
-          video_url: video || audio || "",
-          audio_url: audio || video || "",
+          video_url: video,
+          audio_url: audio,
           thumbnail: thumbs[thumbs.length - 1]?.url || fallbackThumbnail(videoId),
           title: (details.title || "YouTube Video").substring(0, 120),
           author: details.author || "YouTube",
