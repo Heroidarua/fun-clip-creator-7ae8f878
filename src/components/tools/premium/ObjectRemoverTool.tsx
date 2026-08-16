@@ -104,13 +104,11 @@ export default function ObjectRemoverTool() {
       toast.info("A IA está removendo o objeto selecionado...");
       
       const processedImage = await removeObject({
-        data: {
-          image: imageBase64,
-          mask: maskBase64
-        }
+        image: imageBase64,
+        mask: maskBase64
       });
 
-      setResult(processedImage);
+      setResult(processedImage as string);
       toast.success("Objeto removido com sucesso!");
     } catch (error) {
       console.error(error);
