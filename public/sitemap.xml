@@ -79,6 +79,12 @@
     <loc>https://sos01.com.br/ferramenta/avatar-pixelado</loc>
   </url>
   <url>
+    <loc>https://sos01.com.br/ferramenta/avioes</loc>
+  </url>
+  <url>
+    <loc>https://sos01.com.br/ferramenta/ceu</loc>
+  </url>
+  <url>
     <loc>https://sos01.com.br/ferramenta/conversor-mp4-mp3</loc>
   </url>
   <url>
@@ -86,6 +92,9 @@
   </url>
   <url>
     <loc>https://sos01.com.br/ferramenta/encurtador-de-url</loc>
+  </url>
+  <url>
+    <loc>https://sos01.com.br/ferramenta/financeira</loc>
   </url>
   <url>
     <loc>https://sos01.com.br/ferramenta/gerador-de-senha</loc>
@@ -109,7 +118,13 @@
     <loc>https://sos01.com.br/ferramenta/marca-dagua</loc>
   </url>
   <url>
+    <loc>https://sos01.com.br/ferramenta/melhorar-video</loc>
+  </url>
+  <url>
     <loc>https://sos01.com.br/ferramenta/meu-ip</loc>
+  </url>
+  <url>
+    <loc>https://sos01.com.br/ferramenta/navios</loc>
   </url>
   <url>
     <loc>https://sos01.com.br/ferramenta/ocr</loc>
@@ -118,7 +133,13 @@
     <loc>https://sos01.com.br/ferramenta/pdf-signer</loc>
   </url>
   <url>
+    <loc>https://sos01.com.br/ferramenta/raios</loc>
+  </url>
+  <url>
     <loc>https://sos01.com.br/ferramenta/removedor-de-fundo</loc>
+  </url>
+  <url>
+    <loc>https://sos01.com.br/ferramenta/remover-objetos</loc>
   </url>
   <url>
     <loc>https://sos01.com.br/ferramenta/resumidor</loc>
@@ -130,10 +151,16 @@
     <loc>https://sos01.com.br/ferramenta/stt</loc>
   </url>
   <url>
+    <loc>https://sos01.com.br/ferramenta/terremotos</loc>
+  </url>
+  <url>
     <loc>https://sos01.com.br/ferramenta/tradutor</loc>
   </url>
   <url>
     <loc>https://sos01.com.br/ferramenta/tts</loc>
+  </url>
+  <url>
+    <loc>https://sos01.com.br/ferramenta/vazamento-email</loc>
   </url>
   <url>
     <loc>https://sos01.com.br/ferramenta/velocidade</loc>
