@@ -4,9 +4,9 @@
  */
 
 export const YT_MAX_DURATION_SECONDS = 60 * 60; // 1 hora
-export const YT_MAX_FILE_BYTES = 1024 * 1024 * 1024; // 1 GB
-export const YT_LINK_TTL_SECONDS = 600; // 10 minutos
-export const YT_PROCESS_TIMEOUT_MS = 25000;
+export const YT_MAX_FILE_BYTES = 500 * 1024 * 1024; // 500 MB (Novo limite solicitado)
+export const YT_LINK_TTL_SECONDS = 3600; // 1 hora (Maior tempo para processamento assíncrono)
+export const YT_PROCESS_TIMEOUT_MS = 60000; // 60 segundos
 
 /** Rate limiting simples por IP (janela deslizante em memória). */
 const buckets = new Map<string, number[]>();

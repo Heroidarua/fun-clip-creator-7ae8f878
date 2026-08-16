@@ -22,7 +22,7 @@ export interface YoutubeInfo {
 const GENERIC_ERROR =
   "Não foi possível processar este vídeo. Verifique a URL e tente novamente.";
 
-async function postJson<T>(path: string, body: unknown): Promise<T> {
+export async function postJson<T>(path: string, body: unknown): Promise<T> {
   let res: Response;
   try {
     res = await fetch(`${apiBase()}${path}`, {

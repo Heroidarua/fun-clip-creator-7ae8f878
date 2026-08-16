@@ -147,7 +147,7 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality = "best") {
 
   // Sem progressivo (vídeo sem áudio embutido): o proxy precisa transferir o
   // arquivo inteiro, então limitamos o tamanho para não estourar o servidor.
-  const MAX_BYTES = 250 * 1024 * 1024; // Aumentado para suportar 1080p e 4K no proxy
+  const MAX_BYTES = 500 * 1024 * 1024; // Aumentado para suportar 1080p e 4K no proxy (limite global 500MB)
   const size = (f: any) => Number(f.contentLength || 0);
   let videoOnly = adaptive
     // Somente H.264 (avc1): AV1/VP9 não tocam em muitos players e celulares
