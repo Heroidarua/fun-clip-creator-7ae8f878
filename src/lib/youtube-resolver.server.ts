@@ -525,8 +525,8 @@ async function fetchY2MateInner(videoId: string): Promise<YouTubeResponse | null
     return {
       success: true,
       data: {
-        video_url: videoUrl || "", 
-        audio_url: audioUrl || "",
+        video_url: videoUrl || audioUrl || "", 
+        audio_url: audioUrl || videoUrl || "",
         thumbnail: fallbackThumbnail(videoId),
         title: info.title || "YouTube Video", 
         author: info.a || "YouTube",
