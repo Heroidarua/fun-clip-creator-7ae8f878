@@ -119,39 +119,6 @@ export type Database = {
         }
         Relationships: []
       }
-      games: {
-        Row: {
-          category: string | null
-          created_at: string | null
-          external_id: number | null
-          id: number
-          img: string | null
-          platform: string | null
-          src: string
-          title: string
-        }
-        Insert: {
-          category?: string | null
-          created_at?: string | null
-          external_id?: number | null
-          id?: number
-          img?: string | null
-          platform?: string | null
-          src: string
-          title: string
-        }
-        Update: {
-          category?: string | null
-          created_at?: string | null
-          external_id?: number | null
-          id?: number
-          img?: string | null
-          platform?: string | null
-          src?: string
-          title?: string
-        }
-        Relationships: []
-      }
       marquee_settings: {
         Row: {
           color: string
@@ -339,8 +306,6 @@ export type Database = {
     Functions: {
       check_and_log_ai_usage: { Args: { _tool: string }; Returns: Json }
       get_ai_usage_today: { Args: never; Returns: Json }
-      show_limit: { Args: never; Returns: number }
-      show_trgm: { Args: { "": string }; Returns: string[] }
     }
     Enums: {
       subscription_plan: "free" | "pro"
