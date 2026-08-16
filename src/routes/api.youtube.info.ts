@@ -97,8 +97,8 @@ export const Route = createFileRoute("/api/youtube/info")({
               container: "mp4" as const,
               type: "video" as const,
               quality: "high",
-              label: "MP4 — 720p",
-              estimatedBytes: estimateBytes(duration, 1200),
+              label: "MP4 — 1080p/720p (Melhor disponível)",
+              estimatedBytes: estimateBytes(duration, 2500),
             },
             {
               id: "mp4-low",

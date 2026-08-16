@@ -138,15 +138,14 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality = "best") {
 
   // Sem progressivo (vídeo sem áudio embutido): o proxy precisa transferir o
   // arquivo inteiro, então limitamos o tamanho para não estourar o servidor.
-  const MAX_BYTES = 45 * 1024 * 1024;
+  const MAX_BYTES = 500 * 1024 * 1024; // Aumentado para 500MB para suportar melhor qualidade
   const size = (f: any) => Number(f.contentLength || 0);
   let videoOnly = adaptive
     // Somente H.264 (avc1): AV1/VP9 não tocam em muitos players e celulares
     .filter(
       (f) =>
         /video\/mp4/.test(f.mimeType || "") &&
-        /avc1/.test(f.mimeType || "") &&
-        (f.height || 0) <= 1080,
+        (f.height || 0) <= 2160, // Aumentado para 4K
     )
     .sort(quality === "worst" ? asc : desc);
   if (quality === "high") {
