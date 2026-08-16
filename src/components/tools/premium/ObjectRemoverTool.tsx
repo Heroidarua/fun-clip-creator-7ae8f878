@@ -37,6 +37,7 @@ export default function ObjectRemoverTool() {
       height,
       isDrawingMode: true,
       backgroundColor: "transparent",
+      enableRetinaScaling: false
     });
 
     const brush = new fabric.PencilBrush(canvas);
