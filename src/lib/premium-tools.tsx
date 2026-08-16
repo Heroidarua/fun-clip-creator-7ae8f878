@@ -115,14 +115,14 @@ export const PREMIUM_TOOLS: PremiumTool[] = [
     status: "ready",
   },
   // Em breve
-  { slug: "avioes", name: "Rastreador de Aviões", description: "Voos em tempo real (em breve).", icon: Plane, color: "210 80% 60%", component: Placeholder, status: "soon" },
-  { slug: "raios", name: "Raios em Tempo Real", description: "Descargas elétricas no mundo (em breve).", icon: CloudLightning, color: "50 100% 55%", component: Placeholder, status: "soon" },
-  { slug: "navios", name: "Navios em Tempo Real", description: "Tráfego marítimo (em breve).", icon: Ship, color: "200 80% 50%", component: Placeholder, status: "soon" },
-  { slug: "terremotos", name: "Terremotos em Tempo Real", description: "Tremores recentes pelo mundo (em breve).", icon: Activity, color: "0 80% 55%", component: Placeholder, status: "soon" },
-  { slug: "ceu", name: "Céu em Tempo Real", description: "Planetário online (em breve).", icon: Stars, color: "260 80% 60%", component: Placeholder, status: "soon" },
-  { slug: "financeira", name: "Calculadora Financeira", description: "Juros, financiamento, investimentos (em breve).", icon: Calculator, color: "140 80% 45%", component: Placeholder, status: "soon" },
-  { slug: "remover-objetos", name: "Removedor de Objetos", description: "Remoção via IA (em breve).", icon: Eraser, color: "300 80% 60%", component: Placeholder, status: "soon" },
-  { slug: "vazamento-email", name: "Verificador de Vazamento", description: "Checagem de e-mail (em breve).", icon: ShieldAlert, color: "0 100% 50%", component: Placeholder, status: "soon" },
+  { slug: "avioes", name: "Rastreador de Aviões", description: "Acompanhe voos em tempo real em todo o mundo.", icon: Plane, color: "210 80% 60%", component: lazy(() => import("@/components/tools/premium/realtime/AircraftTrackerTool")), status: "ready" },
+  { slug: "raios", name: "Raios em Tempo Real", description: "Mapa global de descargas elétricas ao vivo.", icon: CloudLightning, color: "50 100% 55%", component: lazy(() => import("@/components/tools/premium/realtime/LightningTrackerTool")), status: "ready" },
+  { slug: "navios", name: "Navios em Tempo Real", description: "Rastreie o tráfego marítimo global.", icon: Ship, color: "200 80% 50%", component: lazy(() => import("@/components/tools/premium/realtime/ShipTrackerTool")), status: "ready" },
+  { slug: "terremotos", name: "Terremotos em Tempo Real", description: "Monitoramento de tremores recentes no mundo.", icon: Activity, color: "0 80% 55%", component: lazy(() => import("@/components/tools/premium/realtime/EarthquakeTrackerTool")), status: "ready" },
+  { slug: "ceu", name: "Céu em Tempo Real", description: "Mapa estelar e planetário interativo.", icon: Stars, color: "260 80% 60%", component: lazy(() => import("@/components/tools/premium/realtime/SkyTrackerTool")), status: "ready" },
+  { slug: "financeira", name: "Calculadora Financeira", description: "Calcule juros compostos e operações básicas.", icon: Calculator, color: "140 80% 45%", component: lazy(() => import("@/components/tools/premium/CalculatorTool")), status: "ready" },
+  { slug: "remover-objetos", name: "Removedor de Objetos", description: "Remova elementos indesejados de fotos com IA.", icon: Eraser, color: "300 80% 60%", component: lazy(() => import("@/components/tools/premium/ObjectRemoverTool")), status: "ready" },
+  { slug: "vazamento-email", name: "Verificador de Vazamento", description: "Verifique se seus dados foram expostos online.", icon: ShieldAlert, color: "0 100% 50%", component: lazy(() => import("@/components/tools/premium/EmailLeakTool")), status: "ready" },
 ];
 
 export const getPremiumTool = (slug: string) =>
