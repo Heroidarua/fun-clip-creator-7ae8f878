@@ -461,20 +461,60 @@ export default function Jogos() {
                     </div>
                   </div>
 
-                  {filtered.length > 0 ? (
-                    <div className="grid gap-4 sm:gap-6 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-                      {filtered.map((g, i) => (
-                        <div key={g.id} className="animate-fade-in" style={{ animationDelay: `${Math.min(i * 15, 200)}ms` }}>
-                          <GameCard
-                            game={g}
-                            onPlay={() => playGame(g)}
-                            isFavorite={isFavorite(g.id)}
-                            onToggleFavorite={() => toggleFavorite(g.id)}
-                          />
+                  {paginated.length > 0 ? (
+                    <>
+                      <div className="grid gap-4 sm:gap-6 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+                        {paginated.map((g, i) => (
+                          <div key={g.id} className="animate-fade-in" style={{ animationDelay: `${Math.min(i * 15, 200)}ms` }}>
+                            <GameCard
+                              game={g}
+                              onPlay={() => playGame(g)}
+                              isFavorite={isFavorite(g.id)}
+                              onToggleFavorite={() => toggleFavorite(g.id)}
+                            />
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Pagination Controls */}
+                      {totalPages > 1 && (
+                        <div className="mt-12 flex flex-wrap items-center justify-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={page === 1}
+                            onClick={() => {
+                              setPage(p => Math.max(1, p - 1));
+                              window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }}
+                            className="font-silkscreen text-[10px] tracking-wider border-2 border-primary/30"
+                          >
+                            ANTERIOR
+                          </Button>
+                          
+                          <div className="flex items-center gap-1 px-4 py-2 rounded-xl bg-card border-2 border-border/50 font-silkscreen text-[11px]">
+                            <span className="text-primary">{page}</span>
+                            <span className="text-muted-foreground">/</span>
+                            <span>{totalPages}</span>
+                          </div>
+
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={page === totalPages}
+                            onClick={() => {
+                              setPage(p => Math.min(totalPages, p + 1));
+                              window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }}
+                            className="font-silkscreen text-[10px] tracking-wider border-2 border-primary/30"
+                          >
+                            PRÓXIMA
+                          </Button>
                         </div>
-                      ))}
-                    </div>
+                      )}
+                    </>
                   ) : (
+
                     <div className="text-center py-20 rounded-3xl border-2 border-dashed border-[hsl(var(--border))] bg-[hsl(var(--card))/0.5]">
                       <div className="mx-auto w-16 h-16 grid place-items-center rounded-2xl bg-[hsl(var(--primary)/0.1)] text-[hsl(var(--primary))] mb-4">
                         <Gamepad2 className="w-8 h-8" />
