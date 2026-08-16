@@ -320,7 +320,20 @@ export default function VideoEnhancer() {
                  <Video className="w-5 h-5 text-primary" />}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-pixel text-xs text-foreground truncate">{status?.original_filename || 'Vídeo'}</p>
+                <div className="flex items-center justify-between gap-2">
+                  <p className="font-pixel text-xs text-foreground truncate">{status?.original_filename || 'Vídeo'}</p>
+                  {status?.status !== 'completed' && status?.status !== 'failed' && (
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={handleCancel}
+                      className="h-6 px-2 font-pixel text-[8px] text-destructive hover:bg-destructive/10"
+                    >
+                      <XCircle className="w-3 h-3 mr-1" />
+                      PARAR
+                    </Button>
+                  )}
+                </div>
                 <div className="flex gap-2 mt-1">
                   <span className="text-[8px] text-muted-foreground uppercase bg-foreground/5 px-1">Modo: {status?.enhancement_mode}</span>
                   {status?.input_size && (
