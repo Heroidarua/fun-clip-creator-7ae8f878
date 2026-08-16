@@ -23,10 +23,14 @@ export interface InstagramData {
 
 export async function resolveInstagramUrl(url: string): Promise<string> {
   try {
-    // Stories normalization
-    if (url.includes("/stories/")) {
+    // Stories and Highlights normalization
+    if (url.includes("/stories/") || url.includes("/s/") || url.includes("highlight")) {
+      // Handles: instagram.com/stories/username/ID/
       const storyMatch = url.match(/instagram\.com\/stories\/([^\/]+)\/([^\/?#]+)/i);
       if (storyMatch) return `https://www.instagram.com/stories/${storyMatch[1]}/${storyMatch[2]}/`;
+
+      // Handles: instagram.com/s/aGlnaGxpZ2h0OjE4MD... or highlight links
+      return url.split("?")[0];
     }
 
     if (!/\/share\//i.test(url) && !/instagr\.am/i.test(url)) return url;
