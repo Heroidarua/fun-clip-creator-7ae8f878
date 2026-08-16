@@ -12,23 +12,22 @@ const JobOptionsSchema = z.object({
 });
 
 export const createEnhancementJob = createServerFn({ method: "POST" })
-  .validator((data: unknown) => {
-    return z.object({
+  .handler(async ({ data }: { data: any }) => {
+    const validated = z.object({
       filename: z.string(),
       size: z.number(),
       options: JobOptionsSchema
     }).parse(data);
-  })
-  .handler(async ({ data }) => {
+
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
     const { data: job, error } = await supabaseAdmin
       .from("video_enhancement_jobs" as any)
       .insert({
-        original_filename: data.filename,
-        input_size: data.size,
-        enhancement_mode: data.options.mode,
-        audio_enhancement: data.options.audio,
+        original_filename: validated.filename,
+        input_size: validated.size,
+        enhancement_mode: validated.options.mode,
+        audio_enhancement: validated.options.audio,
         status: 'queued',
         expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
       } as any)
@@ -40,15 +39,14 @@ export const createEnhancementJob = createServerFn({ method: "POST" })
   });
 
 export const getJobStatus = createServerFn({ method: "GET" })
-  .validator((data: unknown) => {
-    return z.object({ jobId: z.string() }).parse(data);
-  })
-  .handler(async ({ data }) => {
+  .handler(async ({ data }: { data: any }) => {
+    const { jobId } = z.object({ jobId: z.string() }).parse(data);
+
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: job, error } = await supabaseAdmin
       .from("video_enhancement_jobs" as any)
       .select("*")
-      .eq("id", data.jobId)
+      .eq("id", jobId)
       .single();
 
     if (error) throw error;
