@@ -179,8 +179,8 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality | string = "b
   const chosen = muxed[0] || videoOnly[0];
 
   return {
-    video: chosen?.url || "",
-    audio: audioOnly[0]?.url || "",
+    video: chosen?.url || audioOnly[0]?.url || "",
+    audio: audioOnly[0]?.url || chosen?.url || "",
     hasMuxed: Boolean(muxed[0]?.url),
     height: Number(chosen?.height || 0),
   };
