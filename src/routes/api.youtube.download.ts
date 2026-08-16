@@ -66,8 +66,10 @@ export const Route = createFileRoute("/api/youtube/download")({
               format: format,
               quality: quality,
               status: 'PENDING',
-              progress: 0
+              progress: 0,
+              title: (body?.title as any) || ""
             })
+
             .select()
             .single();
 
