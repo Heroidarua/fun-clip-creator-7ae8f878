@@ -53,6 +53,8 @@ export default function VideoEnhancer() {
   };
 
   const startPolling = (id: string) => {
+    if (pollingRef.current) clearInterval(pollingRef.current);
+    
     setUploading(true);
     const interval = setInterval(async () => {
       try {
@@ -62,12 +64,12 @@ export default function VideoEnhancer() {
         setStatus(updatedJob);
         
         if ((updatedJob as any).status === 'completed' || (updatedJob as any).status === 'failed') {
-          clearInterval(interval);
+          if (pollingRef.current) clearInterval(pollingRef.current);
           setUploading(false);
           localStorage.removeItem('pending_video_enhancement_id');
           if ((updatedJob as any).status === 'completed') {
             toast.success("Melhoria concluída com sucesso!");
-          } else {
+          } else if ((updatedJob as any).error_message !== 'Cancelado pelo usuário') {
             toast.error("Falha no processamento: " + (updatedJob as any).error_message);
           }
         }
@@ -75,7 +77,36 @@ export default function VideoEnhancer() {
         console.error("Polling error:", err);
       }
     }, 5000); 
-    return () => clearInterval(interval);
+    pollingRef.current = interval;
+    return () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+    };
+  };
+
+  const handleCancel = async () => {
+    if (!jobId) return;
+    
+    try {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+      await cancelJob({ data: { jobId } });
+      localStorage.removeItem('pending_video_enhancement_id');
+      setJobId(null);
+      setStatus(null);
+      setUploading(false);
+      toast.info("Processamento interrompido.");
+    } catch (error) {
+      console.error("Erro ao cancelar:", error);
+      toast.error("Erro ao cancelar o processamento.");
+    }
+  };
+
+  const handleReset = () => {
+    if (pollingRef.current) clearInterval(pollingRef.current);
+    localStorage.removeItem('pending_video_enhancement_id');
+    setJobId(null);
+    setFile(null);
+    setStatus(null);
+    setUploading(false);
   };
 
   const startEnhancement = async () => {
