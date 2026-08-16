@@ -12,8 +12,10 @@ const JobOptionsSchema = z.object({
 });
 
 export const createEnhancementJob = createServerFn({ method: "POST" })
-  .validator((data: any) => data)
-  .handler(async ({ data }) => {
+  .handler(async (args) => {
+    // TanStack Start v1 createServerFn uses the first argument as input
+    const data = args.data as any;
+    
     const validated = z.object({
       filename: z.string(),
       size: z.number(),
@@ -40,8 +42,8 @@ export const createEnhancementJob = createServerFn({ method: "POST" })
   });
 
 export const getJobStatus = createServerFn({ method: "GET" })
-  .validator((data: any) => data)
-  .handler(async ({ data }) => {
+  .handler(async (args) => {
+    const data = args.data as any;
     const { jobId } = z.object({ jobId: z.string() }).parse(data);
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
