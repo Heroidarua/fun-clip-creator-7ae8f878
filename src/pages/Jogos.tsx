@@ -59,7 +59,7 @@ function pushRecent(id: number) {
 }
 
 // ---------- Card ----------
-function GameCard({
+const GameCard = React.memo(function GameCard({
   game, onPlay, isFavorite, onToggleFavorite,
 }: {
   game: Game; onPlay: () => void; isFavorite: boolean;
