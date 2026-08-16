@@ -37,12 +37,17 @@ export default function ObjectRemoverTool() {
 
     const container = containerRef.current;
     const width = container.clientWidth;
-    const height = (width * 9) / 16; // Mantém aspect ratio 16:9
+    const height = (width * 9) / 16;
 
-    // Destruir instância anterior se existir antes de criar nova
-    if (fabricCanvas.current) {
-      fabricCanvas.current.dispose();
-      fabricCanvas.current = null;
+    // A biblioteca Fabric.js as vezes entra em conflito com o React
+    // ao tentar manipular o DOM durante o dispose.
+    // Usamos um try/catch e verificação de segurança.
+    try {
+      if (fabricCanvas.current) {
+        fabricCanvas.current.dispose();
+      }
+    } catch (e) {
+      console.warn("Erro ao limpar canvas anterior:", e);
     }
 
     const canvas = new fabric.Canvas(canvasRef.current, {
@@ -82,9 +87,13 @@ export default function ObjectRemoverTool() {
     fabricCanvas.current = canvas;
 
     return () => {
-      if (fabricCanvas.current) {
-        fabricCanvas.current.dispose();
-        fabricCanvas.current = null;
+      try {
+        if (fabricCanvas.current) {
+          fabricCanvas.current.dispose();
+          fabricCanvas.current = null;
+        }
+      } catch (e) {
+        console.warn("Erro no dispose final do canvas:", e);
       }
     };
   }, [preview, result, brushSize]);
