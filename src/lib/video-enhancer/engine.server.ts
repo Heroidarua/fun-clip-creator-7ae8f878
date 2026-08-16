@@ -30,7 +30,7 @@ export async function processVideo(
   // 1. Denoise (Redução de ruído)
   if (options.mode === 'standard' || options.mode === 'maximum') {
     // hqdn3d é um filtro de denoise de alta qualidade
-    videoFilters.push("hqdn3d=1.5:1.5:6:6");
+    videoFilters.push("hqdn3d=1.0:1.0:4:4"); // Reduzido para performance
   }
 
   // 2. Upscale (Aumento de resolução)
@@ -40,10 +40,10 @@ export async function processVideo(
 
   // 3. Sharpen (Nitidez)
   if (options.mode === 'maximum') {
-    // unsharp mask
-    videoFilters.push("unsharp=5:5:1.0:5:5:0.0");
+    // unsharp mask - suavizado para performance
+    videoFilters.push("unsharp=3:3:0.8:3:3:0.0");
   } else if (options.mode === 'standard') {
-    videoFilters.push("unsharp=3:3:0.5:3:3:0.0");
+    videoFilters.push("unsharp=3:3:0.4:3:3:0.0");
   }
 
   // 4. Audio Enhancement
@@ -64,11 +64,10 @@ export async function processVideo(
   
   // Preset de velocidade vs qualidade
   // Otimizado: presets mais rápidos para resoluções altas para reduzir o tempo de espera
-  let preset = 'veryfast';
+  // Preset de velocidade ultra-rápida no sandbox
+  let preset = 'ultrafast';
   if (options.mode === 'maximum') {
-    preset = target && (target.w > 1920) ? 'faster' : 'slower';
-  } else if (options.mode === 'standard') {
-    preset = target && (target.w > 1280) ? 'veryfast' : 'medium';
+    preset = 'superfast';
   }
 
   const args = [
