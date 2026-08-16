@@ -126,6 +126,54 @@ export type ToolSeo = {
 
 export const TOOLS_SEO: ToolSeo[] = [
   {
+    slug: "melhorar-video",
+    name: "Melhorar Vídeo",
+    title: "Melhorar Vídeo Online Grátis | Upscale e Denoise | SOS01",
+    description:
+      "Melhore a qualidade dos seus vídeos online e grátis. Upscale para 4K, remoção de ruído, nitidez e melhoria de áudio com IA.",
+    h1: "Melhorar qualidade de vídeo online",
+    keywords: [
+      "melhorar vídeo",
+      "upscale vídeo",
+      "remover ruído vídeo",
+      "melhorar áudio vídeo",
+      "vídeo 4k online",
+    ],
+    category: "video",
+    intro:
+      "A ferramenta de melhoria de vídeo do SOS01 utiliza algoritmos avançados para aumentar a resolução e a clareza dos seus arquivos MP4. Você pode fazer upscale para HD, Full HD ou 4K, remover granulação (denoise) e melhorar a inteligibilidade das vozes no áudio, tudo de forma modular e gratuita.",
+    steps: [
+      "Envie seu arquivo de vídeo (MP4 recomendado, até 500MB).",
+      "Escolha o nível de melhoria: Leve, Padrão ou Máximo.",
+      "Selecione as opções de áudio como redução de ruído e ganho de voz.",
+      "Aguarde o processamento e baixe o vídeo aprimorado.",
+    ],
+    features: [
+      "Upscale inteligente para resoluções maiores",
+      "Redução de ruído visual e digital (Denoise)",
+      "Ajuste de nitidez e correção de cor",
+      "Melhoria de áudio com foco em voz",
+    ],
+    formats: ["MP4", "MOV", "AVI"],
+    faq: [
+      {
+        question: "Qual o limite de tamanho de arquivo?",
+        answer: "Você pode enviar vídeos de até 500 MB para processamento.",
+      },
+      {
+        question: "Quanto tempo demora o processamento?",
+        answer:
+          "Depende da duração do vídeo e do nível de melhoria escolhido. Vídeos curtos levam alguns minutos.",
+      },
+      {
+        question: "Os meus vídeos ficam salvos?",
+        answer:
+          "Os arquivos são deletados automaticamente após 24 horas da conclusão do processamento.",
+      },
+    ],
+    related: ["conversor-mp4-mp3", "gerador-de-thumbnail", "removedor-de-fundo"],
+  },
+  {
     slug: "gerador-qrcode",
     name: "Gerador de QR Code",
     title: "Gerador de QR Code Grátis Online | SOS01",

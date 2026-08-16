@@ -17,6 +17,7 @@ import {
   Image as ImageIcon,
   Link2,
   UserSquare2,
+  Video,
   type LucideIcon,
 } from "lucide-react";
 import { PREMIUM_TOOLS } from "@/lib/premium-tools";
@@ -36,6 +37,17 @@ export type RegisteredTool = {
 };
 
 const UTILITY_TOOLS: RegisteredTool[] = [
+  {
+    slug: "melhorar-video",
+    name: "Melhorar Vídeo",
+    description: "Upscale, denoise e melhoria de áudio com IA para seus vídeos.",
+    icon: Video,
+    color: "260 100% 60%",
+    component: lazy(() => import("@/components/tools/video-enhancer/VideoEnhancer")),
+    featureKey: "video-enhancer",
+    premium: false,
+    status: "ready",
+  },
   {
     slug: "gerador-qrcode",
     name: "Gerador de QR Code",
