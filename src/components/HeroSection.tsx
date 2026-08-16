@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from "react";
-import { Clipboard, Search, Download, Headphones, Gamepad2, Book, Music, Camera, CheckCircle, AlertTriangle, Play } from "lucide-react";
+import { Clipboard, Search, Download, Headphones, Gamepad2, Book, Music, Camera, CheckCircle, AlertTriangle, Play, Video, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { Link } from "@tanstack/react-router";
+
 
 import { useDownloaderStatus } from "@/hooks/useDownloaderStatus";
 
@@ -306,6 +308,7 @@ const HeroSection = () => {
 
   const createEnhancementJobFn = useServerFn(createEnhancementJob);
   const getJobStatusFn = useServerFn(getJobStatus);
+
 
 
 
