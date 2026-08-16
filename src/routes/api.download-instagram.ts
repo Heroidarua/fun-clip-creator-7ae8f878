@@ -331,28 +331,25 @@ async function tryDirectScrape(url: string): Promise<MediaResponse | null> {
     const shortcode = url.match(/(?:p|reel|reels|tv)\/([A-Za-z0-9-_]+)/)?.[1];
     if (!shortcode) return null;
 
-    // Use o pidgets do Instagram como uma forma leve de metadados
-    const embedRes = await fetch(`https://www.instagram.com/p/${shortcode}/embed/captioned/`, {
+    // Use o oembed do Instagram como uma forma oficial de metadados
+    const embedRes = await fetch(`https://help.instagram.com/ajax/webcanversations/oembed?url=${encodeURIComponent(url)}`, {
       headers: {
         "User-Agent": UA,
-        Accept: "text/html",
+        Accept: "application/json",
       },
     });
 
     if (embedRes.ok) {
-      const html = await embedRes.text();
-      const videoUrlMatch = html.match(/"video_url":"([^"]+)"/);
-      const displayUrlMatch = html.match(/"display_url":"([^"]+)"/);
-      
-      if (videoUrlMatch || displayUrlMatch) {
+      const json: any = await embedRes.json();
+      if (json?.thumbnail_url) {
         return {
           success: true,
           data: {
-            media_url: (videoUrlMatch?.[1] || displayUrlMatch?.[1] || "").replace(/\\u0026/g, "&"),
-            media_type: videoUrlMatch ? "video" : "image",
-            thumbnail: (displayUrlMatch?.[1] || "").replace(/\\u0026/g, "&"),
-            title: "Instagram Media",
-            author: "Instagram User",
+            media_url: json.thumbnail_url, // Fallback image
+            media_type: "image",
+            thumbnail: json.thumbnail_url,
+            title: json.title || "Instagram Media",
+            author: json.author_name || "Instagram User",
           },
         };
       }
@@ -436,10 +433,6 @@ async function downloadInstagramMedia(url: string, functionUrl: string, rapidApi
   } catch (e) {
     console.warn("⚠️ snapsave falhou:", (e as Error).message);
   }
-
-  // Fallback for when snapsave fails - try to find other options or re-fetch.
-  // Re-attempting snapsave one more time with a slightly modified URL or header if possible
-  // or just move to RapidAPI.
 
   // RapidAPI providers como fallback (alguns endpoints exigem subscription paga).
   const rapidResult = await fetchViaRapidApi(url, rapidApiKey);
