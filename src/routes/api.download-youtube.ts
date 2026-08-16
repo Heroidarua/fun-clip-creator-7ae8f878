@@ -51,10 +51,14 @@ export const Route = createFileRoute("/api/download-youtube")({
 
           const result = await resolveYoutube(canonicalUrl, videoId);
 
-          const { reportDownloaderResult } = await import(
-            "@/lib/downloader-status.server"
-          );
-          reportDownloaderResult("youtube", result.success);
+          try {
+            const { reportDownloaderResult } = await import(
+              "@/lib/downloader-status.server"
+            );
+            reportDownloaderResult("youtube", result.success);
+          } catch (e) {
+            console.warn("Failed to report status:", e);
+          }
 
           return Response.json(result, {
             status: result.success ? 200 : 502,

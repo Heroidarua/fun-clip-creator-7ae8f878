@@ -12,6 +12,7 @@ function isLovableHost(host: string): boolean {
   return (
     host.endsWith(".lovable.app") ||
     host.endsWith(".lovableproject.com") ||
+    host.includes("lovableproject.com") ||
     host === "localhost" ||
     host.startsWith("127.") ||
     host.startsWith("192.168.")

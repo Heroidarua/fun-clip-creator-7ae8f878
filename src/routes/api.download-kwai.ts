@@ -499,8 +499,12 @@ export const Route = createFileRoute("/api/download-kwai")({
           const sessionCookie = process.env.KWAI_SESSION_COOKIE || "";
           const result = await downloadKwaiMedia(url, requestUrl.pathname, sessionCookie);
           try {
-            const { reportDownloaderResult } = await import("@/lib/downloader-status.server");
-            reportDownloaderResult("kwai", !!result.success);
+            try {
+              const { reportDownloaderResult } = await import("@/lib/downloader-status.server");
+              reportDownloaderResult("kwai", !!result.success);
+            } catch (e) {
+              console.warn("Failed to report status:", e);
+            }
           } catch {}
           return new Response(JSON.stringify(result), {
             status: 200,

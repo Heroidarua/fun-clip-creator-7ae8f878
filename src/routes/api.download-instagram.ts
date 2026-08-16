@@ -565,8 +565,12 @@ export const Route = createFileRoute("/api/download-instagram")({
         const rapidApiKey = process.env.RAPIDAPI_KEY || "";
         const result = await downloadInstagramMedia(url, "/api/download-instagram", rapidApiKey);
         try {
-          const { reportDownloaderResult } = await import("@/lib/downloader-status.server");
-          reportDownloaderResult("instagram", !!result.success);
+            try {
+              const { reportDownloaderResult } = await import("@/lib/downloader-status.server");
+              reportDownloaderResult("instagram", !!result.success);
+            } catch (e) {
+              console.warn("Failed to report status:", e);
+            }
         } catch {}
         return new Response(JSON.stringify(result), {
           status: 200,
