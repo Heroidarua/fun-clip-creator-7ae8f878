@@ -191,7 +191,7 @@ export default function ObjectRemoverTool() {
                 ref={containerRef}
                 className="relative aspect-video w-full border-2 border-border overflow-hidden rounded-sm bg-slate-950 shadow-cartridge"
               >
-                <canvas ref={canvasRef} />
+                <canvas ref={canvasRef} id="object-remover-canvas" />
                 {processing && (
                   <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center z-50">
                     <Loader2 className="w-8 h-8 text-primary animate-spin mb-2" />
