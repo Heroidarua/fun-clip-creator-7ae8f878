@@ -81,8 +81,9 @@ export const Route = createFileRoute("/api/youtube/download")({
             videoId: parsed.videoId!,
             type: format === "m4a" ? "audio" : "video",
             quality,
-            title: "",
+            title: body?.title || "",
           });
+
 
           const downloadUrl = `/api/youtube/file?token=${encodeURIComponent(token)}&jobId=${job.id}`;
           
