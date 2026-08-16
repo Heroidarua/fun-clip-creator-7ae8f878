@@ -1,10 +1,10 @@
+import React, { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import {
   Gamepad2, X, Search, Play, Heart, Shuffle, Clock,
   Flame, Sparkles, Star, Filter, Trophy, RotateCw
 } from "lucide-react";
-import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Game } from "@/data/games";
