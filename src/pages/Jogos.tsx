@@ -320,9 +320,7 @@ export default function Jogos() {
 
   return (
     <>
-      <Header />
-
-      <main className="min-h-screen bg-[hsl(var(--background))] pt-20 pb-24">
+      <div className="container mx-auto px-4">
         {/* ---- Compact Hero ---- */}
         <section className="relative overflow-hidden">
           {/* soft neon spots */}
@@ -567,8 +565,7 @@ export default function Jogos() {
           </div>
         </div>
       )}
-
-      <Footer />
+      </div>
     </>
   );
 }
