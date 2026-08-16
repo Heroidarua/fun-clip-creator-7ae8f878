@@ -19,7 +19,6 @@ import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as NasaRouteImport } from './routes/nasa'
 import { Route as MaisSbtRouteImport } from './routes/mais-sbt'
 import { Route as JogosJavaRouteImport } from './routes/jogos-java'
-import { Route as JogosRouteImport } from './routes/jogos'
 import { Route as IptvRouteImport } from './routes/iptv'
 import { Route as FerramentasRouteImport } from './routes/ferramentas'
 import { Route as DmcaRouteImport } from './routes/dmca'
@@ -32,7 +31,6 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as JogosIndexRouteImport } from './routes/jogos/index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as JogosCategoryRouteImport } from './routes/jogos/$category'
 import { Route as FerramentasYoutubeDownloaderRouteImport } from './routes/ferramentas_.youtube-downloader'
@@ -116,11 +114,6 @@ const JogosJavaRoute = JogosJavaRouteImport.update({
   path: '/jogos-java',
   getParentRoute: () => rootRouteImport,
 } as any)
-const JogosRoute = JogosRouteImport.update({
-  id: '/jogos',
-  path: '/jogos',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IptvRoute = IptvRouteImport.update({
   id: '/iptv',
   path: '/iptv',
@@ -180,11 +173,6 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any)
-const JogosIndexRoute = JogosIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => JogosRoute,
 } as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/',
@@ -371,7 +359,6 @@ export interface FileRoutesByFullPath {
   '/dmca': typeof DmcaRoute
   '/ferramentas': typeof FerramentasRoute
   '/iptv': typeof IptvRoute
-  '/jogos': typeof JogosRouteWithChildren
   '/jogos-java': typeof JogosJavaRoute
   '/mais-sbt': typeof MaisSbtRoute
   '/nasa': typeof NasaRoute
@@ -410,7 +397,6 @@ export interface FileRoutesByFullPath {
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/jogos/$category': typeof JogosCategoryRoute
   '/blog/': typeof BlogIndexRoute
-  '/jogos/': typeof JogosIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/youtube/download': typeof ApiYoutubeDownloadRoute
   '/api/youtube/file': typeof ApiYoutubeFileRoute
@@ -466,7 +452,6 @@ export interface FileRoutesByTo {
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/jogos/$category': typeof JogosCategoryRoute
   '/blog': typeof BlogIndexRoute
-  '/jogos': typeof JogosIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/youtube/download': typeof ApiYoutubeDownloadRoute
   '/api/youtube/file': typeof ApiYoutubeFileRoute
@@ -486,7 +471,6 @@ export interface FileRoutesById {
   '/dmca': typeof DmcaRoute
   '/ferramentas': typeof FerramentasRoute
   '/iptv': typeof IptvRoute
-  '/jogos': typeof JogosRouteWithChildren
   '/jogos-java': typeof JogosJavaRoute
   '/mais-sbt': typeof MaisSbtRoute
   '/nasa': typeof NasaRoute
@@ -525,7 +509,6 @@ export interface FileRoutesById {
   '/ferramentas_/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/jogos/$category': typeof JogosCategoryRoute
   '/blog/': typeof BlogIndexRoute
-  '/jogos/': typeof JogosIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/youtube/download': typeof ApiYoutubeDownloadRoute
   '/api/youtube/file': typeof ApiYoutubeFileRoute
@@ -546,7 +529,6 @@ export interface FileRouteTypes {
     | '/dmca'
     | '/ferramentas'
     | '/iptv'
-    | '/jogos'
     | '/jogos-java'
     | '/mais-sbt'
     | '/nasa'
@@ -585,7 +567,6 @@ export interface FileRouteTypes {
     | '/ferramentas/youtube-downloader'
     | '/jogos/$category'
     | '/blog/'
-    | '/jogos/'
     | '/api/public/pinterest-download'
     | '/api/youtube/download'
     | '/api/youtube/file'
@@ -641,7 +622,6 @@ export interface FileRouteTypes {
     | '/ferramentas/youtube-downloader'
     | '/jogos/$category'
     | '/blog'
-    | '/jogos'
     | '/api/public/pinterest-download'
     | '/api/youtube/download'
     | '/api/youtube/file'
@@ -660,7 +640,6 @@ export interface FileRouteTypes {
     | '/dmca'
     | '/ferramentas'
     | '/iptv'
-    | '/jogos'
     | '/jogos-java'
     | '/mais-sbt'
     | '/nasa'
@@ -699,7 +678,6 @@ export interface FileRouteTypes {
     | '/ferramentas_/youtube-downloader'
     | '/jogos/$category'
     | '/blog/'
-    | '/jogos/'
     | '/api/public/pinterest-download'
     | '/api/youtube/download'
     | '/api/youtube/file'
@@ -719,7 +697,6 @@ export interface RootRouteChildren {
   DmcaRoute: typeof DmcaRoute
   FerramentasRoute: typeof FerramentasRoute
   IptvRoute: typeof IptvRoute
-  JogosRoute: typeof JogosRouteWithChildren
   JogosJavaRoute: typeof JogosJavaRoute
   MaisSbtRoute: typeof MaisSbtRoute
   NasaRoute: typeof NasaRoute
@@ -823,13 +800,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JogosJavaRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/jogos': {
-      id: '/jogos'
-      path: '/jogos'
-      fullPath: '/jogos'
-      preLoaderRoute: typeof JogosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/iptv': {
       id: '/iptv'
       path: '/iptv'
@@ -913,13 +883,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/jogos/': {
-      id: '/jogos/'
-      path: '/'
-      fullPath: '/jogos/'
-      preLoaderRoute: typeof JogosIndexRouteImport
-      parentRoute: typeof JogosRoute
     }
     '/blog/': {
       id: '/blog/'
@@ -1181,18 +1144,6 @@ const BlogRouteChildren: BlogRouteChildren = {
 
 const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
-interface JogosRouteChildren {
-  JogosCategoryRoute: typeof JogosCategoryRoute
-  JogosIndexRoute: typeof JogosIndexRoute
-}
-
-const JogosRouteChildren: JogosRouteChildren = {
-  JogosCategoryRoute: JogosCategoryRoute,
-  JogosIndexRoute: JogosIndexRoute,
-}
-
-const JogosRouteWithChildren = JogosRoute._addFileChildren(JogosRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
@@ -1206,7 +1157,6 @@ const rootRouteChildren: RootRouteChildren = {
   DmcaRoute: DmcaRoute,
   FerramentasRoute: FerramentasRoute,
   IptvRoute: IptvRoute,
-  JogosRoute: JogosRouteWithChildren,
   JogosJavaRoute: JogosJavaRoute,
   MaisSbtRoute: MaisSbtRoute,
   NasaRoute: NasaRoute,
