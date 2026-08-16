@@ -1,5 +1,22 @@
-import { useState, useEffect, useRef } from "react";
-import { Clipboard, Search, Download, Headphones, Gamepad2, Book, Music, Camera, CheckCircle, AlertTriangle, Play } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { 
+  Download, 
+  Search, 
+  Clipboard, 
+  CheckCircle, 
+  AlertTriangle, 
+  Play,
+  Gamepad2, 
+  Music, 
+  Camera, 
+  Book,
+  Maximize2,
+  ChevronLeft,
+  ChevronRight,
+  Loader2,
+  AlertCircle,
+  Headphones
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -16,13 +33,16 @@ import {
   type YoutubeInfo,
 } from "@/services/youtubeDownloader";
 import { downloadYoutubeMedia, BROWSER_PROCESS_LIMIT } from "@/lib/youtube-download-flow";
+import { fetchInstagramInfo, requestInstagramDownload, absoluteDownloadUrl as absoluteIgUrl } from "@/services/instagramDownloader";
 import { useServerFn } from "@tanstack/react-start";
+import { trackDownload } from "@/lib/analytics";
 import { validatePinterestUrl } from "@/lib/pinterest-validation";
 import tiktokIcon from "@/assets/tiktok-icon.png";
 import instagramIcon from "@/assets/instagram-icon.png";
 import kwaiIcon from "@/assets/kwai-icon.png";
 import youtubeIcon from "@/assets/youtube-icon.png";
 import facebookIcon from "@/assets/facebook-icon.png";
+import pinterestIcon from "@/assets/pinterest-icon.png";
 
 // Status Badge Component
 const StatusBadge = ({ isActive }: { isActive: boolean }) => (
@@ -503,8 +523,8 @@ const HeroSection = () => {
     
     if (!instagramUrl.trim()) {
       toast({
-        title: "URL obrigatório",
-        description: "Por favor, insira um URL válido do Instagram (vídeo, foto ou story).",
+        title: "URL obrigatória",
+        description: "Por favor, insira um URL válido do Instagram.",
         variant: "destructive",
       });
       return;
@@ -512,6 +532,7 @@ const HeroSection = () => {
 
     setInstagramLoading(true);
     setInstagramProgress(0);
+    setInstagramData(null);
     setSelectedCarouselIndex(0);
 
     const progressInterval = setInterval(() => {
@@ -522,50 +543,40 @@ const HeroSection = () => {
     }, 200);
 
     try {
-      console.log("Chamando API Instagram com URL:", instagramUrl.trim());
-      
-      const data = await fetchJsonWithRetry(apiUrl('/api/download-instagram'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: instagramUrl.trim() }),
-      });
+      const data = await fetchInstagramInfo(instagramUrl.trim());
 
       setInstagramProgress(100);
       clearInterval(progressInterval);
 
       if (data && data.success) {
-        setInstagramData(rewriteProxy(data.data));
-        setSelectedCarouselIndex(0);
-        const isCarousel = data.data.is_carousel && data.data.carousel_items?.length > 1;
-        const mediaTypeText = isCarousel 
-          ? `Carrossel com ${data.data.carousel_items.length} itens` 
-          : (data.data.media_type === 'video' ? 'Vídeo' : 'Foto');
+        // Mapeamos InstagramInfo para InstagramData
+        const igData: InstagramData = {
+          media_url: data.media_url,
+          media_type: data.media_type,
+          thumbnail: data.thumbnail,
+          title: data.title,
+          author: data.author,
+          duration: data.duration,
+          is_carousel: data.is_carousel,
+          carousel_items: data.carousel_items?.map((item, idx) => ({
+            index: idx,
+            media_url: item.url,
+            media_type: item.type,
+            thumbnail: item.thumbnail,
+          })),
+        };
+        setInstagramData(igData);
+        const isCarousel = data.is_carousel && data.carousel_items && data.carousel_items.length > 1;
         toast({
-          title: `${isCarousel ? 'Carrossel' : mediaTypeText} encontrado!`,
-          description: isCarousel ? "Selecione o item que deseja baixar." : "Pronto para download.",
-        });
-      } else {
-        toast({
-          title: "Erro ao processar",
-          description: data.error || "Não foi possível processar a mídia do Instagram.",
-          variant: "destructive",
+          title: "Conteúdo encontrado!",
+          description: isCarousel ? "Selecione o item do carrossel para baixar." : "Pronto para download.",
         });
       }
     } catch (error: any) {
-      console.error("Erro completo:", error);
       clearInterval(progressInterval);
-      
-      let errorMessage = "Tente novamente em alguns momentos.";
-      
-      if (error.message) {
-        errorMessage = error.message;
-      } else if (typeof error === 'string') {
-        errorMessage = error;
-      }
-      
       toast({
-        title: "Erro de conexão",
-        description: errorMessage,
+        title: "Erro ao buscar",
+        description: error.message || "Não foi possível processar este link.",
         variant: "destructive",
       });
     } finally {
@@ -583,50 +594,38 @@ const HeroSection = () => {
     if (!instagramData) return;
 
     try {
-      let downloadUrl: string;
-      let mediaType: 'video' | 'image';
-      
-      // If carousel and specific item selected
-      if (instagramData.is_carousel && instagramData.carousel_items && itemIndex !== undefined) {
-        const item = instagramData.carousel_items[itemIndex];
-        downloadUrl = item.proxy_url || item.media_url;
-        mediaType = item.media_type;
-      } else if (instagramData.is_carousel && instagramData.carousel_items) {
-        // Use selected carousel index
-        const item = instagramData.carousel_items[selectedCarouselIndex];
-        downloadUrl = item.proxy_url || item.media_url;
-        mediaType = item.media_type;
-      } else {
-        // Single item
-        downloadUrl = instagramData.proxy_url || instagramData.media_url;
-        mediaType = instagramData.media_type;
-      }
-      
-      const response = await fetch(downloadUrl);
-      const blob = await response.blob();
-      const downloadBlobUrl = URL.createObjectURL(blob);
-      
+      const index = itemIndex !== undefined ? itemIndex : selectedCarouselIndex;
+      const item = instagramData.is_carousel && instagramData.carousel_items 
+        ? instagramData.carousel_items[index] 
+        : { media_url: instagramData.media_url, media_type: instagramData.media_type };
+
+      const { downloadUrl } = await requestInstagramDownload(
+        item.media_url,
+        item.media_type,
+        instagramData.title
+      );
+
       const link = document.createElement('a');
-      link.href = downloadBlobUrl;
-      const extension = mediaType === 'video' ? 'mp4' : 'jpg';
-      const itemSuffix = itemIndex !== undefined ? `_${itemIndex + 1}` : '';
-      link.download = `${instagramData.title.replace(/[^a-zA-Z0-9]/g, '_')}_instagram${itemSuffix}.${extension}`;
+      link.href = absoluteIgUrl(downloadUrl);
+      link.setAttribute('download', '');
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      URL.revokeObjectURL(downloadBlobUrl);
 
-      const mediaTypeText = mediaType === 'video' ? 'vídeo' : 'foto';
-      trackDownload('instagram');
+      if (typeof (window as any).gtag === 'function') {
+        (window as any).gtag('event', 'download', {
+          event_category: 'engagement',
+          event_label: 'instagram',
+        });
+      }
       toast({
         title: "Download iniciado!",
-        description: `${mediaTypeText.charAt(0).toUpperCase() + mediaTypeText.slice(1)} está sendo baixado.`,
+        description: "O arquivo está sendo processado pelo servidor.",
       });
-    } catch (error) {
-      const mediaTypeText = instagramData?.media_type === 'video' ? 'vídeo' : 'foto';
+    } catch (error: any) {
       toast({
         title: "Erro no download",
-        description: `Não foi possível baixar ${mediaTypeText === 'vídeo' ? 'o' : 'a'} ${mediaTypeText}.`,
+        description: error.message || "Não foi possível iniciar o download.",
         variant: "destructive",
       });
     }
@@ -1444,32 +1443,24 @@ const HeroSection = () => {
                   {/* Media Preview */}
                   <div className="w-full mb-4 border-2 border-[hsl(var(--retro-magenta))]/30 bg-background/50">
                     {(() => {
-                      const currentItem: {
-                        media_url: string;
-                        media_type: 'video' | 'image';
-                        thumbnail: string;
-                        proxy_url?: string;
-                        proxy_thumbnail_url?: string;
-                      } = instagramData.is_carousel && instagramData.carousel_items
+                      const currentItem = instagramData.is_carousel && instagramData.carousel_items
                         ? instagramData.carousel_items[selectedCarouselIndex]
                         : {
                             media_url: instagramData.media_url,
                             media_type: instagramData.media_type,
                             thumbnail: instagramData.thumbnail,
-                            proxy_url: instagramData.proxy_url,
-                            proxy_thumbnail_url: instagramData.proxy_thumbnail_url,
                           };
                       
                       return currentItem.media_type === 'video' ? (
                         <div
                           key={selectedCarouselIndex}
                           className="relative w-full min-h-[320px] bg-center bg-no-repeat bg-contain"
-                          style={{ backgroundImage: `url(${currentItem.proxy_thumbnail_url || currentItem.thumbnail})` }}
+                          style={{ backgroundImage: `url(${currentItem.thumbnail})` }}
                           aria-label="Preview do vídeo do Instagram"
                         >
                           <div className="absolute inset-0 bg-background/10 backdrop-blur-[1px]" />
                           <img
-                            src={currentItem.proxy_thumbnail_url || currentItem.thumbnail}
+                            src={currentItem.thumbnail}
                             alt="Preview do vídeo do Instagram"
                             className="w-full h-[320px] object-contain opacity-0 pointer-events-none"
                           />
@@ -1477,13 +1468,13 @@ const HeroSection = () => {
                             title={instagramData.title}
                             author={instagramData.author}
                             duration={instagramData.duration}
-                            mediaUrl={currentItem.proxy_url || currentItem.media_url}
+                            mediaUrl={currentItem.media_url}
                           />
                         </div>
                       ) : (
                         <img 
                           key={selectedCarouselIndex}
-                          src={currentItem.proxy_url || currentItem.media_url}
+                          src={currentItem.media_url}
                           alt="Preview da foto"
                           className="w-full max-h-[400px] object-contain"
                         />
