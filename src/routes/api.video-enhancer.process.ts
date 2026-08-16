@@ -58,9 +58,11 @@ export const Route = createFileRoute("/api/video-enhancer/process")({
               }, analysis.duration);
 
               // Upload para Supabase Storage
+              console.log("Reading output file for storage upload:", outputPath);
               const outputBuffer = readFileSync(outputPath);
               const storagePath = `enhanced/${jobId}.mp4`;
               
+              console.log("Uploading to storage bucket 'videos' at path:", storagePath);
               const { error: uploadError } = await supabaseAdmin.storage
                 .from("videos")
                 .upload(storagePath, outputBuffer, {
@@ -68,11 +70,16 @@ export const Route = createFileRoute("/api/video-enhancer/process")({
                   upsert: true
                 });
 
-              if (uploadError) throw uploadError;
+              if (uploadError) {
+                console.error("Storage upload error details:", uploadError);
+                throw uploadError;
+              }
 
               const { data: { publicUrl } } = supabaseAdmin.storage
                 .from("videos")
                 .getPublicUrl(storagePath);
+
+              console.log("Upload successful. Public URL:", publicUrl);
 
               await (supabaseAdmin
                 .from("video_enhancement_jobs" as any)
