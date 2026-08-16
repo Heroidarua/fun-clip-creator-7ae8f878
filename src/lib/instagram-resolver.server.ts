@@ -23,13 +23,19 @@ export interface InstagramData {
 
 export async function resolveInstagramUrl(url: string): Promise<string> {
   try {
+    // Stories normalization
+    if (url.includes("/stories/")) {
+      const storyMatch = url.match(/instagram\.com\/stories\/([^\/]+)\/([^\/?#]+)/i);
+      if (storyMatch) return `https://www.instagram.com/stories/${storyMatch[1]}/${storyMatch[2]}/`;
+    }
+
     if (!/\/share\//i.test(url) && !/instagr\.am/i.test(url)) return url;
     const r = await fetch(url, {
       method: "GET",
       redirect: "follow",
       headers: { "User-Agent": UA },
     });
-    if (r.url && /instagram\.com\/.*(p|reel|reels|tv)\//i.test(r.url)) {
+    if (r.url && /instagram\.com\/.*(p|reel|reels|tv|stories)\//i.test(r.url)) {
       return r.url.split("?")[0];
     }
   } catch {}

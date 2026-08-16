@@ -122,7 +122,7 @@ const MediaPreviewOverlay = ({
           <video
             ref={videoRef}
             src={mediaUrl}
-            className={`w-full h-full object-contain transition-opacity duration-300 ${isPlaying ? 'opacity-100' : 'opacity-0'}`}
+            className={`w-full h-full object-contain bg-black/40 transition-opacity duration-300 ${isPlaying ? 'opacity-100' : 'opacity-0'}`}
             loop
             muted={false}
             playsInline
