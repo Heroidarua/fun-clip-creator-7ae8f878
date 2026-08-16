@@ -78,12 +78,13 @@ export async function processVideo(
     const process = exec(command);
 
     process.stderr?.on('data', (data) => {
+      const log = data.toString();
       // O FFmpeg envia logs de progresso para o stderr
       // Exemplo: frame=  123 fps= 30 q=28.0 size=    512kB time=00:00:05.12 bitrate= 819.2kbits/s speed=1.2x
-      const timeMatch = data.toString().match(/time=(\d{2}:\d{2}:\d{2}.\d{2})/);
+      const timeMatch = log.match(/time=(\d{2}:\d{2}:\d{2}.\d{2})/);
       if (timeMatch) {
-        // Aqui poderíamos calcular o percentual se tivéssemos a duração total
-        // Por agora vamos apenas simular um incremento
+        // Simulação básica de progresso baseada na atividade
+        // Idealmente usaríamos a duração total do analyzer para calcular % real
         onProgress(Math.min(95, 10)); 
       }
     });
