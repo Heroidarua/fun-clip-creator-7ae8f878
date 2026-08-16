@@ -251,16 +251,18 @@ export default function Jogos() {
 
   const isHydrated = typeof window !== 'undefined';
 
-  const { data: featured } = (typeof window !== 'undefined' ? useQuery({
+  const { data: featured } = useQuery({
     queryKey: ["featured-games"],
     queryFn: () => fetchFeaturedFn(),
     staleTime: 1000 * 60 * 60,
-  }) : { data: undefined }) as any;
+    enabled: isHydrated,
+  });
 
-  const { data: recent } = (typeof window !== 'undefined' && recentIds.length > 0 ? useQuery({
+  const { data: recent } = useQuery({
     queryKey: ["recent-games", recentIds],
     queryFn: () => fetchRecentFn({ data: { ids: recentIds } }),
-  }) : { data: undefined }) as any;
+    enabled: isHydrated && recentIds.length > 0,
+  });
 
   const {
     data: infiniteData,
@@ -268,7 +270,7 @@ export default function Jogos() {
     hasNextPage,
     isFetchingNextPage,
     isLoading
-  } = (typeof window !== 'undefined' ? useInfiniteQuery({
+  } = useInfiniteQuery({
     queryKey: ["games", category, searchQuery],
     queryFn: ({ pageParam = 1 }) => fetchGamesFn({ 
       data: {
@@ -279,13 +281,13 @@ export default function Jogos() {
     }),
     getNextPageParam: (lastPage: any) => lastPage.hasMore ? lastPage.page + 1 : undefined,
     initialPageParam: 1,
-  }) : { data: undefined, fetchNextPage: () => {}, hasNextPage: false, isFetchingNextPage: false, isLoading: false }) as any;
+    enabled: isHydrated,
+  });
 
   const filtered = useMemo(() => {
-    // During build/SSR, return empty to avoid TanStack Query errors
-    if (typeof window === 'undefined') return [];
+    if (!isHydrated) return [];
     return (infiniteData?.pages || []).flatMap((page: any) => page.items) || [];
-  }, [infiniteData]);
+  }, [infiniteData, isHydrated]);
 
   const { ref: loadMoreRef, inView } = useInView();
 

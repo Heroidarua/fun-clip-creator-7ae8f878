@@ -1,4 +1,5 @@
-import { games } from '../data/games';
+// Dynamic import to avoid module issues during build
+// import { games } from '../data/games';
 
 export type Game = {
   id: number;
@@ -24,8 +25,15 @@ function setToCache(key: string, data: any) {
   cache.set(key, { data, expiry: Date.now() + CACHE_TTL });
 }
 
-function getTypedGames(): Game[] {
-  return (games as Game[]) || [];
+async function getTypedGames(): Promise<Game[]> {
+  try {
+    // @ts-ignore - dynamic import for large data file to avoid build-time OOM/Type recursion
+    const dataModule = await import('../data/games');
+    return (dataModule.games as Game[]) || [];
+  } catch (error) {
+    console.error('Error loading games data:', error);
+    return [];
+  }
 }
 
 export async function fetchGames({ page = 1, limit = 24, search = '', category = 'Todos' }) {
@@ -33,7 +41,7 @@ export async function fetchGames({ page = 1, limit = 24, search = '', category =
   const cached = getFromCache(cacheKey);
   if (cached) return cached;
 
-  const typedGames = getTypedGames();
+  const typedGames = await getTypedGames();
   let filtered = [...typedGames];
 
   // Search filter
@@ -81,7 +89,7 @@ export async function fetchGameById(id: number) {
   const cached = getFromCache(cacheKey);
   if (cached) return cached;
 
-  const typedGames = getTypedGames();
+  const typedGames = await getTypedGames();
   const game = typedGames.find((g: Game) => g.id === id);
   if (game) {
     setToCache(cacheKey, game);
@@ -95,7 +103,7 @@ export async function fetchFeaturedGames() {
   if (cached) return cached;
 
   const featuredIds = [1, 2, 6, 20, 7, 23, 22, 17, 14, 33, 50, 4];
-  const typedGames = getTypedGames();
+  const typedGames = await getTypedGames();
   const items = typedGames.filter((g: Game) => featuredIds.includes(g.id));
   
   setToCache(cacheKey, items);
@@ -103,6 +111,6 @@ export async function fetchFeaturedGames() {
 }
 
 export async function fetchRecentGames(ids: number[]) {
-  const typedGames = getTypedGames();
+  const typedGames = await getTypedGames();
   return typedGames.filter((g: Game) => ids.includes(g.id)).slice(0, 12);
 }
