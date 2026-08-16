@@ -34,6 +34,7 @@ import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as FerramentasYoutubeDownloaderRouteImport } from './routes/ferramentas_.youtube-downloader'
+import { Route as FerramentaMelhorarVideoRouteImport } from './routes/ferramenta.melhorar-video'
 import { Route as FerramentaSlugRouteImport } from './routes/ferramenta.$slug'
 import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
 import { Route as BlogJogosRetroGratisRouteImport } from './routes/blog.jogos-retro-gratis'
@@ -190,6 +191,11 @@ const FerramentasYoutubeDownloaderRoute =
     path: '/ferramentas/youtube-downloader',
     getParentRoute: () => rootRouteImport,
   } as any)
+const FerramentaMelhorarVideoRoute = FerramentaMelhorarVideoRouteImport.update({
+  id: '/ferramenta/melhorar-video',
+  path: '/ferramenta/melhorar-video',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FerramentaSlugRoute = FerramentaSlugRouteImport.update({
   id: '/ferramenta/$slug',
   path: '/ferramenta/$slug',
@@ -395,6 +401,7 @@ export interface FileRoutesByFullPath {
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
+  '/ferramenta/melhorar-video': typeof FerramentaMelhorarVideoRoute
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/blog/': typeof BlogIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
@@ -450,6 +457,7 @@ export interface FileRoutesByTo {
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
+  '/ferramenta/melhorar-video': typeof FerramentaMelhorarVideoRoute
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/blog': typeof BlogIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
@@ -507,6 +515,7 @@ export interface FileRoutesById {
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
+  '/ferramenta/melhorar-video': typeof FerramentaMelhorarVideoRoute
   '/ferramentas_/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/blog/': typeof BlogIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
@@ -565,6 +574,7 @@ export interface FileRouteTypes {
     | '/blog/jogos-retro-gratis'
     | '/categoria/$slug'
     | '/ferramenta/$slug'
+    | '/ferramenta/melhorar-video'
     | '/ferramentas/youtube-downloader'
     | '/blog/'
     | '/api/public/pinterest-download'
@@ -620,6 +630,7 @@ export interface FileRouteTypes {
     | '/blog/jogos-retro-gratis'
     | '/categoria/$slug'
     | '/ferramenta/$slug'
+    | '/ferramenta/melhorar-video'
     | '/ferramentas/youtube-downloader'
     | '/blog'
     | '/api/public/pinterest-download'
@@ -676,6 +687,7 @@ export interface FileRouteTypes {
     | '/blog/jogos-retro-gratis'
     | '/categoria/$slug'
     | '/ferramenta/$slug'
+    | '/ferramenta/melhorar-video'
     | '/ferramentas_/youtube-downloader'
     | '/blog/'
     | '/api/public/pinterest-download'
@@ -722,6 +734,7 @@ export interface RootRouteChildren {
   ApiRemoveBgRoute: typeof ApiRemoveBgRoute
   CategoriaSlugRoute: typeof CategoriaSlugRoute
   FerramentaSlugRoute: typeof FerramentaSlugRoute
+  FerramentaMelhorarVideoRoute: typeof FerramentaMelhorarVideoRoute
   FerramentasYoutubeDownloaderRoute: typeof FerramentasYoutubeDownloaderRoute
   ApiPublicPinterestDownloadRoute: typeof ApiPublicPinterestDownloadRoute
   ApiYoutubeDownloadRoute: typeof ApiYoutubeDownloadRoute
@@ -904,6 +917,13 @@ declare module '@tanstack/react-router' {
       path: '/ferramentas/youtube-downloader'
       fullPath: '/ferramentas/youtube-downloader'
       preLoaderRoute: typeof FerramentasYoutubeDownloaderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ferramenta/melhorar-video': {
+      id: '/ferramenta/melhorar-video'
+      path: '/ferramenta/melhorar-video'
+      fullPath: '/ferramenta/melhorar-video'
+      preLoaderRoute: typeof FerramentaMelhorarVideoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ferramenta/$slug': {
@@ -1183,6 +1203,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiRemoveBgRoute: ApiRemoveBgRoute,
   CategoriaSlugRoute: CategoriaSlugRoute,
   FerramentaSlugRoute: FerramentaSlugRoute,
+  FerramentaMelhorarVideoRoute: FerramentaMelhorarVideoRoute,
   FerramentasYoutubeDownloaderRoute: FerramentasYoutubeDownloaderRoute,
   ApiPublicPinterestDownloadRoute: ApiPublicPinterestDownloadRoute,
   ApiYoutubeDownloadRoute: ApiYoutubeDownloadRoute,
