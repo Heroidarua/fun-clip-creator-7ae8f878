@@ -37,11 +37,11 @@ import { Route as FerramentasYoutubeDownloaderRouteImport } from './routes/ferra
 import { Route as FerramentaSlugRouteImport } from './routes/ferramenta.$slug'
 import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
 import { Route as BlogJogosRetroGratisRouteImport } from './routes/blog.jogos-retro-gratis'
-import { Route as BlogGuiaCompletoClipsaveRouteImport } from './routes/blog.guia-completo-clipsave'
+import { Route as BlogGuiaCompletoSos01RouteImport } from './routes/blog.guia-completo-sos01'
 import { Route as BlogFerramentasGratuitasRouteImport } from './routes/blog.ferramentas-gratuitas'
 import { Route as BlogDicasCriadoresConteudoRouteImport } from './routes/blog.dicas-criadores-conteudo'
 import { Route as BlogComoUsarDownloadersRouteImport } from './routes/blog.como-usar-downloaders'
-import { Route as BlogComoNasceuClipsaveRouteImport } from './routes/blog.como-nasceu-clipsave'
+import { Route as BlogComoNasceuSos01RouteImport } from './routes/blog.como-nasceu-sos01'
 import { Route as BlogComoExtrairAudioTiktokRouteImport } from './routes/blog.como-extrair-audio-tiktok'
 import { Route as BlogComoBaixarVideosYoutubeRouteImport } from './routes/blog.como-baixar-videos-youtube'
 import { Route as BlogComoBaixarVideosTiktokSemMarcaRouteImport } from './routes/blog.como-baixar-videos-tiktok-sem-marca'
@@ -205,12 +205,11 @@ const BlogJogosRetroGratisRoute = BlogJogosRetroGratisRouteImport.update({
   path: '/jogos-retro-gratis',
   getParentRoute: () => BlogRoute,
 } as any)
-const BlogGuiaCompletoClipsaveRoute =
-  BlogGuiaCompletoClipsaveRouteImport.update({
-    id: '/guia-completo-clipsave',
-    path: '/guia-completo-clipsave',
-    getParentRoute: () => BlogRoute,
-  } as any)
+const BlogGuiaCompletoSos01Route = BlogGuiaCompletoSos01RouteImport.update({
+  id: '/guia-completo-sos01',
+  path: '/guia-completo-sos01',
+  getParentRoute: () => BlogRoute,
+} as any)
 const BlogFerramentasGratuitasRoute =
   BlogFerramentasGratuitasRouteImport.update({
     id: '/ferramentas-gratuitas',
@@ -228,9 +227,9 @@ const BlogComoUsarDownloadersRoute = BlogComoUsarDownloadersRouteImport.update({
   path: '/como-usar-downloaders',
   getParentRoute: () => BlogRoute,
 } as any)
-const BlogComoNasceuClipsaveRoute = BlogComoNasceuClipsaveRouteImport.update({
-  id: '/como-nasceu-clipsave',
-  path: '/como-nasceu-clipsave',
+const BlogComoNasceuSos01Route = BlogComoNasceuSos01RouteImport.update({
+  id: '/como-nasceu-sos01',
+  path: '/como-nasceu-sos01',
   getParentRoute: () => BlogRoute,
 } as any)
 const BlogComoExtrairAudioTiktokRoute =
@@ -387,11 +386,11 @@ export interface FileRoutesByFullPath {
   '/blog/como-baixar-videos-tiktok-sem-marca': typeof BlogComoBaixarVideosTiktokSemMarcaRoute
   '/blog/como-baixar-videos-youtube': typeof BlogComoBaixarVideosYoutubeRoute
   '/blog/como-extrair-audio-tiktok': typeof BlogComoExtrairAudioTiktokRoute
-  '/blog/como-nasceu-clipsave': typeof BlogComoNasceuClipsaveRoute
+  '/blog/como-nasceu-sos01': typeof BlogComoNasceuSos01Route
   '/blog/como-usar-downloaders': typeof BlogComoUsarDownloadersRoute
   '/blog/dicas-criadores-conteudo': typeof BlogDicasCriadoresConteudoRoute
   '/blog/ferramentas-gratuitas': typeof BlogFerramentasGratuitasRoute
-  '/blog/guia-completo-clipsave': typeof BlogGuiaCompletoClipsaveRoute
+  '/blog/guia-completo-sos01': typeof BlogGuiaCompletoSos01Route
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
@@ -442,11 +441,11 @@ export interface FileRoutesByTo {
   '/blog/como-baixar-videos-tiktok-sem-marca': typeof BlogComoBaixarVideosTiktokSemMarcaRoute
   '/blog/como-baixar-videos-youtube': typeof BlogComoBaixarVideosYoutubeRoute
   '/blog/como-extrair-audio-tiktok': typeof BlogComoExtrairAudioTiktokRoute
-  '/blog/como-nasceu-clipsave': typeof BlogComoNasceuClipsaveRoute
+  '/blog/como-nasceu-sos01': typeof BlogComoNasceuSos01Route
   '/blog/como-usar-downloaders': typeof BlogComoUsarDownloadersRoute
   '/blog/dicas-criadores-conteudo': typeof BlogDicasCriadoresConteudoRoute
   '/blog/ferramentas-gratuitas': typeof BlogFerramentasGratuitasRoute
-  '/blog/guia-completo-clipsave': typeof BlogGuiaCompletoClipsaveRoute
+  '/blog/guia-completo-sos01': typeof BlogGuiaCompletoSos01Route
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
@@ -499,11 +498,11 @@ export interface FileRoutesById {
   '/blog/como-baixar-videos-tiktok-sem-marca': typeof BlogComoBaixarVideosTiktokSemMarcaRoute
   '/blog/como-baixar-videos-youtube': typeof BlogComoBaixarVideosYoutubeRoute
   '/blog/como-extrair-audio-tiktok': typeof BlogComoExtrairAudioTiktokRoute
-  '/blog/como-nasceu-clipsave': typeof BlogComoNasceuClipsaveRoute
+  '/blog/como-nasceu-sos01': typeof BlogComoNasceuSos01Route
   '/blog/como-usar-downloaders': typeof BlogComoUsarDownloadersRoute
   '/blog/dicas-criadores-conteudo': typeof BlogDicasCriadoresConteudoRoute
   '/blog/ferramentas-gratuitas': typeof BlogFerramentasGratuitasRoute
-  '/blog/guia-completo-clipsave': typeof BlogGuiaCompletoClipsaveRoute
+  '/blog/guia-completo-sos01': typeof BlogGuiaCompletoSos01Route
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
@@ -557,11 +556,11 @@ export interface FileRouteTypes {
     | '/blog/como-baixar-videos-tiktok-sem-marca'
     | '/blog/como-baixar-videos-youtube'
     | '/blog/como-extrair-audio-tiktok'
-    | '/blog/como-nasceu-clipsave'
+    | '/blog/como-nasceu-sos01'
     | '/blog/como-usar-downloaders'
     | '/blog/dicas-criadores-conteudo'
     | '/blog/ferramentas-gratuitas'
-    | '/blog/guia-completo-clipsave'
+    | '/blog/guia-completo-sos01'
     | '/blog/jogos-retro-gratis'
     | '/categoria/$slug'
     | '/ferramenta/$slug'
@@ -612,11 +611,11 @@ export interface FileRouteTypes {
     | '/blog/como-baixar-videos-tiktok-sem-marca'
     | '/blog/como-baixar-videos-youtube'
     | '/blog/como-extrair-audio-tiktok'
-    | '/blog/como-nasceu-clipsave'
+    | '/blog/como-nasceu-sos01'
     | '/blog/como-usar-downloaders'
     | '/blog/dicas-criadores-conteudo'
     | '/blog/ferramentas-gratuitas'
-    | '/blog/guia-completo-clipsave'
+    | '/blog/guia-completo-sos01'
     | '/blog/jogos-retro-gratis'
     | '/categoria/$slug'
     | '/ferramenta/$slug'
@@ -668,11 +667,11 @@ export interface FileRouteTypes {
     | '/blog/como-baixar-videos-tiktok-sem-marca'
     | '/blog/como-baixar-videos-youtube'
     | '/blog/como-extrair-audio-tiktok'
-    | '/blog/como-nasceu-clipsave'
+    | '/blog/como-nasceu-sos01'
     | '/blog/como-usar-downloaders'
     | '/blog/dicas-criadores-conteudo'
     | '/blog/ferramentas-gratuitas'
-    | '/blog/guia-completo-clipsave'
+    | '/blog/guia-completo-sos01'
     | '/blog/jogos-retro-gratis'
     | '/categoria/$slug'
     | '/ferramenta/$slug'
@@ -927,11 +926,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogJogosRetroGratisRouteImport
       parentRoute: typeof BlogRoute
     }
-    '/blog/guia-completo-clipsave': {
-      id: '/blog/guia-completo-clipsave'
-      path: '/guia-completo-clipsave'
-      fullPath: '/blog/guia-completo-clipsave'
-      preLoaderRoute: typeof BlogGuiaCompletoClipsaveRouteImport
+    '/blog/guia-completo-sos01': {
+      id: '/blog/guia-completo-sos01'
+      path: '/guia-completo-sos01'
+      fullPath: '/blog/guia-completo-sos01'
+      preLoaderRoute: typeof BlogGuiaCompletoSos01RouteImport
       parentRoute: typeof BlogRoute
     }
     '/blog/ferramentas-gratuitas': {
@@ -955,11 +954,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogComoUsarDownloadersRouteImport
       parentRoute: typeof BlogRoute
     }
-    '/blog/como-nasceu-clipsave': {
-      id: '/blog/como-nasceu-clipsave'
-      path: '/como-nasceu-clipsave'
-      fullPath: '/blog/como-nasceu-clipsave'
-      preLoaderRoute: typeof BlogComoNasceuClipsaveRouteImport
+    '/blog/como-nasceu-sos01': {
+      id: '/blog/como-nasceu-sos01'
+      path: '/como-nasceu-sos01'
+      fullPath: '/blog/como-nasceu-sos01'
+      preLoaderRoute: typeof BlogComoNasceuSos01RouteImport
       parentRoute: typeof BlogRoute
     }
     '/blog/como-extrair-audio-tiktok': {
@@ -1118,11 +1117,11 @@ interface BlogRouteChildren {
   BlogComoBaixarVideosTiktokSemMarcaRoute: typeof BlogComoBaixarVideosTiktokSemMarcaRoute
   BlogComoBaixarVideosYoutubeRoute: typeof BlogComoBaixarVideosYoutubeRoute
   BlogComoExtrairAudioTiktokRoute: typeof BlogComoExtrairAudioTiktokRoute
-  BlogComoNasceuClipsaveRoute: typeof BlogComoNasceuClipsaveRoute
+  BlogComoNasceuSos01Route: typeof BlogComoNasceuSos01Route
   BlogComoUsarDownloadersRoute: typeof BlogComoUsarDownloadersRoute
   BlogDicasCriadoresConteudoRoute: typeof BlogDicasCriadoresConteudoRoute
   BlogFerramentasGratuitasRoute: typeof BlogFerramentasGratuitasRoute
-  BlogGuiaCompletoClipsaveRoute: typeof BlogGuiaCompletoClipsaveRoute
+  BlogGuiaCompletoSos01Route: typeof BlogGuiaCompletoSos01Route
   BlogJogosRetroGratisRoute: typeof BlogJogosRetroGratisRoute
   BlogIndexRoute: typeof BlogIndexRoute
 }
@@ -1134,11 +1133,11 @@ const BlogRouteChildren: BlogRouteChildren = {
     BlogComoBaixarVideosTiktokSemMarcaRoute,
   BlogComoBaixarVideosYoutubeRoute: BlogComoBaixarVideosYoutubeRoute,
   BlogComoExtrairAudioTiktokRoute: BlogComoExtrairAudioTiktokRoute,
-  BlogComoNasceuClipsaveRoute: BlogComoNasceuClipsaveRoute,
+  BlogComoNasceuSos01Route: BlogComoNasceuSos01Route,
   BlogComoUsarDownloadersRoute: BlogComoUsarDownloadersRoute,
   BlogDicasCriadoresConteudoRoute: BlogDicasCriadoresConteudoRoute,
   BlogFerramentasGratuitasRoute: BlogFerramentasGratuitasRoute,
-  BlogGuiaCompletoClipsaveRoute: BlogGuiaCompletoClipsaveRoute,
+  BlogGuiaCompletoSos01Route: BlogGuiaCompletoSos01Route,
   BlogJogosRetroGratisRoute: BlogJogosRetroGratisRoute,
   BlogIndexRoute: BlogIndexRoute,
 }

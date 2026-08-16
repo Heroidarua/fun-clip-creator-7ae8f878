@@ -44,8 +44,8 @@ const ARTICLES: SearchEntry[] = [
   { id: "a-jogos", title: "Jogos retrô grátis online", description: "Os melhores clássicos para jogar no navegador.", path: "/blog/jogos-retro-gratis", type: "artigo", keywords: ["jogos", "retro", "online"] },
   { id: "a-quadrinhos", title: "Biblioteca de quadrinhos", description: "Onde ler quadrinhos clássicos gratuitamente.", path: "/blog/biblioteca-quadrinhos", type: "artigo", keywords: ["quadrinhos", "hq", "leitura"] },
   { id: "a-dicas", title: "Dicas para criadores de conteúdo", description: "Boas práticas para produzir e publicar mais rápido.", path: "/blog/dicas-criadores-conteudo", type: "artigo", keywords: ["criadores", "conteudo", "dicas"] },
-  { id: "a-guia", title: "Guia completo do SOS01", description: "Todos os recursos da plataforma explicados.", path: "/blog/guia-completo-clipsave", type: "artigo", keywords: ["guia", "sos01", "recursos"] },
-  { id: "a-origem", title: "Como nasceu o SOS01", description: "A história por trás do projeto.", path: "/blog/como-nasceu-clipsave", type: "artigo", keywords: ["historia", "sobre", "projeto"] },
+  { id: "a-guia", title: "Guia completo do SOS01", description: "Todos os recursos da plataforma explicados.", path: "/blog/guia-completo-sos01", type: "artigo", keywords: ["guia", "sos01", "recursos"] },
+  { id: "a-origem", title: "Como nasceu o SOS01", description: "A história por trás do projeto.", path: "/blog/como-nasceu-sos01", type: "artigo", keywords: ["historia", "sobre", "projeto"] },
 ];
 
 export const SEARCH_INDEX: SearchEntry[] = [
