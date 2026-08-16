@@ -27,7 +27,10 @@ export default function VideoEnhancer() {
 
   const createJob = useServerFn(createEnhancementJob);
   const checkStatus = useServerFn(getJobStatus);
+  const cancelJob = useServerFn(cancelEnhancementJob);
   const initStorage = useServerFn(setupStorage);
+  
+  const pollingRef = useRef<NodeJS.Timeout | null>(null);
 
   // Restaurar job pendente do localStorage
   useEffect(() => {
