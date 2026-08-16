@@ -527,11 +527,10 @@ export default function Jogos() {
                     </div>
                   )}
                 </section>
-              </div>
             </div>
           </div>
         </div>
-      </main>
+      </div>
 
       {/* ---- Fullscreen player ---- */}
       {fullscreenGame && (
