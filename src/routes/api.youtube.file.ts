@@ -67,7 +67,6 @@ function chunkedStream(
         const end = Math.min(cursor + CHUNK_BYTES - 1, total - 1);
         const res = await fetch(mediaUrl, {
           headers: { ...baseHeaders, Range: `bytes=${cursor}-${end}` },
-          signal: AbortSignal.timeout(YT_PROCESS_TIMEOUT_MS),
         });
         if (!res.ok || !res.body) {
           controller.error(new Error("upstream chunk failed"));
@@ -141,16 +140,16 @@ export const Route = createFileRoute("/api/youtube/file")({
               const firstEnd = rangeStart + CHUNK_BYTES - 1;
               const res = await fetch(mediaUrl!, {
                 headers: { ...baseHeaders, Range: `bytes=${rangeStart}-${firstEnd}` },
-                signal: AbortSignal.timeout(YT_PROCESS_TIMEOUT_MS),
               });
               
               if (res.ok && res.body) {
                 const receivedRange = parseContentRange(res.headers.get("content-range"));
-                if (!receivedRange || receivedRange.start !== rangeStart) {
+                const contentLength = Number(res.headers.get("content-length") || 0);
+                if (res.status === 206 && (!receivedRange || receivedRange.start !== rangeStart)) {
                   await res.body.cancel().catch(() => {});
                   continue;
                 }
-                total = receivedRange.total;
+                total = receivedRange?.total || contentLength;
                 if (total > YT_MAX_FILE_BYTES) {
                   return Response.json(
                     { success: false, error: "Arquivo maior que o limite permitido (1 GB)." },
@@ -159,14 +158,16 @@ export const Route = createFileRoute("/api/youtube/file")({
                 }
                 contentType = res.headers.get("content-type") || "";
                 muxed = candidate.muxed !== false;
-                body = chunkedStream(
-                  mediaUrl!,
-                  baseHeaders,
-                  rangeStart,
-                  total,
-                  res,
-                  receivedRange,
-                );
+                body = receivedRange && receivedRange.end + 1 < total
+                  ? chunkedStream(
+                      mediaUrl!,
+                      baseHeaders,
+                      rangeStart,
+                      total,
+                      res,
+                      receivedRange,
+                    )
+                  : res.body;
                 title = title || candidate.title;
                 break;
               }
