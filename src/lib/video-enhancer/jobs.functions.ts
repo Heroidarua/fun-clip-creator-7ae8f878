@@ -11,22 +11,8 @@ const JobOptionsSchema = z.object({
   }),
 });
 
-type CreateJobInput = {
-  filename: string;
-  size: number;
-  options: {
-    mode: 'light' | 'standard' | 'maximum';
-    targetResolution: 'auto' | '720p' | '1080p' | '1440p' | '4k';
-    audio: {
-      reduceNoise: boolean;
-      boostVoice: boolean;
-      normalize: boolean;
-    };
-  };
-};
-
 export const createEnhancementJob = createServerFn({ method: "POST" })
-  .inputValidator((data: CreateJobInput) => {
+  .validator((data: unknown) => {
     return z.object({
       filename: z.string(),
       size: z.number(),
@@ -54,7 +40,7 @@ export const createEnhancementJob = createServerFn({ method: "POST" })
   });
 
 export const getJobStatus = createServerFn({ method: "GET" })
-  .inputValidator((data: { jobId: string }) => {
+  .validator((data: unknown) => {
     return z.object({ jobId: z.string() }).parse(data);
   })
   .handler(async ({ data }) => {
