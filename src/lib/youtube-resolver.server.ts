@@ -128,17 +128,12 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality | string = "b
   // Progressivo (vídeo + áudio no mesmo arquivo) é o que o navegador reproduz direto
   let muxed = progressive
     .filter((f) => /video\/mp4/.test(f.mimeType || "") && /mp4a/.test(f.mimeType || ""))
+    .filter((f) => (f.height || 0) <= 720) // Limit to 720p
     .sort(quality === "worst" ? asc : desc);
 
   // Priorização de qualidade baseada na string recebida
-  if (typeof quality === 'string' && quality.includes("4k")) {
-    const uhd4k = muxed.filter((f) => (f.height || 0) >= 2160);
-    if (uhd4k.length) muxed = uhd4k;
-  } else if (typeof quality === 'string' && quality.includes("1080p")) {
-    const fhd = muxed.filter((f) => (f.height || 0) >= 1080);
-    if (fhd.length) muxed = fhd;
-  } else if (quality === "high" || (typeof quality === 'string' && quality.includes("720p"))) {
-    const hd = muxed.filter((f) => (f.height || 0) >= 720);
+  if (quality === "high" || (typeof quality === 'string' && quality.includes("720p"))) {
+    const hd = muxed.filter((f) => (f.height || 0) === 720);
     if (hd.length) muxed = hd;
   }
 
@@ -150,18 +145,12 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality | string = "b
     .filter(
       (f) =>
         /video\/mp4/.test(f.mimeType || "") &&
-        (f.height || 0) <= 2160,
+        (f.height || 0) <= 720, // Limit to 720p
     )
     .sort(quality === "worst" ? asc : desc);
   
-  if (typeof quality === 'string' && quality.includes("4k")) {
-    const uhd4k = videoOnly.filter((f) => (f.height || 0) >= 2160);
-    if (uhd4k.length) videoOnly = uhd4k;
-  } else if (typeof quality === 'string' && quality.includes("1080p")) {
-    const fhd = videoOnly.filter((f) => (f.height || 0) >= 1080);
-    if (fhd.length) videoOnly = fhd;
-  } else if (quality === "high" || (typeof quality === 'string' && quality.includes("720p"))) {
-    const hd = videoOnly.filter((f) => (f.height || 0) >= 720);
+  if (quality === "high" || (typeof quality === 'string' && quality.includes("720p"))) {
+    const hd = videoOnly.filter((f) => (f.height || 0) === 720);
     if (hd.length) videoOnly = hd;
   }
   const fitsSize = videoOnly.filter((f) => size(f) > 0 && size(f) <= MAX_BYTES);
@@ -436,9 +425,7 @@ async function fetchPiped(
 
       let chosen = muxed[0];
       if (quality === "worst" && muxed.length) chosen = muxed[muxed.length - 1];
-      if (typeof quality === 'string' && quality.includes("4k")) chosen = muxed.find((s) => height(s) >= 2160) || muxed[0];
-      else if (typeof quality === 'string' && quality.includes("1080p")) chosen = muxed.find((s) => height(s) >= 1080) || muxed[0];
-      else if (quality === "high" || (typeof quality === 'string' && quality.includes("720p"))) chosen = muxed.find((s) => height(s) >= 720) || muxed[0];
+      if (quality === "high" || (typeof quality === 'string' && quality.includes("720p"))) chosen = muxed.find((s) => height(s) === 720) || muxed[0];
 
       const bestAudio = [...audioStreams]
         .sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0))
