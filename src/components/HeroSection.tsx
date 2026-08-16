@@ -830,8 +830,9 @@ const HeroSection = () => {
       youtubeInfoRef.current = info;
       setYoutubeFormats(info.formats);
       const firstVideo = info.formats.find((f) => f.type === "video");
+      const highQualityVideo = info.formats.find((f) => f.type === "video" && (f.quality === "high" || f.quality === "best"));
       setYoutubeDownloadType(firstVideo ? "video" : "audio");
-      setYoutubeQuality((firstVideo || info.formats[0])?.id ?? "");
+      setYoutubeQuality((highQualityVideo || firstVideo || info.formats[0])?.id ?? "");
 
       setYoutubeProgress(100);
       clearInterval(progressInterval);
