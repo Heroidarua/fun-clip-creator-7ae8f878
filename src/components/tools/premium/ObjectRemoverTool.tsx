@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Eraser, Upload, Loader2, Download, Undo, RefreshCw, Brush } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
