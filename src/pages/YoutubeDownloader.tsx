@@ -20,13 +20,6 @@ import { AlertCircle, Download, RotateCcw, Trash2 } from "lucide-react";
 const GENERIC_ERROR =
   "Não foi possível processar este vídeo. Verifique a URL e tente novamente.";
 
-function safeName(title: string) {
-  return title.replace(/[\\/:*?"<>|]+/g, " ").trim().slice(0, 100) || "youtube";
-}
-
-/** Até este tamanho o arquivo é processado no navegador; acima, baixa direto. */
-const BROWSER_PROCESS_LIMIT = 300 * 1024 * 1024; // Aumentado para suportar 1080p e 4K
-const TOO_LARGE = "TOO_LARGE";
 
 function saveBlob(blob: Blob, filename: string) {
   const objectUrl = URL.createObjectURL(blob);
