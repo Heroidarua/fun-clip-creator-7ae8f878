@@ -90,7 +90,7 @@ export default function ObjectRemoverTool() {
       const canvas = fabricCanvas.current;
       const originalBG = canvas.backgroundImage;
       canvas.backgroundImage = undefined;
-      const maskBase64 = canvas.toDataURL({ format: "png" });
+      const maskBase64 = canvas.toDataURL({ format: "png", multiplier: 1 });
       canvas.backgroundImage = originalBG;
       canvas.renderAll();
 
@@ -104,8 +104,10 @@ export default function ObjectRemoverTool() {
       toast.info("A IA está removendo o objeto selecionado...");
       
       const processedImage = await removeObject({
-        image: imageBase64,
-        mask: maskBase64
+        data: {
+          image: imageBase64,
+          mask: maskBase64
+        }
       });
 
       setResult(processedImage);
