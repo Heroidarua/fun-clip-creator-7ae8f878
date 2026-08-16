@@ -1,4 +1,4 @@
-import { createServerFn } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 const JobOptionsSchema = z.object({
@@ -17,7 +17,7 @@ export const createEnhancementJob = createServerFn({ method: "POST" })
     size: z.number(),
     options: JobOptionsSchema
   }))
-  .handler(async ({ data }) => {
+  .handler(async ({ data }: { data: any }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
     // Garantir que temos os dados mínimos
@@ -47,7 +47,7 @@ export const createEnhancementJob = createServerFn({ method: "POST" })
 
 export const getJobStatus = createServerFn({ method: "GET" })
   .inputValidator(z.object({ jobId: z.string() }))
-  .handler(async ({ data }) => {
+  .handler(async ({ data }: { data: any }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: job, error } = await (supabaseAdmin
       .from("video_enhancement_jobs" as any)
