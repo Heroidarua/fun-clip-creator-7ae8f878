@@ -18,14 +18,14 @@ import { getRouteApi } from "@tanstack/react-router";
 const routeApi = getRouteApi("/jogos/$category");
 
 // ---------- helpers ----------
-type Category = "Todos" | "Luta" | "Plataforma" | "Corrida" | "Ação" | "Tiro" | "Arcade";
+type Category = "Todos" | "Luta" | "Plataforma" | "Corrida" | "Acao" | "Tiro" | "Arcade";
 
 const CATEGORIES: { id: Category; label: string; icon: string; description: string }[] = [
   { id: "Todos", label: "Tudo", icon: "✨", description: "Explorar toda a biblioteca" },
   { id: "Luta", label: "Luta", icon: "🥊", description: "Combate e artes marciais" },
   { id: "Plataforma", label: "Aventura", icon: "🍄", description: "Plataformas e exploração" },
   { id: "Corrida", label: "Velocidade", icon: "🏁", description: "Carros e corridas clássicas" },
-  { id: "Ação", label: "Ação", icon: "💥", description: "Combate intenso e arcade" },
+  { id: "Acao", label: "Ação", icon: "💥", description: "Combate intenso e arcade" },
   { id: "Tiro", label: "Shoot'em Up", icon: "🎯", description: "Ação balística clássica" },
   { id: "Arcade", label: "Clássicos", icon: "🕹️", description: "O puro suco dos 8/16 bits" },
 ];

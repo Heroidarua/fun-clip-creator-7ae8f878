@@ -47,27 +47,30 @@ const CATEGORY_REGEX = {
   plataforma: /(mario|sonic|kong|bomberman|kidd|mickey|donald|dizzy|picapau|monica|pocahontas|luigi|yoshi|rockman)/i,
   corrida: /(kart|top gear|gp rider|rider)/i,
   tiro: /(1941|asteroids|duck hunt|battle city|popeye)/i,
-  ação: /(metal slug|spider|mask|power rangers|x-men|simpsons|alien|justice|dragonball|flintstones|saga|gta|theft)/i,
+  acao: /(metal slug|spider|mask|power rangers|x-men|simpsons|alien|justice|dragonball|flintstones|saga|gta|theft)/i,
   // Arcade is everything else
 };
 
 function getCategoryGames(allGames: Game[], category: string): Game[] {
   const catLower = category.toLowerCase();
-  if (catLower === 'todos') return allGames;
+  // Normalize acao category
+  const targetCat = catLower === 'ação' ? 'acao' : catLower;
   
-  if (categoryCache.has(catLower)) {
-    return categoryCache.get(catLower)!;
+  if (targetCat === 'todos') return allGames;
+  
+  if (categoryCache.has(targetCat)) {
+    return categoryCache.get(targetCat)!;
   }
 
   let filtered: Game[] = [];
-  if (catLower === 'arcade') {
+  if (targetCat === 'arcade') {
     const allRegex = new RegExp(
       Object.values(CATEGORY_REGEX).map(r => r.source).join('|'),
       'i'
     );
     filtered = allGames.filter(g => !allRegex.test(g.title));
   } else {
-    const regex = CATEGORY_REGEX[catLower as keyof typeof CATEGORY_REGEX];
+    const regex = CATEGORY_REGEX[targetCat as keyof typeof CATEGORY_REGEX];
     if (regex) {
       filtered = allGames.filter(g => regex.test(g.title));
     } else {
@@ -75,7 +78,7 @@ function getCategoryGames(allGames: Game[], category: string): Game[] {
     }
   }
 
-  categoryCache.set(catLower, filtered);
+  categoryCache.set(targetCat, filtered);
   return filtered;
 }
 
