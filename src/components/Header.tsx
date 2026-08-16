@@ -109,7 +109,7 @@ const Header = () => {
                 />
               </div>
             </div>
-            <div className="hidden sm:flex flex-col leading-none">
+            <div className="flex flex-col leading-none">
               <span className="font-display text-xl tracking-tight text-foreground">
                 sos<span className="italic text-accent">01</span>
               </span>
