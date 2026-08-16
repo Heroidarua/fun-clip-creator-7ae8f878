@@ -345,6 +345,7 @@ export type Database = {
           quality: string
           source_url: string
           status: Database["public"]["Enums"]["youtube_job_status"]
+          title: string | null
           updated_at: string
           user_id: string | null
           video_id: string
@@ -361,6 +362,7 @@ export type Database = {
           quality: string
           source_url: string
           status?: Database["public"]["Enums"]["youtube_job_status"]
+          title?: string | null
           updated_at?: string
           user_id?: string | null
           video_id: string
@@ -377,6 +379,7 @@ export type Database = {
           quality?: string
           source_url?: string
           status?: Database["public"]["Enums"]["youtube_job_status"]
+          title?: string | null
           updated_at?: string
           user_id?: string | null
           video_id?: string
