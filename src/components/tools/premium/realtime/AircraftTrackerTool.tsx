@@ -13,9 +13,10 @@ export default function AircraftTrackerTool() {
 
       <div className="relative aspect-video w-full border-2 border-border overflow-hidden rounded-sm bg-muted shadow-cartridge">
         <iframe
-          src="https://www.flightradar24.com/simple_index.php?lat=-15&lon=-47&z=4"
+          src="https://adsbexchange.com/map/"
           className="absolute inset-0 w-full h-full grayscale-[0.2] brightness-[0.9]"
-          title="FlightRadar24 Live"
+          title="ADSBExchange Live"
+          allow="geolocation"
         />
       </div>
 

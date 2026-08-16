@@ -3,11 +3,14 @@ import { ShieldAlert, Search, Loader2, CheckCircle, AlertTriangle } from "lucide
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { useServerFn } from "@tanstack/react-start";
+import { checkEmailLeak } from "@/lib/tools/email-leak.functions";
 
 export default function EmailLeakTool() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{ safe: boolean; details?: string } | null>(null);
+  const checkFn = useServerFn(checkEmailLeak);
 
   const check = async () => {
     if (!email || !email.includes("@")) {
@@ -19,19 +22,16 @@ export default function EmailLeakTool() {
     setResult(null);
 
     try {
-      // Simulation for safety and performance
-      await new Promise(r => setTimeout(r, 1500));
-      
-      const isCommon = ["gmail.com", "outlook.com", "hotmail.com"].some(d => email.endsWith(d));
-      
-      setResult({
-        safe: !isCommon || Math.random() > 0.4,
-        details: isCommon 
-          ? "Este e-mail foi encontrado em vazamentos de dados públicos. Recomendamos trocar sua senha." 
-          : "Nenhum vazamento imediato encontrado nesta conta."
-      });
-    } catch {
-      toast.error("Erro ao verificar.");
+      const data = await checkFn({ data: { email } });
+      setResult(data);
+      if (!data.safe) {
+        toast.warning("Atenção: Possível vazamento detectado.");
+      } else {
+        toast.success("E-mail parece seguro.");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Erro ao verificar. Tente novamente mais tarde.");
     } finally {
       setLoading(false);
     }
