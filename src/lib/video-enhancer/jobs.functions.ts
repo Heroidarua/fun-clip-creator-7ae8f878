@@ -11,11 +11,15 @@ const JobOptionsSchema = z.object({
   }),
 });
 
+interface CreateJobInput {
+  filename: string;
+  size: number;
+  options: z.infer<typeof JobOptionsSchema>;
+}
+
 export const createEnhancementJob = createServerFn({ method: "POST" })
-  .handler(async (args) => {
-    // TanStack Start v1 createServerFn uses the first argument as input
-    const data = args.data as any;
-    
+  .handler(async (ctx: { data: CreateJobInput }) => {
+    const data = ctx.data;
     const validated = z.object({
       filename: z.string(),
       size: z.number(),
@@ -42,8 +46,8 @@ export const createEnhancementJob = createServerFn({ method: "POST" })
   });
 
 export const getJobStatus = createServerFn({ method: "GET" })
-  .handler(async (args) => {
-    const data = args.data as any;
+  .handler(async (ctx: { data: { jobId: string } }) => {
+    const data = ctx.data;
     const { jobId } = z.object({ jobId: z.string() }).parse(data);
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
