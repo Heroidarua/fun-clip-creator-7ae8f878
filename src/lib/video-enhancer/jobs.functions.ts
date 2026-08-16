@@ -11,8 +11,15 @@ const JobOptionsSchema = z.object({
   }),
 });
 
+type CreateJobInput = {
+  filename: string;
+  size: number;
+  options: z.infer<typeof JobOptionsSchema>;
+};
+
 export const createEnhancementJob = createServerFn({ method: "POST" })
-  .handler(async ({ data }: { data: any }) => {
+  .validator((data: CreateJobInput) => data)
+  .handler(async ({ data }) => {
     const validated = z.object({
       filename: z.string(),
       size: z.number(),
@@ -39,7 +46,8 @@ export const createEnhancementJob = createServerFn({ method: "POST" })
   });
 
 export const getJobStatus = createServerFn({ method: "GET" })
-  .handler(async ({ data }: { data: any }) => {
+  .validator((data: { jobId: string }) => data)
+  .handler(async ({ data }) => {
     const { jobId } = z.object({ jobId: z.string() }).parse(data);
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
