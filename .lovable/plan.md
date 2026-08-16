@@ -29,4 +29,3 @@ Reformulação completa da arquitetura do downloader do YouTube para garantir es
 - **Banco de Dados**: Supabase (PostgreSQL) para persistência de jobs curtos.
 - **Limite**: 500 MB hard limit no backend.
 - **Compatibilidade**: MP4 (H.264) e MP3.
-
