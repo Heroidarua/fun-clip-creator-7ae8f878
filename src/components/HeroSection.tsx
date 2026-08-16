@@ -1245,15 +1245,16 @@ const HeroSection = () => {
                 
                 {/* Video preview */}
                   <div
-                    className="relative w-full mb-4 border-2 border-primary/30 bg-background/50 overflow-hidden min-h-[320px] bg-center bg-no-repeat bg-contain"
+                    className="relative w-full mb-4 border-2 border-primary/30 bg-background/50 overflow-hidden min-h-[320px] flex items-center justify-center bg-center bg-no-repeat bg-contain"
                     style={{ backgroundImage: `url(${videoData.proxy_thumbnail_url || videoData.thumbnail})` }}
                     aria-label={`Capa do vídeo ${videoData.title}`}
                   >
                     <div className="absolute inset-0 bg-background/10 backdrop-blur-[1px]" />
+                    {/* Elemento oculto para manter proporção, mas sem afetar o layout flex */}
                     <img
                       src={videoData.proxy_thumbnail_url || videoData.thumbnail}
-                      alt={`Capa do vídeo ${videoData.title}`}
-                      className="w-full h-[320px] object-contain opacity-0 pointer-events-none"
+                      alt=""
+                      className="w-full h-[320px] object-contain opacity-0 pointer-events-none absolute"
                     />
                     <MediaPreviewOverlay
                       title={videoData.title}

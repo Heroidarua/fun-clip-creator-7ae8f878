@@ -133,6 +133,7 @@ export async function downloadYoutubeMedia({
     );
 
     if (video.muxed) {
+      console.log("Arquivo já possui áudio (muxed), pulando etapa de muxagem.");
       saveBlob(
         new Blob([video.bytes.slice().buffer as ArrayBuffer], { type: "video/mp4" }),
         `${name}.mp4`,
