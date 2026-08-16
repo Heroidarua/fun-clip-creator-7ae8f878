@@ -13,7 +13,7 @@ export default function AircraftTrackerTool() {
 
       <div className="relative aspect-video w-full border-2 border-border overflow-hidden rounded-sm bg-muted shadow-cartridge">
         <iframe
-          src="https://adsbexchange.com/map/"
+          src="https://globe.adsbexchange.com/?cacheBust=2603311544"
           className="absolute inset-0 w-full h-full grayscale-[0.2] brightness-[0.9]"
           title="ADSBExchange Live"
           allow="geolocation"
