@@ -219,9 +219,26 @@ const GameRow = React.memo(function GameRow({
 
 // ---------- Page ----------
 export default function Jogos() {
+  const { category: routeCategory } = Route.useParams();
+  const navigate = Route.useNavigate();
+  
   const [fullscreenGame, setFullscreenGame] = useState<Game | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [category, setCategory] = useState<Category>("Todos");
+  
+  // Sincroniza a categoria da rota com o estado local/filtro
+  const category = useMemo(() => {
+    const cat = routeCategory.toLowerCase();
+    const found = CATEGORIES.find(c => c.id.toLowerCase() === cat);
+    return (found?.id as Category) || "Todos";
+  }, [routeCategory]);
+
+  const setCategory = (newCat: Category) => {
+    navigate({
+      to: "/jogos/$category",
+      params: { category: newCat.toLowerCase() },
+    });
+  };
+
   const [recentIds, setRecentIds] = useState<number[]>([]);
   const [searchFocused, setSearchFocused] = useState(false);
   const { favorites, toggleFavorite, isFavorite } = useFavoriteGames();
