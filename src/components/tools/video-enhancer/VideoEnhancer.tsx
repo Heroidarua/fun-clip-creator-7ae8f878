@@ -69,7 +69,7 @@ export default function VideoEnhancer() {
       } catch (err) {
         console.error("Polling error:", err);
       }
-    }, 5000); // Polling cada 5s para economizar recursos
+    }, 5000); 
     return () => clearInterval(interval);
   };
 
@@ -198,14 +198,25 @@ export default function VideoEnhancer() {
                   </div>
                 </div>
 
+                <div className="bg-primary/5 p-4 rounded-sm border border-primary/10 space-y-2">
+                  <div className="flex items-start gap-2 text-[10px] text-muted-foreground">
+                    <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                    <p>O processamento é feito por IA e pode levar de 2 a 10 minutos dependendo da duração do vídeo e da resolução escolhida.</p>
+                  </div>
+                  <div className="flex items-start gap-2 text-[10px] text-muted-foreground">
+                    <Clock className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                    <p>Você pode fechar esta página e voltar mais tarde; o progresso será mantido.</p>
+                  </div>
+                </div>
+
                 <Button className="w-full h-12 text-sm font-pixel btn-3d" onClick={startEnhancement} disabled={uploading}>
                   {uploading ? (
                     <>
                       <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                      PROCESSANDO...
+                      ENVIANDO...
                     </>
                   ) : (
-                    "MELHORAR VÍDEO AGORA"
+                    "INICIAR MELHORIA AGORA"
                   )}
                 </Button>
               </div>
@@ -220,49 +231,83 @@ export default function VideoEnhancer() {
                 <h3 className="font-pixel text-xs uppercase tracking-tighter text-foreground">Status do Processamento</h3>
                 <p className="text-[10px] text-muted-foreground mt-1">ID: {jobId}</p>
               </div>
-              <span className="px-2 py-1 rounded-sm bg-primary/10 text-primary text-[8px] font-pixel border border-primary/20 uppercase">
-                {status?.status}
-              </span>
+              <div className="flex flex-col items-end gap-1">
+                <span className={`px-2 py-1 rounded-sm text-[8px] font-pixel border uppercase ${
+                  status?.status === 'completed' ? 'bg-green-500/10 text-green-500 border-green-500/20' :
+                  status?.status === 'failed' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
+                  'bg-primary/10 text-primary border-primary/20'
+                }`}>
+                  {status?.status === 'queued' ? 'NA FILA' : 
+                   status?.status === 'processing' ? 'PROCESSANDO' : 
+                   status?.status === 'completed' ? 'CONCLUÍDO' : 
+                   status?.status === 'failed' ? 'FALHOU' : status?.status}
+                </span>
+              </div>
             </div>
-            <Progress value={status?.progress || 0} className="h-2 rounded-none bg-muted" />
-            <p className="text-center font-pixel text-[10px] text-foreground">{status?.progress || 0}% CONCLUÍDO</p>
+            
+            <div className="space-y-2">
+              <div className="flex justify-between text-[10px] font-pixel text-muted-foreground">
+                <span>{getStatusMessage(status?.status, status?.progress || 0)}</span>
+                <span>{status?.progress || 0}%</span>
+              </div>
+              <Progress value={status?.progress || 0} className="h-2 rounded-none bg-muted" />
+            </div>
           </div>
 
           <div className="p-6 bg-muted/20 border border-border/50 space-y-4">
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-sm bg-primary/10 flex items-center justify-center border border-primary/20">
-                <Video className="w-5 h-5 text-primary" />
+                {status?.status === 'completed' ? <CheckCircle2 className="w-5 h-5 text-green-500" /> :
+                 status?.status === 'failed' ? <AlertTriangle className="w-5 h-5 text-red-500" /> :
+                 <Video className="w-5 h-5 text-primary" />}
               </div>
-              <div>
-                <p className="font-pixel text-xs text-foreground truncate max-w-[200px]">{status?.original_filename}</p>
-                <p className="text-[10px] text-muted-foreground uppercase">Modo: {status?.enhancement_mode}</p>
+              <div className="flex-1 min-w-0">
+                <p className="font-pixel text-xs text-foreground truncate">{status?.original_filename || 'Vídeo'}</p>
+                <div className="flex gap-2 mt-1">
+                  <span className="text-[8px] text-muted-foreground uppercase bg-foreground/5 px-1">Modo: {status?.enhancement_mode}</span>
+                  {status?.input_size && (
+                    <span className="text-[8px] text-muted-foreground uppercase bg-foreground/5 px-1">
+                      Tamanho: {(status.input_size / 1024 / 1024).toFixed(1)}MB
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
 
             {status?.status === 'completed' && (
-              <Button className="w-full btn-3d font-pixel text-[10px]" asChild>
-                <a href={status.output_url} download>
-                  <Download className="w-4 h-4 mr-2" />
-                  BAIXAR VÍDEO MELHORADO
-                </a>
-              </Button>
+              <div className="space-y-3">
+                <Button className="w-full btn-3d font-pixel text-[10px]" asChild>
+                  <a href={status.output_url} download={status.original_filename?.replace(/\.[^/.]+$/, "") + "_melhorado.mp4"}>
+                    <Download className="w-4 h-4 mr-2" />
+                    BAIXAR VÍDEO MELHORADO
+                  </a>
+                </Button>
+                <p className="text-[9px] text-center text-muted-foreground font-pixel">
+                  O link expira em 24 horas.
+                </p>
+              </div>
             )}
 
             {status?.status === 'failed' && (
-              <div className="p-3 bg-destructive/10 border border-destructive/20 text-destructive text-[10px] font-pixel">
-                ERRO: {status.error_message}
+              <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-500 text-[9px] font-pixel space-y-2">
+                <p className="font-bold">ERRO NO PROCESSAMENTO:</p>
+                <p>{status.error_message || "Ocorreu um erro inesperado ao processar o vídeo. Tente um formato diferente ou um arquivo menor."}</p>
               </div>
             )}
           </div>
 
           {status?.status !== 'completed' && status?.status !== 'failed' && (
-            <p className="text-center text-[8px] font-pixel text-muted-foreground animate-pulse">
-              NÃO FECHE ESTA PÁGINA ATÉ A CONCLUSÃO DO PROCESSO.
-            </p>
+            <div className="bg-primary/5 p-4 border border-primary/10 rounded-sm flex items-center gap-3">
+              <Loader2 className="w-4 h-4 text-primary animate-spin shrink-0" />
+              <p className="text-[9px] font-pixel text-muted-foreground leading-relaxed">
+                ESTAMOS MELHORANDO SEU VÍDEO. VOCÊ PODE SAIR DESTA PÁGINA; O PROCESSAMENTO CONTINUA NO SERVIDOR.
+              </p>
+            </div>
           )}
 
           {(status?.status === 'completed' || status?.status === 'failed') && (
-            <Button variant="ghost" className="w-full font-pixel text-[8px] uppercase text-muted-foreground" onClick={() => {
+            <Button variant="outline" className="w-full font-pixel text-[8px] uppercase border-dashed" onClick={() => {
+              localStorage.removeItem('pending_video_enhancement_id');
               setJobId(null);
               setFile(null);
               setStatus(null);
@@ -272,6 +317,33 @@ export default function VideoEnhancer() {
           )}
         </Card>
       )}
+
+      <div className="mt-12 space-y-6">
+        <h3 className="text-xl font-archivo-black uppercase text-center text-foreground">Como Funciona</h3>
+        <div className="grid sm:grid-cols-3 gap-6">
+          <div className="pixel-card p-4 space-y-2 bg-background/50">
+            <div className="w-8 h-8 rounded-sm bg-primary/10 flex items-center justify-center border border-primary/20 mb-2">
+              <span className="font-pixel text-primary text-xs">01</span>
+            </div>
+            <h4 className="font-pixel text-[10px] text-foreground uppercase">Upload Local</h4>
+            <p className="text-[9px] text-muted-foreground leading-relaxed">O vídeo é enviado para nossos servidores seguros para processamento intensivo de IA.</p>
+          </div>
+          <div className="pixel-card p-4 space-y-2 bg-background/50">
+            <div className="w-8 h-8 rounded-sm bg-primary/10 flex items-center justify-center border border-primary/20 mb-2">
+              <span className="font-pixel text-primary text-xs">02</span>
+            </div>
+            <h4 className="font-pixel text-[10px] text-foreground uppercase">IA Engine</h4>
+            <p className="text-[9px] text-muted-foreground leading-relaxed">Aplicamos Denoise para remover granulação, Sharpen para nitidez e Upscale de resolução.</p>
+          </div>
+          <div className="pixel-card p-4 space-y-2 bg-background/50">
+            <div className="w-8 h-8 rounded-sm bg-primary/10 flex items-center justify-center border border-primary/20 mb-2">
+              <span className="font-pixel text-primary text-xs">03</span>
+            </div>
+            <h4 className="font-pixel text-[10px] text-foreground uppercase">Download</h4>
+            <p className="text-[9px] text-muted-foreground leading-relaxed">Assim que concluído, seu vídeo aprimorado fica disponível para download por 24 horas.</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
