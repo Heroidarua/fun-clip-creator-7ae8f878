@@ -13,16 +13,19 @@ import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useInView } from "react-intersection-observer";
 import { useFavoriteGames } from "@/hooks/useFavoriteGames";
+import { getRouteApi } from "@tanstack/react-router";
+
+const routeApi = getRouteApi("/jogos/$category");
 
 // ---------- helpers ----------
-type Category = "Todos" | "Luta" | "Plataforma" | "Corrida" | "Ação" | "Tiro" | "Arcade";
+type Category = "Todos" | "Luta" | "Plataforma" | "Corrida" | "Acao" | "Tiro" | "Arcade";
 
 const CATEGORIES: { id: Category; label: string; icon: string; description: string }[] = [
   { id: "Todos", label: "Tudo", icon: "✨", description: "Explorar toda a biblioteca" },
   { id: "Luta", label: "Luta", icon: "🥊", description: "Combate e artes marciais" },
   { id: "Plataforma", label: "Aventura", icon: "🍄", description: "Plataformas e exploração" },
   { id: "Corrida", label: "Velocidade", icon: "🏁", description: "Carros e corridas clássicas" },
-  { id: "Ação", label: "Ação", icon: "💥", description: "Combate intenso e arcade" },
+  { id: "Acao", label: "Ação", icon: "💥", description: "Combate intenso e arcade" },
   { id: "Tiro", label: "Shoot'em Up", icon: "🎯", description: "Ação balística clássica" },
   { id: "Arcade", label: "Clássicos", icon: "🕹️", description: "O puro suco dos 8/16 bits" },
 ];
@@ -33,7 +36,7 @@ function categoryOf(g: Game): Category {
   if (/(mario|sonic|kong|bomberman|kidd|mickey|donald|dizzy|picapau|monica|pocahontas|luigi|yoshi|rockman)/.test(t)) return "Plataforma";
   if (/(kart|top gear|gp rider|rider)/.test(t)) return "Corrida";
   if (/(1941|asteroids|duck hunt|battle city|popeye)/.test(t)) return "Tiro";
-  if (/(metal slug|spider|mask|power rangers|x-men|simpsons|alien|justice|dragonball|flintstones|saga|gta|theft)/.test(t)) return "Ação";
+  if (/(metal slug|spider|mask|power rangers|x-men|simpsons|alien|justice|dragonball|flintstones|saga|gta|theft)/.test(t)) return "Acao";
   return "Arcade";
 }
 
@@ -219,9 +222,26 @@ const GameRow = React.memo(function GameRow({
 
 // ---------- Page ----------
 export default function Jogos() {
+  const { category: routeCategory } = routeApi.useParams();
+  const navigate = routeApi.useNavigate();
+  
   const [fullscreenGame, setFullscreenGame] = useState<Game | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [category, setCategory] = useState<Category>("Todos");
+  
+  // Sincroniza a categoria da rota com o estado local/filtro
+  const category = useMemo(() => {
+    const cat = routeCategory.toLowerCase();
+    const found = CATEGORIES.find(c => c.id.toLowerCase() === cat);
+    return (found?.id as Category) || "Todos";
+  }, [routeCategory]);
+
+  const setCategory = (newCat: Category) => {
+    navigate({
+      to: "/jogos/$category",
+      params: { category: newCat.toLowerCase() },
+    });
+  };
+
   const [recentIds, setRecentIds] = useState<number[]>([]);
   const [searchFocused, setSearchFocused] = useState(false);
   const { favorites, toggleFavorite, isFavorite } = useFavoriteGames();
@@ -300,9 +320,7 @@ export default function Jogos() {
 
   return (
     <>
-      <Header />
-
-      <main className="min-h-screen bg-[hsl(var(--background))] pt-20 pb-24">
+      <div className="container mx-auto px-4">
         {/* ---- Compact Hero ---- */}
         <section className="relative overflow-hidden">
           {/* soft neon spots */}
@@ -391,7 +409,7 @@ export default function Jogos() {
 
               <div className="space-y-2">
                 <h3 className="font-silkscreen text-[11px] tracking-wider text-[hsl(var(--muted-foreground))] px-2 mb-3">
-                  CATEGORIAS
+                  GÊNEROS
                 </h3>
                 <nav className="space-y-1">
                   {CATEGORIES.map((c) => {
@@ -509,11 +527,10 @@ export default function Jogos() {
                     </div>
                   )}
                 </section>
-              </div>
             </div>
           </div>
         </div>
-      </main>
+      </div>
 
       {/* ---- Fullscreen player ---- */}
       {fullscreenGame && (
@@ -547,8 +564,7 @@ export default function Jogos() {
           </div>
         </div>
       )}
-
-      <Footer />
+      </div>
     </>
   );
 }
