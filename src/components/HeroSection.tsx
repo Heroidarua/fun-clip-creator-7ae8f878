@@ -898,9 +898,9 @@ const HeroSection = () => {
       info?.formats.find((f) => f.type === wantedType);
 
     try {
-      toast({
+      const loadingToastId = toast({
         title: isAutoDownload ? "🚀 Iniciando download automático..." : "⏳ Preparando download...",
-        description: "Baixando o arquivo. Isso pode levar alguns instantes...",
+        description: "O arquivo está sendo processado pelo seu navegador. Por favor, aguarde.",
       });
 
       setYoutubeLoading(true);
@@ -919,11 +919,20 @@ const HeroSection = () => {
         description: `O ${wantedType === "video" ? "vídeo" : "áudio"} foi salvo no seu dispositivo.`,
       });
 
-    } catch (error) {
+    } catch (error: any) {
       console.error("Download error:", error);
+      
+      // Capturar erros comuns e dar feedbacks melhores
+      let message = "Não foi possível processar o download. Tente novamente.";
+      if (error instanceof Error) message = error.message;
+      
+      if (message.includes("Failed to fetch") || message.includes("upstream chunk failed")) {
+        message = "O servidor de download está instável ou o YouTube bloqueou a conexão. Tente outra qualidade ou aguarde um momento.";
+      }
+
       toast({
         title: "❌ Erro no download",
-        description: error instanceof Error ? error.message : "Não foi possível processar o download. Tente novamente.",
+        description: message,
         variant: "destructive",
       });
     } finally {

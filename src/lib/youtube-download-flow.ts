@@ -41,10 +41,20 @@ async function fetchStream(
 ): Promise<StreamResult> {
   const ticket = await requestYoutubeDownload(videoUrl, container, quality);
   const fileUrl = absoluteDownloadUrl(ticket.downloadUrl);
-  const res = await fetch(fileUrl);
+  const res = await fetch(fileUrl).catch((err) => {
+    console.error("Fetch error:", err);
+    throw new Error("Erro de conexão com o servidor de download. Tente novamente.");
+  });
+  
   if (!res.ok || !res.body) {
-    const data = await res.json().catch(() => null);
-    throw new Error(data?.error || GENERIC_ERROR);
+    let errorDetail = GENERIC_ERROR;
+    try {
+      const data = await res.json();
+      errorDetail = data?.error || errorDetail;
+    } catch {
+      errorDetail = `Servidor retornou erro ${res.status}. Tente outra qualidade.`;
+    }
+    throw new Error(errorDetail);
   }
   const total = Number(res.headers.get("content-length") || 0);
   const muxed = res.headers.get("x-yt-muxed") !== "0";
