@@ -1,46 +1,39 @@
-# Nova aba "+SBT 📺"
+# Plano de Correção Emergencial - Downloader do Instagram
 
-## O que será feito
+O objetivo deste plano é restabelecer o funcionamento do downloader do Instagram no SOS01, revertendo para a implementação funcional anterior ou corrigindo o fluxo atual que está apresentando falhas no processamento de mídia.
 
-1. **Nova rota fullscreen** `src/routes/mais-sbt.tsx` + página `src/pages/MaisSbt.tsx`
-   - Layout 100vw × 100vh, sem Header/Footer/MobileBottomNav (página totalmente imersiva)
-   - Fundo preto, iframe ocupando toda a tela
-   - `allow="fullscreen; autoplay; encrypted-media"` + `allowFullScreen`
-   - Botão flutuante discreto no canto superior esquerdo: "← Voltar" (retorna ao site) e "⛶ Tela cheia" (usa `requestFullscreen()`)
-   - Indicador de carregamento centralizado (spinner retrô na paleta neon do SOS01: azul neon #28B6FF + roxo #B66DFF, fonte VT323 "CARREGANDO...")
-   - Detecção de bloqueio por X-Frame-Options/CSP:
-     - Timer de 6s após montar; se o `onLoad` do iframe não disparar, considera bloqueado
-     - Também escuta `onError`
-     - Estado de fallback exibe: ícone Tv (lucide-react), título "O +SBT não permite incorporação direta", subtítulo explicativo, botão grande `btn-3d` "Abrir +SBT" com `target="_blank" rel="noopener noreferrer"` apontando para https://mais.sbt.com.br/
-   - CSS: `overflow: hidden` no body enquanto a página estiver montada (cleanup no unmount)
+## Problema Identificado
+O downloader do Instagram parou de funcionar recentemente. A análise preliminar indica que a chamada para o endpoint `/api/download-instagram` está falhando ao processar URLs de reels/posts, possivelmente devido a mudanças na API de terceiros (Snapsave/RapidAPI) ou no tratamento de CORS/Proxy.
 
-2. **Esconder o MobileBottomNav nesta rota**
-   - Em `src/components/MobileBottomNav.tsx` (montado no `__root.tsx`), adicionar verificação do pathname; se for `/mais-sbt`, não renderizar
-   - Mesma lógica caso haja qualquer wrapper visual global
+## Ações
 
-3. **Adicionar item ao menu principal**
-   - Em `src/components/Header.tsx`, adicionar entrada no array `NAV`:
-     - `{ to: "/mais-sbt", label: "+SBT 📺", icon: Tv, desc: "Assista +SBT grátis" }`
-   - Usar ícone `Tv` do lucide-react
+### 1. Diagnóstico e Reversão
+- Analisar o arquivo `src/routes/api.download-instagram.ts` para identificar por que a função `downloadInstagramMedia` está falhando.
+- Verificar o histórico recente de commits para identificar a última versão estável da lógica de download.
+- Se a implementação com RapidAPI estiver falhando, priorizar o fallback para Snapsave ou extração direta via `tryDirectScrape`.
 
-## Estética (SOS01 retrô)
+### 2. Correção do Backend (API Route)
+- Ajustar o handler de `POST` em `src/routes/api.download-instagram.ts` para garantir que as URLs sejam normalizadas corretamente antes do processamento.
+- Validar se os cabeçalhos de CORS (`Access-Control-Allow-Origin: *`) estão sendo enviados corretamente.
+- Garantir que o `handleProxy` não esteja bloqueando requisições legítimas dos CDNs do Instagram (verificar `isSafeProxyUrl`).
 
-- Tela de loading: fundo preto, spinner com bordas em neon (azul + roxo), texto "CARREGANDO +SBT..." em VT323
-- Tela de fallback (bloqueio): card central com borda neon, ícone Tv grande pulsante, botão CTA usando utilitário `btn-3d` existente, animações `animate-in fade-in` do Tailwind
-- Sem barras, sem padding lateral — iframe edge-to-edge
+### 3. Ajuste no Frontend (HeroSection)
+- Verificar a chamada `fetchJsonWithRetry` em `src/components/HeroSection.tsx`.
+- Garantir que o payload enviado pelo frontend seja exatamente o que o backend espera.
+- Melhorar o log de erro no frontend para exibir a mensagem real retornada pelo servidor em caso de falha.
 
-## Detalhes técnicos
+### 4. Validação e Testes
+- Testar o fluxo completo no ambiente de preview:
+    1. Colar URL de Reel.
+    2. Clicar em Buscar.
+    3. Verificar se o preview (thumb/título) aparece.
+    4. Clicar em Download e verificar se o arquivo é gerado.
+- Testar com URLs de posts de imagem únicos e carrosséis.
 
-- Rota TanStack: `createFileRoute("/mais-sbt")` com `head()` definindo title "+SBT — SOS01" e meta description
-- Não usar `Header` nem `Footer` (página fullscreen dedicada)
-- `useState` para `loading`, `blocked`
-- `useRef<HTMLIFrameElement>` + `useEffect` com `setTimeout(6000)` para detectar bloqueio silencioso
-- `requestFullscreen()` opcional via botão (não automático — navegadores exigem gesto do usuário)
-- Sem alterações em backend, DB ou env
+## Detalhes Técnicos
+- **Endpoint**: `/api/download-instagram`
+- **Método**: POST
+- **Payload**: `{ "url": "..." }`
+- **Mecanismos de Fallback**: Snapsave -> RapidAPI -> Direct Scrape.
 
-## Arquivos
-
-- **Novo**: `src/routes/mais-sbt.tsx`
-- **Novo**: `src/pages/MaisSbt.tsx`
-- **Editado**: `src/components/Header.tsx` (item NAV)
-- **Editado**: `src/components/MobileBottomNav.tsx` (hide on /mais-sbt)
+*Nota: Não serão feitas alterações visuais ou em outras ferramentas (YouTube, TikTok, etc.) conforme solicitado.*
