@@ -30,16 +30,17 @@ export const Route = createFileRoute("/api/instagram/file")({
             );
           }
 
-          const mediaType = ticket.type === "video" ? "video" : "image"; // Mapeia de volta o tipo do ticket para o IG proxy
-          if (!isSafeProxyUrl(mediaUrl)) {
+          const targetUrl = ticket.videoId; // No caso do IG, guardamos a URL no campo videoId do ticket
+          if (!isSafeProxyUrl(targetUrl)) {
             return Response.json(
               { success: false, error: "URL de mídia não permitida." },
               { status: 403, headers: JSON_HEADERS },
             );
           }
 
+          const mediaType = ticket.type === "video" ? "video" : "image"; // Mapeia de volta o tipo do ticket para o IG proxy
           const range = request.headers.get("range");
-          const response = await fetch(mediaUrl, {
+          const response = await fetch(targetUrl, {
             headers: {
               "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
               "Referer": "https://www.instagram.com/",
@@ -50,7 +51,7 @@ export const Route = createFileRoute("/api/instagram/file")({
 
           if (!response.ok) throw new Error(`Upstream status ${response.status}`);
 
-          const ext = ticket.type === "video" ? "mp4" : "jpg";
+          const ext = mediaType === "video" ? "mp4" : "jpg";
           const filename = `${sanitizeFilename(ticket.title, "instagram")}.${ext}`;
           
           const headers = new Headers({
