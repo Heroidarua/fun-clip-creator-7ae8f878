@@ -1,5 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
-console.log("Loading api.download-instagram.ts...");
+import { createFileRoute } from "@tanstack/react-router";
 import { isSafeProxyUrl } from "@/lib/proxy-url-guard";
 import { callSnapsave } from "@/lib/snapsave.server";
 
