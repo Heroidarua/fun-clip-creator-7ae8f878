@@ -132,7 +132,7 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality | string = "b
     .sort(quality === "worst" ? asc : desc);
 
   // Priorização de qualidade baseada na string recebida
-  if (quality === "high" || (typeof quality === 'string' && quality.includes("720p"))) {
+  if (quality === "high" || (typeof quality === 'string' && quality.includes("720"))) {
     const hd = muxed.filter((f) => (f.height || 0) === 720);
     if (hd.length) muxed = hd;
   }
@@ -149,7 +149,7 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality | string = "b
     )
     .sort(quality === "worst" ? asc : desc);
   
-  if (quality === "high" || (typeof quality === 'string' && quality.includes("720p"))) {
+  if (quality === "high" || (typeof quality === 'string' && quality.includes("720"))) {
     const hd = videoOnly.filter((f) => (f.height || 0) === 720);
     if (hd.length) videoOnly = hd;
   }
@@ -433,7 +433,7 @@ async function fetchPiped(
 
       let chosen = muxed[0];
       if (quality === "worst" && muxed.length) chosen = muxed[muxed.length - 1];
-      if (quality === "high" || (typeof quality === 'string' && quality.includes("720p"))) chosen = muxed.find((s) => height(s) === 720) || muxed[0];
+      if (quality === "high" || (typeof quality === 'string' && quality.includes("720"))) chosen = muxed.find((s) => height(s) === 720) || muxed[0];
 
       const bestAudio = [...audioStreams]
         .sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0))
