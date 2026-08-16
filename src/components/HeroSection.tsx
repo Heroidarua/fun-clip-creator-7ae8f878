@@ -303,7 +303,7 @@ const HeroSection = () => {
   };
 
   const getPlatformIcon = (platform: string | null) => {
-    if (platform === 'tiktok') return <img src={tiktokIcon} alt="Ícone oficial da rede social TikTok para identificação automática do link" className="w-5 h-5" />;
+    if (platform === 'tiktok') return <img src={tiktokIcon} alt="Logotipo do TikTok" className="w-5 h-5" />;
     return null;
   };
 

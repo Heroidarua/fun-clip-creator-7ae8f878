@@ -85,7 +85,7 @@ const AboutSection = () => {
                     {/* Photo */}
                     <img 
                       src={developerPhoto} 
-                      alt="Fotografia de Matheus Marinho, desenvolvedor e fundador do sos01.com.br" loading="lazy" decoding="async"
+                      alt="Matheus Marinho - Desenvolvedor do sos01" loading="lazy" decoding="async"
                       className="relative w-full h-full object-cover rounded-lg"
                     />
                     

@@ -10,8 +10,6 @@ import ProtectionLayer from "@/components/ProtectionLayer";
 import SplashScreen from "@/components/SplashScreen";
 import CookieConsent from "@/components/CookieConsent";
 import { registerSW } from "@/lib/registerSW";
-import MobileBottomNav from "@/components/MobileBottomNav";
-
 
 import appCss from "../styles.css?url";
 
@@ -140,8 +138,6 @@ function RootComponent() {
         <SplashScreen />
         <Outlet />
         <Navigation />
-        <MobileBottomNav />
-
         <BackToTop />
         <CookieConsent />
       </TooltipProvider>

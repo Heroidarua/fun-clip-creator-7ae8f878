@@ -14,14 +14,13 @@ const ITEMS = [
   { to: "/", label: "Home", icon: Home, desc: "Início" },
   { to: "/ferramentas", label: "Ferramentas", icon: Wrench, desc: "Utilidades" },
   { to: "/busca", label: "Busca", icon: Search, desc: "Encontre rápido" },
-  { to: "/jogos", label: "Jogos", icon: Gamepad2, desc: "2900+ Diversão" },
+  { to: "/jogos", label: "Jogos", icon: Gamepad2, desc: "Diversão" },
   { to: "/nasa", label: "NASA", icon: Globe2, desc: "Espaço" },
-  { to: "/mais-sbt", label: "+SBT", icon: Tv, desc: "TV Online" },
+  { to: "/mais-sbt", label: "+SBT", icon: Tv, desc: "TV Ao Vivo" },
   { to: "/iptv", label: "PLUTO TV", icon: Radio, desc: "Canais" },
   { to: "/player", label: "IPTV 1.0", icon: PlayCircle, desc: "Premium" },
   { to: "/blog", label: "Blog", icon: BookOpen, desc: "Notícias" },
 ] as const;
-
 
 export default function SidebarNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });

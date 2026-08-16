@@ -32,36 +32,12 @@ function isRateLimited(req: Request): boolean {
 const str = (v: unknown, max = 120): string =>
   typeof v === "string" ? v.replace(/[\r\n]+/g, " ").slice(0, max) : "";
 
-
-async function requireUser(req: Request): Promise<{ id: string } | null> {
-  const authHeader = req.headers.get("Authorization");
-  if (!authHeader?.startsWith("Bearer ")) return null;
-  const token = authHeader.slice(7);
-  const supabaseUrl = Deno.env.get("SUPABASE_URL");
-  const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
-  if (!supabaseUrl || !anonKey) return null;
-  const resp = await fetch(`${supabaseUrl}/auth/v1/user`, {
-    headers: { apikey: anonKey, Authorization: `Bearer ${token}` },
-  });
-  if (!resp.ok) return null;
-  const user = await resp.json().catch(() => null);
-  return user?.id ? { id: user.id } : null;
-}
-
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const user = await requireUser(req);
-    if (!user) {
-      return new Response(
-        JSON.stringify({ error: "Autenticação necessária para usar as ferramentas de IA." }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
     if (isRateLimited(req)) {
       return new Response(
         JSON.stringify({ error: "Muitas requisições. Aguarde um minuto e tente novamente." }),

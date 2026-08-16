@@ -10,11 +10,8 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
-import { Game } from "@/data/games";
+import { games, Game } from "@/data/games";
 import { useFavoriteGames } from "@/hooks/useFavoriteGames";
-import { useQuery } from "@tanstack/react-query";
-import { getPagedGames } from "@/lib/games.functions";
-
 
 function GameCard({ game, isFavorite, onToggleFavorite }: { game: Game; isFavorite: boolean; onToggleFavorite: () => void }) {
   return (
@@ -40,7 +37,7 @@ function GameCard({ game, isFavorite, onToggleFavorite }: { game: Game; isFavori
 
                 <img
                   src={game.img}
-                  alt={`Capa oficial do jogo retrô ${game.title} - Jogue grátis na plataforma SOS01`}
+                  alt={`Capa do jogo ${game.title}`}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   draggable={false}
                   loading="lazy"
@@ -103,22 +100,14 @@ function GameCard({ game, isFavorite, onToggleFavorite }: { game: Game; isFavori
 export default function GamesCarousel() {
   const { favorites, toggleFavorite, isFavorite } = useFavoriteGames();
 
-  const { data } = useQuery({
-    queryKey: ["games-featured"],
-    queryFn: () => getPagedGames({ data: { page: 0 } }),
-  });
-
-  const displayGames = data?.games || [];
-
   // Sort games: favorites first, then the rest
   const sortedGames = useMemo(() => {
-    return [...displayGames].sort((a, b) => {
+    return [...games].sort((a, b) => {
       const aFav = favorites.includes(a.id) ? 0 : 1;
       const bFav = favorites.includes(b.id) ? 0 : 1;
       return aFav - bFav;
     });
-  }, [displayGames, favorites]);
-
+  }, [favorites]);
 
   const autoplayPlugin = useRef(
     Autoplay({
