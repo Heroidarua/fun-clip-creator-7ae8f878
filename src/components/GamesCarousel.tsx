@@ -102,7 +102,7 @@ export default function GamesCarousel() {
 
   // Sort games: favorites first, then the rest
   const sortedGames = useMemo(() => {
-    return [...games].sort((a, b) => {
+    return [...(games as Game[])].sort((a, b) => {
       const aFav = favorites.includes(a.id) ? 0 : 1;
       const bFav = favorites.includes(b.id) ? 0 : 1;
       return aFav - bFav;

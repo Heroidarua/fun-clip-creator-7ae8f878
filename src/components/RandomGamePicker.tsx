@@ -25,7 +25,7 @@ export default function RandomGamePicker() {
     setTimeout(() => {
       if (intervalRef.current) clearInterval(intervalRef.current);
       const final = games[Math.floor(Math.random() * games.length)];
-      setReelIndex(games.findIndex((g) => g.id === final.id));
+      setReelIndex(games.findIndex((g: Game) => g.id === final.id));
       setPicked(final);
       setSpinning(false);
     }, totalDuration);
