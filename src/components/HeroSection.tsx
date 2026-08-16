@@ -602,19 +602,14 @@ const HeroSection = () => {
         mediaType = instagramData.media_type;
       }
       
-      const response = await fetch(downloadUrl);
-      const blob = await response.blob();
-      const downloadBlobUrl = URL.createObjectURL(blob);
-      
       const link = document.createElement('a');
-      link.href = downloadBlobUrl;
+      link.href = downloadUrl;
       const extension = mediaType === 'video' ? 'mp4' : 'jpg';
       const itemSuffix = itemIndex !== undefined ? `_${itemIndex + 1}` : '';
       link.download = `${instagramData.title.replace(/[^a-zA-Z0-9]/g, '_')}_instagram${itemSuffix}.${extension}`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      URL.revokeObjectURL(downloadBlobUrl);
 
       const mediaTypeText = mediaType === 'video' ? 'vídeo' : 'foto';
       trackDownload('instagram');
@@ -733,17 +728,12 @@ const HeroSection = () => {
     if (!kwaiData) return;
 
     try {
-      const response = await fetch(kwaiData.proxy_url || kwaiData.video_url);
-      const blob = await response.blob();
-      const downloadBlobUrl = URL.createObjectURL(blob);
-      
       const link = document.createElement('a');
-      link.href = downloadBlobUrl;
+      link.href = kwaiData.proxy_url || kwaiData.video_url;
       link.download = `${kwaiData.title.replace(/[^a-zA-Z0-9]/g, '_')}_kwai.mp4`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      URL.revokeObjectURL(downloadBlobUrl);
 
       trackDownload('kwai');
       toast({
