@@ -2,7 +2,9 @@ import { useState, useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import { Dices, Sparkles, Play, RotateCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { games, type Game } from "@/data/games";
+import { type Game } from "@/data/games";
+import { useQuery } from "@tanstack/react-query";
+import { getPagedGames } from "@/lib/games.functions";
 
 export default function RandomGamePicker() {
   const [spinning, setSpinning] = useState(false);
@@ -10,8 +12,16 @@ export default function RandomGamePicker() {
   const [reelIndex, setReelIndex] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  const { data } = useQuery({
+    queryKey: ["games-random"],
+    queryFn: () => getPagedGames({ data: { page: 0 } }),
+  });
+
+  const games = data?.games || [];
+
   const startSpin = () => {
-    if (spinning) return;
+    if (spinning || !games.length) return;
+
     setSpinning(true);
     setPicked(null);
 
