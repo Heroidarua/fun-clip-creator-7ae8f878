@@ -1823,7 +1823,7 @@ const HeroSection = () => {
                       <h3 className="font-pixel text-[10px] text-center mb-3 text-muted-foreground">
                         {youtubeDownloadType === "video" ? "SELECIONE A RESOLUÇÃO:" : "SELECIONE A QUALIDADE:"}
                       </h3>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         {youtubeFormats
                           .filter((f) => f.type === youtubeDownloadType)
                           .map((f) => {
@@ -1836,19 +1836,19 @@ const HeroSection = () => {
                                 type="button"
                                 onClick={() => setYoutubeQuality(f.id)}
                                 aria-pressed={active}
-                                className={`flex flex-col items-center justify-center gap-1 px-2 py-2 rounded-sm border-2 transition-all ${
+                                className={`flex flex-col items-center justify-center gap-1.5 px-3 py-3 rounded-sm border-2 transition-all ${
                                   active
-                                    ? "border-[hsl(var(--retro-cyan))] bg-[hsl(0,100%,50%)]/15"
-                                    : "border-muted-foreground/40 hover:border-muted-foreground/70"
+                                    ? "border-[hsl(var(--retro-cyan))] bg-[hsl(0,100%,50%)]/20 shadow-[0_0_15px_hsl(var(--retro-cyan),0.3)]"
+                                    : "border-muted-foreground/30 bg-background/40 hover:border-muted-foreground/60"
                                 }`}
                               >
-                                <span className="font-pixel text-[10px] text-foreground">{f.label}</span>
+                                <span className="font-pixel text-[11px] text-foreground leading-tight">{f.label}</span>
                                 <span className="font-orbitron text-[10px] text-muted-foreground">
                                   {formatBytes(f.estimatedBytes)}
                                 </span>
                                 {tooBig && (
-                                  <span className="font-orbitron text-[9px] text-yellow-400">
-                                    acima de 100 MB
+                                  <span className="font-orbitron text-[9px] text-yellow-400 mt-0.5">
+                                    acima de 500 MB
                                   </span>
                                 )}
                               </button>
