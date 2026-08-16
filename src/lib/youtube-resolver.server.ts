@@ -134,23 +134,30 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality = "best") {
   if (quality === "high") {
     const hd = muxed.filter((f) => (f.height || 0) >= 720);
     if (hd.length) muxed = hd;
+  } else if (quality === "best") {
+    const uhd = muxed.filter((f) => (f.height || 0) >= 1080);
+    if (uhd.length) muxed = uhd;
   }
 
   // Sem progressivo (vídeo sem áudio embutido): o proxy precisa transferir o
   // arquivo inteiro, então limitamos o tamanho para não estourar o servidor.
-  const MAX_BYTES = 500 * 1024 * 1024; // Aumentado para 500MB para suportar melhor qualidade
+  const MAX_BYTES = 1024 * 1024 * 1024; // Aumentado para 1GB para suportar 4K via proxy
   const size = (f: any) => Number(f.contentLength || 0);
   let videoOnly = adaptive
-    // Somente H.264 (avc1): AV1/VP9 não tocam em muitos players e celulares
+    // Somente H.264 (avc1) ou VP9/AV1 se disponível e compatível (aqui mantemos simplificado para MP4)
     .filter(
       (f) =>
         /video\/mp4/.test(f.mimeType || "") &&
-        (f.height || 0) <= 2160, // Aumentado para 4K
+        (f.height || 0) <= 2160,
     )
     .sort(quality === "worst" ? asc : desc);
+  
   if (quality === "high") {
     const hd = videoOnly.filter((f) => (f.height || 0) >= 720);
     if (hd.length) videoOnly = hd;
+  } else if (quality === "best") {
+    const uhd = videoOnly.filter((f) => (f.height || 0) >= 1080);
+    if (uhd.length) videoOnly = uhd;
   }
   const fitsSize = videoOnly.filter((f) => size(f) > 0 && size(f) <= MAX_BYTES);
   if (fitsSize.length) {
