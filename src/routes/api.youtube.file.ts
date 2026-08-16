@@ -17,7 +17,7 @@ function sanitizeFilename(name: string, fallback: string): string {
 }
 
 /** O CDN do YouTube recusa faixas abertas (bytes=0-); usamos blocos fixos. */
-const CHUNK_BYTES = 4_000_000;
+const CHUNK_BYTES = 1_000_000;
 
 interface ContentRange {
   start: number;
