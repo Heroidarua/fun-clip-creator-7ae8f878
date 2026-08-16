@@ -51,63 +51,6 @@ export default function YoutubeDownloaderPage() {
   const [jobId, setJobId] = useState<string | null>(null);
 
 
-  const fetchStream = useCallback(
-    async (
-      videoUrl: string,
-      container: "mp4" | "m4a",
-      quality: string,
-      onRatio: (r: number | null) => void,
-    ): Promise<{
-      bytes: Uint8Array;
-      contentType: string;
-      directUrl: string;
-      muxed: boolean;
-    }> => {
-      const ticket = await requestYoutubeDownload(videoUrl, container, quality);
-      const fileUrl = absoluteDownloadUrl(ticket.downloadUrl);
-      const res = await fetch(fileUrl);
-      if (!res.ok || !res.body) {
-        const data = await res.json().catch(() => null);
-        throw new Error(data?.error || GENERIC_ERROR);
-      }
-      const total = Number(res.headers.get("content-length") || 0);
-      if (total > BROWSER_PROCESS_LIMIT) {
-        await res.body.cancel().catch(() => {});
-        const err = new Error(TOO_LARGE) as Error & {
-          directUrl?: string;
-          muxed?: boolean;
-        };
-        err.directUrl = fileUrl;
-        err.muxed = res.headers.get("x-yt-muxed") !== "0";
-        throw err;
-      }
-      const reader = res.body.getReader();
-      const chunks: Uint8Array[] = [];
-      let received = 0;
-      for (;;) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        if (value) {
-          chunks.push(value);
-          received += value.length;
-          onRatio(total ? received / total : null);
-        }
-      }
-      const bytes = new Uint8Array(received);
-      let offset = 0;
-      for (const c of chunks) {
-        bytes.set(c, offset);
-        offset += c.length;
-      }
-      return {
-        bytes,
-        contentType: res.headers.get("content-type") || "application/octet-stream",
-        directUrl: fileUrl,
-        muxed: res.headers.get("x-yt-muxed") !== "0",
-      };
-    },
-    [],
-  );
 
   const analyze = useCallback(async () => {
     if (!url.trim() || analyzing) return;
