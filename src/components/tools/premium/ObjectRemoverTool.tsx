@@ -26,30 +26,13 @@ export default function ObjectRemoverTool() {
   };
 
   useEffect(() => {
-    // Se não há preview ou se o resultado já existe, não inicializa
-    if (!preview || !canvasRef.current || !containerRef.current || result) {
-      if (fabricCanvas.current) {
-        fabricCanvas.current.dispose();
-        fabricCanvas.current = null;
-      }
-      return;
-    }
+    if (!preview || !canvasRef.current || !containerRef.current || result) return;
 
     const container = containerRef.current;
     const width = container.clientWidth;
     const height = (width * 9) / 16;
 
-    // A biblioteca Fabric.js as vezes entra em conflito com o React
-    // ao tentar manipular o DOM durante o dispose.
-    // Usamos um try/catch e verificação de segurança.
-    try {
-      if (fabricCanvas.current) {
-        fabricCanvas.current.dispose();
-      }
-    } catch (e) {
-      console.warn("Erro ao limpar canvas anterior:", e);
-    }
-
+    // Inicialização manual para evitar conflitos de ciclo de vida do React com Fabric.js
     const canvas = new fabric.Canvas(canvasRef.current, {
       width,
       height,
@@ -60,11 +43,10 @@ export default function ObjectRemoverTool() {
 
     const brush = new fabric.PencilBrush(canvas);
     brush.width = brushSize;
-    brush.color = "rgba(255, 0, 0, 0.5)"; // Vermelho semi-transparente para a máscara
+    brush.color = "rgba(255, 0, 0, 0.5)";
     canvas.freeDrawingBrush = brush;
 
     fabric.FabricImage.fromURL(preview).then((img) => {
-      // Redimensiona imagem para caber no canvas
       const scaleX = width / img.width!;
       const scaleY = height / img.height!;
       const scale = Math.min(scaleX, scaleY);
@@ -87,16 +69,26 @@ export default function ObjectRemoverTool() {
     fabricCanvas.current = canvas;
 
     return () => {
+      // Importante: Não chamar dispose() se o elemento pai já foi removido pelo React
+      // O Fabric.js tenta remover elementos do DOM que o React pode já ter removido
       try {
         if (fabricCanvas.current) {
-          fabricCanvas.current.dispose();
+          const c = fabricCanvas.current;
           fabricCanvas.current = null;
+          c.dispose();
         }
       } catch (e) {
-        console.warn("Erro no dispose final do canvas:", e);
+        console.warn("Fabric dispose handled:", e);
       }
     };
-  }, [preview, result, brushSize]);
+  }, [preview, result]); // Removido brushSize para evitar recriação constante
+
+  // Efeito separado para atualizar o tamanho do pincel sem destruir o canvas
+  useEffect(() => {
+    if (fabricCanvas.current && fabricCanvas.current.freeDrawingBrush) {
+      fabricCanvas.current.freeDrawingBrush.width = brushSize;
+    }
+  }, [brushSize]);
 
   const undo = () => {
     if (!fabricCanvas.current) return;
@@ -110,7 +102,6 @@ export default function ObjectRemoverTool() {
   const process = async () => {
     if (!fabricCanvas.current || !file) return;
     
-    // Validar se o usuário desenhou algo
     const objects = fabricCanvas.current.getObjects().filter(obj => obj.type === 'path');
     if (objects.length === 0) {
       toast.error("Por favor, pinte sobre o objeto que deseja remover.");
@@ -122,12 +113,9 @@ export default function ObjectRemoverTool() {
       const canvas = fabricCanvas.current;
       const originalBG = canvas.backgroundImage as fabric.FabricImage;
       
-      // 1. Gerar a máscara binária (preto e branco)
-      // Ocultamos a imagem de fundo para exportar apenas os caminhos desenhados
       const originalVisibility = originalBG.visible;
       originalBG.visible = false;
       
-      // Mudamos a cor dos traços para branco sobre fundo preto para a IA
       const currentObjects = canvas.getObjects().filter(o => o.type === 'path') as fabric.Path[];
       const originalColors = currentObjects.map(o => o.stroke);
       currentObjects.forEach(o => o.set({ stroke: 'white' }));
@@ -137,17 +125,15 @@ export default function ObjectRemoverTool() {
       
       const maskBase64 = canvas.toDataURL({ 
         format: "png", 
-        multiplier: 2, // Aumentar resolução da máscara
+        multiplier: 2,
         enableRetinaScaling: false 
       });
       
-      // Restaurar estado do canvas
       originalBG.visible = originalVisibility;
       currentObjects.forEach((o, i) => o.set({ stroke: originalColors[i] }));
       canvas.backgroundColor = originalCanvasBG;
       canvas.renderAll();
 
-      // 2. Converter imagem original para base64
       const reader = new FileReader();
       const imageBase64 = await new Promise<string>((resolve) => {
         reader.onload = () => resolve(reader.result as string);
@@ -207,7 +193,8 @@ export default function ObjectRemoverTool() {
                 ref={containerRef}
                 className="relative aspect-video w-full border-2 border-border overflow-hidden rounded-sm bg-slate-950 shadow-cartridge"
               >
-                <canvas ref={canvasRef} id="object-remover-canvas" />
+                {/* O canvas não deve ser recriado pelo React, o Fabric assume o controle dele */}
+                <canvas ref={canvasRef} />
                 {processing && (
                   <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center z-50">
                     <Loader2 className="w-8 h-8 text-primary animate-spin mb-2" />
