@@ -90,8 +90,15 @@ export default function ObjectRemoverTool() {
       // 1. Gerar a máscara (canvas sem a imagem de fundo)
       const canvas = fabricCanvas.current;
       const originalBG = canvas.backgroundImage;
+      
+      // Temporariamente remove o fundo para capturar apenas a máscara (os traços desenhados)
       canvas.backgroundImage = undefined;
-      const maskBase64 = canvas.toDataURL({ format: "png", multiplier: 1 });
+      const maskBase64 = canvas.toDataURL({ 
+        format: "png", 
+        multiplier: 1,
+        enableRetinaScaling: false 
+      });
+      
       canvas.backgroundImage = originalBG;
       canvas.renderAll();
 
