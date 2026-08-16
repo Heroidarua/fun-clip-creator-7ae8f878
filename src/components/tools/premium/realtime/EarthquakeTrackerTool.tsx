@@ -20,13 +20,13 @@ export default function EarthquakeTrackerTool() {
       </div>
 
       <a
-        href="https://earthquake.usgs.gov"
+        href="https://www.volcanodiscovery.com"
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center justify-center gap-2 text-[10px] font-pixel text-primary hover:underline"
       >
         <ExternalLink className="w-3 h-3" />
-        ABRIR NO USGS
+        ABRIR NO VOLCANO DISCOVERY
       </a>
     </div>
   );

@@ -21,13 +21,13 @@ export default function AircraftTrackerTool() {
       </div>
 
       <a
-        href="https://www.flightradar24.com"
+        href="https://adsbexchange.com"
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center justify-center gap-2 text-[10px] font-pixel text-primary hover:underline"
       >
         <ExternalLink className="w-3 h-3" />
-        ABRIR NO FLIGHTRADAR24
+        ABRIR NO ADSBEXCHANGE
       </a>
     </div>
   );
