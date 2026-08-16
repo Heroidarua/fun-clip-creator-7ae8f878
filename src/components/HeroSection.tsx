@@ -549,7 +549,23 @@ const HeroSection = () => {
       clearInterval(progressInterval);
 
       if (data && data.success) {
-        setInstagramData(data);
+        // Mapeamos InstagramInfo para InstagramData
+        const igData: InstagramData = {
+          media_url: data.media_url,
+          media_type: data.media_type,
+          thumbnail: data.thumbnail,
+          title: data.title,
+          author: data.author,
+          duration: data.duration,
+          is_carousel: data.is_carousel,
+          carousel_items: data.carousel_items?.map((item, idx) => ({
+            index: idx,
+            media_url: item.url,
+            media_type: item.type,
+            thumbnail: item.thumbnail,
+          })),
+        };
+        setInstagramData(igData);
         const isCarousel = data.is_carousel && data.carousel_items && data.carousel_items.length > 1;
         toast({
           title: "Conteúdo encontrado!",
