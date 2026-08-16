@@ -332,6 +332,75 @@ export type Database = {
         }
         Relationships: []
       }
+      video_enhancement_jobs: {
+        Row: {
+          audio_enhancement: Json | null
+          created_at: string | null
+          enhancement_mode: string | null
+          error_message: string | null
+          expires_at: string | null
+          id: string
+          input_fps: number | null
+          input_height: number | null
+          input_size: number | null
+          input_width: number | null
+          original_filename: string
+          output_fps: number | null
+          output_height: number | null
+          output_size: number | null
+          output_url: string | null
+          output_width: number | null
+          progress: number | null
+          status: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          audio_enhancement?: Json | null
+          created_at?: string | null
+          enhancement_mode?: string | null
+          error_message?: string | null
+          expires_at?: string | null
+          id?: string
+          input_fps?: number | null
+          input_height?: number | null
+          input_size?: number | null
+          input_width?: number | null
+          original_filename: string
+          output_fps?: number | null
+          output_height?: number | null
+          output_size?: number | null
+          output_url?: string | null
+          output_width?: number | null
+          progress?: number | null
+          status?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          audio_enhancement?: Json | null
+          created_at?: string | null
+          enhancement_mode?: string | null
+          error_message?: string | null
+          expires_at?: string | null
+          id?: string
+          input_fps?: number | null
+          input_height?: number | null
+          input_size?: number | null
+          input_width?: number | null
+          original_filename?: string
+          output_fps?: number | null
+          output_height?: number | null
+          output_size?: number | null
+          output_url?: string | null
+          output_width?: number | null
+          progress?: number | null
+          status?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       youtube_download_jobs: {
         Row: {
           created_at: string
