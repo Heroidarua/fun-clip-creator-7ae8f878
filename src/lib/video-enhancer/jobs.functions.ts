@@ -1,42 +1,52 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
+const JobOptionsSchema = z.object({
+  mode: z.enum(['light', 'standard', 'maximum']),
+  targetResolution: z.enum(['auto', '720p', '1080p', '1440p', '4k']),
+  audio: z.object({
+    reduceNoise: z.boolean(),
+    boostVoice: z.boolean(),
+    normalize: z.boolean(),
+  }),
+});
+
 export const createEnhancementJob = createServerFn({ method: "POST" })
-  .validator((data: unknown) => z.object({
+  .inputValidator(z.object({
     filename: z.string(),
     size: z.number(),
-    options: z.any()
-  }).parse(data))
+    options: JobOptionsSchema
+  }))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
     const { data: job, error } = await supabaseAdmin
-      .from("youtube_download_jobs" as any) // Using existing table for now as fallback if schema update fails
+      .from("video_enhancement_jobs" as any)
       .insert({
-        source_url: data.filename, // placeholder fields for now to fix build
-        file_size: data.size,
-        status: 'PENDING',
-        format: 'mp4',
-        quality: '720p',
-        video_id: 'enhancement'
+        original_filename: data.filename,
+        input_size: data.size,
+        enhancement_mode: data.options.mode,
+        audio_enhancement: data.options.audio,
+        status: 'queued',
+        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
       } as any)
       .select()
       .single();
 
     if (error) throw error;
-    return job;
+    return job as any;
   });
 
 export const getJobStatus = createServerFn({ method: "GET" })
-  .validator((data: unknown) => z.object({ jobId: z.string() }).parse(data))
+  .inputValidator(z.object({ jobId: z.string() }))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: job, error } = await supabaseAdmin
-      .from("youtube_download_jobs" as any)
+      .from("video_enhancement_jobs" as any)
       .select("*")
       .eq("id", data.jobId)
       .single();
 
     if (error) throw error;
-    return job;
+    return job as any;
   });
