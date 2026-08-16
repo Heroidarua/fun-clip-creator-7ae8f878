@@ -34,26 +34,30 @@ export const Route = createFileRoute("/api/video-enhancer/process")({
           // Iniciar processamento
           await (supabaseAdmin
             .from("video_enhancement_jobs" as any)
-            .update({ status: "processing", progress: 5 } as any)
+            .update({ status: "processing", progress: 2 } as any)
             .eq("id", jobId) as any);
 
           // Execução do processamento assíncrono
           (async () => {
             try {
+              console.log(`Job ${jobId}: Starting analysis...`);
               const analysis = await analyzeVideo(inputPath);
               
               await (supabaseAdmin
                 .from("video_enhancement_jobs" as any)
                 .update({ 
-                  progress: 20,
+                  progress: 10,
                   input_metadata: analysis as any
                 } as any)
                 .eq("id", jobId) as any);
 
+              console.log(`Job ${jobId}: Analysis complete. Starting FFmpeg...`);
               await processVideo(inputPath, outputPath, options, async (progress) => {
+                // Mapear progresso de 0-100 para 10-90 na escala global
+                const mappedProgress = 10 + Math.floor(progress * 0.8);
                 await (supabaseAdmin
                   .from("video_enhancement_jobs" as any)
-                  .update({ progress: 20 + Math.floor(progress * 0.7) } as any)
+                  .update({ progress: mappedProgress } as any)
                   .eq("id", jobId) as any);
               }, analysis.duration);
 

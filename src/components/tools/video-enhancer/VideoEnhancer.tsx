@@ -76,7 +76,7 @@ export default function VideoEnhancer() {
       } catch (err) {
         console.error("Polling error:", err);
       }
-    }, 5000); 
+    }, 3000); 
     pollingRef.current = interval;
     return () => {
       if (pollingRef.current) clearInterval(pollingRef.current);
@@ -158,12 +158,13 @@ export default function VideoEnhancer() {
   const getStatusMessage = (status: string, progress: number) => {
     if (status === 'queued') return "Na fila de espera...";
     if (status === 'processing') {
-      if (progress < 5) return "Iniciando upload...";
-      if (progress < 20) return "Analisando metadados do vídeo...";
-      if (progress < 40) return "Preparando filtros de IA...";
-      if (progress < 60) return "Removendo ruído e granulação...";
-      if (progress < 80) return "Realizando upscale de resolução...";
-      return "Finalizando compressão e áudio...";
+      if (progress < 5) return "Preparando ambiente...";
+      if (progress < 12) return "Analisando formato e duração...";
+      if (progress < 25) return "Iniciando motores de IA...";
+      if (progress < 50) return "Processando frames (Redução de ruído)...";
+      if (progress < 75) return "Processando frames (Upscaling & Nitidez)...";
+      if (progress < 90) return "Finalizando renderização e áudio...";
+      return "Enviando para nuvem (quase pronto)...";
     }
     if (status === 'completed') return "Processamento concluído!";
     if (status === 'failed') return "Erro no processamento.";

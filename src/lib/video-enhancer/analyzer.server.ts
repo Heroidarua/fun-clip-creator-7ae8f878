@@ -14,7 +14,8 @@ export async function analyzeVideo(filePath: string): Promise<VideoAnalysis> {
 
   try {
     const { stdout } = await execAsync(
-      `ffprobe -v error -select_streams v:0 -show_entries stream=width,height,avg_frame_rate,codec_name -show_entries format=duration,size,bit_rate -of json "${filePath}"`
+      `ffprobe -v error -select_streams v:0 -show_entries stream=width,height,avg_frame_rate,codec_name -show_entries format=duration,size,bit_rate -of json "${filePath}"`,
+      { timeout: 30000 } // 30s timeout para análise
     );
     
     const data = JSON.parse(stdout);
