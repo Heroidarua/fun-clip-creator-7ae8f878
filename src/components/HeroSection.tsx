@@ -1425,8 +1425,8 @@ const HeroSection = () => {
                       const currentItem = instagramData.is_carousel && instagramData.carousel_items
                         ? instagramData.carousel_items[selectedCarouselIndex]
                         : {
-                            url: instagramData.media_url,
-                            type: instagramData.media_type,
+                            media_url: instagramData.media_url,
+                            media_type: instagramData.media_type,
                             thumbnail: instagramData.thumbnail,
                           };
                       
