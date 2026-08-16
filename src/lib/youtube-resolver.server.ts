@@ -130,21 +130,23 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality | string = "b
     .filter((f) => /video\/mp4/.test(f.mimeType || "") && /mp4a/.test(f.mimeType || ""))
     .sort(quality === "worst" ? asc : desc);
 
-  // Espelha `best[height>=720]` do yt-dlp: prioriza >=720p quando existir
-  if (quality === "high") {
+  // Priorização de qualidade baseada na string recebida
+  if (typeof quality === 'string' && quality.includes("4k")) {
+    const uhd4k = muxed.filter((f) => (f.height || 0) >= 2160);
+    if (uhd4k.length) muxed = uhd4k;
+  } else if (typeof quality === 'string' && quality.includes("1080p")) {
+    const fhd = muxed.filter((f) => (f.height || 0) >= 1080);
+    if (fhd.length) muxed = fhd;
+  } else if (quality === "high" || (typeof quality === 'string' && quality.includes("720p"))) {
     const hd = muxed.filter((f) => (f.height || 0) >= 720);
     if (hd.length) muxed = hd;
-  } else if (quality === "best") {
-    const uhd = muxed.filter((f) => (f.height || 0) >= 1080);
-    if (uhd.length) muxed = uhd;
   }
 
   // Sem progressivo (vídeo sem áudio embutido): o proxy precisa transferir o
   // arquivo inteiro, então limitamos o tamanho para não estourar o servidor.
-  const MAX_BYTES = 1024 * 1024 * 1024; // Aumentado para 1GB para suportar 4K via proxy
+  const MAX_BYTES = 1024 * 1024 * 1024; // 1 GB
   const size = (f: any) => Number(f.contentLength || 0);
   let videoOnly = adaptive
-    // Somente H.264 (avc1) ou VP9/AV1 se disponível e compatível (aqui mantemos simplificado para MP4)
     .filter(
       (f) =>
         /video\/mp4/.test(f.mimeType || "") &&
@@ -152,18 +154,20 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality | string = "b
     )
     .sort(quality === "worst" ? asc : desc);
   
-  if (quality === "high") {
+  if (typeof quality === 'string' && quality.includes("4k")) {
+    const uhd4k = videoOnly.filter((f) => (f.height || 0) >= 2160);
+    if (uhd4k.length) videoOnly = uhd4k;
+  } else if (typeof quality === 'string' && quality.includes("1080p")) {
+    const fhd = videoOnly.filter((f) => (f.height || 0) >= 1080);
+    if (fhd.length) videoOnly = fhd;
+  } else if (quality === "high" || (typeof quality === 'string' && quality.includes("720p"))) {
     const hd = videoOnly.filter((f) => (f.height || 0) >= 720);
     if (hd.length) videoOnly = hd;
-  } else if (quality === "best") {
-    const uhd = videoOnly.filter((f) => (f.height || 0) >= 1080);
-    if (uhd.length) videoOnly = uhd;
   }
   const fitsSize = videoOnly.filter((f) => size(f) > 0 && size(f) <= MAX_BYTES);
   if (fitsSize.length) {
     videoOnly = fitsSize;
   } else if (videoOnly.length) {
-    // Nenhum cabe no limite: usa o menor disponível
     videoOnly = [...videoOnly].sort((a, b) => size(a) - size(b));
   }
 
