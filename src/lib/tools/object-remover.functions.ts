@@ -2,13 +2,13 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 export const removeObject = createServerFn({ method: "POST" })
-  .inputValidator((data) => 
+  .inputValidator(
     z.object({
       image: z.string(), // base64
       mask: z.string(),  // base64
-    }).parse(data)
+    })
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data }: { data: { image: string, mask: string } }) => {
     // Para uma implementação real, usaríamos o Lovable AI Gateway para Inpainting.
     // Como o prompt pede para TRABALHAR na ferramenta porque não está pegando (e era simulação),
     // vamos implementar a chamada real ao modelo.
