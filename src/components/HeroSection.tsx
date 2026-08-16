@@ -1,8 +1,12 @@
 import { useState, useEffect, useRef } from "react";
-import { Clipboard, Search, Download, Headphones, Gamepad2, Book, Music, Camera, CheckCircle, AlertTriangle, Play } from "lucide-react";
+import { Clipboard, Search, Download, Headphones, Gamepad2, Book, Music, Camera, CheckCircle, AlertTriangle, Play, Video, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { Link } from "@tanstack/react-router";
+import { createEnhancementJob, getJobStatus } from "@/lib/video-enhancer/jobs.functions";
+
+
 
 import { useDownloaderStatus } from "@/hooks/useDownloaderStatus";
 
@@ -295,6 +299,19 @@ const HeroSection = () => {
   const [pinterestProgress, setPinterestProgress] = useState(0);
   const [pinterestData, setPinterestData] = useState<PinterestData | null>(null);
   const [clickedPinterestButton, setClickedPinterestButton] = useState<string | null>(null);
+
+  // Melhorar Vídeo states
+  const [videoEnhancerUrl, setVideoEnhancerUrl] = useState("");
+  const [videoEnhancerLoading, setVideoEnhancerLoading] = useState(false);
+  const [videoEnhancerProgress, setVideoEnhancerProgress] = useState(0);
+  const [videoEnhancerJobId, setVideoEnhancerJobId] = useState<string | null>(null);
+  const [videoEnhancerStatus, setVideoEnhancerStatus] = useState<any>(null);
+  const [clickedVideoEnhancerButton, setClickedVideoEnhancerButton] = useState<string | null>(null);
+
+  const createEnhancementJobFn = useServerFn(createEnhancementJob);
+  const getJobStatusFn = useServerFn(getJobStatus);
+
+
 
 
   const detectPlatform = (url: string) => {
@@ -2181,7 +2198,78 @@ const HeroSection = () => {
               </div>
             )}
           </div>
-        </div>
+          </div>
+
+          {/* Video Enhancer Section */}
+          <div className="pixel-card rounded-sm p-5 sm:p-6 lg:p-8 mt-6" style={{ borderColor: 'hsl(260 100% 60% / 0.5)' }}>
+            {/* Section header */}
+            <div className="mb-5 flex items-center justify-between gap-3 border-b border-foreground/10 pb-4">
+              <div className="flex items-center gap-3 text-left">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-foreground/5 ring-1 ring-foreground/10">
+                  <Video className="w-5 h-5 text-[hsl(260,100%,60%)]" />
+                </span>
+                <div>
+                  <h2 className="font-pixel text-xs sm:text-sm text-[hsl(260,100%,60%)]">MELHORAR VÍDEO (IA)</h2>
+                  <p className="mt-1 text-[11px] text-muted-foreground">Upscale, nitidez e melhoria de áudio</p>
+                </div>
+              </div>
+              <StatusBadge isActive={isActive('video-enhancer')} />
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <div className="flex-1 relative">
+                <Input
+                  type="url"
+                  placeholder="Cole o link do vídeo para melhorar..."
+                  value={videoEnhancerUrl}
+                  onChange={(e) => setVideoEnhancerUrl(e.target.value)}
+                  disabled={!isActive('video-enhancer') || videoEnhancerLoading}
+                  className="h-12 sm:h-14 text-sm sm:text-base bg-background/80 border-2 rounded-sm text-foreground placeholder:text-muted-foreground font-orbitron transition-all duration-200 focus:shadow-[0_0_20px_hsl(260,100%,60%,0.3)] disabled:opacity-50"
+                  style={{ borderColor: 'hsl(260 100% 60% / 0.3)' }}
+                />
+              </div>
+
+              <div className="flex gap-2 sm:gap-3">
+                <Button
+                  onClick={async () => {
+                    setClickedVideoEnhancerButton("paste");
+                    setTimeout(() => setClickedVideoEnhancerButton(null), 300);
+                    try {
+                      const text = await navigator.clipboard.readText();
+                      setVideoEnhancerUrl(text);
+                    } catch (err) {}
+                  }}
+                  variant="secondary"
+                  className={`h-12 sm:h-14 px-4 sm:px-6 rounded-sm bg-secondary/80 hover:bg-secondary border-2 border-secondary/50 hover:border-[hsl(var(--retro-cyan))] font-pixel text-[10px] shadow-[3px_3px_0_hsl(var(--secondary))] hover:shadow-[1px_1px_0_hsl(var(--secondary))] hover:translate-x-[2px] hover:translate-y-[2px] transition-all ${
+                    clickedVideoEnhancerButton === "paste" ? "translate-x-[2px] translate-y-[2px] shadow-[1px_1px_0_hsl(var(--secondary))]" : ""
+                  }`}
+                >
+                  <Clipboard className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">COLAR</span>
+                </Button>
+
+                <Button
+                  asChild
+                  className={`h-12 sm:h-14 px-5 sm:px-8 rounded-sm border-2 border-[hsl(var(--retro-cyan))] font-pixel text-[10px] text-white shadow-[4px_4px_0_hsl(var(--retro-cyan))] hover:shadow-[2px_2px_0_hsl(var(--retro-cyan))] hover:translate-x-[2px] hover:translate-y-[2px] transition-all ${
+                    clickedVideoEnhancerButton === "search" ? "translate-x-[2px] translate-y-[2px] shadow-[2px_2px_0_hsl(var(--retro-cyan))]" : ""
+                  }`}
+                  style={{ backgroundColor: 'hsl(260, 100%, 60%)' }}
+                >
+                  <Link to="/ferramenta/melhorar-video">
+                    <Sparkles className="w-4 h-4 sm:mr-2" />
+                    <span className="hidden sm:inline">ACESSAR FERRAMENTA</span>
+                  </Link>
+                </Button>
+              </div>
+            </div>
+
+            {!isActive('video-enhancer') && <MaintenanceWarning />}
+            
+            <p className="mt-4 text-[10px] text-muted-foreground font-orbitron text-center italic">
+              * A melhoria de vídeo requer o upload direto do arquivo na página da ferramenta.
+            </p>
+          </div>
+
       </div>
     </section>
   );
