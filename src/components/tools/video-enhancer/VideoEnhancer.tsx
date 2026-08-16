@@ -90,13 +90,28 @@ export default function VideoEnhancer() {
       setJobId(id);
       setStatus(job);
       localStorage.setItem('pending_video_enhancement_id', id);
-      toast.success("Vídeo enviado! Iniciando processamento...");
+      toast.success("Enviando arquivo para processamento...");
+
+      // Enviar o arquivo para a rota de processamento real
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("jobId", id);
+      formData.append("options", JSON.stringify(options));
+
+      const response = await fetch("/api/video-enhancer/process", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Falha no upload do arquivo.");
+      }
       
       startPolling(id);
       
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      toast.error("Erro ao iniciar a melhoria do vídeo.");
+      toast.error(error.message || "Erro ao iniciar a melhoria do vídeo.");
       setUploading(false);
     }
   };
@@ -104,6 +119,7 @@ export default function VideoEnhancer() {
   const getStatusMessage = (status: string, progress: number) => {
     if (status === 'queued') return "Na fila de espera...";
     if (status === 'processing') {
+      if (progress < 5) return "Iniciando upload...";
       if (progress < 20) return "Analisando metadados do vídeo...";
       if (progress < 40) return "Preparando filtros de IA...";
       if (progress < 60) return "Removendo ruído e granulação...";

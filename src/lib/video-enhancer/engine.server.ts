@@ -8,7 +8,8 @@ export async function processVideo(
   inputPath: string, 
   outputPath: string, 
   options: EnhancementOptions,
-  onProgress: (percent: number) => void
+  onProgress: (percent: number) => void,
+  totalDuration?: number
 ): Promise<void> {
   const { exec } = await import("child_process");
   
@@ -78,12 +79,17 @@ export async function processVideo(
     const process = exec(command);
 
     process.stderr?.on('data', (data) => {
-      // O FFmpeg envia logs de progresso para o stderr
-      // Exemplo: frame=  123 fps= 30 q=28.0 size=    512kB time=00:00:05.12 bitrate= 819.2kbits/s speed=1.2x
-      const timeMatch = data.toString().match(/time=(\d{2}:\d{2}:\d{2}.\d{2})/);
-      if (timeMatch) {
-        // Aqui poderíamos calcular o percentual se tivéssemos a duração total
-        // Por agora vamos apenas simular um incremento
+      const log = data.toString();
+      const timeMatch = log.match(/time=(\d{2}):(\d{2}):(\d{2})\.(\d{2})/);
+      if (timeMatch && totalDuration && totalDuration > 0) {
+        const hours = parseInt(timeMatch[1]);
+        const minutes = parseInt(timeMatch[2]);
+        const seconds = parseInt(timeMatch[3]);
+        const centiseconds = parseInt(timeMatch[4]);
+        const currentTime = (hours * 3600) + (minutes * 60) + seconds + (centiseconds / 100);
+        const percent = Math.min(99, Math.round((currentTime / totalDuration) * 100));
+        onProgress(percent);
+      } else if (timeMatch) {
         onProgress(Math.min(95, 10)); 
       }
     });
