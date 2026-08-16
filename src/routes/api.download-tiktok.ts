@@ -281,12 +281,8 @@ export const Route = createFileRoute("/api/download-tiktok")({
             const result = await method();
             if (result && result.video_urls.hd) {
               const data = addProxyUrls(result, requestUrl.pathname);
-              try {
-                const { reportDownloaderResult } = await import("@/lib/downloader-status.server");
-                reportDownloaderResult("tiktok", true);
-              } catch (e) {
-                console.warn("Failed to report status:", e);
-              }
+              const { reportDownloaderResult } = await import("@/lib/downloader-status.server");
+              reportDownloaderResult("tiktok", true);
               return Response.json(
                 { success: true, data },
                 { headers: corsHeaders() }
@@ -295,12 +291,8 @@ export const Route = createFileRoute("/api/download-tiktok")({
           }
 
           {
-            try {
-              const { reportDownloaderResult } = await import("@/lib/downloader-status.server");
-              reportDownloaderResult("tiktok", false);
-            } catch (e) {
-              console.warn("Failed to report status:", e);
-            }
+            const { reportDownloaderResult } = await import("@/lib/downloader-status.server");
+            reportDownloaderResult("tiktok", false);
           }
           return Response.json(
             {

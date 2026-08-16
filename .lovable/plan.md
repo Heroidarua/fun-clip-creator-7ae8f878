@@ -1,30 +1,46 @@
-# Plan - Fix database connection and download functions
+# Nova aba "+SBT 📺"
 
-Investigate and fix the database connection issues that are causing download functions to fail following the Supabase integration.
+## O que será feito
 
-## Proposed Changes
+1. **Nova rota fullscreen** `src/routes/mais-sbt.tsx` + página `src/pages/MaisSbt.tsx`
+   - Layout 100vw × 100vh, sem Header/Footer/MobileBottomNav (página totalmente imersiva)
+   - Fundo preto, iframe ocupando toda a tela
+   - `allow="fullscreen; autoplay; encrypted-media"` + `allowFullScreen`
+   - Botão flutuante discreto no canto superior esquerdo: "← Voltar" (retorna ao site) e "⛶ Tela cheia" (usa `requestFullscreen()`)
+   - Indicador de carregamento centralizado (spinner retrô na paleta neon do SOS01: azul neon #28B6FF + roxo #B66DFF, fonte VT323 "CARREGANDO...")
+   - Detecção de bloqueio por X-Frame-Options/CSP:
+     - Timer de 6s após montar; se o `onLoad` do iframe não disparar, considera bloqueado
+     - Também escuta `onError`
+     - Estado de fallback exibe: ícone Tv (lucide-react), título "O +SBT não permite incorporação direta", subtítulo explicativo, botão grande `btn-3d` "Abrir +SBT" com `target="_blank" rel="noopener noreferrer"` apontando para https://mais.sbt.com.br/
+   - CSS: `overflow: hidden` no body enquanto a página estiver montada (cleanup no unmount)
 
-### Database connection and status tracking
+2. **Esconder o MobileBottomNav nesta rota**
+   - Em `src/components/MobileBottomNav.tsx` (montado no `__root.tsx`), adicionar verificação do pathname; se for `/mais-sbt`, não renderizar
+   - Mesma lógica caso haja qualquer wrapper visual global
 
-- Update `src/hooks/useDownloaderStatus.ts` to improve error handling and provide meaningful feedback when the database is unreachable.
-- Verify `downloader_status` table content and add a fallback mechanism in `isActive` to return `true` (active) if the database check fails, ensuring tools remain functional even if status tracking is down.
-- Update `src/lib/downloader-status.server.ts` to use a more robust update logic and verify if `supabaseAdmin` is correctly initialized.
+3. **Adicionar item ao menu principal**
+   - Em `src/components/Header.tsx`, adicionar entrada no array `NAV`:
+     - `{ to: "/mais-sbt", label: "+SBT 📺", icon: Tv, desc: "Assista +SBT grátis" }`
+   - Usar ícone `Tv` do lucide-react
 
-### API route stabilization
+## Estética (SOS01 retrô)
 
-- Ensure all downloader API routes (`/api/download-*`) correctly handle Supabase connection failures without crashing the entire request.
-- Add try-catch blocks around `reportDownloaderResult` calls in all relevant API handlers.
+- Tela de loading: fundo preto, spinner com bordas em neon (azul + roxo), texto "CARREGANDO +SBT..." em VT323
+- Tela de fallback (bloqueio): card central com borda neon, ícone Tv grande pulsante, botão CTA usando utilitário `btn-3d` existente, animações `animate-in fade-in` do Tailwind
+- Sem barras, sem padding lateral — iframe edge-to-edge
 
-### Environment and host detection
+## Detalhes técnicos
 
-- Refine `src/lib/api-base.ts` to ensure it accurately detects all platform host variations (preview and production) to avoid CORS issues.
+- Rota TanStack: `createFileRoute("/mais-sbt")` com `head()` definindo title "+SBT — SOS01" e meta description
+- Não usar `Header` nem `Footer` (página fullscreen dedicada)
+- `useState` para `loading`, `blocked`
+- `useRef<HTMLIFrameElement>` + `useEffect` com `setTimeout(6000)` para detectar bloqueio silencioso
+- `requestFullscreen()` opcional via botão (não automático — navegadores exigem gesto do usuário)
+- Sem alterações em backend, DB ou env
 
-## Technical Details
+## Arquivos
 
-- **Database**: Use the service role client (`supabaseAdmin`) for status updates and public client (`supabase`) for reads.
-- **Resilience**: Tools will default to "active" if status cannot be fetched.
-- **Logging**: Add specific server-side logs to trace connection failures to the backend.
-
-## User Review Required
-
-- No immediate action required from the user. I will proceed with fixing the connection and ensuring the tools work.
+- **Novo**: `src/routes/mais-sbt.tsx`
+- **Novo**: `src/pages/MaisSbt.tsx`
+- **Editado**: `src/components/Header.tsx` (item NAV)
+- **Editado**: `src/components/MobileBottomNav.tsx` (hide on /mais-sbt)

@@ -35,11 +35,7 @@ async function loadStatuses(force = false): Promise<void> {
   inFlight = (async () => {
     try {
       const { data, error } = await fromTable("downloader_status").select("*");
-      if (error) {
-        console.error("Supabase request failed, falling back to all active:", error);
-        emit({ statuses: {}, items: [], loading: false });
-        return;
-      }
+      if (error) throw error;
 
       const rows = (data as DownloaderStatus[]) || [];
       const statusMap: Record<string, boolean> = {};
@@ -49,7 +45,7 @@ async function loadStatuses(force = false): Promise<void> {
       emit({ statuses: statusMap, items: rows, loading: false });
     } catch (error) {
       console.error("Error fetching downloader statuses:", error);
-      emit({ statuses: {}, items: [], loading: false });
+      emit({ ...cache, loading: false });
     } finally {
       inFlight = null;
     }

@@ -1,4 +1,4 @@
-/* Desde que conectou ao supabase as funções do site pararam, tais como qualquer funções de donwload */
+/* Exclua a ferramenta de removedor de metadados */
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "@/pages/Index";
 import { buildSeo, SITE } from "@/lib/seo";
