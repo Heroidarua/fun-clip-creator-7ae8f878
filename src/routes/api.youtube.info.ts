@@ -85,28 +85,36 @@ export const Route = createFileRoute("/api/youtube/info")({
 
           const formats = [
             {
-              id: "mp4-best",
+              id: "mp4-4k",
               container: "mp4" as const,
               type: "video" as const,
               quality: "best",
-              label: "MP4 — Melhor qualidade disponível",
-              estimatedBytes: estimateBytes(duration, 1800),
+              label: "MP4 — 4K / 2K (Ultra HD)",
+              estimatedBytes: estimateBytes(duration, 15000),
+            },
+            {
+              id: "mp4-1080p",
+              container: "mp4" as const,
+              type: "video" as const,
+              quality: "best",
+              label: "MP4 — 1080p (Full HD)",
+              estimatedBytes: estimateBytes(duration, 5000),
             },
             {
               id: "mp4-720p",
               container: "mp4" as const,
               type: "video" as const,
               quality: "high",
-              label: "MP4 — 1080p/720p (Melhor disponível)",
+              label: "MP4 — 720p (HD)",
               estimatedBytes: estimateBytes(duration, 2500),
             },
             {
-              id: "mp4-low",
+              id: "mp4-480p",
               container: "mp4" as const,
               type: "video" as const,
               quality: "worst",
-              label: "MP4 — Qualidade leve (economia de dados)",
-              estimatedBytes: estimateBytes(duration, 500),
+              label: "MP4 — 480p (Qualidade SD)",
+              estimatedBytes: estimateBytes(duration, 1200),
             },
             {
               id: "m4a-audio",
