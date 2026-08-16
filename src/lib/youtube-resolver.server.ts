@@ -436,7 +436,9 @@ async function fetchPiped(
 
       let chosen = muxed[0];
       if (quality === "worst" && muxed.length) chosen = muxed[muxed.length - 1];
-      if (quality === "high") chosen = muxed.find((s) => height(s) >= 720) || muxed[0];
+      if (typeof quality === 'string' && quality.includes("4k")) chosen = muxed.find((s) => height(s) >= 2160) || muxed[0];
+      else if (typeof quality === 'string' && quality.includes("1080p")) chosen = muxed.find((s) => height(s) >= 1080) || muxed[0];
+      else if (quality === "high" || (typeof quality === 'string' && quality.includes("720p"))) chosen = muxed.find((s) => height(s) >= 720) || muxed[0];
 
       const bestAudio = [...audioStreams]
         .sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0))
