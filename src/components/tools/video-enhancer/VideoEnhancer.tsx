@@ -377,14 +377,16 @@ export default function VideoEnhancer() {
           )}
 
           {(status?.status === 'completed' || status?.status === 'failed') && (
-            <Button variant="outline" className="w-full font-pixel text-[8px] uppercase border-dashed" onClick={() => {
-              localStorage.removeItem('pending_video_enhancement_id');
-              setJobId(null);
-              setFile(null);
-              setStatus(null);
-            }}>
-              Melhorar outro vídeo
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button 
+                variant="outline" 
+                className="flex-1 font-pixel text-[8px] uppercase border-dashed" 
+                onClick={handleReset}
+              >
+                <RefreshCcw className="w-3 h-3 mr-2" />
+                Recomeçar / Novo Vídeo
+              </Button>
+            </div>
           )}
         </Card>
       )}
