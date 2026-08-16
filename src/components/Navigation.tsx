@@ -71,7 +71,7 @@ export default function SidebarNav() {
                 <Tooltip key={to}>
                   <TooltipTrigger asChild>
                     <Link
-                      to={to}
+                      to={to as any}
                       onClick={(e) => {
                         if (to === "/player") {
                           e.preventDefault();
@@ -143,7 +143,7 @@ export default function SidebarNav() {
               return (
                 <Link
                   key={to}
-                  to={to}
+                  to={to as any}
                   onClick={(e) => {
                     setIsMobileMenuOpen(false);
                     if (to === "/player") {
