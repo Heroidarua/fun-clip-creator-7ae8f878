@@ -1,46 +1,39 @@
-# Nova aba "+SBT 📺"
+# Otimização da Área de Jogos (2.900+ Jogos)
 
-## O que será feito
+Esta tarefa visa resolver a lentidão crítica causada pelo carregamento de milhares de jogos simultâneos no frontend. A nova arquitetura utilizará o Supabase para persistência e busca, com paginação real no servidor e carregamento sob demanda.
 
-1. **Nova rota fullscreen** `src/routes/mais-sbt.tsx` + página `src/pages/MaisSbt.tsx`
-   - Layout 100vw × 100vh, sem Header/Footer/MobileBottomNav (página totalmente imersiva)
-   - Fundo preto, iframe ocupando toda a tela
-   - `allow="fullscreen; autoplay; encrypted-media"` + `allowFullScreen`
-   - Botão flutuante discreto no canto superior esquerdo: "← Voltar" (retorna ao site) e "⛶ Tela cheia" (usa `requestFullscreen()`)
-   - Indicador de carregamento centralizado (spinner retrô na paleta neon do SOS01: azul neon #28B6FF + roxo #B66DFF, fonte VT323 "CARREGANDO...")
-   - Detecção de bloqueio por X-Frame-Options/CSP:
-     - Timer de 6s após montar; se o `onLoad` do iframe não disparar, considera bloqueado
-     - Também escuta `onError`
-     - Estado de fallback exibe: ícone Tv (lucide-react), título "O +SBT não permite incorporação direta", subtítulo explicativo, botão grande `btn-3d` "Abrir +SBT" com `target="_blank" rel="noopener noreferrer"` apontando para https://mais.sbt.com.br/
-   - CSS: `overflow: hidden` no body enquanto a página estiver montada (cleanup no unmount)
+## Mudanças Técnicas
 
-2. **Esconder o MobileBottomNav nesta rota**
-   - Em `src/components/MobileBottomNav.tsx` (montado no `__root.tsx`), adicionar verificação do pathname; se for `/mais-sbt`, não renderizar
-   - Mesma lógica caso haja qualquer wrapper visual global
+### 1. Banco de Dados (Supabase)
+- Criar tabela `public.games` para armazenar os 2.757+ jogos.
+- Migrar os dados do arquivo estático `src/data/games.ts` para o banco.
+- Adicionar índices para busca rápida (trgm) e filtragem por categoria.
 
-3. **Adicionar item ao menu principal**
-   - Em `src/components/Header.tsx`, adicionar entrada no array `NAV`:
-     - `{ to: "/mais-sbt", label: "+SBT 📺", icon: Tv, desc: "Assista +SBT grátis" }`
-   - Usar ícone `Tv` do lucide-react
+### 2. Backend (Server Functions)
+- Implementar `getPagedGames` em `src/lib/games.functions.ts`.
+- Suporte a paginação (`page`), busca (`search`) e categorias (`category`).
+- Retornar contagem total para controles de UI.
 
-## Estética (SOS01 retrô)
+### 3. Frontend (UI de Jogos)
+- Substituir a lista estática por `useSuspenseQuery` do TanStack Query.
+- Implementar controles de paginação (Anterior/Próximo) e carregamento infinito "Ver Mais".
+- **Lazy Loading**: As imagens dos cards usarão `loading="lazy"`.
+- **Iframe sob demanda**: O iframe do jogo só será montado quando o usuário clicar em "Jogar".
+- **Code Splitting**: O player de jogos será carregado dinamicamente.
 
-- Tela de loading: fundo preto, spinner com bordas em neon (azul + roxo), texto "CARREGANDO +SBT..." em VT323
-- Tela de fallback (bloqueio): card central com borda neon, ícone Tv grande pulsante, botão CTA usando utilitário `btn-3d` existente, animações `animate-in fade-in` do Tailwind
-- Sem barras, sem padding lateral — iframe edge-to-edge
+### 4. Otimização da Home
+- Limitar a exibição de jogos na Home para apenas 8-12 itens.
+- Carregar o catálogo completo apenas na rota `/jogos`.
 
-## Detalhes técnicos
+## Passo a Passo da Implementação
 
-- Rota TanStack: `createFileRoute("/mais-sbt")` com `head()` definindo title "+SBT — SOS01" e meta description
-- Não usar `Header` nem `Footer` (página fullscreen dedicada)
-- `useState` para `loading`, `blocked`
-- `useRef<HTMLIFrameElement>` + `useEffect` com `setTimeout(6000)` para detectar bloqueio silencioso
-- `requestFullscreen()` opcional via botão (não automático — navegadores exigem gesto do usuário)
-- Sem alterações em backend, DB ou env
+1. **Database**: Executar a migração da tabela `games`.
+2. **Seeding**: Rodar o script de migração de dados via console admin.
+3. **API**: Validar a `serverFn` de busca.
+4. **Refactor**: Atualizar `src/pages/Jogos.tsx` para usar os novos dados dinâmicos.
+5. **Clean up**: Reduzir o bundle removendo (ou movendo) o arquivo `games.ts` gigante.
 
-## Arquivos
-
-- **Novo**: `src/routes/mais-sbt.tsx`
-- **Novo**: `src/pages/MaisSbt.tsx`
-- **Editado**: `src/components/Header.tsx` (item NAV)
-- **Editado**: `src/components/MobileBottomNav.tsx` (hide on /mais-sbt)
+## Considerações de Performance
+- `staleTime` de 5 minutos para resultados de busca.
+- `prefetchQuery` para a próxima página.
+- Virtualização opcional se a lista crescer muito no DOM.
