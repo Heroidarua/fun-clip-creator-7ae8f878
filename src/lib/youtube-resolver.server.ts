@@ -168,6 +168,14 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality | string = "b
         : (b.bitrate || 0) - (a.bitrate || 0),
     );
 
+  // Fallback to any audio if mp4/mpeg not found
+  if (!audioOnly.length) {
+    const anyAudio = formats
+      .filter((f) => /audio/i.test(f.mimeType || ""))
+      .sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0));
+    if (anyAudio.length) audioOnly.push(anyAudio[0]);
+  }
+
   const chosen = muxed[0] || videoOnly[0];
 
   return {
@@ -247,8 +255,8 @@ async function fetchInnerTube(
       const result: YouTubeResponse = {
         success: true,
         data: {
-          video_url: video || audio,
-          audio_url: audio || "",
+          video_url: video || audio || "",
+          audio_url: audio || video || "",
           thumbnail: thumbs[thumbs.length - 1]?.url || fallbackThumbnail(videoId),
           title: (details.title || "YouTube Video").substring(0, 120),
           author: details.author || "YouTube",
@@ -517,8 +525,8 @@ async function fetchY2MateInner(videoId: string): Promise<YouTubeResponse | null
     return {
       success: true,
       data: {
-        video_url: videoUrl || "", 
-        audio_url: audioUrl || "",
+        video_url: videoUrl || audioUrl || "", 
+        audio_url: audioUrl || videoUrl || "",
         thumbnail: fallbackThumbnail(videoId),
         title: info.title || "YouTube Video", 
         author: info.a || "YouTube",
