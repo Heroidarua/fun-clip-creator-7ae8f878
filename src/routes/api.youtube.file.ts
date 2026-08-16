@@ -113,9 +113,15 @@ export const Route = createFileRoute("/api/youtube/file")({
           if (jobId && !clientRange) {
              await supabase
                 .from("youtube_download_jobs")
-                .update({ status: 'PROCESSING', progress: 10 })
+                .update({ 
+                  status: 'PROCESSING', 
+                  progress: 10,
+                  title: (ticket.title as any) // Type assertion to bypass temporary generation mismatch
+                })
                 .eq("id", jobId);
           }
+
+
 
           for await (const candidate of resolveYoutubeCandidates(
             canonical,

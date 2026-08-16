@@ -55,9 +55,11 @@ export function requestYoutubeDownload(
   url: string,
   format: "mp4" | "m4a",
   quality: string,
-): Promise<{ success: true; downloadUrl: string; expiresIn: number }> {
-  return postJson("/api/youtube/download", { url, format, quality });
+  title?: string,
+): Promise<{ success: true; downloadUrl: string; expiresIn: number; jobId?: string }> {
+  return postJson("/api/youtube/download", { url, format, quality, title });
 }
+
 
 export function absoluteDownloadUrl(path: string): string {
   return `${apiBase()}${path}`;

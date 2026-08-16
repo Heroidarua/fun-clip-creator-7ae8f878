@@ -7,7 +7,7 @@ const GENERIC_ERROR =
   "Não foi possível processar este vídeo. Verifique a URL e tente novamente.";
 
 /** Acima deste tamanho o arquivo não é processado no navegador. */
-export const BROWSER_PROCESS_LIMIT = 300 * 1024 * 1024; // Aumentado para suportar 1080p e 4K
+export const BROWSER_PROCESS_LIMIT = 500 * 1024 * 1024; // Aumentado para suportar até 500MB
 
 const TOO_LARGE = "TOO_LARGE";
 
@@ -39,7 +39,7 @@ async function fetchStream(
   quality: string,
   onRatio: (ratio: number | null) => void,
 ): Promise<StreamResult> {
-  const ticket = await requestYoutubeDownload(videoUrl, container, quality);
+  const ticket = await requestYoutubeDownload(videoUrl, container, quality, "stream");
   const fileUrl = absoluteDownloadUrl(ticket.downloadUrl);
   const res = await fetch(fileUrl).catch((err) => {
     console.error("Fetch error:", err);
