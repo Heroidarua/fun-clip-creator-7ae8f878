@@ -16,7 +16,7 @@ import { useFavoriteGames } from "@/hooks/useFavoriteGames";
 function GameCard({ game, isFavorite, onToggleFavorite }: { game: Game; isFavorite: boolean; onToggleFavorite: () => void }) {
   return (
     <div className="block group relative">
-      <Link to="/jogos">
+      <Link to="/jogos/$category" params={{ category: "todos" }}>
         <div className="relative cursor-pointer transition-all duration-300">
           {/* Outer frame — decorative bezel */}
           <div
@@ -174,7 +174,7 @@ export default function GamesCarousel() {
 
         {/* CTA Button */}
         <div className="text-center mt-10 sm:mt-12">
-          <Link to="/jogos">
+          <Link to="/jogos/$category" params={{ category: "todos" }}>
             <Button className="gap-2 px-8 py-3 text-sm font-semibold bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary)/0.9)] text-[hsl(var(--primary-foreground))] rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all">
               <Gamepad2 className="w-4 h-4" />
               Ver todos os jogos

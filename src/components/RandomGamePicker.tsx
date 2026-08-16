@@ -123,7 +123,7 @@ export default function RandomGamePicker() {
                   )}
                 </Button>
                 {picked && !spinning && (
-                  <Link to="/jogos" className="flex-1">
+                  <Link to="/jogos/$category" params={{ category: "todos" }} className="flex-1">
                     <Button className="w-full gap-2 animate-in fade-in slide-in-from-bottom-1 duration-300">
                       <Play className="w-4 h-4" fill="currentColor" />
                       Jogar agora

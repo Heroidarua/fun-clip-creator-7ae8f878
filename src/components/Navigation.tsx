@@ -14,7 +14,7 @@ const ITEMS = [
   { to: "/", label: "Home", icon: Home, desc: "Início" },
   { to: "/ferramentas", label: "Ferramentas", icon: Wrench, desc: "Utilidades" },
   { to: "/busca", label: "Busca", icon: Search, desc: "Encontre rápido" },
-  { to: "/jogos", label: "Jogos", icon: Gamepad2, desc: "Diversão" },
+  { to: "/jogos/$category", params: { category: "todos" }, label: "Jogos", icon: Gamepad2, desc: "Diversão" },
   { to: "/nasa", label: "NASA", icon: Globe2, desc: "Espaço" },
   { to: "/mais-sbt", label: "+SBT", icon: Tv, desc: "TV Ao Vivo" },
   { to: "/iptv", label: "PLUTO TV", icon: Radio, desc: "Canais" },
