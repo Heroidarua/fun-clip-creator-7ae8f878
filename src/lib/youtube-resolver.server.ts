@@ -115,7 +115,7 @@ const INNERTUBE_CLIENTS = [
   },
 ] as const;
 
-function pickInnertubeFormats(player: any, quality: YouTubeQuality = "best") {
+function pickInnertubeFormats(player: any, quality: YouTubeQuality | string = "best") {
   const streaming = player?.streamingData || {};
   const hasUrl = (f: any) => typeof f?.url === "string" && f.url.startsWith("http");
   const progressive: any[] = (streaming.formats || []).filter(hasUrl);
@@ -210,7 +210,7 @@ async function fetchVisitorData(): Promise<string> {
 
 async function fetchInnerTube(
   videoId: string,
-  quality: YouTubeQuality = "best",
+  quality: YouTubeQuality | string = "best",
 ): Promise<YouTubeResponse | null> {
   let fallbackResult: YouTubeResponse | null = null;
   const visitorData = await fetchVisitorData();
@@ -410,7 +410,7 @@ const PIPED_INSTANCES = [
 
 async function fetchPiped(
   videoId: string,
-  quality: YouTubeQuality = "best",
+  quality: YouTubeQuality | string = "best",
 ): Promise<YouTubeResponse | null> {
   for (const instance of PIPED_INSTANCES) {
     try {
@@ -571,7 +571,7 @@ async function fetchYoutubePreview(videoId: string): Promise<YouTubeResponse> {
   }
 }
 
-function buildProviders(rawUrl: string, videoId: string, quality: YouTubeQuality) {
+function buildProviders(rawUrl: string, videoId: string, quality: YouTubeQuality | string) {
   const key = (process.env.RAPIDAPI_KEY || "").trim();
   const providers: Array<{ name: string; run: () => Promise<YouTubeResponse | null> }> = [];
   
@@ -596,7 +596,7 @@ function buildProviders(rawUrl: string, videoId: string, quality: YouTubeQuality
 export async function resolveYoutube(
   rawUrl: string,
   videoId: string,
-  quality: YouTubeQuality = "best",
+  quality: YouTubeQuality | string = "best",
 ): Promise<YouTubeResponse> {
   const providers = buildProviders(rawUrl, videoId, quality);
 
@@ -627,7 +627,7 @@ export async function resolveYoutube(
 export async function* resolveYoutubeCandidates(
   rawUrl: string,
   videoId: string,
-  quality: YouTubeQuality = "best",
+  quality: YouTubeQuality | string = "best",
 ): AsyncGenerator<YouTubeData> {
   for (const p of buildProviders(rawUrl, videoId, quality)) {
     try {
