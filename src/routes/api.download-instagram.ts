@@ -536,7 +536,7 @@ export const Route = createFileRoute("/api/download-instagram")({
         }
 
         const rapidApiKey = process.env.RAPIDAPI_KEY || "";
-        const result = await downloadInstagramMedia(url, requestUrl.pathname, rapidApiKey);
+        const result = await downloadInstagramMedia(url, "/api/download-instagram", rapidApiKey);
         return new Response(JSON.stringify(result), {
           status: result.success ? 200 : 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -544,13 +544,12 @@ export const Route = createFileRoute("/api/download-instagram")({
       },
 
       POST: async ({ request }) => {
-        const requestUrl = new URL(request.url);
         let url = "";
         try {
           const body = await request.json();
           url = body?.url || "";
         } catch {
-          url = requestUrl.searchParams.get("url") || "";
+          url = new URL(request.url).searchParams.get("url") || "";
         }
 
         if (!url || !url.includes("instagram.com")) {
@@ -561,7 +560,7 @@ export const Route = createFileRoute("/api/download-instagram")({
         }
 
         const rapidApiKey = process.env.RAPIDAPI_KEY || "";
-        const result = await downloadInstagramMedia(url, requestUrl.pathname, rapidApiKey);
+        const result = await downloadInstagramMedia(url, "/api/download-instagram", rapidApiKey);
         try {
           const { reportDownloaderResult } = await import("@/lib/downloader-status.server");
           reportDownloaderResult("instagram", !!result.success);
