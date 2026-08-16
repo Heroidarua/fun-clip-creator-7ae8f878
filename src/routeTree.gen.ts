@@ -180,9 +180,9 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
   getParentRoute: () => BlogRoute,
 } as any)
 const JogosCategoryRoute = JogosCategoryRouteImport.update({
-  id: '/$category',
-  path: '/$category',
-  getParentRoute: () => JogosRoute,
+  id: '/jogos/$category',
+  path: '/jogos/$category',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const FerramentasYoutubeDownloaderRoute =
   FerramentasYoutubeDownloaderRouteImport.update({
@@ -722,6 +722,7 @@ export interface RootRouteChildren {
   CategoriaSlugRoute: typeof CategoriaSlugRoute
   FerramentaSlugRoute: typeof FerramentaSlugRoute
   FerramentasYoutubeDownloaderRoute: typeof FerramentasYoutubeDownloaderRoute
+  JogosCategoryRoute: typeof JogosCategoryRoute
   ApiPublicPinterestDownloadRoute: typeof ApiPublicPinterestDownloadRoute
   ApiYoutubeDownloadRoute: typeof ApiYoutubeDownloadRoute
   ApiYoutubeFileRoute: typeof ApiYoutubeFileRoute
@@ -893,10 +894,10 @@ declare module '@tanstack/react-router' {
     }
     '/jogos/$category': {
       id: '/jogos/$category'
-      path: '/$category'
+      path: '/jogos/$category'
       fullPath: '/jogos/$category'
       preLoaderRoute: typeof JogosCategoryRouteImport
-      parentRoute: typeof JogosRoute
+      parentRoute: typeof rootRouteImport
     }
     '/ferramentas_/youtube-downloader': {
       id: '/ferramentas_/youtube-downloader'
@@ -1182,6 +1183,7 @@ const rootRouteChildren: RootRouteChildren = {
   CategoriaSlugRoute: CategoriaSlugRoute,
   FerramentaSlugRoute: FerramentaSlugRoute,
   FerramentasYoutubeDownloaderRoute: FerramentasYoutubeDownloaderRoute,
+  JogosCategoryRoute: JogosCategoryRoute,
   ApiPublicPinterestDownloadRoute: ApiPublicPinterestDownloadRoute,
   ApiYoutubeDownloadRoute: ApiYoutubeDownloadRoute,
   ApiYoutubeFileRoute: ApiYoutubeFileRoute,
