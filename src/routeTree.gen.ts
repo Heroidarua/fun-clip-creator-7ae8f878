@@ -32,10 +32,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as JogosIndexRouteImport } from './routes/jogos/index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
-import { Route as JogosLayoutRouteImport } from './routes/jogos/$layout'
-import { Route as JogosCategoryRouteImport } from './routes/jogos/$category'
 import { Route as FerramentasYoutubeDownloaderRouteImport } from './routes/ferramentas_.youtube-downloader'
 import { Route as FerramentaSlugRouteImport } from './routes/ferramenta.$slug'
 import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
@@ -54,7 +51,6 @@ import { Route as ApiRemoveBgRouteImport } from './routes/api.remove-bg'
 import { Route as ApiPlayerCatalogRouteImport } from './routes/api.player-catalog'
 import { Route as ApiManageFeatureStatusRouteImport } from './routes/api.manage-feature-status'
 import { Route as ApiManageAnnouncementsRouteImport } from './routes/api.manage-announcements'
-import { Route as ApiGamesRouteImport } from './routes/api.games'
 import { Route as ApiFreeTextRouteImport } from './routes/api.free-text'
 import { Route as ApiDownloadYoutubeStreamRouteImport } from './routes/api.download-youtube-stream'
 import { Route as ApiDownloadYoutubeRouteImport } from './routes/api.download-youtube'
@@ -183,25 +179,10 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const JogosIndexRoute = JogosIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => JogosRoute,
-} as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => BlogRoute,
-} as any)
-const JogosLayoutRoute = JogosLayoutRouteImport.update({
-  id: '/$layout',
-  path: '/$layout',
-  getParentRoute: () => JogosRoute,
-} as any)
-const JogosCategoryRoute = JogosCategoryRouteImport.update({
-  id: '/$category',
-  path: '/$category',
-  getParentRoute: () => JogosRoute,
 } as any)
 const FerramentasYoutubeDownloaderRoute =
   FerramentasYoutubeDownloaderRouteImport.update({
@@ -302,11 +283,6 @@ const ApiManageAnnouncementsRoute = ApiManageAnnouncementsRouteImport.update({
   path: '/api/manage-announcements',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiGamesRoute = ApiGamesRouteImport.update({
-  id: '/api/games',
-  path: '/api/games',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiFreeTextRoute = ApiFreeTextRouteImport.update({
   id: '/api/free-text',
   path: '/api/free-text',
@@ -383,7 +359,7 @@ export interface FileRoutesByFullPath {
   '/dmca': typeof DmcaRoute
   '/ferramentas': typeof FerramentasRoute
   '/iptv': typeof IptvRoute
-  '/jogos': typeof JogosRouteWithChildren
+  '/jogos': typeof JogosRoute
   '/jogos-java': typeof JogosJavaRoute
   '/mais-sbt': typeof MaisSbtRoute
   '/nasa': typeof NasaRoute
@@ -402,7 +378,6 @@ export interface FileRoutesByFullPath {
   '/api/download-youtube': typeof ApiDownloadYoutubeRoute
   '/api/download-youtube-stream': typeof ApiDownloadYoutubeStreamRoute
   '/api/free-text': typeof ApiFreeTextRoute
-  '/api/games': typeof ApiGamesRoute
   '/api/manage-announcements': typeof ApiManageAnnouncementsRoute
   '/api/manage-feature-status': typeof ApiManageFeatureStatusRoute
   '/api/player-catalog': typeof ApiPlayerCatalogRoute
@@ -421,10 +396,7 @@ export interface FileRoutesByFullPath {
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
-  '/jogos/$category': typeof JogosCategoryRoute
-  '/jogos/$layout': typeof JogosLayoutRoute
   '/blog/': typeof BlogIndexRoute
-  '/jogos/': typeof JogosIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/youtube/download': typeof ApiYoutubeDownloadRoute
   '/api/youtube/file': typeof ApiYoutubeFileRoute
@@ -442,6 +414,7 @@ export interface FileRoutesByTo {
   '/dmca': typeof DmcaRoute
   '/ferramentas': typeof FerramentasRoute
   '/iptv': typeof IptvRoute
+  '/jogos': typeof JogosRoute
   '/jogos-java': typeof JogosJavaRoute
   '/mais-sbt': typeof MaisSbtRoute
   '/nasa': typeof NasaRoute
@@ -460,7 +433,6 @@ export interface FileRoutesByTo {
   '/api/download-youtube': typeof ApiDownloadYoutubeRoute
   '/api/download-youtube-stream': typeof ApiDownloadYoutubeStreamRoute
   '/api/free-text': typeof ApiFreeTextRoute
-  '/api/games': typeof ApiGamesRoute
   '/api/manage-announcements': typeof ApiManageAnnouncementsRoute
   '/api/manage-feature-status': typeof ApiManageFeatureStatusRoute
   '/api/player-catalog': typeof ApiPlayerCatalogRoute
@@ -479,10 +451,7 @@ export interface FileRoutesByTo {
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
-  '/jogos/$category': typeof JogosCategoryRoute
-  '/jogos/$layout': typeof JogosLayoutRoute
   '/blog': typeof BlogIndexRoute
-  '/jogos': typeof JogosIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/youtube/download': typeof ApiYoutubeDownloadRoute
   '/api/youtube/file': typeof ApiYoutubeFileRoute
@@ -502,7 +471,7 @@ export interface FileRoutesById {
   '/dmca': typeof DmcaRoute
   '/ferramentas': typeof FerramentasRoute
   '/iptv': typeof IptvRoute
-  '/jogos': typeof JogosRouteWithChildren
+  '/jogos': typeof JogosRoute
   '/jogos-java': typeof JogosJavaRoute
   '/mais-sbt': typeof MaisSbtRoute
   '/nasa': typeof NasaRoute
@@ -521,7 +490,6 @@ export interface FileRoutesById {
   '/api/download-youtube': typeof ApiDownloadYoutubeRoute
   '/api/download-youtube-stream': typeof ApiDownloadYoutubeStreamRoute
   '/api/free-text': typeof ApiFreeTextRoute
-  '/api/games': typeof ApiGamesRoute
   '/api/manage-announcements': typeof ApiManageAnnouncementsRoute
   '/api/manage-feature-status': typeof ApiManageFeatureStatusRoute
   '/api/player-catalog': typeof ApiPlayerCatalogRoute
@@ -540,10 +508,7 @@ export interface FileRoutesById {
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/ferramentas_/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
-  '/jogos/$category': typeof JogosCategoryRoute
-  '/jogos/$layout': typeof JogosLayoutRoute
   '/blog/': typeof BlogIndexRoute
-  '/jogos/': typeof JogosIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/youtube/download': typeof ApiYoutubeDownloadRoute
   '/api/youtube/file': typeof ApiYoutubeFileRoute
@@ -583,7 +548,6 @@ export interface FileRouteTypes {
     | '/api/download-youtube'
     | '/api/download-youtube-stream'
     | '/api/free-text'
-    | '/api/games'
     | '/api/manage-announcements'
     | '/api/manage-feature-status'
     | '/api/player-catalog'
@@ -602,10 +566,7 @@ export interface FileRouteTypes {
     | '/categoria/$slug'
     | '/ferramenta/$slug'
     | '/ferramentas/youtube-downloader'
-    | '/jogos/$category'
-    | '/jogos/$layout'
     | '/blog/'
-    | '/jogos/'
     | '/api/public/pinterest-download'
     | '/api/youtube/download'
     | '/api/youtube/file'
@@ -623,6 +584,7 @@ export interface FileRouteTypes {
     | '/dmca'
     | '/ferramentas'
     | '/iptv'
+    | '/jogos'
     | '/jogos-java'
     | '/mais-sbt'
     | '/nasa'
@@ -641,7 +603,6 @@ export interface FileRouteTypes {
     | '/api/download-youtube'
     | '/api/download-youtube-stream'
     | '/api/free-text'
-    | '/api/games'
     | '/api/manage-announcements'
     | '/api/manage-feature-status'
     | '/api/player-catalog'
@@ -660,10 +621,7 @@ export interface FileRouteTypes {
     | '/categoria/$slug'
     | '/ferramenta/$slug'
     | '/ferramentas/youtube-downloader'
-    | '/jogos/$category'
-    | '/jogos/$layout'
     | '/blog'
-    | '/jogos'
     | '/api/public/pinterest-download'
     | '/api/youtube/download'
     | '/api/youtube/file'
@@ -701,7 +659,6 @@ export interface FileRouteTypes {
     | '/api/download-youtube'
     | '/api/download-youtube-stream'
     | '/api/free-text'
-    | '/api/games'
     | '/api/manage-announcements'
     | '/api/manage-feature-status'
     | '/api/player-catalog'
@@ -720,10 +677,7 @@ export interface FileRouteTypes {
     | '/categoria/$slug'
     | '/ferramenta/$slug'
     | '/ferramentas_/youtube-downloader'
-    | '/jogos/$category'
-    | '/jogos/$layout'
     | '/blog/'
-    | '/jogos/'
     | '/api/public/pinterest-download'
     | '/api/youtube/download'
     | '/api/youtube/file'
@@ -743,7 +697,7 @@ export interface RootRouteChildren {
   DmcaRoute: typeof DmcaRoute
   FerramentasRoute: typeof FerramentasRoute
   IptvRoute: typeof IptvRoute
-  JogosRoute: typeof JogosRouteWithChildren
+  JogosRoute: typeof JogosRoute
   JogosJavaRoute: typeof JogosJavaRoute
   MaisSbtRoute: typeof MaisSbtRoute
   NasaRoute: typeof NasaRoute
@@ -762,7 +716,6 @@ export interface RootRouteChildren {
   ApiDownloadYoutubeRoute: typeof ApiDownloadYoutubeRoute
   ApiDownloadYoutubeStreamRoute: typeof ApiDownloadYoutubeStreamRoute
   ApiFreeTextRoute: typeof ApiFreeTextRoute
-  ApiGamesRoute: typeof ApiGamesRoute
   ApiManageAnnouncementsRoute: typeof ApiManageAnnouncementsRoute
   ApiManageFeatureStatusRoute: typeof ApiManageFeatureStatusRoute
   ApiPlayerCatalogRoute: typeof ApiPlayerCatalogRoute
@@ -939,33 +892,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/jogos/': {
-      id: '/jogos/'
-      path: '/'
-      fullPath: '/jogos/'
-      preLoaderRoute: typeof JogosIndexRouteImport
-      parentRoute: typeof JogosRoute
-    }
     '/blog/': {
       id: '/blog/'
       path: '/'
       fullPath: '/blog/'
       preLoaderRoute: typeof BlogIndexRouteImport
       parentRoute: typeof BlogRoute
-    }
-    '/jogos/$layout': {
-      id: '/jogos/$layout'
-      path: '/$layout'
-      fullPath: '/jogos/$layout'
-      preLoaderRoute: typeof JogosLayoutRouteImport
-      parentRoute: typeof JogosRoute
-    }
-    '/jogos/$category': {
-      id: '/jogos/$category'
-      path: '/$category'
-      fullPath: '/jogos/$category'
-      preLoaderRoute: typeof JogosCategoryRouteImport
-      parentRoute: typeof JogosRoute
     }
     '/ferramentas_/youtube-downloader': {
       id: '/ferramentas_/youtube-downloader'
@@ -1093,13 +1025,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiManageAnnouncementsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/games': {
-      id: '/api/games'
-      path: '/api/games'
-      fullPath: '/api/games'
-      preLoaderRoute: typeof ApiGamesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/free-text': {
       id: '/api/free-text'
       path: '/api/free-text'
@@ -1220,20 +1145,6 @@ const BlogRouteChildren: BlogRouteChildren = {
 
 const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
-interface JogosRouteChildren {
-  JogosCategoryRoute: typeof JogosCategoryRoute
-  JogosLayoutRoute: typeof JogosLayoutRoute
-  JogosIndexRoute: typeof JogosIndexRoute
-}
-
-const JogosRouteChildren: JogosRouteChildren = {
-  JogosCategoryRoute: JogosCategoryRoute,
-  JogosLayoutRoute: JogosLayoutRoute,
-  JogosIndexRoute: JogosIndexRoute,
-}
-
-const JogosRouteWithChildren = JogosRoute._addFileChildren(JogosRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
@@ -1247,7 +1158,7 @@ const rootRouteChildren: RootRouteChildren = {
   DmcaRoute: DmcaRoute,
   FerramentasRoute: FerramentasRoute,
   IptvRoute: IptvRoute,
-  JogosRoute: JogosRouteWithChildren,
+  JogosRoute: JogosRoute,
   JogosJavaRoute: JogosJavaRoute,
   MaisSbtRoute: MaisSbtRoute,
   NasaRoute: NasaRoute,
@@ -1266,7 +1177,6 @@ const rootRouteChildren: RootRouteChildren = {
   ApiDownloadYoutubeRoute: ApiDownloadYoutubeRoute,
   ApiDownloadYoutubeStreamRoute: ApiDownloadYoutubeStreamRoute,
   ApiFreeTextRoute: ApiFreeTextRoute,
-  ApiGamesRoute: ApiGamesRoute,
   ApiManageAnnouncementsRoute: ApiManageAnnouncementsRoute,
   ApiManageFeatureStatusRoute: ApiManageFeatureStatusRoute,
   ApiPlayerCatalogRoute: ApiPlayerCatalogRoute,

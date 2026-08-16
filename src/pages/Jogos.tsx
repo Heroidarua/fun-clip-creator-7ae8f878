@@ -1,31 +1,24 @@
-import React, { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import {
   Gamepad2, X, Search, Play, Heart, Shuffle, Clock,
-  Flame, Sparkles, Star, Filter, Trophy, RotateCw
+  Flame, Sparkles, Star, Filter, Trophy,
 } from "lucide-react";
+import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Game } from "@/data/games";
-import { getGames, getFeaturedGames, getRecentGames } from "@/lib/games.functions";
-import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-import { useInView } from "react-intersection-observer";
+import { games, Game } from "@/data/games";
 import { useFavoriteGames } from "@/hooks/useFavoriteGames";
-import { getRouteApi } from "@tanstack/react-router";
-
-const routeApi = getRouteApi("/jogos/$category");
 
 // ---------- helpers ----------
-type Category = "Todos" | "Luta" | "Plataforma" | "Corrida" | "Acao" | "Tiro" | "Arcade";
+type Category = "Todos" | "Luta" | "Plataforma" | "Corrida" | "Ação" | "Tiro" | "Arcade";
 
 const CATEGORIES: { id: Category; label: string; icon: string; description: string }[] = [
   { id: "Todos", label: "Tudo", icon: "✨", description: "Explorar toda a biblioteca" },
   { id: "Luta", label: "Luta", icon: "🥊", description: "Combate e artes marciais" },
   { id: "Plataforma", label: "Aventura", icon: "🍄", description: "Plataformas e exploração" },
   { id: "Corrida", label: "Velocidade", icon: "🏁", description: "Carros e corridas clássicas" },
-  { id: "Acao", label: "Ação", icon: "💥", description: "Combate intenso e arcade" },
+  { id: "Ação", label: "Ação", icon: "💥", description: "Combate intenso e arcade" },
   { id: "Tiro", label: "Shoot'em Up", icon: "🎯", description: "Ação balística clássica" },
   { id: "Arcade", label: "Clássicos", icon: "🕹️", description: "O puro suco dos 8/16 bits" },
 ];
@@ -36,7 +29,7 @@ function categoryOf(g: Game): Category {
   if (/(mario|sonic|kong|bomberman|kidd|mickey|donald|dizzy|picapau|monica|pocahontas|luigi|yoshi|rockman)/.test(t)) return "Plataforma";
   if (/(kart|top gear|gp rider|rider)/.test(t)) return "Corrida";
   if (/(1941|asteroids|duck hunt|battle city|popeye)/.test(t)) return "Tiro";
-  if (/(metal slug|spider|mask|power rangers|x-men|simpsons|alien|justice|dragonball|flintstones|saga|gta|theft)/.test(t)) return "Acao";
+  if (/(metal slug|spider|mask|power rangers|x-men|simpsons|alien|justice|dragonball|flintstones|saga|gta|theft)/.test(t)) return "Ação";
   return "Arcade";
 }
 
@@ -62,7 +55,7 @@ function pushRecent(id: number) {
 }
 
 // ---------- Card ----------
-const GameCard = React.memo(function GameCard({
+function GameCard({
   game, onPlay, isFavorite, onToggleFavorite,
 }: {
   game: Game; onPlay: () => void; isFavorite: boolean;
@@ -73,6 +66,7 @@ const GameCard = React.memo(function GameCard({
 
   return (
     <div className="group relative h-full">
+      {/* neon aura on hover */}
       <div
         aria-hidden
         className="pointer-events-none absolute -inset-1 rounded-[22px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -88,6 +82,7 @@ const GameCard = React.memo(function GameCard({
         className="cartridge relative w-full h-full text-left rounded-[14px] overflow-hidden bg-[hsl(var(--card))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--primary))] flex flex-col"
         aria-label={`Jogar ${game.title}`}
       >
+        {/* Cartridge top ridge / slot */}
         <div className="relative h-5 bg-[hsl(var(--secondary))] shrink-0">
           <div className="absolute inset-x-0 top-0 h-1 bg-[hsl(var(--primary))] opacity-60" />
           <div className="absolute inset-0 flex items-center justify-center gap-1.5">
@@ -95,15 +90,17 @@ const GameCard = React.memo(function GameCard({
               <div key={i} className="w-2 h-2.5 rounded-sm bg-[hsl(var(--secondary-foreground)/0.15)]" />
             ))}
           </div>
+          {/* corner screws */}
           <div className="absolute top-1 left-2 w-1.5 h-1.5 rounded-full bg-[hsl(var(--secondary-foreground)/0.25)]" />
           <div className="absolute top-1 right-2 w-1.5 h-1.5 rounded-full bg-[hsl(var(--secondary-foreground)/0.25)]" />
         </div>
 
+        {/* Cover */}
         <div className="relative flex-1 min-h-0 aspect-[3/4] overflow-hidden bg-gradient-to-br from-[hsl(var(--muted))] to-[hsl(var(--primary)/0.12)]">
           <img
             src={game.img || `https://placehold.co/400x533/0E4A7B/F5F9FF?text=${encodeURIComponent(game.title)}`}
             alt={game.title}
-            loading={game.id <= 50 ? "eager" : "lazy"}
+            loading="lazy"
             draggable={false}
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             onError={(e) => {
@@ -113,6 +110,7 @@ const GameCard = React.memo(function GameCard({
             }}
           />
 
+          {/* scanlines overlay */}
           <div
             aria-hidden
             className="absolute inset-0 pointer-events-none opacity-[0.06]"
@@ -122,8 +120,10 @@ const GameCard = React.memo(function GameCard({
             }}
           />
 
+          {/* Bottom gradient for text legibility */}
           <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
 
+          {/* Top row: category chip + favorite */}
           <div className="absolute top-2.5 left-2.5 right-2.5 flex items-start justify-between gap-2">
             <span className="px-2 py-1 rounded-md bg-black/60 backdrop-blur-md text-[10px] font-silkscreen tracking-wider text-white border border-white/15 shadow-sm">
               {category.toUpperCase()}
@@ -142,12 +142,14 @@ const GameCard = React.memo(function GameCard({
             </button>
           </div>
 
+          {/* Hover play overlay */}
           <div className="absolute inset-0 grid place-items-center opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black/20">
             <div className="w-16 h-16 rounded-full bg-[hsl(var(--primary))] grid place-items-center text-white shadow-neon scale-90 group-hover:scale-100 transition-transform duration-300">
               <Play className="w-7 h-7 ml-0.5" fill="currentColor" />
             </div>
           </div>
 
+          {/* Bottom overlay info */}
           <div className="absolute inset-x-0 bottom-0 p-3 text-white">
             <h3 className="font-display text-base sm:text-lg leading-tight line-clamp-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
               {game.title}
@@ -162,6 +164,7 @@ const GameCard = React.memo(function GameCard({
           </div>
         </div>
 
+        {/* Footer strip */}
         <div className="shrink-0 flex items-center justify-between gap-2 px-3 py-2.5 bg-[hsl(var(--muted)/0.5)] border-t border-[hsl(var(--border))]">
           <span className="text-[11px] font-silkscreen tracking-wider text-[hsl(var(--muted-foreground))]">
             #{String(game.id).padStart(3, "0")}
@@ -174,10 +177,10 @@ const GameCard = React.memo(function GameCard({
       </button>
     </div>
   );
-});
+}
 
 // ---------- Section row ----------
-const GameRow = React.memo(function GameRow({
+function GameRow({
   title, icon, badge, games: list, onPlay, isFavorite, toggleFavorite,
 }: {
   title: string;
@@ -218,30 +221,13 @@ const GameRow = React.memo(function GameRow({
       </div>
     </section>
   );
-});
+}
 
 // ---------- Page ----------
 export default function Jogos() {
-  const { category: routeCategory } = routeApi.useParams();
-  const navigate = routeApi.useNavigate();
-  
   const [fullscreenGame, setFullscreenGame] = useState<Game | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  
-  // Sincroniza a categoria da rota com o estado local/filtro
-  const category = useMemo(() => {
-    const cat = routeCategory.toLowerCase();
-    const found = CATEGORIES.find(c => c.id.toLowerCase() === cat);
-    return (found?.id as Category) || "Todos";
-  }, [routeCategory]);
-
-  const setCategory = (newCat: Category) => {
-    navigate({
-      to: "/jogos/$category",
-      params: { category: newCat.toLowerCase() },
-    });
-  };
-
+  const [category, setCategory] = useState<Category>("Todos");
   const [recentIds, setRecentIds] = useState<number[]>([]);
   const [searchFocused, setSearchFocused] = useState(false);
   const { favorites, toggleFavorite, isFavorite } = useFavoriteGames();
@@ -255,72 +241,49 @@ export default function Jogos() {
     setFullscreenGame(g);
   }, []);
 
-  const fetchGamesFn = useServerFn(getGames);
-  const fetchFeaturedFn = useServerFn(getFeaturedGames);
-  const fetchRecentFn = useServerFn(getRecentGames);
+  const byId = useMemo(() => new Map(games.map((g) => [g.id, g])), []);
+  const recent = useMemo(
+    () => recentIds.map((id) => byId.get(id)).filter(Boolean).slice(0, 6) as Game[],
+    [recentIds, byId]
+  );
+  const popular = useMemo(
+    () => POPULAR_IDS.map((id) => byId.get(id)).filter(Boolean) as Game[],
+    [byId]
+  );
+  const community = useMemo(
+    () => COMMUNITY_IDS.map((id) => byId.get(id)).filter(Boolean) as Game[],
+    [byId]
+  );
+  const latest = useMemo(
+    () => [...games].sort((a, b) => b.id - a.id).slice(0, 12),
+    []
+  );
 
-  const isHydrated = typeof window !== 'undefined';
-
-  const { data: featured } = useQuery({
-    queryKey: ["featured-games"],
-    queryFn: () => fetchFeaturedFn(),
-    staleTime: 1000 * 60 * 60,
-    enabled: isHydrated,
-  });
-
-  const { data: recent } = useQuery({
-    queryKey: ["recent-games", recentIds],
-    queryFn: () => fetchRecentFn({ data: { ids: recentIds } }),
-    enabled: isHydrated && recentIds.length > 0,
-  });
-
-  const {
-    data: infiniteData,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading
-  } = useInfiniteQuery({
-    queryKey: ["games", category, searchQuery],
-    queryFn: ({ pageParam = 1 }) => fetchGamesFn({ 
-      data: {
-        page: pageParam as number, 
-        search: searchQuery, 
-        category 
-      }
-    }),
-    getNextPageParam: (lastPage: any) => lastPage.hasMore ? lastPage.page + 1 : undefined,
-    initialPageParam: 1,
-    enabled: isHydrated,
-  });
-
+  // Filtered "all games" grid
   const filtered = useMemo(() => {
-    if (!isHydrated) return [];
-    return (infiniteData?.pages || []).flatMap((page: any) => page.items) || [];
-  }, [infiniteData, isHydrated]);
-
-  const { ref: loadMoreRef, inView } = useInView();
-
-  useEffect(() => {
-    if (isHydrated && inView && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage, isHydrated]);
+    const q = searchQuery.trim().toLowerCase();
+    return games.filter((g) => {
+      if (category !== "Todos" && categoryOf(g) !== category) return false;
+      if (q && !g.title.toLowerCase().includes(q)) return false;
+      return true;
+    });
+  }, [searchQuery, category]);
 
   const handleRandom = () => {
-    if (filtered.length) {
-      playGame(filtered[Math.floor(Math.random() * filtered.length)]);
-    }
+    const pool = filtered.length ? filtered : games;
+    playGame(pool[Math.floor(Math.random() * pool.length)]);
   };
 
   const handleContinue = () => {
-    if (recent && recent[0]) playGame(recent[0]);
+    if (recent[0]) playGame(recent[0]);
     else handleRandom();
   };
 
   return (
     <>
-      <div className="container mx-auto px-4">
+      <Header />
+
+      <main className="min-h-screen bg-[hsl(var(--background))] pt-20 pb-24">
         {/* ---- Compact Hero ---- */}
         <section className="relative overflow-hidden">
           {/* soft neon spots */}
@@ -341,7 +304,7 @@ export default function Jogos() {
                 <Gamepad2 className="w-3.5 h-3.5" /> ARCADE
               </span>
               <span className="font-silkscreen text-[10px] tracking-wider text-[hsl(var(--muted-foreground))]">
-                2900+ JOGOS · 100% GRÁTIS
+                {games.length} JOGOS · 100% GRÁTIS
               </span>
             </div>
 
@@ -358,11 +321,11 @@ export default function Jogos() {
               <div className="flex flex-wrap gap-2 sm:justify-end">
                 <Button
                   onClick={handleContinue}
-                  disabled={!recent || recent.length === 0}
+                  disabled={!recent.length}
                   className="font-silkscreen tracking-wider text-xs gap-2 bg-[hsl(var(--secondary))] text-white hover:bg-[hsl(var(--secondary)/0.9)] shadow-[0_4px_0_hsl(var(--secondary)/0.5)] disabled:opacity-50"
                 >
                   <Clock className="w-4 h-4" />
-                  {recent && recent[0] ? "CONTINUAR" : "SEM HISTÓRICO"}
+                  {recent[0] ? "CONTINUAR" : "SEM HISTÓRICO"}
                 </Button>
                 <Button
                   onClick={handleRandom}
@@ -409,7 +372,7 @@ export default function Jogos() {
 
               <div className="space-y-2">
                 <h3 className="font-silkscreen text-[11px] tracking-wider text-[hsl(var(--muted-foreground))] px-2 mb-3">
-                  GÊNEROS
+                  CATEGORIAS
                 </h3>
                 <nav className="space-y-1">
                   {CATEGORIES.map((c) => {
@@ -450,17 +413,17 @@ export default function Jogos() {
                     <GameRow
                       title="Continuar"
                       icon={<Clock className="w-4 h-4" />}
-                      games={recent || []}
+                      games={recent}
                       onPlay={playGame}
                       isFavorite={isFavorite}
                       toggleFavorite={toggleFavorite}
                     />
 
                     <GameRow
-                      title="Destaques"
+                      title="Populares"
                       icon={<Flame className="w-4 h-4" />}
                       badge="HOT"
-                      games={featured || []}
+                      games={popular}
                       onPlay={playGame}
                       isFavorite={isFavorite}
                       toggleFavorite={toggleFavorite}
@@ -483,7 +446,7 @@ export default function Jogos() {
 
                   {filtered.length > 0 ? (
                     <div className="grid gap-4 sm:gap-6 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-                      {filtered.map((g: Game, i: number) => (
+                      {filtered.map((g, i) => (
                         <div key={g.id} className="animate-fade-in" style={{ animationDelay: `${Math.min(i * 15, 200)}ms` }}>
                           <GameCard
                             game={g}
@@ -492,23 +455,6 @@ export default function Jogos() {
                             onToggleFavorite={() => toggleFavorite(g.id)}
                           />
                         </div>
-                      ))}
-                      {hasNextPage && (
-                        <div ref={loadMoreRef} className="col-span-full h-20 flex items-center justify-center">
-                          {isFetchingNextPage ? (
-                            <div className="flex items-center gap-2 font-silkscreen text-[10px] text-[hsl(var(--muted-foreground))]">
-                              <RotateCw className="w-4 h-4 animate-spin" /> CARREGANDO MAIS...
-                            </div>
-                          ) : (
-                            <div className="h-1 w-full bg-transparent" />
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  ) : isLoading ? (
-                    <div className="grid gap-4 sm:gap-6 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-                      {[...Array(8)].map((_, i) => (
-                        <div key={i} className="aspect-[3/4] rounded-[14px] bg-[hsl(var(--card))] animate-pulse" />
                       ))}
                     </div>
                   ) : (
@@ -527,10 +473,11 @@ export default function Jogos() {
                     </div>
                   )}
                 </section>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </main>
 
       {/* ---- Fullscreen player ---- */}
       {fullscreenGame && (
@@ -564,7 +511,8 @@ export default function Jogos() {
           </div>
         </div>
       )}
-      </div>
+
+      <Footer />
     </>
   );
 }

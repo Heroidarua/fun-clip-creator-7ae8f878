@@ -1,4 +1,3 @@
-/* Divide os jogos por página de gênero, assim o carregamento não vai ficar pesado por conta dos jogos e cada jogo vai ter sua aba */
 import { lazy, Suspense } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
