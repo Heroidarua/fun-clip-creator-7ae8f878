@@ -26,12 +26,14 @@ type CreateJobInput = {
 };
 
 export const createEnhancementJob = createServerFn({ method: "POST" })
-  .input(z.object({
-    filename: z.string(),
-    size: z.number(),
-    options: JobOptionsSchema
-  }))
-  .handler(async ({ data }: { data: CreateJobInput }) => {
+  .inputValidator((data: CreateJobInput) => {
+    return z.object({
+      filename: z.string(),
+      size: z.number(),
+      options: JobOptionsSchema
+    }).parse(data);
+  })
+  .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
     const { data: job, error } = await supabaseAdmin
@@ -52,8 +54,10 @@ export const createEnhancementJob = createServerFn({ method: "POST" })
   });
 
 export const getJobStatus = createServerFn({ method: "GET" })
-  .input(z.object({ jobId: z.string() }))
-  .handler(async ({ data }: { data: { jobId: string } }) => {
+  .inputValidator((data: { jobId: string }) => {
+    return z.object({ jobId: z.string() }).parse(data);
+  })
+  .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: job, error } = await supabaseAdmin
       .from("video_enhancement_jobs" as any)
