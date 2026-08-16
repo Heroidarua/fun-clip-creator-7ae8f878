@@ -210,7 +210,10 @@ export default function VideoEnhancer() {
                     <p className="font-pixel text-xs truncate text-foreground">{file.name}</p>
                     <p className="text-[10px] text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                   </div>
-                  <Button variant="ghost" size="sm" onClick={() => setFile(null)} className="font-pixel text-[8px] text-destructive">Remover</Button>
+                  <Button variant="ghost" size="sm" onClick={() => setFile(null)} className="font-pixel text-[8px] text-destructive hover:bg-destructive/10">
+                    <Trash2 className="w-3 h-3 mr-1" />
+                    Remover
+                  </Button>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
