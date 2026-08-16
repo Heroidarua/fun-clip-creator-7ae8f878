@@ -22,7 +22,7 @@ function safeName(title: string) {
 }
 
 /** Até este tamanho o arquivo é processado no navegador; acima, baixa direto. */
-const BROWSER_PROCESS_LIMIT = 100 * 1024 * 1024;
+const BROWSER_PROCESS_LIMIT = 500 * 1024 * 1024;
 const TOO_LARGE = "TOO_LARGE";
 
 function saveBlob(blob: Blob, filename: string) {
@@ -179,7 +179,7 @@ export default function YoutubeDownloaderPage() {
           window.location.href = err.directUrl;
         } else {
           setError(
-            "Este arquivo passa de 100 MB e não pode ser processado no navegador. Escolha uma qualidade menor.",
+            "Este arquivo passa de 500 MB e não pode ser processado no navegador. Escolha uma qualidade menor.",
           );
         }
       } else {
