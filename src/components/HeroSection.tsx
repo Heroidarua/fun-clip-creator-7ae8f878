@@ -14,7 +14,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Loader2,
-  AlertCircle
+  AlertCircle,
+  Headphones
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,7 +23,7 @@ import { useToast } from "@/hooks/use-toast";
 
 import { useDownloaderStatus } from "@/hooks/useDownloaderStatus";
 
-import { ScrollReveal } from "./ScrollReveal";
+import ScrollReveal from "./ScrollReveal";
 import { apiUrl, rewriteProxy } from "@/lib/api-base";
 import { parseYouTubeUrl, youtubeValidationError, getYouTubeVideoId } from "@/lib/youtube-url";
 import {
@@ -35,6 +36,7 @@ import { downloadYoutubeMedia, BROWSER_PROCESS_LIMIT } from "@/lib/youtube-downl
 import { fetchInstagramInfo, requestInstagramDownload, absoluteDownloadUrl as absoluteIgUrl } from "@/services/instagramDownloader";
 import { useServerFn } from "@tanstack/react-start";
 import { trackDownload } from "@/lib/analytics";
+import { validatePinterestUrl } from "@/lib/pinterest-validation";
 import tiktokIcon from "@/assets/tiktok-icon.png";
 import instagramIcon from "@/assets/instagram-icon.png";
 import kwaiIcon from "@/assets/kwai-icon.png";
