@@ -36,7 +36,7 @@ interface MediaResponse {
 }
 
 const UA =
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+  "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1";
 
 // Resolve /share/ and other shortened links to canonical /p/ /reel/ /tv/.
 async function resolveInstagramUrl(url: string): Promise<string> {
@@ -305,10 +305,10 @@ async function fetchViaRapidApi(url: string, rapidApiKey: string): Promise<Media
   if (!shortcode) return null;
 
   const providers: Array<{ name: string; run: () => Promise<MediaResponse | null> }> = [
+    { name: "instagram120", run: () => fetchInstagram120(url, RAPIDAPI_KEY, shortcode) },
     { name: "social-all-in-one", run: () => fetchSocialAllInOne(url, RAPIDAPI_KEY) },
     { name: "auto-all-in-one", run: () => fetchAutoAllInOne(url, RAPIDAPI_KEY) },
     { name: "scraper-api2", run: () => fetchScraperApi2(shortcode, RAPIDAPI_KEY) },
-    { name: "instagram120", run: () => fetchInstagram120(url, RAPIDAPI_KEY, shortcode) },
   ];
 
   for (const p of providers) {
@@ -328,13 +328,48 @@ async function fetchViaRapidApi(url: string, rapidApiKey: string): Promise<Media
 
 async function tryDirectScrape(url: string): Promise<MediaResponse | null> {
   try {
-    const shortcode = url.match(/(?:p|reel|reels)\/([A-Za-z0-9-_]+)/)?.[1];
+    const shortcode = url.match(/(?:p|reel|reels|tv)\/([A-Za-z0-9-_]+)/)?.[1];
     if (!shortcode) return null;
 
+    // Use o oembed do Instagram como uma forma oficial de metadados
+    const embedRes = await fetch(`https://www.instagram.com/oembed/?url=${encodeURIComponent(url.replace('/reels/', '/reel/').replace('/tv/', '/reel/'))}`, {
+      headers: {
+        "User-Agent": UA,
+        Accept: "application/json",
+      },
+    });
+
+    if (embedRes.ok) {
+      let json: any = null;
+      const text = await embedRes.text();
+      try {
+        json = JSON.parse(text);
+      } catch {
+        const jsonMatch = text.match(/window\.__additionalDataLoaded\('extra',(\{.*?\})\);/);
+        if (jsonMatch) {
+          try { json = JSON.parse(jsonMatch[1]); } catch {}
+        }
+      }
+      
+      if (json?.thumbnail_url || json?.graphql?.shortcode_media?.display_url) {
+        const thumb = json.thumbnail_url || json.graphql.shortcode_media.display_url;
+        return {
+          success: true,
+          data: {
+            media_url: thumb,
+            media_type: "image",
+            thumbnail: thumb,
+            title: json.title || "Instagram Media",
+            author: json.author_name || "Instagram User",
+          },
+        };
+      }
+    }
+
+    // Fallback para scrape direto na página (pode falhar por causa do login)
     const response = await fetch(`https://www.instagram.com/p/${shortcode}/`, {
       headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "User-Agent": UA,
         Accept: "text/html",
       },
     });
@@ -353,7 +388,7 @@ async function tryDirectScrape(url: string): Promise<MediaResponse | null> {
           media_type: "video",
           thumbnail: imageMatch?.[1] ? imageMatch[1].replace(/\\u0026/g, "&") : "",
           title: "Instagram Video",
-          author: "Desconhecido",
+          author: "Instagram User",
         },
       };
     }
@@ -367,13 +402,14 @@ async function tryDirectScrape(url: string): Promise<MediaResponse | null> {
           media_type: "image",
           thumbnail: img,
           title: "Instagram Image",
-          author: "Desconhecido",
+          author: "Instagram User",
         },
       };
     }
 
     return null;
-  } catch {
+  } catch (e) {
+    console.error("Direct scrape error:", e);
     return null;
   }
 }
@@ -412,12 +448,14 @@ async function downloadInstagramMedia(url: string, functionUrl: string, rapidApi
   // RapidAPI providers como fallback (alguns endpoints exigem subscription paga).
   const rapidResult = await fetchViaRapidApi(url, rapidApiKey);
   if (rapidResult?.success && rapidResult.data) {
+    console.log("✅ Instagram via RapidAPI");
     rapidResult.data = addProxyUrls(rapidResult.data, functionUrl);
     return rapidResult;
   }
 
   const directResult = await tryDirectScrape(url);
   if (directResult?.success && directResult.data) {
+    console.log("✅ Instagram via Direct Scrape");
     directResult.data = addProxyUrls(directResult.data, functionUrl);
     return directResult;
   }
@@ -435,8 +473,7 @@ async function handleProxy(request: Request, mediaUrl: string, mediaType: string
     const response = await fetch(mediaUrl, {
       method: "GET",
       headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "User-Agent": UA,
         Referer: "https://www.instagram.com/",
         ...(range ? { Range: range } : {}),
       },
@@ -451,7 +488,7 @@ async function handleProxy(request: Request, mediaUrl: string, mediaType: string
       "Content-Type": contentType,
       "Cache-Control": "public, max-age=31536000",
       "Accept-Ranges": "bytes",
-      "Content-Disposition": mediaType === "video" ? "inline" : "attachment",
+      "Content-Disposition": mediaType === "video" ? "attachment" : "inline",
     });
 
     if (response.headers.has("content-length")) headers.set("Content-Length", response.headers.get("content-length")!);
@@ -502,9 +539,9 @@ export const Route = createFileRoute("/api/download-instagram")({
         }
 
         const rapidApiKey = process.env.RAPIDAPI_KEY || "";
-        const result = await downloadInstagramMedia(url, requestUrl.pathname, rapidApiKey);
+        const result = await downloadInstagramMedia(url, "/api/download-instagram", rapidApiKey);
         return new Response(JSON.stringify(result), {
-          status: result.success ? 200 : 400,
+          status: 200,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       },
@@ -526,13 +563,13 @@ export const Route = createFileRoute("/api/download-instagram")({
         }
 
         const rapidApiKey = process.env.RAPIDAPI_KEY || "";
-        const result = await downloadInstagramMedia(url, new URL(request.url).pathname, rapidApiKey);
+        const result = await downloadInstagramMedia(url, "/api/download-instagram", rapidApiKey);
         try {
           const { reportDownloaderResult } = await import("@/lib/downloader-status.server");
           reportDownloaderResult("instagram", !!result.success);
         } catch {}
         return new Response(JSON.stringify(result), {
-          status: result.success ? 200 : 400,
+          status: 200,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       },

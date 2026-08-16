@@ -5,8 +5,8 @@
 const LOVABLE_API_ORIGIN = "https://fun-clip-creator.lovable.app";
 
 function isLovableHost(host: string): boolean {
-  if (host.startsWith("id-preview--") || host.startsWith("preview--")) {
-    return false;
+  if (host.includes(".lovable.app") || host.includes(".lovableproject.com")) {
+    return true;
   }
 
   return (
