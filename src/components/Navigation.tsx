@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, Search, Wrench, Gamepad2, Globe2, Tv, Radio, PlayCircle, BookOpen, Share2, PanelLeftClose, PanelLeftOpen, Menu, X } from "lucide-react";
+import { Home, Search, Wrench, Gamepad2, Globe2, Tv, Radio, PlayCircle, BookOpen, Share2, PanelLeftClose, PanelLeftOpen, Menu, X, Plane, Ship, CloudLightning, Activity, Stars } from "lucide-react";
 import { useState, useEffect } from "react";
 import IPTVModal from "./IPTVModal";
 import ThemeToggle from "./ThemeToggle";
@@ -16,6 +16,11 @@ const ITEMS = [
   { to: "/busca", label: "Busca", icon: Search, desc: "Encontre rápido" },
   { to: "/jogos", label: "Jogos", icon: Gamepad2, desc: "Diversão" },
   { to: "/nasa", label: "NASA", icon: Globe2, desc: "Espaço" },
+  { to: "/ferramenta/avioes", label: "Aviões", icon: Plane, desc: "Tempo Real" },
+  { to: "/ferramenta/navios", label: "Navios", icon: Ship, desc: "Marítimo" },
+  { to: "/ferramenta/raios", label: "Raios", icon: CloudLightning, desc: "Ao Vivo" },
+  { to: "/ferramenta/terremotos", label: "Terremotos", icon: Activity, desc: "Sismos" },
+  { to: "/ferramenta/ceu", label: "Céu", icon: Stars, desc: "Estelar" },
   { to: "/mais-sbt", label: "+SBT", icon: Tv, desc: "TV Ao Vivo" },
   { to: "/iptv", label: "PLUTO TV", icon: Radio, desc: "Canais" },
   { to: "/player", label: "IPTV 1.0", icon: PlayCircle, desc: "Premium" },
@@ -27,6 +32,7 @@ export default function SidebarNav() {
   const [iptvModalOpen, setIptvModalOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   
   const isActive = (to: string) =>
     to === "/" ? pathname === "/" : pathname === to || pathname.startsWith(to + "/");
@@ -65,7 +71,7 @@ export default function SidebarNav() {
                 <Tooltip key={to}>
                   <TooltipTrigger asChild>
                     <Link
-                      to={to}
+                      to={to as any}
                       onClick={(e) => {
                         if (to === "/player") {
                           e.preventDefault();
@@ -137,7 +143,7 @@ export default function SidebarNav() {
               return (
                 <Link
                   key={to}
-                  to={to}
+                  to={to as any}
                   onClick={(e) => {
                     setIsMobileMenuOpen(false);
                     if (to === "/player") {
