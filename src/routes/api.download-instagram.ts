@@ -340,19 +340,17 @@ async function tryDirectScrape(url: string): Promise<MediaResponse | null> {
     });
 
     if (embedRes.ok) {
-      const json: any = await embedRes.json();
-      if (json?.thumbnail_url) {
-        return {
-          success: true,
-          data: {
-            media_url: json.thumbnail_url, // Fallback image
-            media_type: "image",
-            thumbnail: json.thumbnail_url,
-            title: json.title || "Instagram Media",
-            author: json.author_name || "Instagram User",
-          },
-        };
+      const text = await embedRes.text();
+      const jsonMatch = text.match(/window\.__additionalDataLoaded\('extra',(\{.*?\})\);/);
+      let json: any = null;
+      if (jsonMatch) {
+        try { json = JSON.parse(jsonMatch[1]); } catch {}
+      } else {
+        try { json = await embedRes.json(); } catch {}
       }
+      
+      if (json?.thumbnail_url || json?.graphql?.shortcode_media?.display_url) {
+        const thumb = json.thumbnail_url || json.graphql.shortcode_media.display_url;
     }
 
     // Fallback para scrape direto na página (pode falhar por causa do login)
