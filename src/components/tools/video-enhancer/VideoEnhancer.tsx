@@ -43,9 +43,11 @@ export default function VideoEnhancer() {
     setUploading(true);
     try {
       const job = await createJob({
-        filename: file.name,
-        size: file.size,
-        options
+        data: {
+          filename: file.name,
+          size: file.size,
+          options
+        }
       });
       
       const id = (job as any).id;
@@ -57,7 +59,7 @@ export default function VideoEnhancer() {
       const interval = setInterval(async () => {
         try {
           const updatedJob = await checkStatus({ 
-            jobId: id 
+            data: { jobId: id } 
           });
           setStatus(updatedJob);
           
