@@ -85,21 +85,41 @@ export default function ObjectRemoverTool() {
   const process = async () => {
     if (!fabricCanvas.current || !file) return;
     
+    // Validar se o usuário desenhou algo
+    const objects = fabricCanvas.current.getObjects().filter(obj => obj.type === 'path');
+    if (objects.length === 0) {
+      toast.error("Por favor, pinte sobre o objeto que deseja remover.");
+      return;
+    }
+    
     setProcessing(true);
     try {
-      // 1. Gerar a máscara (canvas sem a imagem de fundo)
       const canvas = fabricCanvas.current;
-      const originalBG = canvas.backgroundImage;
+      const originalBG = canvas.backgroundImage as fabric.FabricImage;
       
-      // Temporariamente remove o fundo para capturar apenas a máscara (os traços desenhados)
-      canvas.backgroundImage = undefined;
+      // 1. Gerar a máscara binária (preto e branco)
+      // Ocultamos a imagem de fundo para exportar apenas os caminhos desenhados
+      const originalVisibility = originalBG.visible;
+      originalBG.visible = false;
+      
+      // Mudamos a cor dos traços para branco sobre fundo preto para a IA
+      const currentObjects = canvas.getObjects().filter(o => o.type === 'path') as fabric.Path[];
+      const originalColors = currentObjects.map(o => o.stroke);
+      currentObjects.forEach(o => o.set({ stroke: 'white' }));
+      
+      const originalCanvasBG = canvas.backgroundColor;
+      canvas.backgroundColor = 'black';
+      
       const maskBase64 = canvas.toDataURL({ 
         format: "png", 
-        multiplier: 1,
+        multiplier: 2, // Aumentar resolução da máscara
         enableRetinaScaling: false 
       });
       
-      canvas.backgroundImage = originalBG;
+      // Restaurar estado do canvas
+      originalBG.visible = originalVisibility;
+      currentObjects.forEach((o, i) => o.set({ stroke: originalColors[i] }));
+      canvas.backgroundColor = originalCanvasBG;
       canvas.renderAll();
 
       // 2. Converter imagem original para base64
@@ -109,7 +129,7 @@ export default function ObjectRemoverTool() {
         reader.readAsDataURL(file);
       });
 
-      toast.info("A IA está removendo o objeto selecionado...");
+      toast.info("A IA está analisando e reconstruindo a imagem...");
       
       const processedImage = await removeObject({
         data: {
@@ -118,11 +138,13 @@ export default function ObjectRemoverTool() {
         }
       });
 
+      if (!processedImage) throw new Error("A IA não retornou um resultado válido.");
+
       setResult(processedImage as string);
       toast.success("Objeto removido com sucesso!");
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      toast.error("Erro ao processar imagem.");
+      toast.error(error.message || "Erro ao processar imagem.");
     } finally {
       setProcessing(false);
     }
