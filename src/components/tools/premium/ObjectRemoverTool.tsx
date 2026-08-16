@@ -26,7 +26,14 @@ export default function ObjectRemoverTool() {
   };
 
   useEffect(() => {
-    if (!preview || !canvasRef.current || !containerRef.current || result) return;
+    // Se não há preview ou se o resultado já existe, não inicializa
+    if (!preview || !canvasRef.current || !containerRef.current || result) {
+      if (fabricCanvas.current) {
+        fabricCanvas.current.dispose();
+        fabricCanvas.current = null;
+      }
+      return;
+    }
 
     const container = containerRef.current;
     const width = container.clientWidth;
