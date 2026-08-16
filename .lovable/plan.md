@@ -1,46 +1,28 @@
-# Nova aba "+SBT 📺"
+# Otimização de Qualidade no Downloader do YouTube
+
+Melhorar a qualidade dos downloads do YouTube, que atualmente estão sendo entregues com resolução ou compressão abaixo do ideal.
 
 ## O que será feito
 
-1. **Nova rota fullscreen** `src/routes/mais-sbt.tsx` + página `src/pages/MaisSbt.tsx`
-   - Layout 100vw × 100vh, sem Header/Footer/MobileBottomNav (página totalmente imersiva)
-   - Fundo preto, iframe ocupando toda a tela
-   - `allow="fullscreen; autoplay; encrypted-media"` + `allowFullScreen`
-   - Botão flutuante discreto no canto superior esquerdo: "← Voltar" (retorna ao site) e "⛶ Tela cheia" (usa `requestFullscreen()`)
-   - Indicador de carregamento centralizado (spinner retrô na paleta neon do SOS01: azul neon #28B6FF + roxo #B66DFF, fonte VT323 "CARREGANDO...")
-   - Detecção de bloqueio por X-Frame-Options/CSP:
-     - Timer de 6s após montar; se o `onLoad` do iframe não disparar, considera bloqueado
-     - Também escuta `onError`
-     - Estado de fallback exibe: ícone Tv (lucide-react), título "O +SBT não permite incorporação direta", subtítulo explicativo, botão grande `btn-3d` "Abrir +SBT" com `target="_blank" rel="noopener noreferrer"` apontando para https://mais.sbt.com.br/
-   - CSS: `overflow: hidden` no body enquanto a página estiver montada (cleanup no unmount)
+- **Otimização do InnerTube**: Aumentar a prioridade e o limite de tamanho para formatos de alta qualidade (1080p e 4K) na extração nativa.
+- **Novas Qualidades no Frontend**: Adicionar opções de 1080p (Full HD) e 4K (Ultra HD) na interface para permitir que o usuário escolha resoluções maiores.
+- **Ajuste de Limites**: Aumentar o limite de processamento no navegador de 100MB para 300MB, permitindo muxagem (vídeo + áudio) de arquivos maiores sem redirecionar para links diretos externos que podem ter qualidade reduzida.
+- **Melhoria na Seleção de Formatos**: Refinar a lógica de escolha de streams para priorizar codecs com melhor preservação de qualidade (como AVC1 High Profile quando disponível).
 
-2. **Esconder o MobileBottomNav nesta rota**
-   - Em `src/components/MobileBottomNav.tsx` (montado no `__root.tsx`), adicionar verificação do pathname; se for `/mais-sbt`, não renderizar
-   - Mesma lógica caso haja qualquer wrapper visual global
+## Detalhes Técnicos
 
-3. **Adicionar item ao menu principal**
-   - Em `src/components/Header.tsx`, adicionar entrada no array `NAV`:
-     - `{ to: "/mais-sbt", label: "+SBT 📺", icon: Tv, desc: "Assista +SBT grátis" }`
-   - Usar ícone `Tv` do lucide-react
+### Backend (`src/lib/youtube-resolver.server.ts` & `src/config/youtube.ts`)
+- Aumentar `MAX_BYTES` de 45MB para 250MB no `pickInnertubeFormats` para permitir que o backend capture streams de 1080p que não são "muxed".
+- Adicionar suporte a resoluções 1440p e 2160p (4K) na filtragem.
 
-## Estética (SOS01 retrô)
+### API (`src/routes/api.youtube.info.ts`)
+- Adicionar novos objetos de formato na resposta da API:
+  - `mp4-1080p`: Full HD (1080p)
+  - `mp4-4k`: Ultra HD (4K)
 
-- Tela de loading: fundo preto, spinner com bordas em neon (azul + roxo), texto "CARREGANDO +SBT..." em VT323
-- Tela de fallback (bloqueio): card central com borda neon, ícone Tv grande pulsante, botão CTA usando utilitário `btn-3d` existente, animações `animate-in fade-in` do Tailwind
-- Sem barras, sem padding lateral — iframe edge-to-edge
+### Frontend (`src/pages/YoutubeDownloader.tsx` & `src/lib/youtube-download-flow.ts`)
+- Alterar `BROWSER_PROCESS_LIMIT` de 100MB para 300MB.
+- Atualizar a interface de seleção de qualidade para mostrar as novas opções.
 
-## Detalhes técnicos
-
-- Rota TanStack: `createFileRoute("/mais-sbt")` com `head()` definindo title "+SBT — SOS01" e meta description
-- Não usar `Header` nem `Footer` (página fullscreen dedicada)
-- `useState` para `loading`, `blocked`
-- `useRef<HTMLIFrameElement>` + `useEffect` com `setTimeout(6000)` para detectar bloqueio silencioso
-- `requestFullscreen()` opcional via botão (não automático — navegadores exigem gesto do usuário)
-- Sem alterações em backend, DB ou env
-
-## Arquivos
-
-- **Novo**: `src/routes/mais-sbt.tsx`
-- **Novo**: `src/pages/MaisSbt.tsx`
-- **Editado**: `src/components/Header.tsx` (item NAV)
-- **Editado**: `src/components/MobileBottomNav.tsx` (hide on /mais-sbt)
+### Muxagem (`src/lib/youtube-mux.ts`)
+- Garantir que o FFmpeg utilize `-c copy` sempre que possível para evitar perda de qualidade por re-encode, ou usar CRF mais baixo se o re-encode for inevitável.
