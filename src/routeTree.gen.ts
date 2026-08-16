@@ -63,9 +63,6 @@ import { Route as ApiYoutubeInfoRouteImport } from './routes/api.youtube.info'
 import { Route as ApiYoutubeFileRouteImport } from './routes/api.youtube.file'
 import { Route as ApiYoutubeDownloadRouteImport } from './routes/api.youtube.download'
 import { Route as ApiPublicPinterestDownloadRouteImport } from './routes/api.public.pinterest-download'
-import { Route as ApiInstagramInfoRouteImport } from './routes/api.instagram.info'
-import { Route as ApiInstagramFileRouteImport } from './routes/api.instagram.file'
-import { Route as ApiInstagramDownloadRouteImport } from './routes/api.instagram.download'
 
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
@@ -348,21 +345,6 @@ const ApiPublicPinterestDownloadRoute =
     path: '/api/public/pinterest-download',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiInstagramInfoRoute = ApiInstagramInfoRouteImport.update({
-  id: '/api/instagram/info',
-  path: '/api/instagram/info',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiInstagramFileRoute = ApiInstagramFileRouteImport.update({
-  id: '/api/instagram/file',
-  path: '/api/instagram/file',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiInstagramDownloadRoute = ApiInstagramDownloadRouteImport.update({
-  id: '/api/instagram/download',
-  path: '/api/instagram/download',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -415,9 +397,6 @@ export interface FileRoutesByFullPath {
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/blog/': typeof BlogIndexRoute
-  '/api/instagram/download': typeof ApiInstagramDownloadRoute
-  '/api/instagram/file': typeof ApiInstagramFileRoute
-  '/api/instagram/info': typeof ApiInstagramInfoRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/youtube/download': typeof ApiYoutubeDownloadRoute
   '/api/youtube/file': typeof ApiYoutubeFileRoute
@@ -473,9 +452,6 @@ export interface FileRoutesByTo {
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/blog': typeof BlogIndexRoute
-  '/api/instagram/download': typeof ApiInstagramDownloadRoute
-  '/api/instagram/file': typeof ApiInstagramFileRoute
-  '/api/instagram/info': typeof ApiInstagramInfoRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/youtube/download': typeof ApiYoutubeDownloadRoute
   '/api/youtube/file': typeof ApiYoutubeFileRoute
@@ -533,9 +509,6 @@ export interface FileRoutesById {
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/ferramentas_/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/blog/': typeof BlogIndexRoute
-  '/api/instagram/download': typeof ApiInstagramDownloadRoute
-  '/api/instagram/file': typeof ApiInstagramFileRoute
-  '/api/instagram/info': typeof ApiInstagramInfoRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/youtube/download': typeof ApiYoutubeDownloadRoute
   '/api/youtube/file': typeof ApiYoutubeFileRoute
@@ -594,9 +567,6 @@ export interface FileRouteTypes {
     | '/ferramenta/$slug'
     | '/ferramentas/youtube-downloader'
     | '/blog/'
-    | '/api/instagram/download'
-    | '/api/instagram/file'
-    | '/api/instagram/info'
     | '/api/public/pinterest-download'
     | '/api/youtube/download'
     | '/api/youtube/file'
@@ -652,9 +622,6 @@ export interface FileRouteTypes {
     | '/ferramenta/$slug'
     | '/ferramentas/youtube-downloader'
     | '/blog'
-    | '/api/instagram/download'
-    | '/api/instagram/file'
-    | '/api/instagram/info'
     | '/api/public/pinterest-download'
     | '/api/youtube/download'
     | '/api/youtube/file'
@@ -711,9 +678,6 @@ export interface FileRouteTypes {
     | '/ferramenta/$slug'
     | '/ferramentas_/youtube-downloader'
     | '/blog/'
-    | '/api/instagram/download'
-    | '/api/instagram/file'
-    | '/api/instagram/info'
     | '/api/public/pinterest-download'
     | '/api/youtube/download'
     | '/api/youtube/file'
@@ -759,9 +723,6 @@ export interface RootRouteChildren {
   CategoriaSlugRoute: typeof CategoriaSlugRoute
   FerramentaSlugRoute: typeof FerramentaSlugRoute
   FerramentasYoutubeDownloaderRoute: typeof FerramentasYoutubeDownloaderRoute
-  ApiInstagramDownloadRoute: typeof ApiInstagramDownloadRoute
-  ApiInstagramFileRoute: typeof ApiInstagramFileRoute
-  ApiInstagramInfoRoute: typeof ApiInstagramInfoRoute
   ApiPublicPinterestDownloadRoute: typeof ApiPublicPinterestDownloadRoute
   ApiYoutubeDownloadRoute: typeof ApiYoutubeDownloadRoute
   ApiYoutubeFileRoute: typeof ApiYoutubeFileRoute
@@ -1148,27 +1109,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPinterestDownloadRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/instagram/info': {
-      id: '/api/instagram/info'
-      path: '/api/instagram/info'
-      fullPath: '/api/instagram/info'
-      preLoaderRoute: typeof ApiInstagramInfoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/instagram/file': {
-      id: '/api/instagram/file'
-      path: '/api/instagram/file'
-      fullPath: '/api/instagram/file'
-      preLoaderRoute: typeof ApiInstagramFileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/instagram/download': {
-      id: '/api/instagram/download'
-      path: '/api/instagram/download'
-      fullPath: '/api/instagram/download'
-      preLoaderRoute: typeof ApiInstagramDownloadRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -1244,9 +1184,6 @@ const rootRouteChildren: RootRouteChildren = {
   CategoriaSlugRoute: CategoriaSlugRoute,
   FerramentaSlugRoute: FerramentaSlugRoute,
   FerramentasYoutubeDownloaderRoute: FerramentasYoutubeDownloaderRoute,
-  ApiInstagramDownloadRoute: ApiInstagramDownloadRoute,
-  ApiInstagramFileRoute: ApiInstagramFileRoute,
-  ApiInstagramInfoRoute: ApiInstagramInfoRoute,
   ApiPublicPinterestDownloadRoute: ApiPublicPinterestDownloadRoute,
   ApiYoutubeDownloadRoute: ApiYoutubeDownloadRoute,
   ApiYoutubeFileRoute: ApiYoutubeFileRoute,
