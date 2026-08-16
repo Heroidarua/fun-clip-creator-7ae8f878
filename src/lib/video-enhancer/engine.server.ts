@@ -11,7 +11,7 @@ export async function processVideo(
   onProgress: (percent: number) => void,
   totalDuration?: number
 ): Promise<void> {
-  const { exec } = await import("child_process");
+  const { spawn } = await import("child_process");
   
   // Mapeamento de resoluções
   const resolutionMap = {
@@ -71,14 +71,25 @@ export async function processVideo(
     preset = target && (target.w > 1280) ? 'veryfast' : 'medium';
   }
 
-  const command = `ffmpeg -i "${inputPath}" ${vf} ${af} -c:v libx264 -preset ${preset} -crf 20 -c:a aac -b:a 192k "${outputPath}" -y`;
+  const args = [
+    "-i", inputPath,
+    ...(vf ? ["-vf", videoFilters.join(',')] : []),
+    ...(af ? ["-af", audioFilters.join(',')] : []),
+    "-c:v", "libx264",
+    "-preset", preset,
+    "-crf", "20",
+    "-c:a", "aac",
+    "-b:a", "192k",
+    outputPath,
+    "-y"
+  ];
 
-  console.log("Executing FFmpeg:", command);
+  console.log("Spawning FFmpeg:", "ffmpeg", args.join(" "));
 
   return new Promise((resolve, reject) => {
-    const process = exec(command);
+    const ffmpegProcess = spawn("ffmpeg", args);
 
-    process.stderr?.on('data', (data) => {
+    ffmpegProcess.stderr?.on('data', (data) => {
       const log = data.toString();
       const timeMatch = log.match(/time=(\d{2}):(\d{2}):(\d{2})\.(\d{2})/);
       if (timeMatch && totalDuration && totalDuration > 0) {
@@ -94,13 +105,17 @@ export async function processVideo(
       }
     });
 
-    process.on('close', (code) => {
+    ffmpegProcess.on('close', (code) => {
       if (code === 0) {
         onProgress(100);
         resolve();
       } else {
         reject(new Error(`FFmpeg exited with code ${code}`));
       }
+    });
+
+    ffmpegProcess.on('error', (err) => {
+      reject(new Error(`Failed to start FFmpeg: ${err.message}`));
     });
   });
 }
