@@ -1,12 +1,28 @@
-import { useState, useEffect, useRef } from "react";
-import { Clipboard, Search, Download, Headphones, Gamepad2, Book, Music, Camera, CheckCircle, AlertTriangle, Play } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { 
+  Download, 
+  Search, 
+  Clipboard, 
+  CheckCircle, 
+  AlertTriangle, 
+  Play,
+  Gamepad2, 
+  Music, 
+  Camera, 
+  Book,
+  Maximize2,
+  ChevronLeft,
+  ChevronRight,
+  Loader2,
+  AlertCircle
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 
 import { useDownloaderStatus } from "@/hooks/useDownloaderStatus";
 
-import ScrollReveal from "./ScrollReveal";
+import { ScrollReveal } from "./ScrollReveal";
 import { apiUrl, rewriteProxy } from "@/lib/api-base";
 import { parseYouTubeUrl, youtubeValidationError, getYouTubeVideoId } from "@/lib/youtube-url";
 import {
@@ -16,13 +32,15 @@ import {
   type YoutubeInfo,
 } from "@/services/youtubeDownloader";
 import { downloadYoutubeMedia, BROWSER_PROCESS_LIMIT } from "@/lib/youtube-download-flow";
+import { fetchInstagramInfo, requestInstagramDownload, absoluteDownloadUrl as absoluteIgUrl } from "@/services/instagramDownloader";
 import { useServerFn } from "@tanstack/react-start";
-import { validatePinterestUrl } from "@/lib/pinterest-validation";
+import { trackDownload } from "@/lib/analytics";
 import tiktokIcon from "@/assets/tiktok-icon.png";
 import instagramIcon from "@/assets/instagram-icon.png";
 import kwaiIcon from "@/assets/kwai-icon.png";
 import youtubeIcon from "@/assets/youtube-icon.png";
 import facebookIcon from "@/assets/facebook-icon.png";
+import pinterestIcon from "@/assets/pinterest-icon.png";
 
 // Status Badge Component
 const StatusBadge = ({ isActive }: { isActive: boolean }) => (
@@ -564,8 +582,8 @@ const HeroSection = () => {
         : { url: instagramData.media_url, type: instagramData.media_type };
 
       const { downloadUrl } = await requestInstagramDownload(
-        item.url,
-        item.type,
+        (item as any).url || (item as any).media_url,
+        (item as any).type || (item as any).media_type,
         instagramData.title
       );
 
@@ -1410,7 +1428,7 @@ const HeroSection = () => {
                             thumbnail: instagramData.thumbnail,
                           };
                       
-                      return currentItem.type === 'video' ? (
+                      return (currentItem as any).type === 'video' || (currentItem as any).media_type === 'video' ? (
                         <div
                           key={selectedCarouselIndex}
                           className="relative w-full min-h-[320px] bg-center bg-no-repeat bg-contain"
@@ -1427,13 +1445,13 @@ const HeroSection = () => {
                             title={instagramData.title}
                             author={instagramData.author}
                             duration={instagramData.duration}
-                            mediaUrl={currentItem.url}
+                            mediaUrl={(currentItem as any).url || (currentItem as any).media_url}
                           />
                         </div>
                       ) : (
                         <img 
                           key={selectedCarouselIndex}
-                          src={currentItem.url}
+                          src={(currentItem as any).url || (currentItem as any).media_url}
                           alt="Preview da foto"
                           className="w-full max-h-[400px] object-contain"
                         />
