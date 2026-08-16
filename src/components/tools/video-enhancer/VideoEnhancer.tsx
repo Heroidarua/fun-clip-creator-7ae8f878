@@ -48,7 +48,7 @@ export default function VideoEnhancer() {
           size: file.size,
           options
         }
-      }) as any;
+      } as any) as any;
       
       setJobId(job.id);
       setStatus(job);
@@ -59,7 +59,7 @@ export default function VideoEnhancer() {
         try {
           const updatedJob = await checkStatus({ 
             data: { jobId: job.id } 
-          }) as any;
+          } as any) as any;
           setStatus(updatedJob);
           
           if (updatedJob.status === 'completed' || updatedJob.status === 'failed') {
