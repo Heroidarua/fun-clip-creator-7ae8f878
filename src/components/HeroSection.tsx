@@ -15,6 +15,8 @@ import {
 } from "@/services/youtubeDownloader";
 import { downloadYoutubeMedia, BROWSER_PROCESS_LIMIT } from "@/lib/youtube-download-flow";
 import { checkYoutubeJobStatus } from "@/services/youtubeJobs";
+import youtubeIcon from "@/assets/youtube-icon.png";
+
 
 // Status Badge Component
 const StatusBadge = ({ isActive }: { isActive: boolean }) => (
