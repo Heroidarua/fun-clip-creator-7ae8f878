@@ -174,7 +174,7 @@ const GameCard = React.memo(function GameCard({
 });
 
 // ---------- Section row ----------
-function GameRow({
+const GameRow = React.memo(function GameRow({
   title, icon, badge, games: list, onPlay, isFavorite, toggleFavorite,
 }: {
   title: string;
@@ -215,7 +215,7 @@ function GameRow({
       </div>
     </section>
   );
-}
+});
 
 // ---------- Page ----------
 export default function Jogos() {
