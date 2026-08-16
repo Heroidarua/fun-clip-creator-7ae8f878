@@ -115,7 +115,7 @@ const INNERTUBE_CLIENTS = [
   },
 ] as const;
 
-function pickInnertubeFormats(player: any, quality: YouTubeQuality = "best") {
+function pickInnertubeFormats(player: any, quality: YouTubeQuality | string = "best") {
   const streaming = player?.streamingData || {};
   const hasUrl = (f: any) => typeof f?.url === "string" && f.url.startsWith("http");
   const progressive: any[] = (streaming.formats || []).filter(hasUrl);
@@ -130,25 +130,37 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality = "best") {
     .filter((f) => /video\/mp4/.test(f.mimeType || "") && /mp4a/.test(f.mimeType || ""))
     .sort(quality === "worst" ? asc : desc);
 
-  // Espelha `best[height>=720]` do yt-dlp: prioriza >=720p quando existir
-  if (quality === "high") {
+  // Priorização de qualidade baseada na string recebida
+  if (typeof quality === 'string' && quality.includes("4k")) {
+    const uhd4k = muxed.filter((f) => (f.height || 0) >= 2160);
+    if (uhd4k.length) muxed = uhd4k;
+  } else if (typeof quality === 'string' && quality.includes("1080p")) {
+    const fhd = muxed.filter((f) => (f.height || 0) >= 1080);
+    if (fhd.length) muxed = fhd;
+  } else if (quality === "high" || (typeof quality === 'string' && quality.includes("720p"))) {
     const hd = muxed.filter((f) => (f.height || 0) >= 720);
     if (hd.length) muxed = hd;
   }
 
   // Sem progressivo (vídeo sem áudio embutido): o proxy precisa transferir o
   // arquivo inteiro, então limitamos o tamanho para não estourar o servidor.
-  const MAX_BYTES = 500 * 1024 * 1024; // Aumentado para 500MB para suportar melhor qualidade
+  const MAX_BYTES = 1024 * 1024 * 1024; // 1 GB
   const size = (f: any) => Number(f.contentLength || 0);
   let videoOnly = adaptive
-    // Somente H.264 (avc1): AV1/VP9 não tocam em muitos players e celulares
     .filter(
       (f) =>
         /video\/mp4/.test(f.mimeType || "") &&
-        (f.height || 0) <= 2160, // Aumentado para 4K
+        (f.height || 0) <= 2160,
     )
     .sort(quality === "worst" ? asc : desc);
-  if (quality === "high") {
+  
+  if (typeof quality === 'string' && quality.includes("4k")) {
+    const uhd4k = videoOnly.filter((f) => (f.height || 0) >= 2160);
+    if (uhd4k.length) videoOnly = uhd4k;
+  } else if (typeof quality === 'string' && quality.includes("1080p")) {
+    const fhd = videoOnly.filter((f) => (f.height || 0) >= 1080);
+    if (fhd.length) videoOnly = fhd;
+  } else if (quality === "high" || (typeof quality === 'string' && quality.includes("720p"))) {
     const hd = videoOnly.filter((f) => (f.height || 0) >= 720);
     if (hd.length) videoOnly = hd;
   }
@@ -156,7 +168,6 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality = "best") {
   if (fitsSize.length) {
     videoOnly = fitsSize;
   } else if (videoOnly.length) {
-    // Nenhum cabe no limite: usa o menor disponível
     videoOnly = [...videoOnly].sort((a, b) => size(a) - size(b));
   }
 
@@ -203,7 +214,7 @@ async function fetchVisitorData(): Promise<string> {
 
 async function fetchInnerTube(
   videoId: string,
-  quality: YouTubeQuality = "best",
+  quality: YouTubeQuality | string = "best",
 ): Promise<YouTubeResponse | null> {
   let fallbackResult: YouTubeResponse | null = null;
   const visitorData = await fetchVisitorData();
@@ -403,7 +414,7 @@ const PIPED_INSTANCES = [
 
 async function fetchPiped(
   videoId: string,
-  quality: YouTubeQuality = "best",
+  quality: YouTubeQuality | string = "best",
 ): Promise<YouTubeResponse | null> {
   for (const instance of PIPED_INSTANCES) {
     try {
@@ -425,7 +436,9 @@ async function fetchPiped(
 
       let chosen = muxed[0];
       if (quality === "worst" && muxed.length) chosen = muxed[muxed.length - 1];
-      if (quality === "high") chosen = muxed.find((s) => height(s) >= 720) || muxed[0];
+      if (typeof quality === 'string' && quality.includes("4k")) chosen = muxed.find((s) => height(s) >= 2160) || muxed[0];
+      else if (typeof quality === 'string' && quality.includes("1080p")) chosen = muxed.find((s) => height(s) >= 1080) || muxed[0];
+      else if (quality === "high" || (typeof quality === 'string' && quality.includes("720p"))) chosen = muxed.find((s) => height(s) >= 720) || muxed[0];
 
       const bestAudio = [...audioStreams]
         .sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0))
@@ -564,7 +577,7 @@ async function fetchYoutubePreview(videoId: string): Promise<YouTubeResponse> {
   }
 }
 
-function buildProviders(rawUrl: string, videoId: string, quality: YouTubeQuality) {
+function buildProviders(rawUrl: string, videoId: string, quality: YouTubeQuality | string) {
   const key = (process.env.RAPIDAPI_KEY || "").trim();
   const providers: Array<{ name: string; run: () => Promise<YouTubeResponse | null> }> = [];
   
@@ -589,7 +602,7 @@ function buildProviders(rawUrl: string, videoId: string, quality: YouTubeQuality
 export async function resolveYoutube(
   rawUrl: string,
   videoId: string,
-  quality: YouTubeQuality = "best",
+  quality: YouTubeQuality | string = "best",
 ): Promise<YouTubeResponse> {
   const providers = buildProviders(rawUrl, videoId, quality);
 
@@ -620,7 +633,7 @@ export async function resolveYoutube(
 export async function* resolveYoutubeCandidates(
   rawUrl: string,
   videoId: string,
-  quality: YouTubeQuality = "best",
+  quality: YouTubeQuality | string = "best",
 ): AsyncGenerator<YouTubeData> {
   for (const p of buildProviders(rawUrl, videoId, quality)) {
     try {
