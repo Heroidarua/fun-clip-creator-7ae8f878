@@ -91,7 +91,7 @@ export default function ObjectRemoverTool() {
       const canvas = fabricCanvas.current;
       const originalBG = canvas.backgroundImage;
       canvas.backgroundImage = undefined;
-      const maskBase64 = canvas.toDataURL({ format: "png", multiplier: 1 });
+      const maskBase64 = canvas.toDataURL({ format: "png" });
       canvas.backgroundImage = originalBG;
       canvas.renderAll();
 
