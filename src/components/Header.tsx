@@ -87,10 +87,10 @@ const Header = () => {
       <div className="container mx-auto px-4 sm:px-6 max-w-7xl">
         <div className="flex items-center justify-between h-16 sm:h-[68px]">
           {/* Logo — 3D icon */}
-          <Link to="/" className="md:hidden flex items-center gap-3 group shrink-0" aria-label="Ir para a página inicial">
+          <Link to="/" className="flex items-center gap-3 group shrink-0" aria-label="Ir para a página inicial">
             <div className="relative" style={{ perspective: '800px' }}>
               <div
-                className="relative w-12 h-12 rounded-2xl transition-transform duration-500 ease-out group-hover:[transform:rotateY(22deg)_rotateX(8deg)_scale(1.06)]"
+                className="relative w-12 h-12 rounded-2xl transition-transform duration-500 ease-out group-hover:[transform:rotateY(22deg)_rotateX(8deg)_scale(1.06)] shadow-[0_8px_32px_rgba(0,0,0,0.25)]"
                 style={{
                   transformStyle: 'preserve-3d',
                   transform: 'rotateY(-12deg) rotateX(6deg)',
@@ -109,7 +109,7 @@ const Header = () => {
                 />
               </div>
             </div>
-            <div className="hidden sm:flex flex-col leading-none">
+            <div className="flex flex-col leading-none">
               <span className="font-display text-xl tracking-tight text-foreground">
                 sos<span className="italic text-accent">01</span>
               </span>

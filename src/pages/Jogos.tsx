@@ -230,10 +230,18 @@ export default function Jogos() {
   const [category, setCategory] = useState<Category>("Todos");
   const [recentIds, setRecentIds] = useState<number[]>([]);
   const [searchFocused, setSearchFocused] = useState(false);
+  const [page, setPage] = useState(1);
+  const ITEMS_PER_PAGE = 24;
+
   const { favorites, toggleFavorite, isFavorite } = useFavoriteGames();
   const searchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { setRecentIds(readRecent()); }, []);
+
+  // Reset page when category or search changes
+  useEffect(() => {
+    setPage(1);
+  }, [category, searchQuery]);
 
   const playGame = useCallback((g: Game) => {
     pushRecent(g.id);
@@ -259,7 +267,7 @@ export default function Jogos() {
     []
   );
 
-  // Filtered "all games" grid
+  // Filtered "all games" list
   const filtered = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     return games.filter((g) => {
@@ -268,6 +276,14 @@ export default function Jogos() {
       return true;
     });
   }, [searchQuery, category]);
+
+  // Paginated list
+  const paginated = useMemo(() => {
+    const start = (page - 1) * ITEMS_PER_PAGE;
+    return filtered.slice(start, start + ITEMS_PER_PAGE);
+  }, [filtered, page]);
+
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
 
   const handleRandom = () => {
     const pool = filtered.length ? filtered : games;
@@ -278,6 +294,7 @@ export default function Jogos() {
     if (recent[0]) playGame(recent[0]);
     else handleRandom();
   };
+
 
   return (
     <>
@@ -444,20 +461,60 @@ export default function Jogos() {
                     </div>
                   </div>
 
-                  {filtered.length > 0 ? (
-                    <div className="grid gap-4 sm:gap-6 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-                      {filtered.map((g, i) => (
-                        <div key={g.id} className="animate-fade-in" style={{ animationDelay: `${Math.min(i * 15, 200)}ms` }}>
-                          <GameCard
-                            game={g}
-                            onPlay={() => playGame(g)}
-                            isFavorite={isFavorite(g.id)}
-                            onToggleFavorite={() => toggleFavorite(g.id)}
-                          />
+                  {paginated.length > 0 ? (
+                    <>
+                      <div className="grid gap-4 sm:gap-6 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+                        {paginated.map((g, i) => (
+                          <div key={g.id} className="animate-fade-in" style={{ animationDelay: `${Math.min(i * 15, 200)}ms` }}>
+                            <GameCard
+                              game={g}
+                              onPlay={() => playGame(g)}
+                              isFavorite={isFavorite(g.id)}
+                              onToggleFavorite={() => toggleFavorite(g.id)}
+                            />
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Pagination Controls */}
+                      {totalPages > 1 && (
+                        <div className="mt-12 flex flex-wrap items-center justify-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={page === 1}
+                            onClick={() => {
+                              setPage(p => Math.max(1, p - 1));
+                              window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }}
+                            className="font-silkscreen text-[10px] tracking-wider border-2 border-primary/30"
+                          >
+                            ANTERIOR
+                          </Button>
+                          
+                          <div className="flex items-center gap-1 px-4 py-2 rounded-xl bg-card border-2 border-border/50 font-silkscreen text-[11px]">
+                            <span className="text-primary">{page}</span>
+                            <span className="text-muted-foreground">/</span>
+                            <span>{totalPages}</span>
+                          </div>
+
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={page === totalPages}
+                            onClick={() => {
+                              setPage(p => Math.min(totalPages, p + 1));
+                              window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }}
+                            className="font-silkscreen text-[10px] tracking-wider border-2 border-primary/30"
+                          >
+                            PRÓXIMA
+                          </Button>
                         </div>
-                      ))}
-                    </div>
+                      )}
+                    </>
                   ) : (
+
                     <div className="text-center py-20 rounded-3xl border-2 border-dashed border-[hsl(var(--border))] bg-[hsl(var(--card))/0.5]">
                       <div className="mx-auto w-16 h-16 grid place-items-center rounded-2xl bg-[hsl(var(--primary)/0.1)] text-[hsl(var(--primary))] mb-4">
                         <Gamepad2 className="w-8 h-8" />
