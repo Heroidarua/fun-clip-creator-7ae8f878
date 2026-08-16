@@ -1,4 +1,5 @@
-import { createServerFn } from "@tanstack/react-start";
+import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { analyzeVideo } from "@/lib/video-enhancer/analyzer.server";
 import { processVideo } from "@/lib/video-enhancer/engine.server";

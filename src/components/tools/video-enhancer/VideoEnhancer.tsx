@@ -119,6 +119,7 @@ export default function VideoEnhancer() {
   const getStatusMessage = (status: string, progress: number) => {
     if (status === 'queued') return "Na fila de espera...";
     if (status === 'processing') {
+      if (progress < 5) return "Iniciando upload...";
       if (progress < 20) return "Analisando metadados do vídeo...";
       if (progress < 40) return "Preparando filtros de IA...";
       if (progress < 60) return "Removendo ruído e granulação...";
