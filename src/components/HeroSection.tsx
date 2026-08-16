@@ -12,6 +12,8 @@ import { parseYouTubeUrl, youtubeValidationError, getYouTubeVideoId } from "@/li
 import {
   fetchYoutubeInfo,
   formatBytes,
+  requestYoutubeDownload,
+  absoluteDownloadUrl,
   type YoutubeFormat,
   type YoutubeInfo,
 } from "@/services/youtubeDownloader";
@@ -281,6 +283,7 @@ const HeroSection = () => {
   const youtubeInfoRef = useRef<YoutubeInfo | null>(null);
   const [youtubeFormats, setYoutubeFormats] = useState<YoutubeFormat[]>([]);
   const [youtubeQuality, setYoutubeQuality] = useState<string>("");
+  const [youtubePreviewUrl, setYoutubePreviewUrl] = useState<string | undefined>(undefined);
 
   // Facebook states
   const [facebookUrl, setFacebookUrl] = useState("");
@@ -844,6 +847,17 @@ const HeroSection = () => {
         author: info.author,
         duration: info.duration,
       });
+
+      // Solicita ticket de download para a prévia (se for pequeno o suficiente)
+      if (firstVideo) {
+        requestYoutubeDownload(normalizedUrl, "mp4", firstVideo.quality)
+          .then((ticket: { downloadUrl: string }) => {
+            setYoutubePreviewUrl(absoluteDownloadUrl(ticket.downloadUrl));
+          })
+          .catch((err: Error) => {
+            console.warn("Falha ao carregar preview:", err);
+          });
+      }
       toast({
         title: "Vídeo encontrado!",
         description: "Pronto para download.",
@@ -1245,21 +1259,22 @@ const HeroSection = () => {
                 
                 {/* Video preview */}
                   <div
-                    className="relative w-full mb-4 border-2 border-primary/30 bg-background/50 overflow-hidden min-h-[320px] bg-center bg-no-repeat bg-contain"
+                    className="relative w-full mb-4 border-2 border-primary/30 bg-background/50 overflow-hidden min-h-[320px] flex items-center justify-center bg-center bg-no-repeat bg-contain"
                     style={{ backgroundImage: `url(${videoData.proxy_thumbnail_url || videoData.thumbnail})` }}
                     aria-label={`Capa do vídeo ${videoData.title}`}
                   >
                     <div className="absolute inset-0 bg-background/10 backdrop-blur-[1px]" />
+                    {/* Elemento oculto para manter proporção, mas sem afetar o layout flex */}
                     <img
                       src={videoData.proxy_thumbnail_url || videoData.thumbnail}
-                      alt={`Capa do vídeo ${videoData.title}`}
-                      className="w-full h-[320px] object-contain opacity-0 pointer-events-none"
+                      alt=""
+                      className="w-full h-[320px] object-contain opacity-0 pointer-events-none absolute"
                     />
                     <MediaPreviewOverlay
                       title={videoData.title}
                       author={videoData.author}
                       duration={videoData.duration}
-                      mediaUrl={videoData.proxy_video_url || videoData.video_urls?.hd}
+                      mediaUrl={youtubePreviewUrl}
                     />
                   </div>
 

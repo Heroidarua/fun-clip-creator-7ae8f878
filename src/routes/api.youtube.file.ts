@@ -123,7 +123,12 @@ export const Route = createFileRoute("/api/youtube/file")({
             try {
               const firstEnd = rangeStart + CHUNK_BYTES - 1;
               const res = await fetch(mediaUrl!, {
-                headers: { ...baseHeaders, Range: `bytes=${rangeStart}-${firstEnd}` },
+                headers: { 
+                  ...baseHeaders, 
+                  Range: `bytes=${rangeStart}-${firstEnd}`,
+                  // Adiciona referer para evitar 403 em alguns provedores
+                  Referer: "https://www.youtube.com/"
+                },
                 signal: AbortSignal.timeout(YT_PROCESS_TIMEOUT_MS),
               });
               
