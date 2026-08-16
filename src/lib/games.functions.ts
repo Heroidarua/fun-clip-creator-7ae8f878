@@ -20,7 +20,7 @@ export const getPagedGames = createServerFn({ method: "GET" })
     const to = from + PAGE_SIZE - 1;
 
     let query = supabaseAdmin
-      .from("games")
+      .from("games" as any)
       .select("id, external_id, title, platform, src, img, category", { count: "exact" });
 
     if (category && category !== "Todos") {
@@ -31,14 +31,14 @@ export const getPagedGames = createServerFn({ method: "GET" })
       query = query.ilike("title", `%${search}%`);
     }
 
-    const { data: games, count, error } = await query
+    const { data: games, count, error } = await (query as any)
       .order("id", { ascending: true })
       .range(from, to);
 
     if (error) throw error;
 
     return {
-      games: games || [],
+      games: (games || []) as any[],
       totalCount: count || 0,
       pageSize: PAGE_SIZE,
       hasMore: (count || 0) > to + 1,

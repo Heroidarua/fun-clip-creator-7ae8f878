@@ -14,8 +14,7 @@ function categoryOf(title: string): string {
 export async function seedGames() {
   console.log(`Starting seed for ${games.length} games...`);
   
-  // Chunking to avoid large request payload limits
-  const CHUNK_SIZE = 100;
+  const CHUNK_SIZE = 50;
   for (let i = 0; i < games.length; i += CHUNK_SIZE) {
     const chunk = games.slice(i, i + CHUNK_SIZE).map(g => ({
       external_id: g.id,
@@ -27,7 +26,7 @@ export async function seedGames() {
     }));
 
     const { error } = await supabaseAdmin
-      .from('games')
+      .from('games' as any)
       .upsert(chunk, { onConflict: 'external_id' });
 
     if (error) {
