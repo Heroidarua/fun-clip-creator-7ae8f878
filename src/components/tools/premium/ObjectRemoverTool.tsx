@@ -26,11 +26,24 @@ export default function ObjectRemoverTool() {
   };
 
   useEffect(() => {
-    if (!preview || !canvasRef.current || !containerRef.current || result) return;
+    // Se não há preview ou se o resultado já existe, não inicializa
+    if (!preview || !canvasRef.current || !containerRef.current || result) {
+      if (fabricCanvas.current) {
+        fabricCanvas.current.dispose();
+        fabricCanvas.current = null;
+      }
+      return;
+    }
 
     const container = containerRef.current;
     const width = container.clientWidth;
     const height = (width * 9) / 16; // Mantém aspect ratio 16:9
+
+    // Destruir instância anterior se existir antes de criar nova
+    if (fabricCanvas.current) {
+      fabricCanvas.current.dispose();
+      fabricCanvas.current = null;
+    }
 
     const canvas = new fabric.Canvas(canvasRef.current, {
       width,
@@ -69,7 +82,10 @@ export default function ObjectRemoverTool() {
     fabricCanvas.current = canvas;
 
     return () => {
-      canvas.dispose();
+      if (fabricCanvas.current) {
+        fabricCanvas.current.dispose();
+        fabricCanvas.current = null;
+      }
     };
   }, [preview, result, brushSize]);
 
@@ -182,7 +198,7 @@ export default function ObjectRemoverTool() {
                 ref={containerRef}
                 className="relative aspect-video w-full border-2 border-border overflow-hidden rounded-sm bg-slate-950 shadow-cartridge"
               >
-                <canvas ref={canvasRef} />
+                <canvas ref={canvasRef} id="object-remover-canvas" />
                 {processing && (
                   <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center z-50">
                     <Loader2 className="w-8 h-8 text-primary animate-spin mb-2" />
