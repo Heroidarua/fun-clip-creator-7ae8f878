@@ -39,7 +39,7 @@ async function fetchStream(
   quality: string,
   onRatio: (ratio: number | null) => void,
 ): Promise<StreamResult> {
-  const ticket = await requestYoutubeDownload(videoUrl, container, quality);
+  const ticket = await requestYoutubeDownload(videoUrl, container, quality, "stream");
   const fileUrl = absoluteDownloadUrl(ticket.downloadUrl);
   const res = await fetch(fileUrl).catch((err) => {
     console.error("Fetch error:", err);
