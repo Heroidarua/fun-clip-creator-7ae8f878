@@ -13,6 +13,9 @@ import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useInView } from "react-intersection-observer";
 import { useFavoriteGames } from "@/hooks/useFavoriteGames";
+import { getRouteApi } from "@tanstack/react-router";
+
+const routeApi = getRouteApi("/jogos/$category");
 
 // ---------- helpers ----------
 type Category = "Todos" | "Luta" | "Plataforma" | "Corrida" | "Ação" | "Tiro" | "Arcade";
@@ -219,8 +222,8 @@ const GameRow = React.memo(function GameRow({
 
 // ---------- Page ----------
 export default function Jogos() {
-  const { category: routeCategory } = Route.useParams();
-  const navigate = Route.useNavigate();
+  const { category: routeCategory } = routeApi.useParams();
+  const navigate = routeApi.useNavigate();
   
   const [fullscreenGame, setFullscreenGame] = useState<Game | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
