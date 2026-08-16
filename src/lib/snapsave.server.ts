@@ -90,8 +90,8 @@ export async function callSnapsave(url: string): Promise<SnapsaveResult | null> 
 
     // Collect every CDN link Snapsave emits (rapidcdn / snapsave / direct fbcdn/cdninstagram).
     const linkRegex =
-      /https:\/\/(?:d\.rapidcdn\.app|snapsave\.app|[a-z0-9.-]+\.fbcdn\.net|[a-z0-9.-]+\.cdninstagram\.com|[a-z0-9.-]*pinimg\.com|[a-z0-9.-]*pinterest\.com)\/[^"'\s<>]+/gi;
-    const allLinks = Array.from(new Set([...html.matchAll(linkRegex)].map((m) => m[0])));
+      /https:\/\/(?:d\.rapidcdn\.app|snapsave\.app|[a-z0-9.-]+\.fbcdn\.net|[a-z0-9.-]+\.cdninstagram\.com|[a-z0-9.-]*pinimg\.com|[a-z0-9.-]*pinterest\.com)[^"'\s<>]+/gi;
+    const allLinks = Array.from(new Set([...html.matchAll(linkRegex)].map((m) => m[0].replace(/\\u0026/g, "&").replace(/\\/g, ""))));
     if (!allLinks.length) return null;
 
     // Thumbnail candidates first (cover image), then media files.
