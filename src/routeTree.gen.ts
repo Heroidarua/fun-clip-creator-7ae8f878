@@ -33,7 +33,6 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
-import { Route as JogosCategoryRouteImport } from './routes/jogos/$category'
 import { Route as FerramentasYoutubeDownloaderRouteImport } from './routes/ferramentas_.youtube-downloader'
 import { Route as FerramentaSlugRouteImport } from './routes/ferramenta.$slug'
 import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
@@ -184,11 +183,6 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => BlogRoute,
-} as any)
-const JogosCategoryRoute = JogosCategoryRouteImport.update({
-  id: '/$category',
-  path: '/$category',
-  getParentRoute: () => JogosRoute,
 } as any)
 const FerramentasYoutubeDownloaderRoute =
   FerramentasYoutubeDownloaderRouteImport.update({
@@ -365,7 +359,7 @@ export interface FileRoutesByFullPath {
   '/dmca': typeof DmcaRoute
   '/ferramentas': typeof FerramentasRoute
   '/iptv': typeof IptvRoute
-  '/jogos': typeof JogosRouteWithChildren
+  '/jogos': typeof JogosRoute
   '/jogos-java': typeof JogosJavaRoute
   '/mais-sbt': typeof MaisSbtRoute
   '/nasa': typeof NasaRoute
@@ -402,7 +396,6 @@ export interface FileRoutesByFullPath {
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
-  '/jogos/$category': typeof JogosCategoryRoute
   '/blog/': typeof BlogIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/youtube/download': typeof ApiYoutubeDownloadRoute
@@ -421,7 +414,7 @@ export interface FileRoutesByTo {
   '/dmca': typeof DmcaRoute
   '/ferramentas': typeof FerramentasRoute
   '/iptv': typeof IptvRoute
-  '/jogos': typeof JogosRouteWithChildren
+  '/jogos': typeof JogosRoute
   '/jogos-java': typeof JogosJavaRoute
   '/mais-sbt': typeof MaisSbtRoute
   '/nasa': typeof NasaRoute
@@ -458,7 +451,6 @@ export interface FileRoutesByTo {
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
-  '/jogos/$category': typeof JogosCategoryRoute
   '/blog': typeof BlogIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/youtube/download': typeof ApiYoutubeDownloadRoute
@@ -479,7 +471,7 @@ export interface FileRoutesById {
   '/dmca': typeof DmcaRoute
   '/ferramentas': typeof FerramentasRoute
   '/iptv': typeof IptvRoute
-  '/jogos': typeof JogosRouteWithChildren
+  '/jogos': typeof JogosRoute
   '/jogos-java': typeof JogosJavaRoute
   '/mais-sbt': typeof MaisSbtRoute
   '/nasa': typeof NasaRoute
@@ -516,7 +508,6 @@ export interface FileRoutesById {
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/ferramentas_/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
-  '/jogos/$category': typeof JogosCategoryRoute
   '/blog/': typeof BlogIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/youtube/download': typeof ApiYoutubeDownloadRoute
@@ -575,7 +566,6 @@ export interface FileRouteTypes {
     | '/categoria/$slug'
     | '/ferramenta/$slug'
     | '/ferramentas/youtube-downloader'
-    | '/jogos/$category'
     | '/blog/'
     | '/api/public/pinterest-download'
     | '/api/youtube/download'
@@ -631,7 +621,6 @@ export interface FileRouteTypes {
     | '/categoria/$slug'
     | '/ferramenta/$slug'
     | '/ferramentas/youtube-downloader'
-    | '/jogos/$category'
     | '/blog'
     | '/api/public/pinterest-download'
     | '/api/youtube/download'
@@ -688,7 +677,6 @@ export interface FileRouteTypes {
     | '/categoria/$slug'
     | '/ferramenta/$slug'
     | '/ferramentas_/youtube-downloader'
-    | '/jogos/$category'
     | '/blog/'
     | '/api/public/pinterest-download'
     | '/api/youtube/download'
@@ -709,7 +697,7 @@ export interface RootRouteChildren {
   DmcaRoute: typeof DmcaRoute
   FerramentasRoute: typeof FerramentasRoute
   IptvRoute: typeof IptvRoute
-  JogosRoute: typeof JogosRouteWithChildren
+  JogosRoute: typeof JogosRoute
   JogosJavaRoute: typeof JogosJavaRoute
   MaisSbtRoute: typeof MaisSbtRoute
   NasaRoute: typeof NasaRoute
@@ -910,13 +898,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/blog/'
       preLoaderRoute: typeof BlogIndexRouteImport
       parentRoute: typeof BlogRoute
-    }
-    '/jogos/$category': {
-      id: '/jogos/$category'
-      path: '/$category'
-      fullPath: '/jogos/$category'
-      preLoaderRoute: typeof JogosCategoryRouteImport
-      parentRoute: typeof JogosRoute
     }
     '/ferramentas_/youtube-downloader': {
       id: '/ferramentas_/youtube-downloader'
@@ -1164,16 +1145,6 @@ const BlogRouteChildren: BlogRouteChildren = {
 
 const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
-interface JogosRouteChildren {
-  JogosCategoryRoute: typeof JogosCategoryRoute
-}
-
-const JogosRouteChildren: JogosRouteChildren = {
-  JogosCategoryRoute: JogosCategoryRoute,
-}
-
-const JogosRouteWithChildren = JogosRoute._addFileChildren(JogosRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
@@ -1187,7 +1158,7 @@ const rootRouteChildren: RootRouteChildren = {
   DmcaRoute: DmcaRoute,
   FerramentasRoute: FerramentasRoute,
   IptvRoute: IptvRoute,
-  JogosRoute: JogosRouteWithChildren,
+  JogosRoute: JogosRoute,
   JogosJavaRoute: JogosJavaRoute,
   MaisSbtRoute: MaisSbtRoute,
   NasaRoute: NasaRoute,
