@@ -116,10 +116,11 @@ export const Route = createFileRoute("/api/youtube/file")({
                 .update({ 
                   status: 'PROCESSING', 
                   progress: 10,
-                  title: ticket.title // Mantém o título no job para referência
+                  title: (ticket.title as any) // Type assertion to bypass temporary generation mismatch
                 })
                 .eq("id", jobId);
           }
+
 
 
           for await (const candidate of resolveYoutubeCandidates(
