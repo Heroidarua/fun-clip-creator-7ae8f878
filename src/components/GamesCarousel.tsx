@@ -10,8 +10,11 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
-import { games, Game } from "@/data/games";
+import { Game } from "@/data/games";
 import { useFavoriteGames } from "@/hooks/useFavoriteGames";
+import { useQuery } from "@tanstack/react-query";
+import { getPagedGames } from "@/lib/games.functions";
+
 
 function GameCard({ game, isFavorite, onToggleFavorite }: { game: Game; isFavorite: boolean; onToggleFavorite: () => void }) {
   return (
@@ -100,14 +103,22 @@ function GameCard({ game, isFavorite, onToggleFavorite }: { game: Game; isFavori
 export default function GamesCarousel() {
   const { favorites, toggleFavorite, isFavorite } = useFavoriteGames();
 
+  const { data } = useQuery({
+    queryKey: ["games-featured"],
+    queryFn: () => getPagedGames({ data: { page: 0 } }),
+  });
+
+  const displayGames = data?.games || [];
+
   // Sort games: favorites first, then the rest
   const sortedGames = useMemo(() => {
-    return [...games].sort((a, b) => {
+    return [...displayGames].sort((a, b) => {
       const aFav = favorites.includes(a.id) ? 0 : 1;
       const bFav = favorites.includes(b.id) ? 0 : 1;
       return aFav - bFav;
     });
-  }, [favorites]);
+  }, [displayGames, favorites]);
+
 
   const autoplayPlugin = useRef(
     Autoplay({

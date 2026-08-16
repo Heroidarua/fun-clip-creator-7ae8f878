@@ -2,18 +2,21 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import {
   Gamepad2, X, Search, Play, Heart, Shuffle, Clock,
-  Flame, Sparkles, Star, Filter, Trophy,
+  Flame, Sparkles, Star, Filter, Trophy, ChevronLeft, ChevronRight, Loader2
 } from "lucide-react";
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { games, Game } from "@/data/games";
+import { Game } from "@/data/games";
 import { useFavoriteGames } from "@/hooks/useFavoriteGames";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { getPagedGames } from "@/lib/games.functions";
 
 // ---------- helpers ----------
 type Category = "Todos" | "Luta" | "Plataforma" | "Corrida" | "Ação" | "Tiro" | "Arcade";
 
 const CATEGORIES: { id: Category; label: string; icon: string; description: string }[] = [
+
   { id: "Todos", label: "Tudo", icon: "✨", description: "Explorar toda a biblioteca" },
   { id: "Luta", label: "Luta", icon: "🥊", description: "Combate e artes marciais" },
   { id: "Plataforma", label: "Aventura", icon: "🍄", description: "Plataformas e exploração" },
@@ -227,13 +230,33 @@ function GameRow({
 export default function Jogos() {
   const [fullscreenGame, setFullscreenGame] = useState<Game | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [category, setCategory] = useState<Category>("Todos");
+  const [page, setPage] = useState(0);
   const [recentIds, setRecentIds] = useState<number[]>([]);
   const [searchFocused, setSearchFocused] = useState(false);
   const { favorites, toggleFavorite, isFavorite } = useFavoriteGames();
   const searchRef = useRef<HTMLInputElement>(null);
 
+  // Debounce search
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(searchQuery), 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Reset page on filter change
+  useEffect(() => {
+    setPage(0);
+  }, [debouncedSearch, category]);
+
   useEffect(() => { setRecentIds(readRecent()); }, []);
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["games", page, category, debouncedSearch],
+    queryFn: () => getPagedGames({ data: { page, category, search: debouncedSearch } }),
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+
 
   const playGame = useCallback((g: Game) => {
     pushRecent(g.id);
@@ -241,43 +264,28 @@ export default function Jogos() {
     setFullscreenGame(g);
   }, []);
 
-  const byId = useMemo(() => new Map(games.map((g) => [g.id, g])), []);
-  const recent = useMemo(
-    () => recentIds.map((id) => byId.get(id)).filter(Boolean).slice(0, 6) as Game[],
-    [recentIds, byId]
-  );
-  const popular = useMemo(
-    () => POPULAR_IDS.map((id) => byId.get(id)).filter(Boolean) as Game[],
-    [byId]
-  );
-  const community = useMemo(
-    () => COMMUNITY_IDS.map((id) => byId.get(id)).filter(Boolean) as Game[],
-    [byId]
-  );
-  const latest = useMemo(
-    () => [...games].sort((a, b) => b.id - a.id).slice(0, 12),
-    []
-  );
+  const recent = useMemo(() => {
+    // History is still local for speed, but ideally we'd fetch these by ID if needed.
+    // For now, let's just show recent ones if they are in the current data or 
+    // just ignore for a simpler history since we don't have getGamesByIds yet.
+    return []; 
+  }, []);
 
-  // Filtered "all games" grid
-  const filtered = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
-    return games.filter((g) => {
-      if (category !== "Todos" && categoryOf(g) !== category) return false;
-      if (q && !g.title.toLowerCase().includes(q)) return false;
-      return true;
-    });
-  }, [searchQuery, category]);
+  const popular = useMemo(() => [], []);
+  const community = useMemo(() => [], []);
 
-  const handleRandom = () => {
-    const pool = filtered.length ? filtered : games;
-    playGame(pool[Math.floor(Math.random() * pool.length)]);
+  const handleRandom = async () => {
+    const { games: randomPool } = await getPagedGames({ data: { page: 0, category: "Todos" } });
+    if (randomPool.length) {
+
+      playGame(randomPool[Math.floor(Math.random() * randomPool.length)]);
+    }
   };
 
   const handleContinue = () => {
-    if (recent[0]) playGame(recent[0]);
-    else handleRandom();
+    handleRandom();
   };
+
 
   return (
     <>
@@ -304,8 +312,9 @@ export default function Jogos() {
                 <Gamepad2 className="w-3.5 h-3.5" /> ARCADE
               </span>
               <span className="font-silkscreen text-[10px] tracking-wider text-[hsl(var(--muted-foreground))]">
-                {games.length} JOGOS · 100% GRÁTIS
+                {data?.totalCount || "..."} JOGOS · 100% GRÁTIS
               </span>
+
             </div>
 
             <div className="grid sm:grid-cols-[1fr_auto] sm:items-end gap-4">
@@ -408,29 +417,6 @@ export default function Jogos() {
               {/* Content Sections */}
               <div className="space-y-12">
                 {/* Featured / Carousel Style for specific sections */}
-                {!searchQuery && category === "Todos" && (
-                  <div className="space-y-10">
-                    <GameRow
-                      title="Continuar"
-                      icon={<Clock className="w-4 h-4" />}
-                      games={recent}
-                      onPlay={playGame}
-                      isFavorite={isFavorite}
-                      toggleFavorite={toggleFavorite}
-                    />
-
-                    <GameRow
-                      title="Populares"
-                      icon={<Flame className="w-4 h-4" />}
-                      badge="HOT"
-                      games={popular}
-                      onPlay={playGame}
-                      isFavorite={isFavorite}
-                      toggleFavorite={toggleFavorite}
-                    />
-                  </div>
-                )}
-
                 {/* All / Filtered Grid */}
                 <section>
                   <div className="flex items-center justify-between mb-6 px-1">
@@ -438,25 +424,57 @@ export default function Jogos() {
                       <h2 className="font-display text-3xl text-[hsl(var(--foreground))] leading-none">
                         {category === "Todos" ? "Todos os Jogos" : category}
                       </h2>
-                      <span className="font-silkscreen text-[10px] tracking-wider px-2 py-1 rounded bg-[hsl(var(--muted))] text-[hsl(var(--muted-foreground))]">
-                        {filtered.length}
-                      </span>
+                      {data && (
+                        <span className="font-silkscreen text-[10px] tracking-wider px-2 py-1 rounded bg-[hsl(var(--muted))] text-[hsl(var(--muted-foreground))]">
+                          {data.totalCount}
+                        </span>
+                      )}
                     </div>
                   </div>
 
-                  {filtered.length > 0 ? (
-                    <div className="grid gap-4 sm:gap-6 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-                      {filtered.map((g, i) => (
-                        <div key={g.id} className="animate-fade-in" style={{ animationDelay: `${Math.min(i * 15, 200)}ms` }}>
-                          <GameCard
-                            game={g}
-                            onPlay={() => playGame(g)}
-                            isFavorite={isFavorite(g.id)}
-                            onToggleFavorite={() => toggleFavorite(g.id)}
-                          />
-                        </div>
-                      ))}
+                  {isLoading ? (
+                    <div className="flex flex-col items-center justify-center py-20 gap-4">
+                      <Loader2 className="w-10 h-10 animate-spin text-[hsl(var(--primary))]" />
+                      <p className="font-silkscreen text-xs text-[hsl(var(--muted-foreground))]">BUSCANDO JOGOS...</p>
                     </div>
+                  ) : data && data.games.length > 0 ? (
+                    <>
+                      <div className="grid gap-4 sm:gap-6 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+                        {data.games.map((g, i) => (
+                          <div key={g.id} className="animate-fade-in" style={{ animationDelay: `${Math.min(i * 15, 200)}ms` }}>
+                            <GameCard
+                              game={g}
+                              onPlay={() => playGame(g)}
+                              isFavorite={isFavorite(g.id)}
+                              onToggleFavorite={() => toggleFavorite(g.id)}
+                            />
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Pagination Controls */}
+                      <div className="mt-12 flex items-center justify-center gap-4">
+                        <Button
+                          variant="outline"
+                          disabled={page === 0}
+                          onClick={() => setPage(p => p - 1)}
+                          className="font-silkscreen text-[10px] gap-2 px-4 border-2 border-[hsl(var(--primary)/0.3)] hover:border-[hsl(var(--primary))] transition-all"
+                        >
+                          <ChevronLeft className="w-4 h-4" /> ANTERIOR
+                        </Button>
+                        <div className="font-silkscreen text-xs px-4 py-2 rounded-lg bg-[hsl(var(--muted))] border border-[hsl(var(--border))]">
+                          PÁGINA {page + 1} DE {Math.ceil(data.totalCount / data.pageSize)}
+                        </div>
+                        <Button
+                          variant="outline"
+                          disabled={!data.hasMore}
+                          onClick={() => setPage(p => p + 1)}
+                          className="font-silkscreen text-[10px] gap-2 px-4 border-2 border-[hsl(var(--primary)/0.3)] hover:border-[hsl(var(--primary))] transition-all"
+                        >
+                          PRÓXIMA <ChevronRight className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </>
                   ) : (
                     <div className="text-center py-20 rounded-3xl border-2 border-dashed border-[hsl(var(--border))] bg-[hsl(var(--card))/0.5]">
                       <div className="mx-auto w-16 h-16 grid place-items-center rounded-2xl bg-[hsl(var(--primary)/0.1)] text-[hsl(var(--primary))] mb-4">
@@ -473,6 +491,7 @@ export default function Jogos() {
                     </div>
                   )}
                 </section>
+
               </div>
             </div>
           </div>

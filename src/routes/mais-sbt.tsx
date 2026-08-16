@@ -7,8 +7,7 @@ export const Route = createFileRoute("/mais-sbt")({
   head: () =>
     buildSeo({
       path: "/mais-sbt",
-      title: "+SBT Online Grátis — Novelas e programas | SOS01",
-      description: "Acesse o +SBT pelo SOS01 e assista novelas, programas e conteúdos do SBT gratuitamente, direto no navegador.",
-      keywords: ["+sbt","sbt online","novelas grátis"],
+      title: "+SBT — Assista TV Online Grátis | SOS01",
+      description: "Assista a programação do +SBT ao vivo e on-demand direto no SOS01. Filmes, séries e programas de TV gratuitos.",
     }),
 });

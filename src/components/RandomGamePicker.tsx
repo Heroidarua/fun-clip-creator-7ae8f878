@@ -1,8 +1,10 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { Dices, Sparkles, Play, RotateCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { games, type Game } from "@/data/games";
+import { type Game } from "@/data/games";
+import { useQuery } from "@tanstack/react-query";
+import { getPagedGames } from "@/lib/games.functions";
 
 export default function RandomGamePicker() {
   const [spinning, setSpinning] = useState(false);
@@ -10,28 +12,37 @@ export default function RandomGamePicker() {
   const [reelIndex, setReelIndex] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  const { data } = useQuery({
+    queryKey: ["games-random"],
+    queryFn: () => getPagedGames({ data: { page: 0 } }),
+  });
+
+  const gamesList = data?.games || [];
+
   const startSpin = () => {
-    if (spinning) return;
+    if (spinning || !gamesList.length) return;
     setSpinning(true);
     setPicked(null);
 
     let tick = 0;
     intervalRef.current = setInterval(() => {
-      setReelIndex(Math.floor(Math.random() * games.length));
+      setReelIndex(Math.floor(Math.random() * gamesList.length));
       tick++;
     }, 70);
 
     const totalDuration = 1800;
     setTimeout(() => {
       if (intervalRef.current) clearInterval(intervalRef.current);
-      const final = games[Math.floor(Math.random() * games.length)];
-      setReelIndex(games.findIndex((g) => g.id === final.id));
+      const final = gamesList[Math.floor(Math.random() * gamesList.length)];
+      setReelIndex(gamesList.findIndex((g) => g.id === final.id));
       setPicked(final);
       setSpinning(false);
     }, totalDuration);
   };
 
-  const current = picked ?? games[reelIndex] ?? games[0];
+  const current = picked ?? gamesList[reelIndex] ?? (gamesList.length > 0 ? gamesList[0] : null);
+
+  if (!current) return null;
 
   return (
     <section className="relative py-12 sm:py-16 overflow-hidden">
@@ -135,7 +146,7 @@ export default function RandomGamePicker() {
           </div>
 
           <p className="text-center text-xs text-[hsl(var(--muted-foreground))] mt-4">
-            {games.length} jogos disponíveis · 100% no navegador
+            {data?.totalCount || "..."} jogos disponíveis · 100% no navegador
           </p>
         </div>
       </div>
