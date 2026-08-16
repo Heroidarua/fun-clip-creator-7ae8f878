@@ -32,6 +32,12 @@ export default function ObjectRemoverTool() {
     const width = container.clientWidth;
     const height = (width * 9) / 16; // Mantém aspect ratio 16:9
 
+    // Destruir instância anterior se existir antes de criar nova
+    if (fabricCanvas.current) {
+      fabricCanvas.current.dispose();
+      fabricCanvas.current = null;
+    }
+
     const canvas = new fabric.Canvas(canvasRef.current, {
       width,
       height,
