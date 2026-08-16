@@ -1,10 +1,10 @@
+import React, { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import {
   Gamepad2, X, Search, Play, Heart, Shuffle, Clock,
   Flame, Sparkles, Star, Filter, Trophy, RotateCw
 } from "lucide-react";
-import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Game } from "@/data/games";
@@ -59,7 +59,7 @@ function pushRecent(id: number) {
 }
 
 // ---------- Card ----------
-function GameCard({
+const GameCard = React.memo(function GameCard({
   game, onPlay, isFavorite, onToggleFavorite,
 }: {
   game: Game; onPlay: () => void; isFavorite: boolean;
@@ -70,7 +70,6 @@ function GameCard({
 
   return (
     <div className="group relative h-full">
-      {/* neon aura on hover */}
       <div
         aria-hidden
         className="pointer-events-none absolute -inset-1 rounded-[22px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -86,7 +85,6 @@ function GameCard({
         className="cartridge relative w-full h-full text-left rounded-[14px] overflow-hidden bg-[hsl(var(--card))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--primary))] flex flex-col"
         aria-label={`Jogar ${game.title}`}
       >
-        {/* Cartridge top ridge / slot */}
         <div className="relative h-5 bg-[hsl(var(--secondary))] shrink-0">
           <div className="absolute inset-x-0 top-0 h-1 bg-[hsl(var(--primary))] opacity-60" />
           <div className="absolute inset-0 flex items-center justify-center gap-1.5">
@@ -94,17 +92,15 @@ function GameCard({
               <div key={i} className="w-2 h-2.5 rounded-sm bg-[hsl(var(--secondary-foreground)/0.15)]" />
             ))}
           </div>
-          {/* corner screws */}
           <div className="absolute top-1 left-2 w-1.5 h-1.5 rounded-full bg-[hsl(var(--secondary-foreground)/0.25)]" />
           <div className="absolute top-1 right-2 w-1.5 h-1.5 rounded-full bg-[hsl(var(--secondary-foreground)/0.25)]" />
         </div>
 
-        {/* Cover */}
         <div className="relative flex-1 min-h-0 aspect-[3/4] overflow-hidden bg-gradient-to-br from-[hsl(var(--muted))] to-[hsl(var(--primary)/0.12)]">
           <img
             src={game.img || `https://placehold.co/400x533/0E4A7B/F5F9FF?text=${encodeURIComponent(game.title)}`}
             alt={game.title}
-            loading="lazy"
+            loading={game.id <= 50 ? "eager" : "lazy"}
             draggable={false}
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             onError={(e) => {
@@ -114,7 +110,6 @@ function GameCard({
             }}
           />
 
-          {/* scanlines overlay */}
           <div
             aria-hidden
             className="absolute inset-0 pointer-events-none opacity-[0.06]"
@@ -124,10 +119,8 @@ function GameCard({
             }}
           />
 
-          {/* Bottom gradient for text legibility */}
           <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
 
-          {/* Top row: category chip + favorite */}
           <div className="absolute top-2.5 left-2.5 right-2.5 flex items-start justify-between gap-2">
             <span className="px-2 py-1 rounded-md bg-black/60 backdrop-blur-md text-[10px] font-silkscreen tracking-wider text-white border border-white/15 shadow-sm">
               {category.toUpperCase()}
@@ -146,14 +139,12 @@ function GameCard({
             </button>
           </div>
 
-          {/* Hover play overlay */}
           <div className="absolute inset-0 grid place-items-center opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black/20">
             <div className="w-16 h-16 rounded-full bg-[hsl(var(--primary))] grid place-items-center text-white shadow-neon scale-90 group-hover:scale-100 transition-transform duration-300">
               <Play className="w-7 h-7 ml-0.5" fill="currentColor" />
             </div>
           </div>
 
-          {/* Bottom overlay info */}
           <div className="absolute inset-x-0 bottom-0 p-3 text-white">
             <h3 className="font-display text-base sm:text-lg leading-tight line-clamp-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
               {game.title}
@@ -168,7 +159,6 @@ function GameCard({
           </div>
         </div>
 
-        {/* Footer strip */}
         <div className="shrink-0 flex items-center justify-between gap-2 px-3 py-2.5 bg-[hsl(var(--muted)/0.5)] border-t border-[hsl(var(--border))]">
           <span className="text-[11px] font-silkscreen tracking-wider text-[hsl(var(--muted-foreground))]">
             #{String(game.id).padStart(3, "0")}
@@ -181,10 +171,10 @@ function GameCard({
       </button>
     </div>
   );
-}
+});
 
 // ---------- Section row ----------
-function GameRow({
+const GameRow = React.memo(function GameRow({
   title, icon, badge, games: list, onPlay, isFavorite, toggleFavorite,
 }: {
   title: string;
@@ -225,7 +215,7 @@ function GameRow({
       </div>
     </section>
   );
-}
+});
 
 // ---------- Page ----------
 export default function Jogos() {

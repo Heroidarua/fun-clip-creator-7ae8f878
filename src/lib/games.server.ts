@@ -9,12 +9,16 @@ export type Game = {
   img?: string;
 };
 
+// Global index for faster filtering
+let gamesIndex: Game[] | null = null;
+const categoryCache = new Map<string, Game[]>();
+
 // Simple in-memory cache for the server
-const cache = new Map<string, { data: any; expiry: number }>();
+const resultCache = new Map<string, { data: any; expiry: number }>();
 const CACHE_TTL = 1000 * 60 * 10; // 10 minutes
 
 function getFromCache(key: string) {
-  const cached = cache.get(key);
+  const cached = resultCache.get(key);
   if (cached && cached.expiry > Date.now()) {
     return cached.data;
   }
@@ -22,18 +26,57 @@ function getFromCache(key: string) {
 }
 
 function setToCache(key: string, data: any) {
-  cache.set(key, { data, expiry: Date.now() + CACHE_TTL });
+  resultCache.set(key, { data, expiry: Date.now() + CACHE_TTL });
 }
 
 async function getTypedGames(): Promise<Game[]> {
+  if (gamesIndex) return gamesIndex;
   try {
     // @ts-ignore - dynamic import for large data file to avoid build-time OOM/Type recursion
     const dataModule = await import('../data/games');
-    return (dataModule.games as Game[]) || [];
+    gamesIndex = (dataModule.games as Game[]) || [];
+    return gamesIndex;
   } catch (error) {
     console.error('Error loading games data:', error);
     return [];
   }
+}
+
+const CATEGORY_REGEX = {
+  luta: /(kombat|fighter|tekken|smash|vs\.|vs |kof|jojo|chaos)/i,
+  plataforma: /(mario|sonic|kong|bomberman|kidd|mickey|donald|dizzy|picapau|monica|pocahontas|luigi|yoshi|rockman)/i,
+  corrida: /(kart|top gear|gp rider|rider)/i,
+  tiro: /(1941|asteroids|duck hunt|battle city|popeye)/i,
+  ação: /(metal slug|spider|mask|power rangers|x-men|simpsons|alien|justice|dragonball|flintstones|saga|gta|theft)/i,
+  // Arcade is everything else
+};
+
+function getCategoryGames(allGames: Game[], category: string): Game[] {
+  const catLower = category.toLowerCase();
+  if (catLower === 'todos') return allGames;
+  
+  if (categoryCache.has(catLower)) {
+    return categoryCache.get(catLower)!;
+  }
+
+  let filtered: Game[] = [];
+  if (catLower === 'arcade') {
+    const allRegex = new RegExp(
+      Object.values(CATEGORY_REGEX).map(r => r.source).join('|'),
+      'i'
+    );
+    filtered = allGames.filter(g => !allRegex.test(g.title));
+  } else {
+    const regex = CATEGORY_REGEX[catLower as keyof typeof CATEGORY_REGEX];
+    if (regex) {
+      filtered = allGames.filter(g => regex.test(g.title));
+    } else {
+      filtered = allGames;
+    }
+  }
+
+  categoryCache.set(catLower, filtered);
+  return filtered;
 }
 
 export async function fetchGames({ page = 1, limit = 24, search = '', category = 'Todos' }) {
@@ -41,8 +84,8 @@ export async function fetchGames({ page = 1, limit = 24, search = '', category =
   const cached = getFromCache(cacheKey);
   if (cached) return cached;
 
-  const typedGames = await getTypedGames();
-  let filtered = [...typedGames];
+  const allGames = await getTypedGames();
+  let filtered = getCategoryGames(allGames, category);
 
   // Search filter
   if (search) {
@@ -51,21 +94,6 @@ export async function fetchGames({ page = 1, limit = 24, search = '', category =
       g.title.toLowerCase().includes(q) || 
       (g.platform && g.platform.toLowerCase().includes(q))
     );
-  }
-
-  // Category filter
-  if (category !== 'Todos') {
-    const catLower = category.toLowerCase();
-    filtered = filtered.filter((g: Game) => {
-      const t = g.title.toLowerCase();
-      if (catLower === 'luta' && /(kombat|fighter|tekken|smash|vs\.|vs |kof|jojo|chaos)/.test(t)) return true;
-      if (catLower === 'plataforma' && /(mario|sonic|kong|bomberman|kidd|mickey|donald|dizzy|picapau|monica|pocahontas|luigi|yoshi|rockman)/.test(t)) return true;
-      if (catLower === 'corrida' && /(kart|top gear|gp rider|rider)/.test(t)) return true;
-      if (catLower === 'tiro' && /(1941|asteroids|duck hunt|battle city|popeye)/.test(t)) return true;
-      if (catLower === 'ação' && /(metal slug|spider|mask|power rangers|x-men|simpsons|alien|justice|dragonball|flintstones|saga|gta|theft)/.test(t)) return true;
-      if (catLower === 'arcade' && !/(kombat|fighter|tekken|smash|vs\.|vs |kof|jojo|chaos|mario|sonic|kong|bomberman|kidd|mickey|donald|dizzy|picapau|monica|pocahontas|luigi|yoshi|rockman|kart|top gear|gp rider|rider|1941|asteroids|duck hunt|battle city|popeye|metal slug|spider|mask|power rangers|x-men|simpsons|alien|justice|dragonball|flintstones|saga|gta|theft)/.test(t)) return true;
-      return false;
-    });
   }
 
   const total = filtered.length;
@@ -112,5 +140,7 @@ export async function fetchFeaturedGames() {
 
 export async function fetchRecentGames(ids: number[]) {
   const typedGames = await getTypedGames();
-  return typedGames.filter((g: Game) => ids.includes(g.id)).slice(0, 12);
+  // Optimized filtering for IDs
+  const idSet = new Set(ids);
+  return typedGames.filter((g: Game) => idSet.has(g.id)).slice(0, 12);
 }
