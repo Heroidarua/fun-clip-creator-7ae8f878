@@ -253,9 +253,10 @@ export default function Jogos() {
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["games", page, category, debouncedSearch],
-    queryFn: () => getPagedGames({ page, category, search: debouncedSearch }),
+    queryFn: () => getPagedGames({ data: { page, category, search: debouncedSearch } }),
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
+
 
   const playGame = useCallback((g: Game) => {
     pushRecent(g.id);
@@ -274,8 +275,9 @@ export default function Jogos() {
   const community = useMemo(() => [], []);
 
   const handleRandom = async () => {
-    const { games: randomPool } = await getPagedGames({ page: 0, category: "Todos" });
+    const { games: randomPool } = await getPagedGames({ data: { page: 0, category: "Todos" } });
     if (randomPool.length) {
+
       playGame(randomPool[Math.floor(Math.random() * randomPool.length)]);
     }
   };
