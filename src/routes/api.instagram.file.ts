@@ -30,7 +30,7 @@ export const Route = createFileRoute("/api/instagram/file")({
             );
           }
 
-          const mediaUrl = ticket.videoId; // No caso do IG, guardamos a URL no campo videoId do ticket
+          const mediaType = ticket.type === "video" ? "video" : "image"; // Mapeia de volta o tipo do ticket para o IG proxy
           if (!isSafeProxyUrl(mediaUrl)) {
             return Response.json(
               { success: false, error: "URL de mídia não permitida." },
@@ -55,8 +55,8 @@ export const Route = createFileRoute("/api/instagram/file")({
           
           const headers = new Headers({
             "Access-Control-Allow-Origin": "*",
-            "Content-Type": response.headers.get("content-type") || (ticket.type === "video" ? "video/mp4" : "image/jpeg"),
-            "Content-Disposition": `attachment; filename="${encodeURIComponent(filename)}"`,
+            "Content-Type": response.headers.get("content-type") || (mediaType === "video" ? "video/mp4" : "image/jpeg"),
+            "Content-Disposition": `attachment; filename="${encodeURIComponent(filename)}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
             "Cache-Control": "public, max-age=31536000",
             "Accept-Ranges": "bytes",
           });

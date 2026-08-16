@@ -40,7 +40,7 @@ export const Route = createFileRoute("/api/instagram/download")({
           // O ticket contém o ID (neste caso a URL encriptada ou o shortcode)
           const token = await signTicket({
             videoId: mediaUrl, // Para o IG, passamos a URL direta no campo videoId do ticket
-            type: mediaType,
+            type: mediaType === "video" ? "video" : "audio", // Reutilizando o tipo do YouTube (audio para fotos no IG proxy)
             quality: "best",
             title: title,
           });
