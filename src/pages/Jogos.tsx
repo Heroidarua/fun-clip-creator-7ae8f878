@@ -409,7 +409,7 @@ export default function Jogos() {
 
               <div className="space-y-2">
                 <h3 className="font-silkscreen text-[11px] tracking-wider text-[hsl(var(--muted-foreground))] px-2 mb-3">
-                  CATEGORIAS
+                  GÊNEROS
                 </h3>
                 <nav className="space-y-1">
                   {CATEGORIES.map((c) => {
