@@ -332,6 +332,60 @@ export type Database = {
         }
         Relationships: []
       }
+      youtube_download_jobs: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          expires_at: string
+          file_size: number | null
+          file_url: string | null
+          format: string
+          id: string
+          progress: number
+          quality: string
+          source_url: string
+          status: Database["public"]["Enums"]["youtube_job_status"]
+          title: string | null
+          updated_at: string
+          user_id: string | null
+          video_id: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          expires_at?: string
+          file_size?: number | null
+          file_url?: string | null
+          format: string
+          id?: string
+          progress?: number
+          quality: string
+          source_url: string
+          status?: Database["public"]["Enums"]["youtube_job_status"]
+          title?: string | null
+          updated_at?: string
+          user_id?: string | null
+          video_id: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          expires_at?: string
+          file_size?: number | null
+          file_url?: string | null
+          format?: string
+          id?: string
+          progress?: number
+          quality?: string
+          source_url?: string
+          status?: Database["public"]["Enums"]["youtube_job_status"]
+          title?: string | null
+          updated_at?: string
+          user_id?: string | null
+          video_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -344,6 +398,7 @@ export type Database = {
     }
     Enums: {
       subscription_plan: "free" | "pro"
+      youtube_job_status: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -472,6 +527,7 @@ export const Constants = {
   public: {
     Enums: {
       subscription_plan: ["free", "pro"],
+      youtube_job_status: ["PENDING", "PROCESSING", "COMPLETED", "FAILED"],
     },
   },
 } as const
