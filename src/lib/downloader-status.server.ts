@@ -20,12 +20,22 @@ export function reportDownloaderResult(platform: Platform, success: boolean): vo
   (async () => {
     try {
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      await supabaseAdmin
+      // Check if supabaseAdmin is available before using it
+      if (!supabaseAdmin) {
+        console.warn("[downloader-status] supabaseAdmin not available");
+        return;
+      }
+      
+      const { error } = await supabaseAdmin
         .from("downloader_status" as never)
         .update({ status: desired, last_checked: new Date().toISOString() } as never)
         .eq("platform", platform);
+        
+      if (error) {
+        console.error("[downloader-status] update error:", platform, error);
+      }
     } catch (e) {
-      console.error("[downloader-status] update failed:", platform, e);
+      console.error("[downloader-status] critical failure:", platform, e);
     }
   })();
 }
