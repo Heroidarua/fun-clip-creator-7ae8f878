@@ -12,6 +12,8 @@ import { parseYouTubeUrl, youtubeValidationError, getYouTubeVideoId } from "@/li
 import {
   fetchYoutubeInfo,
   formatBytes,
+  requestYoutubeDownload,
+  absoluteDownloadUrl,
   type YoutubeFormat,
   type YoutubeInfo,
 } from "@/services/youtubeDownloader";
@@ -849,10 +851,10 @@ const HeroSection = () => {
       // Solicita ticket de download para a prévia (se for pequeno o suficiente)
       if (firstVideo) {
         requestYoutubeDownload(normalizedUrl, "mp4", firstVideo.quality)
-          .then(ticket => {
+          .then((ticket: { downloadUrl: string }) => {
             setYoutubePreviewUrl(absoluteDownloadUrl(ticket.downloadUrl));
           })
-          .catch(err => {
+          .catch((err: Error) => {
             console.warn("Falha ao carregar preview:", err);
           });
       }
