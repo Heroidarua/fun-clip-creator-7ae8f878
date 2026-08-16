@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import { createEnhancementJob, getJobStatus } from "@/lib/video-enhancer/jobs.functions";
 import type { EnhancementMode, ResolutionTier } from "@/lib/video-enhancer/types";
+import { useServerFn } from "@tanstack/react-start";
 
 export default function VideoEnhancer() {
   const [file, setFile] = useState<File | null>(null);
@@ -21,6 +22,9 @@ export default function VideoEnhancer() {
       normalize: true,
     }
   });
+
+  const createJob = useServerFn(createEnhancementJob);
+  const checkStatus = useServerFn(getJobStatus);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -38,11 +42,13 @@ export default function VideoEnhancer() {
     
     setUploading(true);
     try {
-      const job = await createEnhancementJob({
-        filename: file.name,
-        size: file.size,
-        options
-      });
+      const job = await createJob({
+        data: {
+          filename: file.name,
+          size: file.size,
+          options
+        }
+      }) as any;
       
       setJobId(job.id);
       setStatus(job);
@@ -50,17 +56,23 @@ export default function VideoEnhancer() {
       
       // Polling progress
       const interval = setInterval(async () => {
-        const updatedJob = await getJobStatus({ jobId: job.id });
-        setStatus(updatedJob);
-        
-        if (updatedJob.status === 'completed' || updatedJob.status === 'failed') {
-          clearInterval(interval);
-          setUploading(false);
-          if (updatedJob.status === 'completed') {
-            toast.success("Melhoria concluída com sucesso!");
-          } else {
-            toast.error("Falha no processamento: " + updatedJob.error_message);
+        try {
+          const updatedJob = await checkStatus({ 
+            data: { jobId: job.id } 
+          }) as any;
+          setStatus(updatedJob);
+          
+          if (updatedJob.status === 'completed' || updatedJob.status === 'failed') {
+            clearInterval(interval);
+            setUploading(false);
+            if (updatedJob.status === 'completed') {
+              toast.success("Melhoria concluída com sucesso!");
+            } else {
+              toast.error("Falha no processamento: " + updatedJob.error_message);
+            }
           }
+        } catch (err) {
+          console.error("Polling error:", err);
         }
       }, 3000);
       
@@ -72,9 +84,9 @@ export default function VideoEnhancer() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 py-8">
+    <div className="max-w-4xl mx-auto space-y-8 py-8 px-4">
       <div className="text-center space-y-4">
-        <h2 className="text-3xl font-archivo-black uppercase tracking-tighter">Melhorar Vídeo</h2>
+        <h2 className="text-3xl font-archivo-black uppercase tracking-tighter text-foreground">Melhorar Vídeo</h2>
         <p className="text-muted-foreground max-w-xl mx-auto">
           Aumente a resolução, remova ruído e melhore a clareza dos seus vídeos com IA.
         </p>
@@ -108,7 +120,7 @@ export default function VideoEnhancer() {
                 <div className="flex items-center gap-4 p-4 rounded-xl bg-primary/5 border border-primary/10">
                   <Video className="w-8 h-8 text-primary" />
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold truncate">{file.name}</p>
+                    <p className="font-semibold truncate text-foreground">{file.name}</p>
                     <p className="text-xs text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                   </div>
                   <Button variant="ghost" size="sm" onClick={() => setFile(null)}>Remover</Button>
@@ -116,7 +128,7 @@ export default function VideoEnhancer() {
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-4">
-                    <h3 className="font-semibold flex items-center gap-2">
+                    <h3 className="font-semibold flex items-center gap-2 text-foreground">
                       <Settings2 className="w-4 h-4" /> Qualidade da Melhoria
                     </h3>
                     <div className="flex flex-wrap gap-2">
@@ -134,7 +146,7 @@ export default function VideoEnhancer() {
                   </div>
 
                   <div className="space-y-4">
-                    <h3 className="font-semibold flex items-center gap-2">
+                    <h3 className="font-semibold flex items-center gap-2 text-foreground">
                       <Sparkles className="w-4 h-4" /> Resolução Alvo
                     </h3>
                     <div className="flex flex-wrap gap-2">
@@ -171,7 +183,7 @@ export default function VideoEnhancer() {
           <div className="space-y-2">
             <div className="flex justify-between items-end">
               <div>
-                <h3 className="font-archivo-black uppercase tracking-tighter">Status do Job</h3>
+                <h3 className="font-archivo-black uppercase tracking-tighter text-foreground">Status do Job</h3>
                 <p className="text-sm text-muted-foreground">ID: {jobId}</p>
               </div>
               <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase">
@@ -179,7 +191,7 @@ export default function VideoEnhancer() {
               </span>
             </div>
             <Progress value={status?.progress || 0} className="h-3" />
-            <p className="text-center text-sm font-medium">{status?.progress || 0}% Concluído</p>
+            <p className="text-center text-sm font-medium text-foreground">{status?.progress || 0}% Concluído</p>
           </div>
 
           <div className="p-6 rounded-2xl bg-muted/50 border border-border space-y-4">
@@ -188,7 +200,7 @@ export default function VideoEnhancer() {
                 <Video className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <p className="font-semibold">{status?.original_filename}</p>
+                <p className="font-semibold text-foreground">{status?.original_filename}</p>
                 <p className="text-xs text-muted-foreground">Modo: {status?.enhancement_mode}</p>
               </div>
             </div>
