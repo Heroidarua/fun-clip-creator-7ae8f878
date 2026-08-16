@@ -100,7 +100,7 @@ const GameCard = React.memo(function GameCard({
           <img
             src={game.img || `https://placehold.co/400x533/0E4A7B/F5F9FF?text=${encodeURIComponent(game.title)}`}
             alt={game.title}
-            loading="lazy"
+            loading={game.id <= 50 ? "eager" : "lazy"}
             draggable={false}
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             onError={(e) => {
