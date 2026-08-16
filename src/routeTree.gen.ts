@@ -34,6 +34,7 @@ import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as JogosIndexRouteImport } from './routes/jogos/index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as JogosCategoryRouteImport } from './routes/jogos/$category'
 import { Route as FerramentasYoutubeDownloaderRouteImport } from './routes/ferramentas_.youtube-downloader'
 import { Route as FerramentaSlugRouteImport } from './routes/ferramenta.$slug'
 import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
@@ -189,6 +190,11 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => BlogRoute,
+} as any)
+const JogosCategoryRoute = JogosCategoryRouteImport.update({
+  id: '/$category',
+  path: '/$category',
+  getParentRoute: () => JogosRoute,
 } as any)
 const FerramentasYoutubeDownloaderRoute =
   FerramentasYoutubeDownloaderRouteImport.update({
@@ -402,6 +408,7 @@ export interface FileRoutesByFullPath {
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
+  '/jogos/$category': typeof JogosCategoryRoute
   '/blog/': typeof BlogIndexRoute
   '/jogos/': typeof JogosIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
@@ -457,6 +464,7 @@ export interface FileRoutesByTo {
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
+  '/jogos/$category': typeof JogosCategoryRoute
   '/blog': typeof BlogIndexRoute
   '/jogos': typeof JogosIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
@@ -515,6 +523,7 @@ export interface FileRoutesById {
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/ferramentas_/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
+  '/jogos/$category': typeof JogosCategoryRoute
   '/blog/': typeof BlogIndexRoute
   '/jogos/': typeof JogosIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
@@ -574,6 +583,7 @@ export interface FileRouteTypes {
     | '/categoria/$slug'
     | '/ferramenta/$slug'
     | '/ferramentas/youtube-downloader'
+    | '/jogos/$category'
     | '/blog/'
     | '/jogos/'
     | '/api/public/pinterest-download'
@@ -629,6 +639,7 @@ export interface FileRouteTypes {
     | '/categoria/$slug'
     | '/ferramenta/$slug'
     | '/ferramentas/youtube-downloader'
+    | '/jogos/$category'
     | '/blog'
     | '/jogos'
     | '/api/public/pinterest-download'
@@ -686,6 +697,7 @@ export interface FileRouteTypes {
     | '/categoria/$slug'
     | '/ferramenta/$slug'
     | '/ferramentas_/youtube-downloader'
+    | '/jogos/$category'
     | '/blog/'
     | '/jogos/'
     | '/api/public/pinterest-download'
@@ -915,6 +927,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/blog/'
       preLoaderRoute: typeof BlogIndexRouteImport
       parentRoute: typeof BlogRoute
+    }
+    '/jogos/$category': {
+      id: '/jogos/$category'
+      path: '/$category'
+      fullPath: '/jogos/$category'
+      preLoaderRoute: typeof JogosCategoryRouteImport
+      parentRoute: typeof JogosRoute
     }
     '/ferramentas_/youtube-downloader': {
       id: '/ferramentas_/youtube-downloader'
@@ -1163,10 +1182,12 @@ const BlogRouteChildren: BlogRouteChildren = {
 const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
 interface JogosRouteChildren {
+  JogosCategoryRoute: typeof JogosCategoryRoute
   JogosIndexRoute: typeof JogosIndexRoute
 }
 
 const JogosRouteChildren: JogosRouteChildren = {
+  JogosCategoryRoute: JogosCategoryRoute,
   JogosIndexRoute: JogosIndexRoute,
 }
 
