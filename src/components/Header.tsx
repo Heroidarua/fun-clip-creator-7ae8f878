@@ -90,7 +90,7 @@ const Header = () => {
           <Link to="/" className="flex items-center gap-3 group shrink-0" aria-label="Ir para a página inicial">
             <div className="relative" style={{ perspective: '800px' }}>
               <div
-                className="relative w-12 h-12 rounded-2xl transition-transform duration-500 ease-out group-hover:[transform:rotateY(22deg)_rotateX(8deg)_scale(1.06)]"
+                className="relative w-12 h-12 rounded-2xl transition-transform duration-500 ease-out group-hover:[transform:rotateY(22deg)_rotateX(8deg)_scale(1.06)] shadow-[0_8px_32px_rgba(0,0,0,0.25)]"
                 style={{
                   transformStyle: 'preserve-3d',
                   transform: 'rotateY(-12deg) rotateX(6deg)',
