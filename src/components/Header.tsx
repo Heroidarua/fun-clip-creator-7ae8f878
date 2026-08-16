@@ -1,13 +1,10 @@
 import {
-  LayoutDashboard,
   Gamepad2,
   Wrench,
   BookOpen,
   Tag,
-  Share2,
   Menu,
   X,
-  ArrowRight,
   Tv,
 } from "lucide-react";
 import { Link, useRouterState } from "@tanstack/react-router";
@@ -17,12 +14,7 @@ import NotificationBell from "@/components/NotificationBell";
 import InstallAppButton from "@/components/InstallAppButton";
 import IPTVModal from "@/components/IPTVModal";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
 
 const NAV = [
   { to: "/ferramentas", label: "Ferramentas", icon: Wrench, desc: "QR, PDF, áudio, imagens" },
