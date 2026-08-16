@@ -63,6 +63,7 @@ import { Route as ApiDownloadFacebookRouteImport } from './routes/api.download-f
 import { Route as ApiYoutubeInfoRouteImport } from './routes/api.youtube.info'
 import { Route as ApiYoutubeFileRouteImport } from './routes/api.youtube.file'
 import { Route as ApiYoutubeDownloadRouteImport } from './routes/api.youtube.download'
+import { Route as ApiVideoEnhancerProcessRouteImport } from './routes/api.video-enhancer.process'
 import { Route as ApiPublicPinterestDownloadRouteImport } from './routes/api.public.pinterest-download'
 
 const TermosRoute = TermosRouteImport.update({
@@ -345,6 +346,11 @@ const ApiYoutubeDownloadRoute = ApiYoutubeDownloadRouteImport.update({
   path: '/api/youtube/download',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiVideoEnhancerProcessRoute = ApiVideoEnhancerProcessRouteImport.update({
+  id: '/api/video-enhancer/process',
+  path: '/api/video-enhancer/process',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPinterestDownloadRoute =
   ApiPublicPinterestDownloadRouteImport.update({
     id: '/api/public/pinterest-download',
@@ -405,6 +411,7 @@ export interface FileRoutesByFullPath {
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/blog/': typeof BlogIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
+  '/api/video-enhancer/process': typeof ApiVideoEnhancerProcessRoute
   '/api/youtube/download': typeof ApiYoutubeDownloadRoute
   '/api/youtube/file': typeof ApiYoutubeFileRoute
   '/api/youtube/info': typeof ApiYoutubeInfoRoute
@@ -461,6 +468,7 @@ export interface FileRoutesByTo {
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/blog': typeof BlogIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
+  '/api/video-enhancer/process': typeof ApiVideoEnhancerProcessRoute
   '/api/youtube/download': typeof ApiYoutubeDownloadRoute
   '/api/youtube/file': typeof ApiYoutubeFileRoute
   '/api/youtube/info': typeof ApiYoutubeInfoRoute
@@ -519,6 +527,7 @@ export interface FileRoutesById {
   '/ferramentas_/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/blog/': typeof BlogIndexRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
+  '/api/video-enhancer/process': typeof ApiVideoEnhancerProcessRoute
   '/api/youtube/download': typeof ApiYoutubeDownloadRoute
   '/api/youtube/file': typeof ApiYoutubeFileRoute
   '/api/youtube/info': typeof ApiYoutubeInfoRoute
@@ -578,6 +587,7 @@ export interface FileRouteTypes {
     | '/ferramentas/youtube-downloader'
     | '/blog/'
     | '/api/public/pinterest-download'
+    | '/api/video-enhancer/process'
     | '/api/youtube/download'
     | '/api/youtube/file'
     | '/api/youtube/info'
@@ -634,6 +644,7 @@ export interface FileRouteTypes {
     | '/ferramentas/youtube-downloader'
     | '/blog'
     | '/api/public/pinterest-download'
+    | '/api/video-enhancer/process'
     | '/api/youtube/download'
     | '/api/youtube/file'
     | '/api/youtube/info'
@@ -691,6 +702,7 @@ export interface FileRouteTypes {
     | '/ferramentas_/youtube-downloader'
     | '/blog/'
     | '/api/public/pinterest-download'
+    | '/api/video-enhancer/process'
     | '/api/youtube/download'
     | '/api/youtube/file'
     | '/api/youtube/info'
@@ -737,6 +749,7 @@ export interface RootRouteChildren {
   FerramentaMelhorarVideoRoute: typeof FerramentaMelhorarVideoRoute
   FerramentasYoutubeDownloaderRoute: typeof FerramentasYoutubeDownloaderRoute
   ApiPublicPinterestDownloadRoute: typeof ApiPublicPinterestDownloadRoute
+  ApiVideoEnhancerProcessRoute: typeof ApiVideoEnhancerProcessRoute
   ApiYoutubeDownloadRoute: typeof ApiYoutubeDownloadRoute
   ApiYoutubeFileRoute: typeof ApiYoutubeFileRoute
   ApiYoutubeInfoRoute: typeof ApiYoutubeInfoRoute
@@ -1122,6 +1135,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiYoutubeDownloadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/video-enhancer/process': {
+      id: '/api/video-enhancer/process'
+      path: '/api/video-enhancer/process'
+      fullPath: '/api/video-enhancer/process'
+      preLoaderRoute: typeof ApiVideoEnhancerProcessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/pinterest-download': {
       id: '/api/public/pinterest-download'
       path: '/api/public/pinterest-download'
@@ -1206,6 +1226,7 @@ const rootRouteChildren: RootRouteChildren = {
   FerramentaMelhorarVideoRoute: FerramentaMelhorarVideoRoute,
   FerramentasYoutubeDownloaderRoute: FerramentasYoutubeDownloaderRoute,
   ApiPublicPinterestDownloadRoute: ApiPublicPinterestDownloadRoute,
+  ApiVideoEnhancerProcessRoute: ApiVideoEnhancerProcessRoute,
   ApiYoutubeDownloadRoute: ApiYoutubeDownloadRoute,
   ApiYoutubeFileRoute: ApiYoutubeFileRoute,
   ApiYoutubeInfoRoute: ApiYoutubeInfoRoute,

@@ -48,7 +48,7 @@ export const Route = createFileRoute("/api/video-enhancer/process")({
                 .from("video_enhancement_jobs")
                 .update({ 
                   progress: 20,
-                  input_metadata: analysis
+                  input_metadata: analysis as any
                 })
                 .eq("id", jobId);
 
