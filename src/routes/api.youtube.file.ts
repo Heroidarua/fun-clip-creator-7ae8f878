@@ -18,11 +18,22 @@ function sanitizeFilename(name: string, fallback: string): string {
 }
 
 /** O CDN do YouTube recusa faixas abertas (bytes=0-); usamos blocos fixos. */
-const CHUNK_BYTES = 1_000_000;
+const CHUNK_BYTES = 4_000_000;
 
-function parseTotal(contentRange: string | null): number {
-  const m = /\/(\d+)$/.exec(contentRange || "");
-  return m ? Number(m[1]) : 0;
+interface ContentRange {
+  start: number;
+  end: number;
+  total: number;
+}
+
+function parseContentRange(value: string | null): ContentRange | null {
+  const match = /^bytes (\d+)-(\d+)\/(\d+)$/.exec(value || "");
+  if (!match) return null;
+  return {
+    start: Number(match[1]),
+    end: Number(match[2]),
+    total: Number(match[3]),
+  };
 }
 
 /** Transmite o arquivo inteiro pedindo blocos sequenciais ao CDN. */
@@ -32,9 +43,9 @@ function chunkedStream(
   start: number,
   total: number,
   first: Response,
-  firstEnd: number,
+  firstRange: ContentRange,
 ): ReadableStream<Uint8Array> {
-  let cursor = firstEnd + 1;
+  let cursor = firstRange.end + 1;
   let current: ReadableStreamDefaultReader<Uint8Array> | null =
     first.body!.getReader();
 
@@ -62,7 +73,13 @@ function chunkedStream(
           controller.error(new Error("upstream chunk failed"));
           return;
         }
-        cursor = end + 1;
+        const receivedRange = parseContentRange(res.headers.get("content-range"));
+        if (!receivedRange || receivedRange.start !== cursor || receivedRange.end < cursor) {
+          await res.body.cancel().catch(() => {});
+          controller.error(new Error("upstream returned an invalid byte range"));
+          return;
+        }
+        cursor = receivedRange.end + 1;
         current = res.body.getReader();
       }
     },
@@ -128,8 +145,12 @@ export const Route = createFileRoute("/api/youtube/file")({
               });
               
               if (res.ok && res.body) {
-                total = parseTotal(res.headers.get("content-range")) ||
-                  rangeStart + Number(res.headers.get("content-length") || 0);
+                const receivedRange = parseContentRange(res.headers.get("content-range"));
+                if (!receivedRange || receivedRange.start !== rangeStart) {
+                  await res.body.cancel().catch(() => {});
+                  continue;
+                }
+                total = receivedRange.total;
                 if (total > YT_MAX_FILE_BYTES) {
                   return Response.json(
                     { success: false, error: "Arquivo maior que o limite permitido (1 GB)." },
@@ -144,7 +165,7 @@ export const Route = createFileRoute("/api/youtube/file")({
                   rangeStart,
                   total,
                   res,
-                  Math.min(firstEnd, total - 1),
+                  receivedRange,
                 );
                 title = title || candidate.title;
                 break;
