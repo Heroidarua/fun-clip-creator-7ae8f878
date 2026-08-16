@@ -332,7 +332,7 @@ async function tryDirectScrape(url: string): Promise<MediaResponse | null> {
     if (!shortcode) return null;
 
     // Use o oembed do Instagram como uma forma oficial de metadados
-    const embedRes = await fetch(`https://www.instagram.com/oembed/?url=${encodeURIComponent(url.replace('/reels/', '/reel/'))}`, {
+    const embedRes = await fetch(`https://www.instagram.com/oembed/?url=${encodeURIComponent(url.replace('/reels/', '/reel/').replace('/tv/', '/reel/'))}`, {
       headers: {
         "User-Agent": UA,
         Accept: "application/json",
