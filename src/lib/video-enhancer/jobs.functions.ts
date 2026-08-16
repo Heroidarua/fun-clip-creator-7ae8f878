@@ -1,4 +1,4 @@
-import { createServerFn } from "@tanstack/react-start";
+import { createServerFn } from "@tanstack/react-router";
 import { z } from "zod";
 
 const JobOptionsSchema = z.object({
@@ -23,7 +23,8 @@ export const createEnhancementJob = createServerFn({ method: "POST" })
     // Garantir que temos os dados mínimos
     if (!data.filename) throw new Error("Filename is required");
 
-    const { data: job, error } = await supabaseAdmin
+    // Forçar o status inicial como 'queued' e progresso 0
+    const { data: job, error } = await (supabaseAdmin
       .from("video_enhancement_jobs" as any)
       .insert({
         original_filename: data.filename,
@@ -35,25 +36,25 @@ export const createEnhancementJob = createServerFn({ method: "POST" })
         expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
       } as any)
       .select()
-      .single();
+      .single() as any);
 
     if (error) {
       console.error("Supabase insert error:", error);
       throw error;
     }
-    return job as any;
+    return job;
   });
 
 export const getJobStatus = createServerFn({ method: "GET" })
   .inputValidator(z.object({ jobId: z.string() }))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: job, error } = await supabaseAdmin
+    const { data: job, error } = await (supabaseAdmin
       .from("video_enhancement_jobs" as any)
       .select("*")
       .eq("id", data.jobId)
-      .single();
+      .single() as any);
 
     if (error) throw error;
-    return job as any;
+    return job;
   });
