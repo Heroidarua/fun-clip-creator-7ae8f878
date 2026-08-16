@@ -2216,58 +2216,29 @@ const HeroSection = () => {
               <StatusBadge isActive={isActive('video-enhancer')} />
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-              <div className="flex-1 relative">
-                <Input
-                  type="url"
-                  placeholder="Cole o link do vídeo para melhorar..."
-                  value={videoEnhancerUrl}
-                  onChange={(e) => setVideoEnhancerUrl(e.target.value)}
-                  disabled={!isActive('video-enhancer') || videoEnhancerLoading}
-                  className="h-12 sm:h-14 text-sm sm:text-base bg-background/80 border-2 rounded-sm text-foreground placeholder:text-muted-foreground font-orbitron transition-all duration-200 focus:shadow-[0_0_20px_hsl(260,100%,60%,0.3)] disabled:opacity-50"
-                  style={{ borderColor: 'hsl(260 100% 60% / 0.3)' }}
-                />
-              </div>
-
-              <div className="flex gap-2 sm:gap-3">
-                <Button
-                  onClick={async () => {
-                    setClickedVideoEnhancerButton("paste");
-                    setTimeout(() => setClickedVideoEnhancerButton(null), 300);
-                    try {
-                      const text = await navigator.clipboard.readText();
-                      setVideoEnhancerUrl(text);
-                    } catch (err) {}
-                  }}
-                  variant="secondary"
-                  className={`h-12 sm:h-14 px-4 sm:px-6 rounded-sm bg-secondary/80 hover:bg-secondary border-2 border-secondary/50 hover:border-[hsl(var(--retro-cyan))] font-pixel text-[10px] shadow-[3px_3px_0_hsl(var(--secondary))] hover:shadow-[1px_1px_0_hsl(var(--secondary))] hover:translate-x-[2px] hover:translate-y-[2px] transition-all ${
-                    clickedVideoEnhancerButton === "paste" ? "translate-x-[2px] translate-y-[2px] shadow-[1px_1px_0_hsl(var(--secondary))]" : ""
-                  }`}
-                >
-                  <Clipboard className="w-4 h-4 sm:mr-2" />
-                  <span className="hidden sm:inline">COLAR</span>
-                </Button>
-
-                <Button
-                  asChild
-                  className={`h-12 sm:h-14 px-5 sm:px-8 rounded-sm border-2 border-[hsl(var(--retro-cyan))] font-pixel text-[10px] text-white shadow-[4px_4px_0_hsl(var(--retro-cyan))] hover:shadow-[2px_2px_0_hsl(var(--retro-cyan))] hover:translate-x-[2px] hover:translate-y-[2px] transition-all ${
-                    clickedVideoEnhancerButton === "search" ? "translate-x-[2px] translate-y-[2px] shadow-[2px_2px_0_hsl(var(--retro-cyan))]" : ""
-                  }`}
-                  style={{ backgroundColor: 'hsl(260, 100%, 60%)' }}
-                >
-                  <Link to="/ferramenta/melhorar-video">
-                    <Sparkles className="w-4 h-4 sm:mr-2" />
-                    <span className="hidden sm:inline">ACESSAR FERRAMENTA</span>
-                  </Link>
-                </Button>
+            <div className="flex flex-col gap-4">
+              <div className="bg-foreground/5 rounded-sm p-4 border border-foreground/10">
+                <p className="text-sm text-muted-foreground mb-4 text-center sm:text-left">
+                  Esta ferramenta requer o upload direto do arquivo de vídeo para aplicar as melhorias de IA.
+                </p>
+                <div className="flex justify-center sm:justify-start">
+                  <Button
+                    asChild
+                    className={`h-12 sm:h-14 px-8 sm:px-12 rounded-sm border-2 border-[hsl(var(--retro-cyan))] font-pixel text-[10px] text-white shadow-[4px_4px_0_hsl(var(--retro-cyan))] hover:shadow-[2px_2px_0_hsl(var(--retro-cyan))] hover:translate-x-[2px] hover:translate-y-[2px] transition-all w-full sm:w-auto`}
+                    style={{ backgroundColor: 'hsl(260, 100%, 60%)' }}
+                  >
+                    <Link to="/ferramenta/melhorar-video">
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      ENVIAR VÍDEO PARA MELHORAR
+                    </Link>
+                  </Button>
+                </div>
               </div>
             </div>
 
+
             {!isActive('video-enhancer') && <MaintenanceWarning />}
-            
-            <p className="mt-4 text-[10px] text-muted-foreground font-orbitron text-center italic">
-              * A melhoria de vídeo requer o upload direto do arquivo na página da ferramenta.
-            </p>
+
           </div>
 
       </div>
