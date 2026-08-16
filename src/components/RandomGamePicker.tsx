@@ -73,7 +73,7 @@ export default function RandomGamePicker() {
                 <img
                   key={current.id}
                   src={current.img}
-                  alt={current.title}
+                  alt={`Prévia visual do jogo ${current.title} selecionado aleatoriamente para você`}
                   className={`w-full h-full object-cover transition-all duration-150 ${spinning ? "blur-sm scale-110 brightness-75" : "blur-0 scale-100"}`}
                   draggable={false}
                 />

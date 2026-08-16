@@ -40,7 +40,7 @@ function GameCard({ game, isFavorite, onToggleFavorite }: { game: Game; isFavori
 
                 <img
                   src={game.img}
-                  alt={`Capa do jogo ${game.title}`}
+                  alt={`Capa oficial do jogo retrô ${game.title} - Jogue grátis na plataforma SOS01`}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   draggable={false}
                   loading="lazy"
