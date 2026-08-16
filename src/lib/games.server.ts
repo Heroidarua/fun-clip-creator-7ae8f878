@@ -1,4 +1,5 @@
-import { games } from '../data/games';
+// Dynamic import to avoid module issues during build
+// import { games } from '../data/games';
 
 export type Game = {
   id: number;
