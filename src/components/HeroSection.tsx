@@ -62,7 +62,7 @@ const MaintenanceWarning = () => (
   </div>
 );
 
-const MediaPreviewOverlay = ({
+export const MediaPreviewOverlay = ({
   title,
   author,
   duration,
