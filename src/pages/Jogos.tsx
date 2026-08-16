@@ -230,10 +230,18 @@ export default function Jogos() {
   const [category, setCategory] = useState<Category>("Todos");
   const [recentIds, setRecentIds] = useState<number[]>([]);
   const [searchFocused, setSearchFocused] = useState(false);
+  const [page, setPage] = useState(1);
+  const ITEMS_PER_PAGE = 24;
+
   const { favorites, toggleFavorite, isFavorite } = useFavoriteGames();
   const searchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { setRecentIds(readRecent()); }, []);
+
+  // Reset page when category or search changes
+  useEffect(() => {
+    setPage(1);
+  }, [category, searchQuery]);
 
   const playGame = useCallback((g: Game) => {
     pushRecent(g.id);
@@ -259,7 +267,7 @@ export default function Jogos() {
     []
   );
 
-  // Filtered "all games" grid
+  // Filtered "all games" list
   const filtered = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     return games.filter((g) => {
@@ -268,6 +276,14 @@ export default function Jogos() {
       return true;
     });
   }, [searchQuery, category]);
+
+  // Paginated list
+  const paginated = useMemo(() => {
+    const start = (page - 1) * ITEMS_PER_PAGE;
+    return filtered.slice(start, start + ITEMS_PER_PAGE);
+  }, [filtered, page]);
+
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
 
   const handleRandom = () => {
     const pool = filtered.length ? filtered : games;
@@ -278,6 +294,7 @@ export default function Jogos() {
     if (recent[0]) playGame(recent[0]);
     else handleRandom();
   };
+
 
   return (
     <>
