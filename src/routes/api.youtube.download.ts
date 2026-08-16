@@ -29,11 +29,11 @@ export const Route = createFileRoute("/api/youtube/download")({
           const format = body?.format === "m4a" ? "m4a" : "mp4";
           const requested = String(body?.quality || "best").toLowerCase();
           const quality: "best" | "high" | "worst" =
-            requested === "720p" || requested === "high"
-              ? "high"
-              : requested === "worst" || requested === "low"
-                ? "worst"
-                : "best";
+            requested.includes("4k") || requested.includes("1080p") || requested === "best"
+              ? "best"
+              : requested.includes("720p") || requested === "high"
+                ? "high"
+                : "worst";
 
           if (!rawUrl || rawUrl.length > 2048) {
             return Response.json(

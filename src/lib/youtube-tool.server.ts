@@ -68,7 +68,7 @@ function fromB64url(s: string): ArrayBuffer {
 export interface YtTicket {
   videoId: string;
   type: "video" | "audio";
-  quality: "best" | "high" | "worst";
+  quality: "best" | "high" | "worst" | string;
   title: string;
   exp: number;
 }
