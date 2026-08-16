@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Upload, Video, Settings2, Sparkles, Download, Loader2 } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Upload, Video, Settings2, Sparkles, Download, Loader2, Info, Clock, CheckCircle2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { createEnhancementJob, getJobStatus } from "@/lib/video-enhancer/jobs.functions";
 import type { EnhancementMode, ResolutionTier } from "@/lib/video-enhancer/types";
 import { useServerFn } from "@tanstack/react-start";
+import { Link } from "@tanstack/react-router";
 
 export default function VideoEnhancer() {
   const [file, setFile] = useState<File | null>(null);
@@ -26,6 +27,15 @@ export default function VideoEnhancer() {
   const createJob = useServerFn(createEnhancementJob);
   const checkStatus = useServerFn(getJobStatus);
 
+  // Restaurar job pendente do localStorage
+  useEffect(() => {
+    const savedJobId = localStorage.getItem('pending_video_enhancement_id');
+    if (savedJobId) {
+      setJobId(savedJobId);
+      startPolling(savedJobId);
+    }
+  }, []);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
@@ -35,6 +45,32 @@ export default function VideoEnhancer() {
       }
       setFile(selectedFile);
     }
+  };
+
+  const startPolling = (id: string) => {
+    setUploading(true);
+    const interval = setInterval(async () => {
+      try {
+        const updatedJob = await checkStatus({ 
+          data: { jobId: id } 
+        });
+        setStatus(updatedJob);
+        
+        if ((updatedJob as any).status === 'completed' || (updatedJob as any).status === 'failed') {
+          clearInterval(interval);
+          setUploading(false);
+          localStorage.removeItem('pending_video_enhancement_id');
+          if ((updatedJob as any).status === 'completed') {
+            toast.success("Melhoria concluída com sucesso!");
+          } else {
+            toast.error("Falha no processamento: " + (updatedJob as any).error_message);
+          }
+        }
+      } catch (err) {
+        console.error("Polling error:", err);
+      }
+    }, 5000); // Polling cada 5s para economizar recursos
+    return () => clearInterval(interval);
   };
 
   const startEnhancement = async () => {
@@ -53,35 +89,30 @@ export default function VideoEnhancer() {
       const id = (job as any).id;
       setJobId(id);
       setStatus(job);
+      localStorage.setItem('pending_video_enhancement_id', id);
       toast.success("Vídeo enviado! Iniciando processamento...");
       
-      // Polling progress
-      const interval = setInterval(async () => {
-        try {
-          const updatedJob = await checkStatus({ 
-            data: { jobId: id } 
-          });
-          setStatus(updatedJob);
-          
-          if ((updatedJob as any).status === 'completed' || (updatedJob as any).status === 'failed') {
-            clearInterval(interval);
-            setUploading(false);
-            if ((updatedJob as any).status === 'completed') {
-              toast.success("Melhoria concluída com sucesso!");
-            } else {
-              toast.error("Falha no processamento: " + (updatedJob as any).error_message);
-            }
-          }
-        } catch (err) {
-          console.error("Polling error:", err);
-        }
-      }, 3000);
+      startPolling(id);
       
     } catch (error) {
       console.error(error);
       toast.error("Erro ao iniciar a melhoria do vídeo.");
       setUploading(false);
     }
+  };
+
+  const getStatusMessage = (status: string, progress: number) => {
+    if (status === 'queued') return "Na fila de espera...";
+    if (status === 'processing') {
+      if (progress < 20) return "Analisando metadados do vídeo...";
+      if (progress < 40) return "Preparando filtros de IA...";
+      if (progress < 60) return "Removendo ruído e granulação...";
+      if (progress < 80) return "Realizando upscale de resolução...";
+      return "Finalizando compressão e áudio...";
+    }
+    if (status === 'completed') return "Processamento concluído!";
+    if (status === 'failed') return "Erro no processamento.";
+    return "Aguarde...";
   };
 
   return (
