@@ -27,6 +27,7 @@ function setToCache(key: string, data: any) {
 
 async function getTypedGames(): Promise<Game[]> {
   try {
+    // @ts-ignore - dynamic import for large data file to avoid build-time OOM/Type recursion
     const dataModule = await import('../data/games');
     return (dataModule.games as Game[]) || [];
   } catch (error) {
