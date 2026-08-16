@@ -23,8 +23,7 @@ export async function muxVideoAndAudio(
   await ffmpeg.exec([
     "-i", "v.mp4",
     "-i", "a.m4a",
-    "-c:v", "copy",
-    "-c:a", "copy",
+    "-c", "copy",
     "-map", "0:v:0",
     "-map", "1:a:0",
     "-movflags", "+faststart",

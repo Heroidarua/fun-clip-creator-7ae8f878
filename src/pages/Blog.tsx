@@ -23,7 +23,7 @@ const Blog = () => {
               A história de Matheus Marinho e como uma frustração virou uma plataforma usada por milhares de pessoas. 100% gratuita, sem pegadinhas.
             </p>
             <Link
-              to="/blog/como-nasceu-sos01"
+              to="/blog/como-nasceu-clipsave"
               className="inline-flex items-center text-primary hover:text-primary/80 font-medium transition-colors"
             >
               Ler a história completa →
@@ -38,7 +38,7 @@ const Blog = () => {
               Conheça todas as funcionalidades: downloads, ferramentas com IA, jogos retrô e quadrinhos. Tudo 100% gratuito!
             </p>
             <Link
-              to="/blog/guia-completo-sos01"
+              to="/blog/guia-completo-clipsave"
               className="inline-flex items-center text-primary hover:text-primary/80 font-medium transition-colors"
             >
               Ler guia completo →

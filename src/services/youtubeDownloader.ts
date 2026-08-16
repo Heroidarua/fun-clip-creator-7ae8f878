@@ -22,7 +22,7 @@ export interface YoutubeInfo {
 const GENERIC_ERROR =
   "Não foi possível processar este vídeo. Verifique a URL e tente novamente.";
 
-export async function postJson<T>(path: string, body: unknown): Promise<T> {
+async function postJson<T>(path: string, body: unknown): Promise<T> {
   let res: Response;
   try {
     res = await fetch(`${apiBase()}${path}`, {
@@ -55,11 +55,9 @@ export function requestYoutubeDownload(
   url: string,
   format: "mp4" | "m4a",
   quality: string,
-  title?: string,
-): Promise<{ success: true; downloadUrl: string; expiresIn: number; jobId?: string }> {
-  return postJson("/api/youtube/download", { url, format, quality, title });
+): Promise<{ success: true; downloadUrl: string; expiresIn: number }> {
+  return postJson("/api/youtube/download", { url, format, quality });
 }
-
 
 export function absoluteDownloadUrl(path: string): string {
   return `${apiBase()}${path}`;

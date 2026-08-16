@@ -33,7 +33,7 @@ const Contato = () => {
                   href="mailto:contatosos01@gmail.com"
                   className="text-primary hover:text-primary/80 font-medium text-lg transition-colors"
                 >
-                  contatosos01@gmail.com
+                  contatoclipsave@gmail.com
                 </a>
               </div>
 

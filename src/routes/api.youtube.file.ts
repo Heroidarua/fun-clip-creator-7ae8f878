@@ -5,7 +5,6 @@ import {
   YT_MAX_FILE_BYTES,
   YT_PROCESS_TIMEOUT_MS,
 } from "@/lib/youtube-tool.server";
-import { supabase } from "@/integrations/supabase/client";
 
 const JSON_HEADERS = ytCors({ "Content-Type": "application/json" });
 
@@ -18,6 +17,7 @@ function sanitizeFilename(name: string, fallback: string): string {
   return cleaned || fallback;
 }
 
+/** O CDN do YouTube recusa faixas abertas (bytes=0-); usamos blocos fixos. */
 const CHUNK_BYTES = 1_000_000;
 
 function parseTotal(contentRange: string | null): number {
@@ -25,6 +25,7 @@ function parseTotal(contentRange: string | null): number {
   return m ? Number(m[1]) : 0;
 }
 
+/** Transmite o arquivo inteiro pedindo blocos sequenciais ao CDN. */
 function chunkedStream(
   mediaUrl: string,
   baseHeaders: Record<string, string>,
@@ -54,7 +55,7 @@ function chunkedStream(
         }
         const end = Math.min(cursor + CHUNK_BYTES - 1, total - 1);
         const res = await fetch(mediaUrl, {
-          headers: { ...baseHeaders, Range: `bytes=${cursor}-${end}`, Referer: "https://www.youtube.com/" },
+          headers: { ...baseHeaders, Range: `bytes=${cursor}-${end}` },
           signal: AbortSignal.timeout(YT_PROCESS_TIMEOUT_MS),
         });
         if (!res.ok || !res.body) {
@@ -71,6 +72,11 @@ function chunkedStream(
   });
 }
 
+/**
+ * Entrega o conteúdo referente a um link temporário assinado.
+ * Nada é gravado em disco: o conteúdo é transmitido sob demanda e o token
+ * expira automaticamente, dispensando limpeza de arquivos residuais.
+ */
 export const Route = createFileRoute("/api/youtube/file")({
   server: {
     handlers: {
@@ -80,16 +86,8 @@ export const Route = createFileRoute("/api/youtube/file")({
         try {
           const url = new URL(request.url);
           const token = url.searchParams.get("token") || "";
-          const jobId = url.searchParams.get("jobId");
-          
           const ticket = await verifyTicket(token);
           if (!ticket) {
-            if (jobId) {
-              await supabase
-                .from("youtube_download_jobs")
-                .update({ status: 'FAILED', error_message: "Link expirado." })
-                .eq("id", jobId);
-            }
             return Response.json(
               { success: false, error: "Link expirado. Gere um novo download." },
               { status: 410, headers: JSON_HEADERS },
@@ -109,20 +107,6 @@ export const Route = createFileRoute("/api/youtube/file")({
           let title = ticket.title;
           let muxed = false;
 
-          // Se tiver jobId e for a primeira requisição (sem range), marcar como PROCESSING
-          if (jobId && !clientRange) {
-             await supabase
-                .from("youtube_download_jobs")
-                .update({ 
-                  status: 'PROCESSING', 
-                  progress: 10,
-                  title: (ticket.title as any) // Type assertion to bypass temporary generation mismatch
-                })
-                .eq("id", jobId);
-          }
-
-
-
           for await (const candidate of resolveYoutubeCandidates(
             canonical,
             ticket.videoId,
@@ -139,36 +123,19 @@ export const Route = createFileRoute("/api/youtube/file")({
             try {
               const firstEnd = rangeStart + CHUNK_BYTES - 1;
               const res = await fetch(mediaUrl!, {
-                headers: { 
-                  ...baseHeaders, 
-                  Range: `bytes=${rangeStart}-${firstEnd}`,
-                  Referer: "https://www.youtube.com/"
-                },
+                headers: { ...baseHeaders, Range: `bytes=${rangeStart}-${firstEnd}` },
                 signal: AbortSignal.timeout(YT_PROCESS_TIMEOUT_MS),
               });
               
               if (res.ok && res.body) {
                 total = parseTotal(res.headers.get("content-range")) ||
                   rangeStart + Number(res.headers.get("content-length") || 0);
-                
-                // BLOQUEIO DE 500 MB SOLICITADO
-                const MAX_ALLOWED = 500 * 1024 * 1024;
-                if (total > MAX_ALLOWED) {
-                  if (jobId) {
-                    await supabase
-                      .from("youtube_download_jobs")
-                      .update({ 
-                        status: 'FAILED', 
-                        error_message: "Este arquivo ultrapassa o limite máximo de 500 MB. Escolha uma qualidade menor." 
-                      })
-                      .eq("id", jobId);
-                  }
+                if (total > YT_MAX_FILE_BYTES) {
                   return Response.json(
-                    { success: false, error: "Este arquivo ultrapassa o limite máximo de 500 MB. Escolha uma qualidade menor." },
+                    { success: false, error: "Arquivo maior que o limite permitido (1 GB)." },
                     { status: 413, headers: JSON_HEADERS },
                   );
                 }
-
                 contentType = res.headers.get("content-type") || "";
                 muxed = candidate.muxed !== false;
                 body = chunkedStream(
@@ -188,12 +155,6 @@ export const Route = createFileRoute("/api/youtube/file")({
           }
 
           if (!body) {
-            if (jobId) {
-              await supabase
-                .from("youtube_download_jobs")
-                .update({ status: 'FAILED', error_message: "Não foi possível obter a stream do vídeo." })
-                .eq("id", jobId);
-            }
             return Response.json(
               {
                 success: false,

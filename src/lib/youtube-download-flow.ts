@@ -7,7 +7,7 @@ const GENERIC_ERROR =
   "Não foi possível processar este vídeo. Verifique a URL e tente novamente.";
 
 /** Acima deste tamanho o arquivo não é processado no navegador. */
-export const BROWSER_PROCESS_LIMIT = 500 * 1024 * 1024; // Aumentado para suportar até 500MB
+export const BROWSER_PROCESS_LIMIT = 100 * 1024 * 1024;
 
 const TOO_LARGE = "TOO_LARGE";
 
@@ -39,22 +39,12 @@ async function fetchStream(
   quality: string,
   onRatio: (ratio: number | null) => void,
 ): Promise<StreamResult> {
-  const ticket = await requestYoutubeDownload(videoUrl, container, quality, "stream");
+  const ticket = await requestYoutubeDownload(videoUrl, container, quality);
   const fileUrl = absoluteDownloadUrl(ticket.downloadUrl);
-  const res = await fetch(fileUrl).catch((err) => {
-    console.error("Fetch error:", err);
-    throw new Error("Erro de conexão com o servidor de download. Tente novamente.");
-  });
-  
+  const res = await fetch(fileUrl);
   if (!res.ok || !res.body) {
-    let errorDetail = GENERIC_ERROR;
-    try {
-      const data = await res.json();
-      errorDetail = data?.error || errorDetail;
-    } catch {
-      errorDetail = `Servidor retornou erro ${res.status}. Tente outra qualidade.`;
-    }
-    throw new Error(errorDetail);
+    const data = await res.json().catch(() => null);
+    throw new Error(data?.error || GENERIC_ERROR);
   }
   const total = Number(res.headers.get("content-length") || 0);
   const muxed = res.headers.get("x-yt-muxed") !== "0";
@@ -133,7 +123,6 @@ export async function downloadYoutubeMedia({
     );
 
     if (video.muxed) {
-      console.log("Arquivo já possui áudio (muxed), pulando etapa de muxagem.");
       saveBlob(
         new Blob([video.bytes.slice().buffer as ArrayBuffer], { type: "video/mp4" }),
         `${name}.mp4`,
@@ -161,7 +150,7 @@ export async function downloadYoutubeMedia({
         return;
       }
       throw new Error(
-        `Este arquivo passa de ${BROWSER_PROCESS_LIMIT / (1024 * 1024)} MB e não pode ser processado no navegador. Escolha uma qualidade menor ou formato direto.`,
+        "Este arquivo passa de 100 MB e não pode ser processado no navegador. Escolha uma qualidade menor.",
       );
     }
     throw new Error(err.message || GENERIC_ERROR);
