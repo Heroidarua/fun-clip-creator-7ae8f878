@@ -537,7 +537,7 @@ export const Route = createFileRoute("/api/download-instagram")({
         const rapidApiKey = process.env.RAPIDAPI_KEY || "";
         const result = await downloadInstagramMedia(url, "/api/download-instagram", rapidApiKey);
         return new Response(JSON.stringify(result), {
-          status: result.success ? 200 : 400,
+          status: 200,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       },
@@ -565,7 +565,7 @@ export const Route = createFileRoute("/api/download-instagram")({
           reportDownloaderResult("instagram", !!result.success);
         } catch {}
         return new Response(JSON.stringify(result), {
-          status: result.success ? 200 : 400,
+          status: 200,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       },
