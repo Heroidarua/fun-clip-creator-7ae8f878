@@ -110,7 +110,7 @@ export const Route = createFileRoute("/api/youtube/file")({
           for await (const candidate of resolveYoutubeCandidates(
             canonical,
             ticket.videoId,
-            ticket.quality,
+            ticket.quality as any,
           )) {
             const mediaUrl =
               ticket.type === "audio" ? candidate.audio_url : candidate.video_url;
