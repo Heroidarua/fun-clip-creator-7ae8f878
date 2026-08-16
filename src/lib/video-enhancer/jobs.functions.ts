@@ -58,3 +58,16 @@ export const getJobStatus = createServerFn({ method: "GET" })
     if (error) throw error;
     return job;
   });
+
+export const cancelEnhancementJob = createServerFn({ method: "POST" })
+  .inputValidator(z.object({ jobId: z.string() }))
+  .handler(async ({ data }: { data: any }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await (supabaseAdmin
+      .from("video_enhancement_jobs" as any)
+      .update({ status: 'failed', error_message: 'Cancelado pelo usuário' } as any)
+      .eq("id", data.jobId) as any);
+
+    if (error) throw error;
+    return { success: true };
+  });
