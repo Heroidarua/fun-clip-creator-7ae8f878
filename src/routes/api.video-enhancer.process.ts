@@ -55,7 +55,7 @@ export const Route = createFileRoute("/api/video-enhancer/process")({
                   .from("video_enhancement_jobs" as any)
                   .update({ progress: 20 + Math.floor(progress * 0.7) } as any)
                   .eq("id", jobId) as any);
-              });
+              }, analysis.duration);
 
               // Upload para Supabase Storage
               const outputBuffer = readFileSync(outputPath);
