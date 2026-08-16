@@ -469,8 +469,7 @@ async function handleProxy(request: Request, mediaUrl: string, mediaType: string
     const response = await fetch(mediaUrl, {
       method: "GET",
       headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "User-Agent": UA,
         Referer: "https://www.instagram.com/",
         ...(range ? { Range: range } : {}),
       },
@@ -485,7 +484,7 @@ async function handleProxy(request: Request, mediaUrl: string, mediaType: string
       "Content-Type": contentType,
       "Cache-Control": "public, max-age=31536000",
       "Accept-Ranges": "bytes",
-      "Content-Disposition": mediaType === "video" ? "inline" : "attachment",
+      "Content-Disposition": mediaType === "video" ? "attachment" : "inline",
     });
 
     if (response.headers.has("content-length")) headers.set("Content-Length", response.headers.get("content-length")!);
