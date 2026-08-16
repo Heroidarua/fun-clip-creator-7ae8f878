@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
@@ -12,7 +12,10 @@ import {
   absoluteDownloadUrl,
   type YoutubeInfo,
 } from "@/services/youtubeDownloader";
+import { downloadYoutubeMedia } from "@/lib/youtube-download-flow";
+import { checkYoutubeJobStatus } from "@/services/youtubeJobs";
 import { AlertCircle, Download, RotateCcw, Trash2 } from "lucide-react";
+
 
 const GENERIC_ERROR =
   "Não foi possível processar este vídeo. Verifique a URL e tente novamente.";
@@ -45,6 +48,8 @@ export default function YoutubeDownloaderPage() {
   const [progress, setProgress] = useState<number | null>(null);
   const [stage, setStage] = useState("Preparando seu download...");
   const [error, setError] = useState("");
+  const [jobId, setJobId] = useState<string | null>(null);
+
 
   const fetchStream = useCallback(
     async (
@@ -126,7 +131,9 @@ export default function YoutubeDownloaderPage() {
     setSelected("");
     setError("");
     setProgress(null);
+    setJobId(null);
   }, []);
+
 
   const download = useCallback(async () => {
     if (!info || downloading) return;
@@ -135,60 +142,76 @@ export default function YoutubeDownloaderPage() {
 
     setDownloading(true);
     setError("");
-    setProgress(null);
+    setProgress(0);
+    setStage("Preparando tarefa...");
+
     try {
-      if (format.type === "audio") {
-        setStage("Baixando o áudio...");
-        const audio = await fetchStream(info.url, "m4a", format.quality, (r) =>
-          setProgress(r == null ? null : Math.round(r * 100)),
-        );
-        saveBlob(
-          new Blob([audio.bytes.slice().buffer as ArrayBuffer], { type: audio.contentType }),
-          `${safeName(info.title)}.m4a`,
-        );
+      const res = await requestYoutubeDownload(info.url, format.container, format.quality);
+      
+      if (res.success && (res as any).jobId) {
+        setJobId((res as any).jobId);
+        setStage("Processando tarefa no servidor...");
       } else {
-        setStage("Baixando o vídeo...");
-        const video = await fetchStream(info.url, "mp4", format.quality, (r) =>
-          setProgress(r == null ? null : Math.round(r * 60)),
-        );
-        if (video.muxed) {
-          saveBlob(
-            new Blob([video.bytes.slice().buffer as ArrayBuffer], { type: "video/mp4" }),
-            `${safeName(info.title)}.mp4`,
-          );
-          setProgress(100);
-          setDownloading(false);
-          return;
-        }
-        setStage("Baixando o áudio...");
-        const audio = await fetchStream(info.url, "m4a", "best", (r) =>
-          setProgress(60 + (r == null ? 0 : Math.round(r * 20))),
-        );
-        setStage("Juntando áudio e vídeo (isso pode levar alguns segundos)...");
-        const { muxVideoAndAudio } = await import("@/lib/youtube-mux");
-        const blob = await muxVideoAndAudio(video.bytes, audio.bytes, (ratio) =>
-          setProgress(80 + Math.min(20, Math.round((ratio || 0) * 20))),
-        );
-        saveBlob(blob, `${safeName(info.title)}.mp4`);
+        // Fallback para download direto
+        await downloadYoutubeMedia({
+          url: info.url,
+          type: format.type,
+          quality: format.quality,
+          title: info.title,
+          onStage: setStage,
+          onProgress: setProgress
+        });
+        setProgress(100);
+        setDownloading(false);
       }
-      setProgress(100);
     } catch (e) {
-      const err = e as Error & { directUrl?: string; muxed?: boolean };
-      if (err.message === TOO_LARGE) {
-        if (err.directUrl && (format.type === "audio" || err.muxed)) {
-          window.location.href = err.directUrl;
-        } else {
-          setError(
-            `Este arquivo passa de ${BROWSER_PROCESS_LIMIT / (1024 * 1024)} MB e não pode ser processado no navegador. Escolha uma qualidade menor ou um formato direto.`,
-          );
-        }
-      } else {
-        setError(err.message || GENERIC_ERROR);
-      }
-    } finally {
+      setError((e as Error).message || GENERIC_ERROR);
       setDownloading(false);
     }
-  }, [info, selected, downloading, fetchStream]);
+  }, [info, selected, downloading]);
+
+  useEffect(() => {
+    let timer: number;
+    if (jobId && downloading && stage === "Processando tarefa no servidor...") {
+      const poll = async () => {
+        try {
+          const status = await checkYoutubeJobStatus(jobId);
+          if (status.status === 'COMPLETED') {
+            setJobId(null);
+            const format = info?.formats.find(f => f.id === selected);
+            if (!format || !info) return;
+
+            setStage("Iniciando download...");
+            await downloadYoutubeMedia({
+              url: info.url,
+              type: format.type,
+              quality: format.quality,
+              title: info.title,
+              onStage: setStage,
+              onProgress: setProgress
+            });
+            
+            setProgress(100);
+            setDownloading(false);
+          } else if (status.status === 'FAILED') {
+            setJobId(null);
+            setError(status.error || "A tarefa falhou no servidor.");
+            setDownloading(false);
+          } else {
+            setProgress(status.progress);
+            timer = window.setTimeout(poll, 2000);
+          }
+        } catch (err: any) {
+          setJobId(null);
+          setError(err.message || "Erro ao acompanhar a tarefa.");
+          setDownloading(false);
+        }
+      };
+      timer = window.setTimeout(poll, 2000);
+    }
+    return () => clearTimeout(timer);
+  }, [jobId, downloading, stage, info, selected]);
+
 
   return (
     <div className="min-h-screen bg-background">
