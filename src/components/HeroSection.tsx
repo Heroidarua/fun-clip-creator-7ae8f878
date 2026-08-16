@@ -238,7 +238,7 @@ export default function HeroSection() {
 
     try {
       const { requestYoutubeDownload } = await import("@/services/youtubeDownloader");
-      const res = await requestYoutubeDownload(youtubeInfo.url, format.container, format.quality);
+      const res = await requestYoutubeDownload(youtubeInfo.url, format.container, format.quality, youtubeInfo.title);
       
       if (res.success && (res as any).jobId) {
         setJobId((res as any).jobId);
