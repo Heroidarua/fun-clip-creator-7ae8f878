@@ -15,7 +15,7 @@ const categoryCache = new Map<string, Game[]>();
 
 // Simple in-memory cache for the server
 const resultCache = new Map<string, { data: any; expiry: number }>();
-const CACHE_TTL = 1000 * 60 * 10; // 10 minutes
+const CACHE_TTL = 1000 * 60 * 60 * 24; // Aumentado para 24 horas (otimização rígida)
 
 function getFromCache(key: string) {
   const cached = resultCache.get(key);
@@ -143,4 +143,9 @@ export async function fetchRecentGames(ids: number[]) {
   // Optimized filtering for IDs
   const idSet = new Set(ids);
   return typedGames.filter((g: Game) => idSet.has(g.id)).slice(0, 12);
+}
+
+export async function clearGamesCache() {
+  categoryCache.clear();
+  resultCache.clear();
 }
