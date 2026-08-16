@@ -281,6 +281,7 @@ const HeroSection = () => {
   const youtubeInfoRef = useRef<YoutubeInfo | null>(null);
   const [youtubeFormats, setYoutubeFormats] = useState<YoutubeFormat[]>([]);
   const [youtubeQuality, setYoutubeQuality] = useState<string>("");
+  const [youtubePreviewUrl, setYoutubePreviewUrl] = useState<string | undefined>(undefined);
 
   // Facebook states
   const [facebookUrl, setFacebookUrl] = useState("");
@@ -844,6 +845,17 @@ const HeroSection = () => {
         author: info.author,
         duration: info.duration,
       });
+
+      // Solicita ticket de download para a prévia (se for pequeno o suficiente)
+      if (firstVideo) {
+        requestYoutubeDownload(normalizedUrl, "mp4", firstVideo.quality)
+          .then(ticket => {
+            setYoutubePreviewUrl(absoluteDownloadUrl(ticket.downloadUrl));
+          })
+          .catch(err => {
+            console.warn("Falha ao carregar preview:", err);
+          });
+      }
       toast({
         title: "Vídeo encontrado!",
         description: "Pronto para download.",
@@ -1260,7 +1272,7 @@ const HeroSection = () => {
                       title={videoData.title}
                       author={videoData.author}
                       duration={videoData.duration}
-                      mediaUrl={videoData.proxy_video_url || videoData.video_urls?.hd}
+                      mediaUrl={youtubePreviewUrl}
                     />
                   </div>
 
