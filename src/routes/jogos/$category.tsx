@@ -3,8 +3,6 @@ import Jogos from "@/pages/Jogos";
 import { buildSeo } from "@/lib/seo";
 import { z } from "zod";
 
-const categorySchema = z.enum(["Todos", "Luta", "Plataforma", "Corrida", "Ação", "Tiro", "Arcade"]).optional();
-
 export const Route = createFileRoute("/jogos/$category")({
   component: Jogos,
   validateSearch: (search) => z.object({
