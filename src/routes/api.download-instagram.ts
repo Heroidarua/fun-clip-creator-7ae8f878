@@ -305,10 +305,10 @@ async function fetchViaRapidApi(url: string, rapidApiKey: string): Promise<Media
   if (!shortcode) return null;
 
   const providers: Array<{ name: string; run: () => Promise<MediaResponse | null> }> = [
+    { name: "instagram120", run: () => fetchInstagram120(url, RAPIDAPI_KEY, shortcode) },
     { name: "social-all-in-one", run: () => fetchSocialAllInOne(url, RAPIDAPI_KEY) },
     { name: "auto-all-in-one", run: () => fetchAutoAllInOne(url, RAPIDAPI_KEY) },
     { name: "scraper-api2", run: () => fetchScraperApi2(shortcode, RAPIDAPI_KEY) },
-    { name: "instagram120", run: () => fetchInstagram120(url, RAPIDAPI_KEY, shortcode) },
   ];
 
   for (const p of providers) {
@@ -328,13 +328,40 @@ async function fetchViaRapidApi(url: string, rapidApiKey: string): Promise<Media
 
 async function tryDirectScrape(url: string): Promise<MediaResponse | null> {
   try {
-    const shortcode = url.match(/(?:p|reel|reels)\/([A-Za-z0-9-_]+)/)?.[1];
+    const shortcode = url.match(/(?:p|reel|reels|tv)\/([A-Za-z0-9-_]+)/)?.[1];
     if (!shortcode) return null;
 
+    // Use o pidgets do Instagram como uma forma leve de metadados
+    const embedRes = await fetch(`https://www.instagram.com/p/${shortcode}/embed/captioned/`, {
+      headers: {
+        "User-Agent": UA,
+        Accept: "text/html",
+      },
+    });
+
+    if (embedRes.ok) {
+      const html = await embedRes.text();
+      const videoUrlMatch = html.match(/"video_url":"([^"]+)"/);
+      const displayUrlMatch = html.match(/"display_url":"([^"]+)"/);
+      
+      if (videoUrlMatch || displayUrlMatch) {
+        return {
+          success: true,
+          data: {
+            media_url: (videoUrlMatch?.[1] || displayUrlMatch?.[1] || "").replace(/\\u0026/g, "&"),
+            media_type: videoUrlMatch ? "video" : "image",
+            thumbnail: (displayUrlMatch?.[1] || "").replace(/\\u0026/g, "&"),
+            title: "Instagram Media",
+            author: "Instagram User",
+          },
+        };
+      }
+    }
+
+    // Fallback para scrape direto na página (pode falhar por causa do login)
     const response = await fetch(`https://www.instagram.com/p/${shortcode}/`, {
       headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "User-Agent": UA,
         Accept: "text/html",
       },
     });
@@ -353,7 +380,7 @@ async function tryDirectScrape(url: string): Promise<MediaResponse | null> {
           media_type: "video",
           thumbnail: imageMatch?.[1] ? imageMatch[1].replace(/\\u0026/g, "&") : "",
           title: "Instagram Video",
-          author: "Desconhecido",
+          author: "Instagram User",
         },
       };
     }
@@ -367,13 +394,14 @@ async function tryDirectScrape(url: string): Promise<MediaResponse | null> {
           media_type: "image",
           thumbnail: img,
           title: "Instagram Image",
-          author: "Desconhecido",
+          author: "Instagram User",
         },
       };
     }
 
     return null;
-  } catch {
+  } catch (e) {
+    console.error("Direct scrape error:", e);
     return null;
   }
 }
@@ -409,15 +437,21 @@ async function downloadInstagramMedia(url: string, functionUrl: string, rapidApi
     console.warn("⚠️ snapsave falhou:", (e as Error).message);
   }
 
+  // Fallback for when snapsave fails - try to find other options or re-fetch.
+  // Re-attempting snapsave one more time with a slightly modified URL or header if possible
+  // or just move to RapidAPI.
+
   // RapidAPI providers como fallback (alguns endpoints exigem subscription paga).
   const rapidResult = await fetchViaRapidApi(url, rapidApiKey);
   if (rapidResult?.success && rapidResult.data) {
+    console.log("✅ Instagram via RapidAPI");
     rapidResult.data = addProxyUrls(rapidResult.data, functionUrl);
     return rapidResult;
   }
 
   const directResult = await tryDirectScrape(url);
   if (directResult?.success && directResult.data) {
+    console.log("✅ Instagram via Direct Scrape");
     directResult.data = addProxyUrls(directResult.data, functionUrl);
     return directResult;
   }
