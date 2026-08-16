@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { Upload, Video, Settings2, Sparkles, Download, Loader2, Info, Clock, CheckCircle2, AlertTriangle } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { Upload, Video, Settings2, Sparkles, Download, Loader2, Info, Clock, CheckCircle2, AlertTriangle, XCircle, RefreshCcw, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
-import { createEnhancementJob, getJobStatus } from "@/lib/video-enhancer/jobs.functions";
+import { createEnhancementJob, getJobStatus, cancelEnhancementJob } from "@/lib/video-enhancer/jobs.functions";
 import { setupStorage } from "@/lib/video-enhancer/setup.functions";
 import type { EnhancementMode, ResolutionTier } from "@/lib/video-enhancer/types";
 import { useServerFn } from "@tanstack/react-start";
