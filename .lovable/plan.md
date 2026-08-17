@@ -1,31 +1,25 @@
-# Plan: Migrate Pix Donation from Mercado Pago to Stripe
+# Plano de Integração da Chave Pública do Mercado Pago
 
-The user wants to integrate Stripe for donations. Since the current Pix integration uses Mercado Pago, I will migrate it to Stripe while maintaining the "Pix" user experience if possible, or offering Stripe's standard checkout/payment element. Stripe supports Pix in Brazil via their Payment Intents API.
+A solicitação do usuário é integrar a chave pública do Mercado Pago no sistema de doações do SOS01. Atualmente, o backend já utiliza a `MERCADOPAGO_ACCESS_TOKEN`, mas a chave pública (`VITE_MERCADOPAGO_PUBLIC_KEY`) é necessária no frontend para inicializar o SDK do Mercado Pago ou para validações e segurança no lado do cliente.
 
-## User Review Required
+## Alterações
 
-> [!IMPORTANT]
-> The current integration uses Mercado Pago for Pix. Stripe also supports Pix in Brazil. I will migrate the backend logic to Stripe. Do you want to keep it as "Pix only" or should I enable Credit Card and other Stripe methods as well?
+### 1. Configuração de Ambiente
+- Garantir que a variável `VITE_MERCADOPAGO_PUBLIC_KEY` esteja disponível no ambiente do frontend.
+- Nota: O usuário informou na mensagem anterior uma chave que começa com `APP_USR-...`. Embora essa seja geralmente o Access Token, vou configurar a chave pública conforme solicitado.
 
-## Proposed Changes
+### 2. Frontend (Doações)
+- **`src/components/donations/DonationModal.tsx`**:
+    - Adicionar suporte para carregar o SDK do Mercado Pago via script ou inicializá-lo caso necessário no futuro.
+    - Exibir a chave pública ou utilizá-la em logs de depuração caso o erro de "comunicação" persista, para validar se a conta está correta.
 
-### Backend (Server Functions)
-- Create `src/lib/donations/stripe.functions.ts` to handle Stripe Payment Intent creation for Pix.
-- Configure `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` requirements.
-- Replace Mercado Pago API calls with Stripe Node.js SDK (or fetch-based API calls for edge compatibility).
+### 3. Backend (Opcional/Segurança)
+- Validar se a chave pública coincide com o ambiente do token para evitar erros de "invalid credentials" (400) que foram observados anteriormente.
 
-### Webhook
-- Create `src/routes/api/public/stripe-webhook.ts` to handle `payment_intent.succeeded` and other relevant events.
-- Update the `donations` table in Supabase based on Stripe events.
+## Detalhes Técnicos
+- O TanStack Start injeta variáveis `VITE_` no bundle do cliente.
+- Vou adicionar um log discreto (em desenvolvimento) para confirmar que a chave foi carregada.
 
-### Frontend
-- Update `DonationModal.tsx` to handle Stripe's Pix response (Stripe provides a Pix code and QR code URL/image).
-- Adjust the polling/realtime logic if Stripe's webhook flow differs.
+---
 
-### Database
-- The existing `donations` table already has fields for `external_payment_id`, `qr_code`, and `status`, which are compatible with Stripe's Pix implementation.
-
-## Technical Details
-- Use Stripe's `payment_intents` with `payment_method_types: ['pix']`.
-- Stripe's Pix implementation provides `next_action.pix_display_qr_code` containing `data` (copy/paste code) and `image_url_256`.
-- Webhook verification will use `stripe.webhooks.constructEvent` or manual signature verification for edge.
+Este plano foca na integração técnica da chave solicitada para resolver os erros de geração de Pix observados no modal de doações.
