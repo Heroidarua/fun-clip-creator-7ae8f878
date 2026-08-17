@@ -11,6 +11,7 @@ export const createPixDonation = createServerFn({ method: "POST" })
 
     const { amount, userId } = parsed;
     const token = process.env.MERCADOPAGO_ACCESS_TOKEN;
+    const publicKey = process.env.MERCADOPAGO_PUBLIC_KEY;
 
     if (!token) {
       throw new Error("MERCADOPAGO_ACCESS_TOKEN not configured");
