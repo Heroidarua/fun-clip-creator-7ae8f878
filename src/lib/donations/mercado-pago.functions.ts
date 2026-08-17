@@ -3,14 +3,14 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 
 export const createPixDonation = createServerFn({ method: "POST" })
-  .validator((data: unknown) => 
-    z.object({
+  .handler(async ({ data }: { data: any }) => {
+    // Manual validation since TanStack version might differ in builder methods
+    const parsed = z.object({
       amount: z.number().min(1).max(50000),
       userId: z.string().uuid().optional(),
-    }).parse(data)
-  )
-  .handler(async ({ data }: { data: any }) => {
-    const { amount, userId } = data;
+    }).parse(data);
+
+    const { amount, userId } = parsed;
     const token = process.env.MERCADOPAGO_ACCESS_TOKEN;
 
     if (!token) {
@@ -93,9 +93,10 @@ export const createPixDonation = createServerFn({ method: "POST" })
   });
 
 export const checkDonationStatus = createServerFn({ method: "GET" })
-  .validator((data: unknown) => z.object({ id: z.string().uuid() }).parse(data))
   .handler(async ({ data }: { data: any }) => {
-    const { id } = data;
+    const parsed = z.object({ id: z.string().uuid() }).parse(data);
+    const { id } = parsed;
+    
     const { data: donation, error } = await supabase
       .from("donations")
       .select("status")
