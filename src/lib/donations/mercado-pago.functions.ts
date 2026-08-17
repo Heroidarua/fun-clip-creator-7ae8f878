@@ -64,7 +64,10 @@ export const createPixDonation = createServerFn({ method: "POST" })
 
       if (!mpResponse.ok) {
         console.error("MP Error:", JSON.stringify(mpData));
-        const detail = mpData?.cause?.[0]?.description || mpData?.message || "Erro na API do Mercado Pago";
+        const raw = mpData?.cause?.[0]?.description || mpData?.message || "";
+        const detail = String(raw).includes("communication_error")
+          ? "PIX_NAO_HABILITADO: cadastre uma chave Pix na conta do Mercado Pago para receber pagamentos."
+          : raw || "Erro na API do Mercado Pago";
         throw new Error(detail);
       }
 
