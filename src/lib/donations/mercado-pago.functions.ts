@@ -33,7 +33,7 @@ export const createPixDonation = createServerFn({ method: "POST" })
 
     if (dbError || !donation) {
       console.error("Donation insert error:", dbError);
-      throw new Error("Falha ao registrar a doação");
+      throw new Error(`Falha ao registrar a doação: ${dbError?.message ?? "sem retorno"}`);
     }
 
     try {
