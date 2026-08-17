@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { fromTable } from "@/integrations/supabase/helpers";
 import { Button } from "@/components/ui/button";
@@ -550,11 +550,11 @@ function DonationStatsSection({ password }: { password: string }) {
       const { data, error } = await fromTable("donations").select("*");
       if (error) throw error;
       
-      const approved = data.filter(d => d.status === 'approved');
-      const pending = data.filter(d => d.status === 'pending');
-      const expired = data.filter(d => d.status === 'expired' || d.status === 'rejected' || d.status === 'cancelled');
+      const approved = data.filter((d: any) => d.status === 'approved');
+      const pending = data.filter((d: any) => d.status === 'pending');
+      const expired = data.filter((d: any) => d.status === 'expired' || d.status === 'rejected' || d.status === 'cancelled');
       
-      const total = approved.reduce((acc, curr) => acc + Number(curr.amount), 0);
+      const total = approved.reduce((acc: number, curr: any) => acc + Number(curr.amount), 0);
       
       setStats({
         total,
@@ -562,7 +562,7 @@ function DonationStatsSection({ password }: { password: string }) {
         approved: approved.length,
         pending: pending.length,
         expired: expired.length,
-        recent: data.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 5)
+        recent: data.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 5)
       });
     } catch (e) {
       console.error(e);
@@ -637,19 +637,3 @@ function DonationStatsSection({ password }: { password: string }) {
   );
 }
 
-const Heart = ({ size, className }: { size?: number, className?: string }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    width={size || 24} 
-    height={size || 24} 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round" 
-    className={className}
-  >
-    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-  </svg>
-);
