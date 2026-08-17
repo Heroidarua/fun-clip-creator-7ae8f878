@@ -10,7 +10,7 @@ const IPTV_CREDENTIALS = {
 };
 
 // Configurações do jogo
-const SPIN_LIMIT = 5; // Limite de tentativas por sessão
+const SPIN_LIMIT = 3; // Limite de 3 tentativas por dia
 const WIN_CHANCE = 0.1; // 10% de chance de ganhar
 
 export const spinRoulette = createServerFn({ method: "POST" })
