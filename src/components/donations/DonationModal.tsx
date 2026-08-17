@@ -108,7 +108,7 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
           amount: finalAmount,
           userId: user?.id
         }
-      });
+      } as any);
       setDonationData(result);
       setTimeLeft(600);
       setStep("payment");
