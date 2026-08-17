@@ -2,8 +2,6 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 
-const MP_ACCESS_TOKEN = process.env.MERCADOPAGO_ACCESS_TOKEN;
-
 export const createPixDonation = createServerFn({ method: "POST" })
   .validator((data: { amount: number; userId?: string }) => 
     z.object({
@@ -12,7 +10,7 @@ export const createPixDonation = createServerFn({ method: "POST" })
     }).parse(data)
   )
   .handler(async ({ data }) => {
-    const { amount, userId } = data;
+    const { amount, userId } = data as { amount: number; userId?: string };
     const token = process.env.MERCADOPAGO_ACCESS_TOKEN;
 
     if (!token) {
@@ -59,7 +57,6 @@ export const createPixDonation = createServerFn({ method: "POST" })
 
       const mpData = await mpResponse.json();
 
-
       if (!mpResponse.ok) {
         console.error("MP Error:", mpData);
         throw new Error(mpData.message || "Mercado Pago API error");
@@ -98,10 +95,11 @@ export const createPixDonation = createServerFn({ method: "POST" })
 export const checkDonationStatus = createServerFn({ method: "GET" })
   .validator((data: { id: string }) => z.object({ id: z.string().uuid() }).parse(data))
   .handler(async ({ data }) => {
+    const { id } = data as { id: string };
     const { data: donation, error } = await supabase
       .from("donations")
       .select("status")
-      .eq("id", data.id)
+      .eq("id", id)
       .single();
     
     if (error || !donation) throw new Error("Donation not found");
