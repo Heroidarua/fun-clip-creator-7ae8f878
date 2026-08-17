@@ -14,8 +14,8 @@ const SPIN_LIMIT = 5; // Limite de tentativas por sessão
 const WIN_CHANCE = 0.1; // 10% de chance de ganhar
 
 export const spinRoulette = createServerFn({ method: "POST" })
-  .inputValidator((data) => z.object({ sessionId: z.string() }).parse(data))
-  .handler(async ({ data, request }) => {
+  .inputValidator((data: unknown) => z.object({ sessionId: z.string() }).parse(data))
+  .handler(async ({ data }) => {
     const { sessionId } = data;
 
     // 1. Verificar tentativas existentes
