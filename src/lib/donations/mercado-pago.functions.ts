@@ -1,6 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
 
 export const createPixDonation = createServerFn({ method: "POST" })
   .handler(async ({ data }: { data: any }) => {
@@ -17,8 +16,10 @@ export const createPixDonation = createServerFn({ method: "POST" })
       throw new Error("MERCADOPAGO_ACCESS_TOKEN not configured");
     }
 
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
     // 1. Create donation record in Supabase first (status: pending)
-    const { data: donation, error: dbError } = await supabase
+    const { data: donation, error: dbError } = await supabaseAdmin
       .from("donations")
       .insert({
         amount,
@@ -31,7 +32,8 @@ export const createPixDonation = createServerFn({ method: "POST" })
       .single();
 
     if (dbError || !donation) {
-      throw new Error("Failed to create donation record");
+      console.error("Donation insert error:", dbError);
+      throw new Error("Falha ao registrar a doação");
     }
 
     try {
@@ -48,18 +50,21 @@ export const createPixDonation = createServerFn({ method: "POST" })
           payment_method_id: "pix",
           description: "Doação para SOS01",
           payer: {
-            email: "doador@sos01.com.br", // Placeholder required by MP
+            email: "doador@sos01.com.br",
+            first_name: "Apoiador",
+            last_name: "SOS01",
+            identification: { type: "CPF", number: "19119119100" },
           },
           external_reference: donation.id,
-          installments: 1
         })
       });
 
       const mpData = await mpResponse.json();
 
       if (!mpResponse.ok) {
-        console.error("MP Error:", mpData);
-        throw new Error(mpData.message || "Mercado Pago API error");
+        console.error("MP Error:", JSON.stringify(mpData));
+        const detail = mpData?.cause?.[0]?.description || mpData?.message || "Erro na API do Mercado Pago";
+        throw new Error(detail);
       }
 
       // 3. Update donation with MP details
@@ -67,7 +72,7 @@ export const createPixDonation = createServerFn({ method: "POST" })
       const qrCodeBase64 = mpData.point_of_interaction?.transaction_data?.qr_code_base64;
       const externalId = mpData.id?.toString();
 
-      await supabase
+      await supabaseAdmin
         .from("donations")
         .update({
           external_payment_id: externalId,
@@ -87,7 +92,7 @@ export const createPixDonation = createServerFn({ method: "POST" })
     } catch (err) {
       console.error("Donation creation failed:", err);
       // Mark as failed in DB
-      await supabase.from("donations").update({ status: "rejected" }).eq("id", donation.id);
+      await supabaseAdmin.from("donations").update({ status: "rejected" }).eq("id", donation.id);
       throw err;
     }
   });
@@ -96,8 +101,9 @@ export const checkDonationStatus = createServerFn({ method: "GET" })
   .handler(async ({ data }: { data: any }) => {
     const parsed = z.object({ id: z.string().uuid() }).parse(data);
     const { id } = parsed;
-    
-    const { data: donation, error } = await supabase
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: donation, error } = await supabaseAdmin
       .from("donations")
       .select("status")
       .eq("id", id)
