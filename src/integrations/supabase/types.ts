@@ -68,6 +68,36 @@ export type Database = {
         }
         Relationships: []
       }
+      button_settings: {
+        Row: {
+          animate: boolean
+          color: string
+          created_at: string | null
+          id: string
+          shape: string
+          singleton: boolean | null
+          updated_at: string | null
+        }
+        Insert: {
+          animate?: boolean
+          color?: string
+          created_at?: string | null
+          id?: string
+          shape?: string
+          singleton?: boolean | null
+          updated_at?: string | null
+        }
+        Update: {
+          animate?: boolean
+          color?: string
+          created_at?: string | null
+          id?: string
+          shape?: string
+          singleton?: boolean | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       donations: {
         Row: {
           amount: number
