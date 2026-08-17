@@ -857,10 +857,10 @@ function DonationStatsSection({ password }: { password: string }) {
 
   useEffect(() => {
     fetchStats();
-  }, []);
+  }, [password]);
 
-  if (loading) return null;
-  if (!stats) return null;
+  if (loading || !stats) return null;
+
 
   return (
     <div className="bg-card border border-border rounded-xl p-6 mb-8">
