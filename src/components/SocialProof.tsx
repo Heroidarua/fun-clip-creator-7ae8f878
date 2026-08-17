@@ -5,21 +5,21 @@ const SocialProof = () => {
   const stats = [
     {
       icon: Download,
-      value: 100000,
+      value: 120000,
       suffix: "+",
-      label: "SOS01 Mídias",
+      label: "Downloads Mídias",
       color: "text-primary"
     },
     {
       icon: Users,
-      value: 50000,
+      value: 65000,
       suffix: "+", 
-      label: "Usuários SOS01",
+      label: "Usuários Ativos",
       color: "text-[hsl(var(--accent))]"
     },
     {
       icon: Gamepad2,
-      value: 60,
+      value: 2757,
       suffix: "+",
       label: "Jogos",
       color: "text-[hsl(var(--retro-cyan))]"

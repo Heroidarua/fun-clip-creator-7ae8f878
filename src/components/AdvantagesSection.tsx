@@ -20,7 +20,7 @@ const AdvantagesSection = () => {
     },
     {
       icon: <Gamepad2 className="w-8 h-8" />,
-      title: "+60 JOGOS",
+      title: "2700+ JOGOS",
       description: "Arcade retrô grátis",
       color: "text-[hsl(var(--accent))]",
       borderColor: "border-[hsl(var(--accent))]",

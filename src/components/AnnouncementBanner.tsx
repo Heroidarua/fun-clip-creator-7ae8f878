@@ -45,10 +45,10 @@ export default function AnnouncementBanner() {
 
   const items = announcements.map((a) => (
     <span key={a.id} className="inline-flex items-center gap-2 px-6 shrink-0">
-      <span className="font-semibold text-foreground">{a.title}</span>
+      <span className="font-pixel text-[10px] text-foreground uppercase tracking-widest">{a.title}</span>
       <span className="text-muted-foreground">—</span>
-      <span className="text-muted-foreground">{a.message}</span>
-      <span style={{ color: palette.soft }}>•</span>
+      <span className="text-muted-foreground font-orbitron text-xs italic">{a.message}</span>
+      <span style={{ color: palette.soft }} className="mx-2">•</span>
     </span>
   ));
 
