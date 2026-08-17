@@ -22,14 +22,18 @@ export const spinRoulette = createServerFn({ method: "POST" })
     const { count, error: countError } = await supabaseAdmin
       .from("iptv_spin_results")
       .select("*", { count: "exact", head: true })
-      .eq("session_id", sessionId);
+      .eq("session_id", sessionId)
+      .gte("created_at", new Date(new Date().setHours(0,0,0,0)).toISOString());
 
-    if (countError) throw new Error("Erro ao verificar tentativas");
+    if (countError) {
+      console.error("IPTV Count Error:", countError);
+      throw new Error("Erro ao verificar tentativas");
+    }
     
     if (count !== null && count >= SPIN_LIMIT) {
       return { 
         success: false, 
-        message: "Limite de tentativas atingido para hoje!",
+        message: "🎰 Suas tentativas de hoje acabaram. Volte amanhã!",
         outOfSpins: true 
       };
     }
