@@ -3,14 +3,14 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 
 export const createPixDonation = createServerFn({ method: "POST" })
-  .validator((data: { amount: number; userId?: string }) => 
+  .validator((data: unknown) => 
     z.object({
       amount: z.number().min(1).max(50000),
       userId: z.string().uuid().optional(),
     }).parse(data)
   )
   .handler(async ({ data }) => {
-    const { amount, userId } = data as { amount: number; userId?: string };
+    const { amount, userId } = data;
     const token = process.env.MERCADOPAGO_ACCESS_TOKEN;
 
     if (!token) {
@@ -93,9 +93,9 @@ export const createPixDonation = createServerFn({ method: "POST" })
   });
 
 export const checkDonationStatus = createServerFn({ method: "GET" })
-  .validator((data: { id: string }) => z.object({ id: z.string().uuid() }).parse(data))
+  .validator((data: unknown) => z.object({ id: z.string().uuid() }).parse(data))
   .handler(async ({ data }) => {
-    const { id } = data as { id: string };
+    const { id } = data;
     const { data: donation, error } = await supabase
       .from("donations")
       .select("status")
