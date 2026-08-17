@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { buildPixPayload } from "./pix-payload";
 
 export const createPixDonation = createServerFn({ method: "POST" })
   .handler(async ({ data }: { data: any }) => {
@@ -64,11 +65,22 @@ export const createPixDonation = createServerFn({ method: "POST" })
 
       if (!mpResponse.ok) {
         console.error("MP Error:", JSON.stringify(mpData));
-        const raw = mpData?.cause?.[0]?.description || mpData?.message || "";
-        const detail = String(raw).includes("communication_error")
-          ? "PIX_NAO_HABILITADO: cadastre uma chave Pix na conta do Mercado Pago para receber pagamentos."
-          : raw || "Erro na API do Mercado Pago";
-        throw new Error(detail);
+        // Fallback: Pix estático com a chave cadastrada
+        const staticCode = buildPixPayload(amount, donation.id.replace(/-/g, "").slice(0, 20));
+        await supabaseAdmin
+          .from("donations")
+          .update({ qr_code: staticCode, payment_method: "pix_estatico" })
+          .eq("id", donation.id);
+
+        return {
+          id: donation.id,
+          amount,
+          qrCode: staticCode,
+          qrCodeBase64: null,
+          expiresAt: null,
+          isStatic: true,
+          publicKey,
+        };
       }
 
       // 3. Update donation with MP details
@@ -92,13 +104,27 @@ export const createPixDonation = createServerFn({ method: "POST" })
         qrCode,
         qrCodeBase64,
         expiresAt: mpData.date_of_expiration,
+        isStatic: false,
         publicKey: publicKey // Pass public key if needed by client
       };
     } catch (err) {
       console.error("Donation creation failed:", err);
-      // Mark as failed in DB
-      await supabaseAdmin.from("donations").update({ status: "rejected" }).eq("id", donation.id);
-      throw err;
+      // Último recurso: entrega o Pix estático para não travar a doação
+      const staticCode = buildPixPayload(amount, donation.id.replace(/-/g, "").slice(0, 20));
+      await supabaseAdmin
+        .from("donations")
+        .update({ qr_code: staticCode, payment_method: "pix_estatico" })
+        .eq("id", donation.id);
+
+      return {
+        id: donation.id,
+        amount,
+        qrCode: staticCode,
+        qrCodeBase64: null,
+        expiresAt: null,
+        isStatic: true,
+        publicKey,
+      };
     }
   });
 
