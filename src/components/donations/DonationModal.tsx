@@ -29,6 +29,25 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
   const [donationData, setDonationData] = useState<any>(null);
   const [timeLeft, setTimeLeft] = useState<number>(600); // 10 minutes
   const [copied, setCopied] = useState(false);
+  const [qrImage, setQrImage] = useState<string | null>(null);
+
+  // Gera a imagem do QR Code quando o Mercado Pago não retorna a imagem pronta
+  useEffect(() => {
+    let active = true;
+    const code = donationData?.qrCode;
+    if (!code || donationData?.qrCodeBase64) {
+      setQrImage(null);
+      return;
+    }
+    import("qrcode").then(({ default: QRCode }) =>
+      QRCode.toDataURL(code, { width: 320, margin: 1 }).then((url) => {
+        if (active) setQrImage(url);
+      }),
+    );
+    return () => {
+      active = false;
+    };
+  }, [donationData?.qrCode, donationData?.qrCodeBase64]);
 
   // Reset when modal closes
   useEffect(() => {
@@ -174,10 +193,6 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
                     }`}
                     onClick={() => {
                       setAmount(val);
-                      if (val === 10) {
-                        navigator.clipboard.writeText("00020126580014br.gov.bcb.pix0136562cc2de-7775-4303-9ec5-866f19d9b2c0520400005303986540510.005802BR5915Matheus Marinho6009Sao Paulo62230519daqr63059315441814163040984");
-                        toast({ title: "Chave Pix copiada!", description: "Pix para doar R$ 10,00 copiado automaticamente." });
-                      }
                     }}
                   >
                     R$ {val}
@@ -234,6 +249,8 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
               <div className="bg-white p-4 rounded-2xl flex items-center justify-center shadow-inner mx-auto max-w-[200px]">
                 {donationData?.qrCodeBase64 ? (
                   <img src={`data:image/png;base64,${donationData.qrCodeBase64}`} alt="QR Code Pix" className="w-full h-auto" />
+                ) : qrImage ? (
+                  <img src={qrImage} alt="QR Code Pix" className="w-full h-auto" />
                 ) : (
                   <QrCode className="w-32 h-32 text-muted-foreground opacity-20" />
                 )}
@@ -255,6 +272,12 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
                   </Button>
                 </div>
               </div>
+
+              {donationData?.isStatic && (
+                <p className="text-[11px] text-center text-muted-foreground bg-muted/50 rounded-lg px-3 py-2">
+                  Pagamento via chave Pix direta. Após pagar, a confirmação pode levar alguns minutos.
+                </p>
+              )}
 
               <div className="flex flex-col items-center gap-3">
                 <div className="flex items-center gap-2 text-yellow-500 font-bold bg-yellow-500/10 px-4 py-2 rounded-full animate-pulse">
