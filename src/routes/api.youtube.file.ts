@@ -98,6 +98,7 @@ export const Route = createFileRoute("/api/youtube/file")({
       OPTIONS: async () => new Response(null, { status: 204, headers: ytCors() }),
 
       GET: async ({ request }) => {
+        console.log("youtube/file requested:", request.url);
         try {
           const url = new URL(request.url);
           const token = url.searchParams.get("token") || "";
