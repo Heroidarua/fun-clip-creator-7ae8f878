@@ -9,7 +9,7 @@ export async function muxVideoAndAudio(
     import("@ffmpeg/util"),
   ]);
 
-  const base = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd";
+  const base = "https://unpkg.com/@ffmpeg/core-mt@0.12.6/dist/umd";
   const ffmpeg = new FFmpeg();
   if (onProgress) ffmpeg.on("progress", ({ progress }) => onProgress(progress));
 
