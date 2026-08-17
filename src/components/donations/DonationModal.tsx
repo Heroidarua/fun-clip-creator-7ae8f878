@@ -102,6 +102,11 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
 
     setStep("generating");
     try {
+      // Log public key presence in dev for debugging
+      if (import.meta.env.DEV) {
+        console.log("Mercado Pago Public Key present:", !!import.meta.env.VITE_MERCADOPAGO_PUBLIC_KEY);
+      }
+
       const { data: { user } } = await supabase.auth.getUser();
       const result = await createPixDonation({
         data: {
@@ -112,10 +117,19 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
       setDonationData(result);
       setTimeLeft(600);
       setStep("payment");
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      console.error("Donation error:", err);
       setStep("error");
-      toast({ title: "Erro ao gerar Pix", description: "Tente novamente em instantes.", variant: "destructive" });
+      
+      const errorMessage = err?.message?.includes("communication_error") 
+        ? "Erro de comunicação com o provedor. Verifique se o Pix está ativo na conta."
+        : "Tente novamente em instantes.";
+
+      toast({ 
+        title: "Erro ao gerar Pix", 
+        description: errorMessage, 
+        variant: "destructive" 
+      });
     }
   };
 
