@@ -562,7 +562,7 @@ function DonationStatsSection({ password }: { password: string }) {
         approved: approved.length,
         pending: pending.length,
         expired: expired.length,
-        recent: data.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 5)
+        recent: [...data].sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 5)
       });
     } catch (e) {
       console.error(e);
