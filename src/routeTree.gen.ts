@@ -65,6 +65,7 @@ import { Route as ApiYoutubeFileRouteImport } from './routes/api.youtube.file'
 import { Route as ApiYoutubeDownloadRouteImport } from './routes/api.youtube.download'
 import { Route as ApiVideoEnhancerProcessRouteImport } from './routes/api.video-enhancer.process'
 import { Route as ApiPublicPinterestDownloadRouteImport } from './routes/api.public.pinterest-download'
+import { Route as ApiPublicMercadopagoWebhookRouteImport } from './routes/api/public/mercadopago-webhook'
 
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
@@ -357,6 +358,12 @@ const ApiPublicPinterestDownloadRoute =
     path: '/api/public/pinterest-download',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicMercadopagoWebhookRoute =
+  ApiPublicMercadopagoWebhookRouteImport.update({
+    id: '/api/public/mercadopago-webhook',
+    path: '/api/public/mercadopago-webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -410,6 +417,7 @@ export interface FileRoutesByFullPath {
   '/ferramenta/melhorar-video': typeof FerramentaMelhorarVideoRoute
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/blog/': typeof BlogIndexRoute
+  '/api/public/mercadopago-webhook': typeof ApiPublicMercadopagoWebhookRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/video-enhancer/process': typeof ApiVideoEnhancerProcessRoute
   '/api/youtube/download': typeof ApiYoutubeDownloadRoute
@@ -467,6 +475,7 @@ export interface FileRoutesByTo {
   '/ferramenta/melhorar-video': typeof FerramentaMelhorarVideoRoute
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/blog': typeof BlogIndexRoute
+  '/api/public/mercadopago-webhook': typeof ApiPublicMercadopagoWebhookRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/video-enhancer/process': typeof ApiVideoEnhancerProcessRoute
   '/api/youtube/download': typeof ApiYoutubeDownloadRoute
@@ -526,6 +535,7 @@ export interface FileRoutesById {
   '/ferramenta/melhorar-video': typeof FerramentaMelhorarVideoRoute
   '/ferramentas_/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/blog/': typeof BlogIndexRoute
+  '/api/public/mercadopago-webhook': typeof ApiPublicMercadopagoWebhookRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/video-enhancer/process': typeof ApiVideoEnhancerProcessRoute
   '/api/youtube/download': typeof ApiYoutubeDownloadRoute
@@ -586,6 +596,7 @@ export interface FileRouteTypes {
     | '/ferramenta/melhorar-video'
     | '/ferramentas/youtube-downloader'
     | '/blog/'
+    | '/api/public/mercadopago-webhook'
     | '/api/public/pinterest-download'
     | '/api/video-enhancer/process'
     | '/api/youtube/download'
@@ -643,6 +654,7 @@ export interface FileRouteTypes {
     | '/ferramenta/melhorar-video'
     | '/ferramentas/youtube-downloader'
     | '/blog'
+    | '/api/public/mercadopago-webhook'
     | '/api/public/pinterest-download'
     | '/api/video-enhancer/process'
     | '/api/youtube/download'
@@ -701,6 +713,7 @@ export interface FileRouteTypes {
     | '/ferramenta/melhorar-video'
     | '/ferramentas_/youtube-downloader'
     | '/blog/'
+    | '/api/public/mercadopago-webhook'
     | '/api/public/pinterest-download'
     | '/api/video-enhancer/process'
     | '/api/youtube/download'
@@ -748,6 +761,7 @@ export interface RootRouteChildren {
   FerramentaSlugRoute: typeof FerramentaSlugRoute
   FerramentaMelhorarVideoRoute: typeof FerramentaMelhorarVideoRoute
   FerramentasYoutubeDownloaderRoute: typeof FerramentasYoutubeDownloaderRoute
+  ApiPublicMercadopagoWebhookRoute: typeof ApiPublicMercadopagoWebhookRoute
   ApiPublicPinterestDownloadRoute: typeof ApiPublicPinterestDownloadRoute
   ApiVideoEnhancerProcessRoute: typeof ApiVideoEnhancerProcessRoute
   ApiYoutubeDownloadRoute: typeof ApiYoutubeDownloadRoute
@@ -1149,6 +1163,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPinterestDownloadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/mercadopago-webhook': {
+      id: '/api/public/mercadopago-webhook'
+      path: '/api/public/mercadopago-webhook'
+      fullPath: '/api/public/mercadopago-webhook'
+      preLoaderRoute: typeof ApiPublicMercadopagoWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1225,6 +1246,7 @@ const rootRouteChildren: RootRouteChildren = {
   FerramentaSlugRoute: FerramentaSlugRoute,
   FerramentaMelhorarVideoRoute: FerramentaMelhorarVideoRoute,
   FerramentasYoutubeDownloaderRoute: FerramentasYoutubeDownloaderRoute,
+  ApiPublicMercadopagoWebhookRoute: ApiPublicMercadopagoWebhookRoute,
   ApiPublicPinterestDownloadRoute: ApiPublicPinterestDownloadRoute,
   ApiVideoEnhancerProcessRoute: ApiVideoEnhancerProcessRoute,
   ApiYoutubeDownloadRoute: ApiYoutubeDownloadRoute,
