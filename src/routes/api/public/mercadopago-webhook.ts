@@ -1,5 +1,4 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute('/api/public/mercadopago-webhook')({
   server: {
@@ -34,6 +33,7 @@ export const Route = createFileRoute('/api/public/mercadopago-webhook')({
             const mpStatus = mpPayment.status;
 
             if (externalRef) {
+              const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
               // 2. Map MP status to our status
               let newStatus = 'pending';
               if (mpStatus === 'approved') newStatus = 'approved';
@@ -41,7 +41,7 @@ export const Route = createFileRoute('/api/public/mercadopago-webhook')({
               else if (mpStatus === 'cancelled') newStatus = 'cancelled';
               
               // 3. Update DB
-              await supabase
+              await supabaseAdmin
                 .from('donations')
                 .update({ 
                   status: newStatus,
