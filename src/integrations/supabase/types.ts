@@ -152,6 +152,33 @@ export type Database = {
         }
         Relationships: []
       }
+      iptv_spin_results: {
+        Row: {
+          created_at: string
+          id: string
+          outcome: string
+          session_id: string
+          user_id: string | null
+          won: boolean
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          outcome: string
+          session_id: string
+          user_id?: string | null
+          won?: boolean
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          outcome?: string
+          session_id?: string
+          user_id?: string | null
+          won?: boolean
+        }
+        Relationships: []
+      }
       marquee_settings: {
         Row: {
           color: string

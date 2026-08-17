@@ -1,16 +1,10 @@
-import { useEffect } from "react";
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { MonitorPlay, ArrowLeft, ExternalLink } from "lucide-react";
-
-// A rota /dashboard só funciona para quem já tem sessão salva no domínio do
-// provedor. Para carregar igual ao Pluto TV (para todos), usamos a entrada
-// oficial, que cria a sessão e leva ao catálogo automaticamente.
-const PLAYER_URL = "https://wplayer.link/";
+import { MonitorPlay, ArrowLeft, Tv } from "lucide-react";
+import IPTVModal from "@/components/IPTVModal";
 
 export default function Player() {
-  useEffect(() => {
-    window.location.replace(PLAYER_URL);
-  }, []);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-6">
@@ -25,29 +19,39 @@ export default function Player() {
           <MonitorPlay className="w-10 h-10 text-[#28B6FF]" aria-hidden="true" />
         </div>
         <h1
-          className="text-3xl sm:text-4xl text-[#F5F9FF] mb-3"
-          style={{ fontFamily: "'VT323', monospace", textShadow: "0 0 10px rgba(40,182,255,0.7)" }}
+          className="text-3xl sm:text-4xl text-[#F5F9FF] mb-3 font-display"
+          style={{ textShadow: "0 0 10px rgba(40,182,255,0.7)" }}
         >
           IPTV 1.0
         </h1>
-        <p className="text-[#E8EEF5]/80 text-sm mb-7 leading-relaxed">
-          Abrindo o acesso do player. Seu perfil será recuperado pelo próprio serviço antes de exibir as mídias.
+        <p className="text-[#E8EEF5]/80 text-sm mb-7 leading-relaxed font-silkscreen uppercase tracking-wider">
+          Roleta da Sorte
         </p>
-        <a
-          href={PLAYER_URL}
-          className="btn-3d inline-flex items-center justify-center gap-2 w-full px-6 py-4 rounded-xl bg-[#FFD93D] text-[#0E4A7B] font-silkscreen uppercase tracking-wider text-base hover:brightness-110 transition-all"
-        >
-          <ExternalLink className="w-5 h-5" aria-hidden="true" />
-          Abrir IPTV 1.0
-        </a>
+        
+        <div className="space-y-4">
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="btn-3d inline-flex items-center justify-center gap-2 w-full px-6 py-4 rounded-xl bg-[#FFD93D] text-[#0E4A7B] font-silkscreen uppercase tracking-wider text-base hover:brightness-110 transition-all"
+          >
+            <Tv className="w-5 h-5" />
+            Tentar a Sorte
+          </button>
+          
+          <p className="text-[10px] text-[#E8EEF5]/50 italic">
+            Desbloqueie credenciais premium girando a roleta.
+          </p>
+        </div>
+
         <Link
           to="/"
-          className="mt-4 inline-flex items-center justify-center gap-1.5 text-xs font-silkscreen uppercase tracking-wider text-[#28B6FF] hover:text-[#B66DFF] transition-colors"
+          className="mt-8 inline-flex items-center justify-center gap-1.5 text-xs font-silkscreen uppercase tracking-wider text-[#28B6FF] hover:text-[#B66DFF] transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
           Voltar ao SOS01
         </Link>
       </div>
+
+      <IPTVModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 }

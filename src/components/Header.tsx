@@ -130,7 +130,7 @@ const Header = () => {
         </div>
       </div>
 
-      <IPTVModal isOpen={iptvModalOpen} onClose={() => setIptvModalOpen(false)} />
+      {/* Modal moved to /player page */}
     </header>
   );
 };
