@@ -172,7 +172,13 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
                     className={`h-16 text-lg font-bold transition-all duration-300 ${
                       amount === val ? "bg-green-600 hover:bg-green-700 scale-[1.02] shadow-lg" : "hover:border-green-500/50"
                     }`}
-                    onClick={() => setAmount(val)}
+                    onClick={() => {
+                      setAmount(val);
+                      if (val === 10) {
+                        navigator.clipboard.writeText("00020126580014br.gov.bcb.pix0136562cc2de-7775-4303-9ec5-866f19d9b2c0520400005303986540510.005802BR5915Matheus Marinho6009Sao Paulo62230519daqr63059315441814163040984");
+                        toast({ title: "Chave Pix copiada!", description: "Pix para doar R$ 10,00 copiado automaticamente." });
+                      }
+                    }}
                   >
                     R$ {val}
                   </Button>
