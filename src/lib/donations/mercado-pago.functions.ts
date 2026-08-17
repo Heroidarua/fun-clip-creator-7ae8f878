@@ -88,7 +88,8 @@ export const createPixDonation = createServerFn({ method: "POST" })
         amount,
         qrCode,
         qrCodeBase64,
-        expiresAt: mpData.date_of_expiration
+        expiresAt: mpData.date_of_expiration,
+        publicKey: publicKey // Pass public key if needed by client
       };
     } catch (err) {
       console.error("Donation creation failed:", err);
