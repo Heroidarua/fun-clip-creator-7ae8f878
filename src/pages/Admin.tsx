@@ -309,11 +309,13 @@ export default function Admin() {
                 Aparência
               </button>
             </div>
+            </div>
           </div>
           <Link to="/" className="text-muted-foreground hover:text-foreground flex items-center gap-2">
             <ArrowLeft size={16} /> Voltar ao site
           </Link>
         </div>
+
 
         {activeTab === "appearance" ? (
           <div className="space-y-6">
