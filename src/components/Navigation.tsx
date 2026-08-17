@@ -74,8 +74,7 @@ export default function SidebarNav() {
                       to={to as any}
                       onClick={(e) => {
                         if (to === "/player") {
-                          e.preventDefault();
-                          setIptvModalOpen(true);
+                          // Allow navigation to the /player page which now contains the game trigger
                         }
                       }}
                       className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group ${
@@ -147,8 +146,7 @@ export default function SidebarNav() {
                   onClick={(e) => {
                     setIsMobileMenuOpen(false);
                     if (to === "/player") {
-                      e.preventDefault();
-                      setIptvModalOpen(true);
+                      // Allow navigation to the /player page
                     }
                   }}
                   className={`flex items-center gap-4 px-4 py-4 rounded-xl transition-all duration-200 group ${
@@ -193,7 +191,7 @@ export default function SidebarNav() {
         <Menu className="w-7 h-7" />
       </button>
 
-      <IPTVModal isOpen={iptvModalOpen} onClose={() => setIptvModalOpen(false)} />
+      {/* IPTVModal removed from here as it is now inside the /player page */}
 
       {/* Main Layout Adjustments for Sidebar & Mobile Nav */}
       <style dangerouslySetInnerHTML={{ __html: `
