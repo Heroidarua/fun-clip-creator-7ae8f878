@@ -11,6 +11,7 @@ export const createPixDonation = createServerFn({ method: "POST" })
 
     const { amount, userId } = parsed;
     const token = process.env.MERCADOPAGO_ACCESS_TOKEN;
+    const publicKey = process.env.MERCADOPAGO_PUBLIC_KEY;
 
     if (!token) {
       throw new Error("MERCADOPAGO_ACCESS_TOKEN not configured");
@@ -87,7 +88,8 @@ export const createPixDonation = createServerFn({ method: "POST" })
         amount,
         qrCode,
         qrCodeBase64,
-        expiresAt: mpData.date_of_expiration
+        expiresAt: mpData.date_of_expiration,
+        publicKey: publicKey // Pass public key if needed by client
       };
     } catch (err) {
       console.error("Donation creation failed:", err);
