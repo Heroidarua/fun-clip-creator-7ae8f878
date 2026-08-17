@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { Lock, Plus, Trash2, Edit, Eye, EyeOff, ArrowLeft, RefreshCw, Megaphone, Heart, Video, Activity, Clock, Trash } from "lucide-react";
+import { Lock, Plus, Trash2, Edit, Eye, EyeOff, ArrowLeft, RefreshCw, Megaphone, Heart, Video, Activity, Clock, Trash, Palette } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Switch } from "@/components/ui/switch";
 import AdminPwa from "@/components/AdminPwa";
@@ -15,6 +15,12 @@ import {
   MARQUEE_COLOR_STYLES,
   type MarqueeSettings,
 } from "@/lib/marquee-settings";
+import {
+  DEFAULT_BUTTON_SETTINGS,
+  BUTTON_COLOR_OPTIONS,
+  BUTTON_SHAPE_OPTIONS,
+  type ButtonSettings,
+} from "@/lib/button-settings";
 
 type Announcement = {
   id: string;
@@ -46,7 +52,9 @@ export default function Admin() {
   const [marquee, setMarquee] = useState<MarqueeSettings>(DEFAULT_MARQUEE_SETTINGS);
   const [marqueeSaving, setMarqueeSaving] = useState(false);
   const [videoJobs, setVideoJobs] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState<"general" | "video">("general");
+  const [buttonSettings, setButtonSettings] = useState<ButtonSettings>(DEFAULT_BUTTON_SETTINGS);
+  const [buttonSaving, setButtonSaving] = useState(false);
+  const [activeTab, setActiveTab] = useState<"general" | "video" | "appearance">("general");
 
   const invokeManageAnnouncements = async (body: any) => {
     const resp = await fetch('/api/manage-announcements', {
@@ -121,6 +129,26 @@ export default function Admin() {
     setMarqueeSaving(false);
   };
 
+  const fetchButtonSettings = async (pwd: string) => {
+    try {
+      const { data } = await invokeManageAnnouncements({ action: "get-button-settings", password: pwd });
+      if (data?.data) setButtonSettings({ ...DEFAULT_BUTTON_SETTINGS, ...data.data });
+    } catch {
+      /* mantém padrões */
+    }
+  };
+
+  const saveButtonSettings = async () => {
+    setButtonSaving(true);
+    try {
+      await invokeManageAnnouncements({ action: "save-button-settings", password, data: buttonSettings });
+      toast({ title: "Estilo do botão atualizado!", description: "As configurações foram salvas." });
+    } catch (e: any) {
+      toast({ title: "Erro ao salvar", description: e?.message, variant: "destructive" });
+    }
+    setButtonSaving(false);
+  };
+
   const authenticate = async () => {
     setLoading(true);
     try {
@@ -129,6 +157,7 @@ export default function Admin() {
       setAnnouncements(data.data || []);
       fetchDownloaderStatuses();
       fetchMarquee(password);
+      fetchButtonSettings(password);
       fetchVideoJobs();
       toast({ title: "Login realizado com sucesso!" });
     } catch {
@@ -273,6 +302,12 @@ export default function Admin() {
               >
                 Melhorar Vídeo
               </button>
+              <button 
+                onClick={() => setActiveTab("appearance")}
+                className={`text-sm font-bold transition-colors ${activeTab === "appearance" ? "text-primary border-b-2 border-primary" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                Aparência
+              </button>
             </div>
           </div>
           <Link to="/" className="text-muted-foreground hover:text-foreground flex items-center gap-2">
@@ -280,7 +315,127 @@ export default function Admin() {
           </Link>
         </div>
 
-        {activeTab === "video" ? (
+
+
+
+        {activeTab === "appearance" ? (
+          <div className="space-y-6">
+            <div className="bg-card border border-border rounded-xl p-6">
+              <h2 className="font-semibold flex items-center gap-2 mb-4">
+                <Palette size={18} />
+                Estilo do Botão "APOIE O SOS01"
+              </h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground block mb-2">
+                      Cor Principal
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {BUTTON_COLOR_OPTIONS.map((opt) => (
+                        <button
+                          key={opt.value}
+                          type="button"
+                          onClick={() => setButtonSettings({ ...buttonSettings, color: opt.value })}
+                          className={`flex items-center gap-2 p-2 rounded border text-left transition-all ${
+                            buttonSettings.color === opt.value
+                              ? "border-primary bg-primary/10"
+                              : "border-border hover:bg-muted/50"
+                          }`}
+                        >
+                          <div className={`w-3 h-3 rounded-full ${
+                            opt.value === 'primary' ? 'bg-primary' :
+                            opt.value === 'success' ? 'bg-green-500' :
+                            opt.value === 'accent' ? 'bg-accent' :
+                            opt.value === 'warning' ? 'bg-yellow-500' :
+                            opt.value === 'danger' ? 'bg-destructive' :
+                            'bg-foreground'
+                          }`} />
+                          <span className="text-xs">{opt.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground block mb-2">
+                      Forma do Botão
+                    </label>
+                    <div className="grid grid-cols-1 gap-2">
+                      {BUTTON_SHAPE_OPTIONS.map((opt) => (
+                        <button
+                          key={opt.value}
+                          type="button"
+                          onClick={() => setButtonSettings({ ...buttonSettings, shape: opt.value as any })}
+                          className={`flex items-center justify-between p-2 rounded border transition-all ${
+                            buttonSettings.shape === opt.value
+                              ? "border-primary bg-primary/10"
+                              : "border-border hover:bg-muted/50"
+                          }`}
+                        >
+                          <span className="text-xs">{opt.label}</span>
+                          <div className={`h-4 w-12 border border-foreground/50 ${opt.value}`} />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 rounded-lg border border-border">
+                    <div className="space-y-0.5">
+                      <label className="text-sm font-medium">Animar Pulso</label>
+                      <p className="text-xs text-muted-foreground">Efeito de pulso suave contínuo</p>
+                    </div>
+                    <Switch
+                      checked={buttonSettings.animate}
+                      onCheckedChange={(val) => setButtonSettings({ ...buttonSettings, animate: val })}
+                    />
+                  </div>
+
+                  <Button 
+                    type="button"
+                    onClick={saveButtonSettings} 
+                    className="w-full" 
+                    disabled={buttonSaving}
+                  >
+                    {buttonSaving ? "Salvando..." : "Salvar Configurações"}
+                  </Button>
+                </div>
+
+                <div className="bg-muted/30 rounded-lg p-8 flex flex-col items-center justify-center border border-dashed border-border">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-4">
+                    Pré-visualização
+                  </span>
+                  
+                  <button
+                    type="button"
+                    className={`
+                      relative group overflow-hidden border transition-all duration-300 gap-2 px-6 h-11 flex items-center justify-center
+                      ${buttonSettings.shape}
+                      ${buttonSettings.animate ? 'animate-pulse-slow' : ''}
+                      ${buttonSettings.color === 'primary' ? 'border-primary/30 bg-primary/10 text-primary shadow-primary/20' : ''}
+                      ${buttonSettings.color === 'success' ? 'border-green-500/30 bg-green-500/10 text-green-500 shadow-green-500/20' : ''}
+                      ${buttonSettings.color === 'accent' ? 'border-accent/30 bg-accent/10 text-accent shadow-accent/20' : ''}
+                      ${buttonSettings.color === 'warning' ? 'border-yellow-500/30 bg-yellow-500/10 text-yellow-500 shadow-yellow-500/20' : ''}
+                      ${buttonSettings.color === 'danger' ? 'border-destructive/30 bg-destructive/10 text-destructive shadow-destructive/20' : ''}
+                      ${buttonSettings.color === 'foreground' ? 'border-foreground/30 bg-foreground/10 text-foreground shadow-foreground/20' : ''}
+                      shadow-lg
+                    `}
+                  >
+                    <Heart className={`w-4 h-4 fill-current/20`} />
+                    <span className="font-display font-bold text-sm tracking-wide whitespace-nowrap">
+                      APOIE O SOS01
+                    </span>
+                  </button>
+                  
+                  <p className="text-[10px] text-muted-foreground mt-4 text-center">
+                    A cor de fundo terá transparência e efeito glassmorphism no cabeçalho.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : activeTab === "video" ? (
           <div className="space-y-6">
             <div className="bg-card border border-border rounded-xl p-6">
               <div className="flex items-center justify-between mb-4">
@@ -666,14 +821,20 @@ export default function Admin() {
             ))
           )}
         </div>
-        </>
-        )}
-      </div>
-    </div>
-  );
+        <DonationStatsSection password={password} />
+      </>
+    )}
+  </div>
+</div>
+);
 }
 
+
+
+
+
 function DonationStatsSection({ password }: { password: string }) {
+
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -705,10 +866,10 @@ function DonationStatsSection({ password }: { password: string }) {
 
   useEffect(() => {
     fetchStats();
-  }, []);
+  }, [password]);
 
-  if (loading) return null;
-  if (!stats) return null;
+  if (loading || !stats) return null;
+
 
   return (
     <div className="bg-card border border-border rounded-xl p-6 mb-8">

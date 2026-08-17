@@ -12,6 +12,8 @@ const MAX_TITLE = 120;
 const MAX_MESSAGE = 1000;
 const MARQUEE_COLORS = ["primary", "accent", "secondary", "success", "warning", "danger", "foreground"] as const;
 const MARQUEE_DIRECTIONS = ["rtl", "ltr"] as const;
+const BUTTON_COLORS = ["primary", "success", "accent", "warning", "danger", "foreground"] as const;
+const BUTTON_SHAPES = ["rounded-full", "rounded-lg", "rounded-md", "rounded-none"] as const;
 
 function cleanText(value: unknown, max: number): string | null {
   if (typeof value !== "string") return null;
@@ -205,6 +207,59 @@ export const Route = createFileRoute("/api/manage-announcements")({
               const { error } = existing?.id
                 ? await (supabaseAdmin as any).from("marquee_settings").update(values).eq("id", existing.id)
                 : await (supabaseAdmin as any).from("marquee_settings").insert({ ...values, singleton: true });
+
+              if (error) throw error;
+              return Response.json(
+                { success: true },
+                { headers: corsHeaders(request) }
+              );
+            }
+
+            case "get-button-settings": {
+              const { data, error } = await (supabaseAdmin as any)
+                .from("button_settings")
+                .select("*")
+                .limit(1)
+                .maybeSingle();
+
+              if (error) throw error;
+              return Response.json(
+                { data },
+                { headers: corsHeaders(request) }
+              );
+            }
+
+            case "save-button-settings": {
+              const color = String(payload?.color ?? "");
+              const shape = String(payload?.shape ?? "");
+              const animate = payload?.animate;
+
+              if (
+                !BUTTON_COLORS.includes(color as (typeof BUTTON_COLORS)[number]) ||
+                !BUTTON_SHAPES.includes(shape as (typeof BUTTON_SHAPES)[number]) ||
+                typeof animate !== "boolean"
+              ) {
+                return Response.json(
+                  { error: "Parâmetros inválidos" },
+                  { status: 400, headers: corsHeaders(request) }
+                );
+              }
+
+              const { data: existing } = await (supabaseAdmin as any)
+                .from("button_settings")
+                .select("id")
+                .limit(1)
+                .maybeSingle();
+
+              const values = {
+                color,
+                shape,
+                animate,
+              };
+
+              const { error } = existing?.id
+                ? await (supabaseAdmin as any).from("button_settings").update(values).eq("id", existing.id)
+                : await (supabaseAdmin as any).from("button_settings").insert({ ...values, singleton: true });
 
               if (error) throw error;
               return Response.json(
