@@ -82,7 +82,7 @@ export default function IPTVModal({ isOpen, onClose }: IPTVModalProps) {
       setSpinResult(null);
 
       // Chamar o backend para decidir o resultado
-      const result = await spinRoulette({ sessionId });
+      const result = await spinRoulette({ data: { sessionId } });
 
       if (!result.success) {
         toast({
