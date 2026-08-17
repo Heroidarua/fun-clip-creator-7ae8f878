@@ -104,8 +104,10 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
     try {
       const { data: { user } } = await supabase.auth.getUser();
       const result = await createPixDonation({
-        amount: finalAmount,
-        userId: user?.id
+        data: {
+          amount: finalAmount,
+          userId: user?.id
+        }
       });
       setDonationData(result);
       setTimeLeft(600);
