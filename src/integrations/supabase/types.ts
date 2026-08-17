@@ -68,6 +68,57 @@ export type Database = {
         }
         Relationships: []
       }
+      donations: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          expires_at: string | null
+          external_payment_id: string | null
+          id: string
+          paid_at: string | null
+          payment_method: string | null
+          provider: string
+          qr_code: string | null
+          qr_code_base64: string | null
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          expires_at?: string | null
+          external_payment_id?: string | null
+          id?: string
+          paid_at?: string | null
+          payment_method?: string | null
+          provider?: string
+          qr_code?: string | null
+          qr_code_base64?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          expires_at?: string | null
+          external_payment_id?: string | null
+          id?: string
+          paid_at?: string | null
+          payment_method?: string | null
+          provider?: string
+          qr_code?: string | null
+          qr_code_base64?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       downloader_status: {
         Row: {
           category: string
