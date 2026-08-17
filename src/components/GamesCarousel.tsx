@@ -133,7 +133,7 @@ export default function GamesCarousel() {
         <div className="text-center mb-10 sm:mb-12">
           <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-[hsl(var(--accent)/0.12)] border border-[hsl(var(--accent)/0.25)] text-[hsl(var(--accent))] font-semibold text-[11px] tracking-wide mb-5">
             <Gamepad2 className="w-4 h-4" />
-            +60 GAMES
+            2700+ GAMES
             {favorites.length > 0 && (
               <span className="ml-1 flex items-center gap-1 text-[hsl(var(--destructive))]">
                 <Heart className="w-3 h-3" fill="currentColor" />

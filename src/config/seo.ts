@@ -17,7 +17,7 @@ export const SITE_CONFIG = {
   defaultDescription:
     "Plataforma gratuita com downloaders de vídeo, ferramentas de imagem, PDF, texto e IA, além de jogos retrô. Tudo direto no navegador, sem cadastro.",
   defaultImage:
-    "https://storage.googleapis.com/gpt-engineer-file-uploads/W9nvJ5xZlFOuhB2wUyS0coPiyM22/social-images/social-1782694696983-1000953354.webp",
+    "https://fun-clip-creator.lovable.app/og-image.png",
 } as const;
 
 export type ToolCategoryId =

@@ -19,7 +19,7 @@ const SocialProof = () => {
     },
     {
       icon: Gamepad2,
-      value: 60,
+      value: 2757,
       suffix: "+",
       label: "Jogos",
       color: "text-[hsl(var(--retro-cyan))]"

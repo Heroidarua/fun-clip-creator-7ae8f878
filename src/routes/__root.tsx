@@ -15,22 +15,32 @@ import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">
-          Página não encontrada
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 font-orbitron overflow-hidden relative">
+      <div className="absolute inset-0 opacity-5 pointer-events-none">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `linear-gradient(hsl(var(--primary)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)`,
+          backgroundSize: '40px 40px'
+        }}></div>
+      </div>
+      <div className="max-w-md text-center relative z-10">
+        <h1 className="text-8xl font-pixel text-primary neon-text animate-pulse">404</h1>
+        <h2 className="mt-6 text-xl font-pixel text-[hsl(var(--retro-cyan))]">
+          MISSIÃO ABORTADA
         </h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          A página que você está procurando não existe ou foi movida.
+        <p className="mt-4 text-sm text-muted-foreground uppercase tracking-widest leading-relaxed">
+          A página que você está procurando não existe ou foi removida do sistema.
         </p>
-        <div className="mt-6">
+        <div className="mt-8 flex flex-col gap-3">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-sm bg-primary px-6 py-3 text-xs font-pixel text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-cartridge"
           >
-            Voltar para Home
+            VOLTAR PARA HOME
           </Link>
+          <div className="grid grid-cols-2 gap-2">
+             <Link to="/ferramentas" className="border-2 border-border p-2 text-[10px] font-pixel hover:border-primary transition-colors">FERRAMENTAS</Link>
+             <Link to="/jogos" className="border-2 border-border p-2 text-[10px] font-pixel hover:border-primary transition-colors">JOGOS</Link>
+          </div>
         </div>
       </div>
     </div>
