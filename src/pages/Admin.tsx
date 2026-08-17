@@ -820,6 +820,7 @@ export default function Admin() {
             ))
           )}
         </div>
+        <DonationStatsSection password={password} />
       </>
     )}
   </div>
@@ -827,10 +828,8 @@ export default function Admin() {
 );
 }
 
-
-
-
 function DonationStatsSection({ password }: { password: string }) {
+
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
