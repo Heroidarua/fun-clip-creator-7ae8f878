@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 const MP_ACCESS_TOKEN = process.env.MERCADOPAGO_ACCESS_TOKEN;
 
 export const createPixDonation = createServerFn({ method: "POST" })
-  .inputValidator((data) => 
+  .validator((data: { amount: number; userId?: string }) => 
     z.object({
       amount: z.number().min(1).max(50000),
       userId: z.string().uuid().optional(),
@@ -59,6 +59,7 @@ export const createPixDonation = createServerFn({ method: "POST" })
 
       const mpData = await mpResponse.json();
 
+
       if (!mpResponse.ok) {
         console.error("MP Error:", mpData);
         throw new Error(mpData.message || "Mercado Pago API error");
@@ -95,7 +96,7 @@ export const createPixDonation = createServerFn({ method: "POST" })
   });
 
 export const checkDonationStatus = createServerFn({ method: "GET" })
-  .inputValidator((data) => z.object({ id: z.string().uuid() }).parse(data))
+  .validator((data: { id: string }) => z.object({ id: z.string().uuid() }).parse(data))
   .handler(async ({ data }) => {
     const { data: donation, error } = await supabase
       .from("donations")

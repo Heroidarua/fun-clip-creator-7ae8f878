@@ -363,6 +363,8 @@ export default function Admin() {
           </Button>
         </div>
 
+        <DonationStatsSection password={password} />
+
         <div className="bg-card border border-border rounded-xl p-6 mb-8">
           <h2 className="font-semibold mb-1 flex items-center gap-2 text-primary">
             <Megaphone size={18} />

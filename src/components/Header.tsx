@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import ThemeToggle from "@/components/ThemeToggle";
 import NotificationBell from "@/components/NotificationBell";
 import InstallAppButton from "@/components/InstallAppButton";
+import { DonationButton } from "@/components/donations/DonationButton";
 import IPTVModal from "@/components/IPTVModal";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -122,6 +123,7 @@ const Header = () => {
 
           {/* Actions */}
           <div className="flex items-center gap-1.5 sm:gap-2">
+            <DonationButton />
             <InstallAppButton />
             <div className="hidden sm:block"><NotificationBell /></div>
 
