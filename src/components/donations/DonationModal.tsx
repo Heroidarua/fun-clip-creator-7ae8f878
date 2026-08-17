@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Heart, Loader2, Copy, Check, QrCode, Timer, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { createPixDonation } from "@/lib/donations/mercado-pago.functions";
+import { createPixDonation, checkDonationStatus } from "@/lib/donations/mercado-pago.functions";
 import { supabase } from "@/integrations/supabase/client";
 import confetti from "canvas-confetti";
 
@@ -61,37 +61,34 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
     }
   }, [isOpen]);
 
-  // Realtime subscription for status
+  // Verificação de status via servidor (dados de doação não são públicos)
   useEffect(() => {
-    if (donationData?.id && step === "payment") {
-      const channel = supabase
-        .channel(`donation-${donationData.id}`)
-        .on(
-          'postgres_changes',
-          {
-            event: 'UPDATE',
-            schema: 'public',
-            table: 'donations',
-            filter: `id=eq.${donationData.id}`,
-          },
-          (payload) => {
-            if (payload.new.status === 'approved') {
-              setStep("success");
-              confetti({
-                particleCount: 150,
-                spread: 70,
-                origin: { y: 0.6 },
-                colors: ['#22c55e', '#ffffff', '#16a34a']
-              });
-            }
-          }
-        )
-        .subscribe();
+    if (!donationData?.id || step !== "payment") return;
+    let active = true;
 
-      return () => {
-        supabase.removeChannel(channel);
-      };
-    }
+    const interval = setInterval(async () => {
+      try {
+        const result = await checkDonationStatus({ data: { id: donationData.id } } as any);
+        if (!active) return;
+        if (result?.status === "approved") {
+          clearInterval(interval);
+          setStep("success");
+          confetti({
+            particleCount: 150,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ["#22c55e", "#ffffff", "#16a34a"],
+          });
+        }
+      } catch {
+        // silencioso: tentaremos novamente no próximo ciclo
+      }
+    }, 4000);
+
+    return () => {
+      active = false;
+      clearInterval(interval);
+    };
   }, [donationData?.id, step]);
 
   // Timer logic
