@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { Lock, Plus, Trash2, Edit, Eye, EyeOff, ArrowLeft, RefreshCw, Megaphone, Heart } from "lucide-react";
+import { Lock, Plus, Trash2, Edit, Eye, EyeOff, ArrowLeft, RefreshCw, Megaphone, Heart, Video, Activity, Clock, Trash } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Switch } from "@/components/ui/switch";
 import AdminPwa from "@/components/AdminPwa";
@@ -45,6 +45,8 @@ export default function Admin() {
   const [content, setContent] = useState("");
   const [marquee, setMarquee] = useState<MarqueeSettings>(DEFAULT_MARQUEE_SETTINGS);
   const [marqueeSaving, setMarqueeSaving] = useState(false);
+  const [videoJobs, setVideoJobs] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<"general" | "video">("general");
 
   const invokeManageAnnouncements = async (body: any) => {
     const resp = await fetch('/api/manage-announcements', {
@@ -127,11 +129,34 @@ export default function Admin() {
       setAnnouncements(data.data || []);
       fetchDownloaderStatuses();
       fetchMarquee(password);
+      fetchVideoJobs();
       toast({ title: "Login realizado com sucesso!" });
     } catch {
       toast({ title: "Senha incorreta", variant: "destructive" });
     }
     setLoading(false);
+  };
+
+  const fetchVideoJobs = async () => {
+    try {
+      const { listEnhancementJobs } = await import("@/lib/admin.functions");
+      const result = await listEnhancementJobs({ data: { password } });
+      if (result.data) setVideoJobs(result.data);
+    } catch (e) {
+      console.error("Error fetching video jobs:", e);
+    }
+  };
+
+  const handleDeleteVideoJob = async (jobId: string) => {
+    if (!confirm("Excluir este trabalho de vídeo permanentemente?")) return;
+    try {
+      const { deleteEnhancementJob } = await import("@/lib/admin.functions");
+      await deleteEnhancementJob({ data: { password, jobId } });
+      toast({ title: "Trabalho excluído" });
+      fetchVideoJobs();
+    } catch (e) {
+      toast({ title: "Erro ao excluir", variant: "destructive" });
+    }
   };
 
   const fetchAnnouncements = async () => {
@@ -233,11 +258,117 @@ export default function Admin() {
     <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-bold">Painel Administrativo</h1>
+          <div>
+            <h1 className="text-2xl font-bold">Painel Administrativo</h1>
+            <div className="flex gap-4 mt-2">
+              <button 
+                onClick={() => setActiveTab("general")}
+                className={`text-sm font-bold transition-colors ${activeTab === "general" ? "text-primary border-b-2 border-primary" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                Geral
+              </button>
+              <button 
+                onClick={() => setActiveTab("video")}
+                className={`text-sm font-bold transition-colors ${activeTab === "video" ? "text-primary border-b-2 border-primary" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                Melhorar Vídeo
+              </button>
+            </div>
+          </div>
           <Link to="/" className="text-muted-foreground hover:text-foreground flex items-center gap-2">
             <ArrowLeft size={16} /> Voltar ao site
           </Link>
         </div>
+
+        {activeTab === "video" ? (
+          <div className="space-y-6">
+            <div className="bg-card border border-border rounded-xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-semibold flex items-center gap-2">
+                  <Video size={18} />
+                  Fila de Processamento de Vídeo
+                </h2>
+                <Button size="sm" variant="outline" onClick={fetchVideoJobs}>
+                  <RefreshCw size={14} className="mr-2" /> Atualizar
+                </Button>
+              </div>
+              
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm text-left">
+                  <thead className="text-[10px] uppercase tracking-widest text-muted-foreground border-b border-border">
+                    <tr>
+                      <th className="pb-2 font-medium">Data</th>
+                      <th className="pb-2 font-medium">Arquivo</th>
+                      <th className="pb-2 font-medium">Status</th>
+                      <th className="pb-2 font-medium">Progresso</th>
+                      <th className="pb-2 font-medium text-right">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/50">
+                    {videoJobs.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="py-8 text-center text-muted-foreground">
+                          Nenhum trabalho encontrado
+                        </td>
+                      </tr>
+                    ) : (
+                      videoJobs.map((job) => (
+                        <tr key={job.id} className="hover:bg-muted/30 transition-colors">
+                          <td className="py-3 text-muted-foreground">{new Date(job.created_at).toLocaleDateString('pt-BR')}</td>
+                          <td className="py-3 max-w-[150px] truncate" title={job.original_filename}>
+                            {job.original_filename}
+                          </td>
+                          <td className="py-3">
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                              job.status === 'completed' ? 'bg-green-500/20 text-green-500' :
+                              job.status === 'processing' ? 'bg-blue-500/20 text-blue-500 animate-pulse' :
+                              job.status === 'failed' ? 'bg-red-500/20 text-red-500' :
+                              'bg-yellow-500/20 text-yellow-500'
+                            }`}>
+                              {job.status.toUpperCase()}
+                            </span>
+                          </td>
+                          <td className="py-3">
+                            <div className="flex items-center gap-2">
+                              <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
+                                <div 
+                                  className="h-full bg-primary transition-all duration-500" 
+                                  style={{ width: `${job.progress}%` }}
+                                />
+                              </div>
+                              <span className="text-[10px] font-mono">{job.progress}%</span>
+                            </div>
+                          </td>
+                          <td className="py-3 text-right">
+                            <div className="flex justify-end gap-1">
+                              {job.output_url && (
+                                <a 
+                                  href={job.output_url} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="p-1 hover:bg-muted rounded text-primary"
+                                >
+                                  <Eye size={16} />
+                                </a>
+                              )}
+                              <button 
+                                onClick={() => handleDeleteVideoJob(job.id)}
+                                className="p-1 hover:bg-muted rounded text-destructive"
+                              >
+                                <Trash size={16} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <>
 
         <div className="bg-card border border-border rounded-xl p-6 mb-8">
           <div className="flex items-center justify-between mb-4">
@@ -535,6 +666,8 @@ export default function Admin() {
             ))
           )}
         </div>
+        </>
+        )}
       </div>
     </div>
   );
