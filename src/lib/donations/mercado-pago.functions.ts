@@ -50,18 +50,21 @@ export const createPixDonation = createServerFn({ method: "POST" })
           payment_method_id: "pix",
           description: "Doação para SOS01",
           payer: {
-            email: "doador@sos01.com.br", // Placeholder required by MP
+            email: "doador@sos01.com.br",
+            first_name: "Apoiador",
+            last_name: "SOS01",
+            identification: { type: "CPF", number: "19119119100" },
           },
           external_reference: donation.id,
-          installments: 1
         })
       });
 
       const mpData = await mpResponse.json();
 
       if (!mpResponse.ok) {
-        console.error("MP Error:", mpData);
-        throw new Error(mpData.message || "Mercado Pago API error");
+        console.error("MP Error:", JSON.stringify(mpData));
+        const detail = mpData?.cause?.[0]?.description || mpData?.message || "Erro na API do Mercado Pago";
+        throw new Error(detail);
       }
 
       // 3. Update donation with MP details
