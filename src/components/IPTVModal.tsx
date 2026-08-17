@@ -106,7 +106,7 @@ export default function IPTVModal({ isOpen, onClose }: IPTVModalProps) {
       setTimeout(() => {
         setIsSpinning(false);
         setSpinResult(result);
-        setCooldown(5); // 5 segundos de cooldown após o giro
+        setCooldown(10); // 10 segundos de cooldown entre giros conforme solicitado
 
         if (result.won) {
           setCredentials(result.credentials);
