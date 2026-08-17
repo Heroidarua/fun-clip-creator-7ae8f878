@@ -47,13 +47,20 @@ export default function IPTVModal({ isOpen, onClose }: IPTVModalProps) {
   const constraintsRef = useRef(null);
 
   // Criar um ID de sessão persistente no localStorage para controle básico
-  const [sessionId] = useState(() => {
-    const saved = localStorage.getItem("iptv_session_id");
-    if (saved) return saved;
-    const id = Math.random().toString(36).substring(2) + Date.now().toString(36);
-    localStorage.setItem("iptv_session_id", id);
-    return id;
-  });
+  const [sessionId, setSessionId] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("iptv_session_id");
+      if (saved) {
+        setSessionId(saved);
+      } else {
+        const id = Math.random().toString(36).substring(2) + Date.now().toString(36);
+        localStorage.setItem("iptv_session_id", id);
+        setSessionId(id);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
