@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Heart, Loader2, Copy, Check, QrCode, Timer, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { createPixDonation, checkDonationStatus } from "@/lib/donations/mercado-pago.functions";
+import { supabase } from "@/integrations/supabase/client";
 import confetti from "canvas-confetti";
 
 interface DonationModalProps {
@@ -67,7 +68,7 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
 
     const interval = setInterval(async () => {
       try {
-        const result = await checkDonationStatus({ data: { id: donationData.id } });
+        const result = await checkDonationStatus({ data: { id: donationData.id } } as any);
         if (!active) return;
         if (result?.status === "approved") {
           clearInterval(interval);
