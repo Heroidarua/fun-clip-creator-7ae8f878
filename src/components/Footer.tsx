@@ -82,7 +82,7 @@ const Footer = () => {
               </div>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed font-orbitron">
-              Plataforma 100% gratuita de utilidades digitais: downloads de vídeos, ferramentas com IA, jogos clássicos e quadrinhos.
+              Ecossistema digital com +2700 jogos retrô, ferramentas de IA e downloaders seguros.
             </p>
           </div>
 
