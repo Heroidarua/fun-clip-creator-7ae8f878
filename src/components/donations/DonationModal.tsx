@@ -115,6 +115,10 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
         }
       } as any);
       setDonationData(result);
+      
+      if (result.publicKey && import.meta.env.DEV) {
+        console.log("Mercado Pago Public Key initialized");
+      }
       setTimeLeft(600);
       setStep("payment");
     } catch (err: any) {
