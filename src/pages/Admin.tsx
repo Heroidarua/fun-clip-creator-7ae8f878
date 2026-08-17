@@ -539,3 +539,117 @@ export default function Admin() {
     </div>
   );
 }
+
+function DonationStatsSection({ password }: { password: string }) {
+  const [stats, setStats] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchStats = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await fromTable("donations").select("*");
+      if (error) throw error;
+      
+      const approved = data.filter(d => d.status === 'approved');
+      const pending = data.filter(d => d.status === 'pending');
+      const expired = data.filter(d => d.status === 'expired' || d.status === 'rejected' || d.status === 'cancelled');
+      
+      const total = approved.reduce((acc, curr) => acc + Number(curr.amount), 0);
+      
+      setStats({
+        total,
+        count: approved.length,
+        approved: approved.length,
+        pending: pending.length,
+        expired: expired.length,
+        recent: data.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 5)
+      });
+    } catch (e) {
+      console.error(e);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  if (loading) return null;
+  if (!stats) return null;
+
+  return (
+    <div className="bg-card border border-border rounded-xl p-6 mb-8">
+      <h2 className="font-semibold mb-4 flex items-center gap-2 text-green-500">
+        <Heart size={18} className="fill-green-500" />
+        Doações Recebidas
+      </h2>
+      
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div className="p-4 bg-muted/50 rounded-lg border border-border">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Total Recebido</p>
+          <p className="text-xl font-bold text-green-500">R$ {stats.total.toFixed(2)}</p>
+        </div>
+        <div className="p-4 bg-muted/50 rounded-lg border border-border">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Aprovadas</p>
+          <p className="text-xl font-bold">{stats.approved}</p>
+        </div>
+        <div className="p-4 bg-muted/50 rounded-lg border border-border">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Pendentes</p>
+          <p className="text-xl font-bold text-yellow-500">{stats.pending}</p>
+        </div>
+        <div className="p-4 bg-muted/50 rounded-lg border border-border">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Expiradas</p>
+          <p className="text-xl font-bold text-red-500">{stats.expired}</p>
+        </div>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm text-left">
+          <thead className="text-[10px] uppercase tracking-widest text-muted-foreground border-b border-border">
+            <tr>
+              <th className="pb-2 font-medium">Data</th>
+              <th className="pb-2 font-medium">Valor</th>
+              <th className="pb-2 font-medium">Status</th>
+              <th className="pb-2 font-medium text-right">ID</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border/50">
+            {stats.recent.map((d: any) => (
+              <tr key={d.id} className="hover:bg-muted/30 transition-colors">
+                <td className="py-3 text-muted-foreground">{new Date(d.created_at).toLocaleDateString('pt-BR')}</td>
+                <td className="py-3 font-bold">R$ {Number(d.amount).toFixed(2)}</td>
+                <td className="py-3">
+                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                    d.status === 'approved' ? 'bg-green-500/20 text-green-500' :
+                    d.status === 'pending' ? 'bg-yellow-500/20 text-yellow-500' :
+                    'bg-red-500/20 text-red-500'
+                  }`}>
+                    {d.status.toUpperCase()}
+                  </span>
+                </td>
+                <td className="py-3 text-right text-[10px] font-mono text-muted-foreground/50">{d.id.split('-')[0]}...</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+const Heart = ({ size, className }: { size?: number, className?: string }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width={size || 24} 
+    height={size || 24} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+  >
+    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+  </svg>
+);
