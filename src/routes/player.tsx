@@ -12,12 +12,5 @@ const seo = buildSeo({
 
 export const Route = createFileRoute("/player")({
   component: Player,
-  head: () => ({
-    ...seo,
-    links: [
-      ...(seo.links ?? []),
-      { rel: "preconnect", href: "https://wplayer.link", crossOrigin: "anonymous" },
-      { rel: "dns-prefetch", href: "https://wplayer.link" },
-    ],
-  }),
+  head: () => seo,
 });
