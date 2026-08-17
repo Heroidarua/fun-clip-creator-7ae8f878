@@ -822,10 +822,11 @@ export default function Admin() {
         </div>
       </>
     )}
-      </div>
-    </div>
-  );
+  </div>
+</div>
+);
 }
+
 
 
 function DonationStatsSection({ password }: { password: string }) {
