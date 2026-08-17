@@ -3,11 +3,11 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 
 export const createPixDonation = createServerFn({ method: "POST" })
-  .inputValidator(
+  .validator((data: unknown) => 
     z.object({
       amount: z.number().min(1).max(50000),
       userId: z.string().uuid().optional(),
-    })
+    }).parse(data)
   )
   .handler(async ({ data }: { data: any }) => {
     const { amount, userId } = data;
@@ -93,7 +93,7 @@ export const createPixDonation = createServerFn({ method: "POST" })
   });
 
 export const checkDonationStatus = createServerFn({ method: "GET" })
-  .inputValidator(z.object({ id: z.string().uuid() }))
+  .validator((data: unknown) => z.object({ id: z.string().uuid() }).parse(data))
   .handler(async ({ data }: { data: any }) => {
     const { id } = data;
     const { data: donation, error } = await supabase
