@@ -933,7 +933,7 @@ const HeroSection = () => {
       await downloadYoutubeMedia({
         url: canonical,
         type: wantedType,
-        quality: format?.quality || "best",
+        quality: format?.id || "best", // Passamos o ID exato para a API de download resolver
         title: youtubeData.title || "youtube",
         onProgress: (p) => setYoutubeProgress(p ?? 0),
       });
