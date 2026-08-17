@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { Lock, Plus, Trash2, Edit, Eye, EyeOff, ArrowLeft, RefreshCw, Megaphone } from "lucide-react";
+import { Lock, Plus, Trash2, Edit, Eye, EyeOff, ArrowLeft, RefreshCw, Megaphone, Heart } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Switch } from "@/components/ui/switch";
 import AdminPwa from "@/components/AdminPwa";
