@@ -143,7 +143,7 @@ export const TOOLS_SEO: ToolSeo[] = [
     intro:
       "A ferramenta de melhoria de vídeo do SOS01 utiliza algoritmos avançados para aumentar a resolução e a clareza dos seus arquivos MP4. Você pode fazer upscale para HD, Full HD ou 4K, remover granulação (denoise) e melhorar a inteligibilidade das vozes no áudio, tudo de forma modular e gratuita.",
     steps: [
-      "Envie seu arquivo de vídeo (MP4 recomendado, até 500MB).",
+      "Envie seu arquivo de vídeo (MP4 recomendado, até 1GB).",
       "Escolha o nível de melhoria: Leve, Padrão ou Máximo.",
       "Selecione as opções de áudio como redução de ruído e ganho de voz.",
       "Aguarde o processamento e baixe o vídeo aprimorado.",
@@ -158,7 +158,7 @@ export const TOOLS_SEO: ToolSeo[] = [
     faq: [
       {
         question: "Qual o limite de tamanho de arquivo?",
-        answer: "Você pode enviar vídeos de até 500 MB para processamento.",
+        answer: "Você pode enviar vídeos de até 1 GB para processamento.",
       },
       {
         question: "Quanto tempo demora o processamento?",
@@ -172,6 +172,52 @@ export const TOOLS_SEO: ToolSeo[] = [
       },
     ],
     related: ["conversor-mp4-mp3", "gerador-de-thumbnail", "removedor-de-fundo"],
+  },
+  {
+    slug: "youtube-downloader",
+    name: "YouTube Downloader",
+    title: "Baixar Vídeos do YouTube Online Grátis em HD | SOS01",
+    description:
+      "Baixe vídeos do YouTube em HD (720p) e MP3 de forma rápida e segura. Limite de até 1GB, processamento direto e sem anúncios intrusivos.",
+    h1: "YouTube Downloader HD Grátis",
+    keywords: [
+      "baixar video youtube",
+      "youtube downloader hd",
+      "converter youtube para mp3",
+      "baixar video youtube 1gb",
+      "sos01 youtube",
+    ],
+    category: "video",
+    intro:
+      "O YouTube Downloader do SOS01 permite salvar seus vídeos favoritos diretamente no seu dispositivo. Com suporte a arquivos de até 1GB e qualidade 720p HD, nossa ferramenta processa o download de forma otimizada para garantir a melhor velocidade e segurança.",
+    steps: [
+      "Cole a URL do vídeo do YouTube no campo de busca.",
+      "Escolha entre o formato Vídeo (MP4) ou Áudio (MP3).",
+      "Selecione a qualidade desejada.",
+      "Clique em Download e aguarde o processamento final.",
+    ],
+    features: [
+      "Suporte a arquivos grandes (até 1GB)",
+      "Qualidade HD 720p garantida",
+      "Conversão para MP3 de alta qualidade",
+      "Processamento via servidor para maior estabilidade",
+    ],
+    formats: ["MP4", "MP3", "M4A"],
+    faq: [
+      {
+        question: "Qual o limite de tamanho para download?",
+        answer: "Você pode baixar vídeos de até 1 GB de tamanho.",
+      },
+      {
+        question: "Qual a resolução máxima suportada?",
+        answer: "Atualmente suportamos até 720p HD para garantir estabilidade no processamento.",
+      },
+      {
+        question: "É seguro baixar vídeos pelo SOS01?",
+        answer: "Sim, o SOS01 processa os downloads de forma segura e não armazena os arquivos permanentemente.",
+      },
+    ],
+    related: ["melhorar-video", "conversor-mp4-mp3", "gerador-de-thumbnail"],
   },
   {
     slug: "gerador-qrcode",
