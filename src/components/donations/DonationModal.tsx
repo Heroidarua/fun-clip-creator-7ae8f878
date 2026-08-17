@@ -125,9 +125,11 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
       console.error("Donation error:", err);
       setStep("error");
       
-      const errorMessage = err?.message?.includes("communication_error") 
-        ? "Erro de comunicação com o provedor. Verifique se o Pix está ativo na conta."
-        : "Tente novamente em instantes.";
+      const msg = String(err?.message ?? "");
+      const errorMessage =
+        msg.includes("PIX_NAO_HABILITADO") || msg.includes("communication_error")
+          ? "O Pix ainda não está liberado na conta de recebimento. Cadastre uma chave Pix no Mercado Pago e tente novamente."
+          : "Tente novamente em instantes.";
 
       toast({ 
         title: "Erro ao gerar Pix", 
