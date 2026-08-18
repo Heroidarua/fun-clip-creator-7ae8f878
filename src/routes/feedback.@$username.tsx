@@ -120,7 +120,7 @@ function FeedbackProfilePage() {
             <p className="text-muted-foreground">Este usuário ainda não fez nenhuma publicação.</p>
           </div>
         ) : (
-          posts.map(post => <FeedbackCard key={post.id} post={post} />)
+          posts.map(post => <FeedbackCard key={post.id} feedback={post} />)
         )}
       </div>
     </div>

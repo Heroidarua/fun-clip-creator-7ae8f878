@@ -79,7 +79,7 @@ const CreateFeedbackCard = ({ onFeedbackCreated }: CreateFeedbackCardProps) => {
       if (onFeedbackCreated) {
         // Recarregar o feedback com os dados do perfil
         const { data: enrichedFeedback } = await supabase
-          .from('community_feedbacks')
+          .from('community_posts')
           .select(`
             *,
             profiles:user_id (avatar_url, display_name, id),
