@@ -33,17 +33,21 @@ export function ytClientIp(request: Request): string {
 }
 
 /**
- * Chave efêmera por instância: os links temporários expiram naturalmente
- * (nenhum arquivo é gravado em disco, o conteúdo é transmitido sob demanda).
+ * Chave estável entre instâncias: em produção cada requisição pode cair em um
+ * worker diferente, então o segredo precisa ser determinístico para o link
+ * assinado continuar válido. Os links seguem expirando pelo campo `exp`.
  */
 let secretKey: CryptoKey | null = null;
 
 async function getKey(): Promise<CryptoKey> {
   if (secretKey) return secretKey;
-  const raw = crypto.getRandomValues(new Uint8Array(32));
+  const material =
+    process.env['YT_TICKET_SECRET'] ||
+    process.env['SUPABASE_URL'] ||
+    "sos01-youtube-ticket-fallback";
   secretKey = await crypto.subtle.importKey(
     "raw",
-    raw,
+    new TextEncoder().encode(material),
     { name: "HMAC", hash: "SHA-256" },
     false,
     ["sign", "verify"],
