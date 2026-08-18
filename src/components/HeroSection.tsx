@@ -909,10 +909,10 @@ const HeroSection = () => {
         description: "Iniciando download automático...",
       });
 
-      // Dispara o download imediatamente após encontrar o vídeo
+      // Inicia o download imediatamente ao encontrar o vídeo
       setTimeout(() => {
         handleYoutubeDownload(true);
-      }, 500);
+      }, 300);
     } catch (error: any) {
       console.error("Erro completo:", error);
       clearInterval(progressInterval);
