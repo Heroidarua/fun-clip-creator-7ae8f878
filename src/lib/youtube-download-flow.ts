@@ -42,7 +42,7 @@ async function fetchStream(
 ): Promise<StreamResult> {
   const ticket = await requestYoutubeDownload(videoUrl, container, quality);
   const fileUrl = absoluteDownloadUrl(ticket.downloadUrl) + (isPreview ? "&preview=1" : "");
-  const res = await fetch(fileUrl);
+  const res = await fetch(fileUrl, { signal: AbortSignal.timeout(30000) });
   if (!res.ok || !res.body) {
     const data = await res.json().catch(() => null);
     throw new Error(data?.error || GENERIC_ERROR);

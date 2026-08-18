@@ -110,7 +110,7 @@ export const Route = createFileRoute("/api/download-youtube-stream")({
           }
 
           if (!upstream || !upstream.body) {
-            if (sawPartialOnly) {
+            console.error(`YouTube stream failure: videoId=${videoId}, lastStatus=${lastStatus}`);
               return Response.json(
                 {
                   success: false,
