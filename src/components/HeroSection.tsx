@@ -885,11 +885,14 @@ const HeroSection = () => {
     try {
       const info = await fetchYoutubeInfo(normalizedUrl);
       youtubeInfoRef.current = info;
-      setYoutubeFormats(info.formats);
-      const firstVideo = info.formats.find((f) => f.type === "video");
-      const highQualityVideo = info.formats.find((f) => f.type === "video" && (f.quality === "high" || f.quality === "best" || f.id.includes("720")));
-      setYoutubeDownloadType(firstVideo ? "video" : "audio");
-      setYoutubeQuality((highQualityVideo || firstVideo || info.formats[0])?.id ?? "");
+      const availableFormats = info.formats || [];
+      setYoutubeFormats(availableFormats);
+      
+      const firstVideo = availableFormats.find((f) => f.type === "video");
+      const highQualityVideo = availableFormats.find((f) => f.type === "video" && (f.quality === "high" || f.quality === "best" || f.id.includes("720")));
+      
+      setYoutubeDownloadType(firstVideo ? "video" : (availableFormats.some(f => f.type === "audio") ? "audio" : "video"));
+      setYoutubeQuality((highQualityVideo || firstVideo || availableFormats[0])?.id ?? "");
 
       setYoutubeProgress(100);
       clearInterval(progressInterval);
@@ -941,8 +944,14 @@ const HeroSection = () => {
 
   const selectYoutubeType = (type: "video" | "audio") => {
     setYoutubeDownloadType(type);
-    const first = youtubeFormats.find((f) => f.type === type);
-    if (first) setYoutubeQuality(first.id);
+    const availableForType = youtubeFormats.filter((f) => f.type === type);
+    if (availableForType.length > 0) {
+      // Tenta manter a qualidade atual se existir no novo tipo (ex: "best") ou pega a primeira
+      const currentQualityStillAvailable = availableForType.find(f => f.id === youtubeQuality);
+      setYoutubeQuality(currentQualityStillAvailable ? youtubeQuality : availableForType[0].id);
+    } else {
+      setYoutubeQuality("");
+    }
   };
 
 
@@ -1857,6 +1866,7 @@ const HeroSection = () => {
                       <Button
                         variant={youtubeDownloadType === "video" ? "default" : "outline"}
                         onClick={() => selectYoutubeType("video")}
+                        disabled={!youtubeFormats.some(f => f.type === "video")}
                         className={`font-pixel text-[10px] rounded-sm ${youtubeDownloadType === "video" ? "border-2 border-[hsl(var(--retro-cyan))]" : "border-2 border-muted-foreground/50"}`}
                         style={youtubeDownloadType === "video" ? { backgroundColor: 'hsl(0, 100%, 50%)' } : {}}
                       >
@@ -1865,7 +1875,7 @@ const HeroSection = () => {
                       <Button
                         variant={youtubeDownloadType === "audio" ? "default" : "outline"}
                         onClick={() => selectYoutubeType("audio")}
-                        disabled={!youtubeData.audio_url}
+                        disabled={!youtubeFormats.some(f => f.type === "audio")}
                         className={`font-pixel text-[10px] rounded-sm ${youtubeDownloadType === "audio" ? "border-2 border-[hsl(var(--retro-cyan))]" : "border-2 border-muted-foreground/50"}`}
                         style={youtubeDownloadType === "audio" ? { backgroundColor: 'hsl(0, 100%, 50%)' } : {}}
                       >
