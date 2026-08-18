@@ -39,7 +39,7 @@ import { Route as FerramentasYoutubeDownloaderRouteImport } from './routes/ferra
 import { Route as FerramentaMelhorarVideoRouteImport } from './routes/ferramenta.melhorar-video'
 import { Route as FerramentaSlugRouteImport } from './routes/ferramenta.$slug'
 import { Route as FeedbackRegrasRouteImport } from './routes/feedback.regras'
-import { Route as ComunidadeAtusernameRouteImport } from './routes/comunidade.@$username'
+import { Route as FeedbackAtusernameRouteImport } from './routes/feedback.@$username'
 import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
 import { Route as BlogJogosRetroGratisRouteImport } from './routes/blog.jogos-retro-gratis'
 import { Route as BlogGuiaCompletoClipsaveRouteImport } from './routes/blog.guia-completo-clipsave'
@@ -222,10 +222,10 @@ const FeedbackRegrasRoute = FeedbackRegrasRouteImport.update({
   path: '/regras',
   getParentRoute: () => FeedbackRoute,
 } as any)
-const ComunidadeAtusernameRoute = ComunidadeAtusernameRouteImport.update({
-  id: '/comunidade/@$username',
-  path: '/comunidade/@$username',
-  getParentRoute: () => rootRouteImport,
+const FeedbackAtusernameRoute = FeedbackAtusernameRouteImport.update({
+  id: '/@$username',
+  path: '/@$username',
+  getParentRoute: () => FeedbackRoute,
 } as any)
 const CategoriaSlugRoute = CategoriaSlugRouteImport.update({
   id: '/categoria/$slug',
@@ -438,7 +438,7 @@ export interface FileRoutesByFullPath {
   '/blog/guia-completo-clipsave': typeof BlogGuiaCompletoClipsaveRoute
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
-  '/comunidade/@$username': typeof ComunidadeAtusernameRoute
+  '/feedback/@$username': typeof FeedbackAtusernameRoute
   '/feedback/regras': typeof FeedbackRegrasRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/ferramenta/melhorar-video': typeof FerramentaMelhorarVideoRoute
@@ -499,7 +499,7 @@ export interface FileRoutesByTo {
   '/blog/guia-completo-clipsave': typeof BlogGuiaCompletoClipsaveRoute
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
-  '/comunidade/@$username': typeof ComunidadeAtusernameRoute
+  '/feedback/@$username': typeof FeedbackAtusernameRoute
   '/feedback/regras': typeof FeedbackRegrasRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/ferramenta/melhorar-video': typeof FerramentaMelhorarVideoRoute
@@ -563,7 +563,7 @@ export interface FileRoutesById {
   '/blog/guia-completo-clipsave': typeof BlogGuiaCompletoClipsaveRoute
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
-  '/comunidade/@$username': typeof ComunidadeAtusernameRoute
+  '/feedback/@$username': typeof FeedbackAtusernameRoute
   '/feedback/regras': typeof FeedbackRegrasRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/ferramenta/melhorar-video': typeof FerramentaMelhorarVideoRoute
@@ -628,7 +628,7 @@ export interface FileRouteTypes {
     | '/blog/guia-completo-clipsave'
     | '/blog/jogos-retro-gratis'
     | '/categoria/$slug'
-    | '/comunidade/@$username'
+    | '/feedback/@$username'
     | '/feedback/regras'
     | '/ferramenta/$slug'
     | '/ferramenta/melhorar-video'
@@ -689,7 +689,7 @@ export interface FileRouteTypes {
     | '/blog/guia-completo-clipsave'
     | '/blog/jogos-retro-gratis'
     | '/categoria/$slug'
-    | '/comunidade/@$username'
+    | '/feedback/@$username'
     | '/feedback/regras'
     | '/ferramenta/$slug'
     | '/ferramenta/melhorar-video'
@@ -752,7 +752,7 @@ export interface FileRouteTypes {
     | '/blog/guia-completo-clipsave'
     | '/blog/jogos-retro-gratis'
     | '/categoria/$slug'
-    | '/comunidade/@$username'
+    | '/feedback/@$username'
     | '/feedback/regras'
     | '/ferramenta/$slug'
     | '/ferramenta/melhorar-video'
@@ -805,7 +805,6 @@ export interface RootRouteChildren {
   ApiPlayerCatalogRoute: typeof ApiPlayerCatalogRoute
   ApiRemoveBgRoute: typeof ApiRemoveBgRoute
   CategoriaSlugRoute: typeof CategoriaSlugRoute
-  ComunidadeAtusernameRoute: typeof ComunidadeAtusernameRoute
   FerramentaSlugRoute: typeof FerramentaSlugRoute
   FerramentaMelhorarVideoRoute: typeof FerramentaMelhorarVideoRoute
   FerramentasYoutubeDownloaderRoute: typeof FerramentasYoutubeDownloaderRoute
@@ -1029,12 +1028,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FeedbackRegrasRouteImport
       parentRoute: typeof FeedbackRoute
     }
-    '/comunidade/@$username': {
-      id: '/comunidade/@$username'
-      path: '/comunidade/@$username'
-      fullPath: '/comunidade/@$username'
-      preLoaderRoute: typeof ComunidadeAtusernameRouteImport
-      parentRoute: typeof rootRouteImport
+    '/feedback/@$username': {
+      id: '/feedback/@$username'
+      path: '/@$username'
+      fullPath: '/feedback/@$username'
+      preLoaderRoute: typeof FeedbackAtusernameRouteImport
+      parentRoute: typeof FeedbackRoute
     }
     '/categoria/$slug': {
       id: '/categoria/$slug'
@@ -1283,11 +1282,13 @@ const BlogRouteChildren: BlogRouteChildren = {
 const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
 interface FeedbackRouteChildren {
+  FeedbackAtusernameRoute: typeof FeedbackAtusernameRoute
   FeedbackRegrasRoute: typeof FeedbackRegrasRoute
   FeedbackIndexRoute: typeof FeedbackIndexRoute
 }
 
 const FeedbackRouteChildren: FeedbackRouteChildren = {
+  FeedbackAtusernameRoute: FeedbackAtusernameRoute,
   FeedbackRegrasRoute: FeedbackRegrasRoute,
   FeedbackIndexRoute: FeedbackIndexRoute,
 }
@@ -1334,7 +1335,6 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPlayerCatalogRoute: ApiPlayerCatalogRoute,
   ApiRemoveBgRoute: ApiRemoveBgRoute,
   CategoriaSlugRoute: CategoriaSlugRoute,
-  ComunidadeAtusernameRoute: ComunidadeAtusernameRoute,
   FerramentaSlugRoute: FerramentaSlugRoute,
   FerramentaMelhorarVideoRoute: FerramentaMelhorarVideoRoute,
   FerramentasYoutubeDownloaderRoute: FerramentasYoutubeDownloaderRoute,

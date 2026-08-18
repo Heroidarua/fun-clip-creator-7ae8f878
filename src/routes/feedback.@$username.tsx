@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Calendar, MapPin, Link as LinkIcon, Edit3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export const Route = createFileRoute("/comunidade/@$username")({
+export const Route = createFileRoute("/feedback/@$username")({
   component: UserProfilePage,
 });
 
