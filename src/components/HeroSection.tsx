@@ -905,6 +905,7 @@ const HeroSection = () => {
         title: info.title,
         author: info.author,
         duration: info.duration,
+        videoId: info.videoId,
       });
 
       toast({
