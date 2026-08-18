@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -6,12 +6,14 @@ import { Image, Send, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { createPost } from "@/lib/community/services";
 import { toast } from "sonner";
+import { useUserStats } from "@/hooks/useUserStats";
 
 interface CreatePostCardProps {
   onPostCreated?: (post: any) => void;
 }
 
 const CreatePostCard = ({ onPostCreated }: CreatePostCardProps) => {
+  const { profile } = useUserStats();
   const [content, setContent] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -80,8 +82,10 @@ const CreatePostCard = ({ onPostCreated }: CreatePostCardProps) => {
     <div className={`bg-card border border-border rounded-xl shadow-sm transition-all duration-300 ${isExpanded ? 'p-4' : 'p-3'}`}>
       <div className="flex gap-3">
         <Avatar className="w-10 h-10 border border-border/50 shrink-0">
-          <AvatarImage src="" />
-          <AvatarFallback className="bg-primary/10 text-primary font-bold">U</AvatarFallback>
+          <AvatarImage src={profile?.avatar_url || ""} />
+          <AvatarFallback className="bg-primary/10 text-primary font-bold">
+            {(profile?.display_name || "U").substring(0, 2).toUpperCase()}
+          </AvatarFallback>
         </Avatar>
         
         <div className="flex-1 space-y-3">
