@@ -74,7 +74,8 @@ export default function SidebarNav() {
           <TooltipProvider delayDuration={0}>
             {ITEMS.map((item) => {
               const { to, label, icon: Icon, desc } = item;
-              if ((item as any).community && !pathname.startsWith("/comunidade")) return null;
+              // Show community link everywhere to improve visibility
+              // if ((item as any).community && !pathname.startsWith("/comunidade")) return null;
               const active = isActive(to);
               return (
                 <Tooltip key={to}>
@@ -148,7 +149,8 @@ export default function SidebarNav() {
           <div className="flex-1 overflow-y-auto py-6 px-4 space-y-2 custom-scrollbar">
             {ITEMS.map((item) => {
               const { to, label, icon: Icon, desc } = item;
-              if ((item as any).community && !pathname.startsWith("/comunidade")) return null;
+              // Show community link everywhere to improve visibility
+              // if ((item as any).community && !pathname.startsWith("/comunidade")) return null;
               const active = isActive(to);
               return (
                 <Link
