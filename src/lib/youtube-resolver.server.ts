@@ -143,7 +143,7 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality | string = "b
 
   // Sem progressivo (vídeo sem áudio embutido): o proxy precisa transferir o
   // arquivo inteiro, então limitamos o tamanho para não estourar o servidor.
-  const MAX_BYTES = 1024 * 1024 * 1024; // 1 GB
+  const MAX_BYTES = 3 * 1024 * 1024 * 1024; // 3 GB
   const size = (f: any) => Number(f.contentLength || 0);
   let videoOnly = adaptive
     .filter(

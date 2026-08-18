@@ -7,7 +7,7 @@ const GENERIC_ERROR =
   "Não foi possível processar este vídeo. Verifique a URL e tente novamente.";
 
 /** Acima deste tamanho o arquivo não é processado no navegador. */
-export const BROWSER_PROCESS_LIMIT = 500 * 1024 * 1024; // 500MB
+export const BROWSER_PROCESS_LIMIT = 1536 * 1024 * 1024; // 1,5 GB
 
 const TOO_LARGE = "TOO_LARGE";
 
@@ -42,7 +42,7 @@ async function fetchStream(
 ): Promise<StreamResult> {
   const ticket = await requestYoutubeDownload(videoUrl, container, quality);
   const fileUrl = absoluteDownloadUrl(ticket.downloadUrl) + (isPreview ? "&preview=1" : "");
-  const res = await fetch(fileUrl, { signal: AbortSignal.timeout(30000) });
+  const res = await fetch(fileUrl, { signal: AbortSignal.timeout(30 * 60_000) });
   if (!res.ok || !res.body) {
     const data = await res.json().catch(() => null);
     throw new Error(data?.error || GENERIC_ERROR);
@@ -155,7 +155,7 @@ export async function downloadYoutubeMedia({
         return;
       }
       throw new Error(
-        "Este arquivo passa de 500 MB e não pode ser processado no navegador. Escolha uma qualidade menor.",
+        "Este arquivo é grande demais para ser finalizado no navegador. Escolha uma qualidade menor ou baixe apenas o áudio.",
       );
     }
     throw new Error(err.message || GENERIC_ERROR);
