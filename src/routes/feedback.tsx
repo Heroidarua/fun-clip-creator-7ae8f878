@@ -7,9 +7,9 @@ export const Route = createFileRoute("/feedback")({
   component: CommunityLayout,
   head: () =>
     buildSeo({
-      path: "/comunidade",
-      title: "Comunidade SOS01 — O seu espaço social",
-      description: "Conecte-se, compartilhe e interaja na comunidade oficial do SOS01.",
+      path: "/feedback",
+      title: "Central de Sugestões e Feedback — SOS01",
+      description: "Envie suas sugestões, feedbacks e relate problemas para melhorarmos o SOS01.",
     }),
 });
 

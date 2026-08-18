@@ -12,7 +12,7 @@ import {
 
 const ITEMS = [
   { to: "/", label: "Início", icon: Home, desc: "Página Principal" },
-  { to: "/comunidade", label: "Comunidade", icon: Share2, desc: "Espaço Social", community: true },
+  { to: "/feedback", label: "Feedback", icon: Share2, desc: "Sugestões e relatos", community: true },
   
   // Categoria: Ferramentas
   { to: "/ferramentas", label: "Ferramentas", icon: Wrench, desc: "Utilidades & IA" },
