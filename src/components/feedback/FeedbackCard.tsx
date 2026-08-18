@@ -10,7 +10,7 @@ import FeedbackComments from "./FeedbackComments";
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
 
-interface FeedbackCardProps {
+interface FeedbackCardProps { feedback: Feedback; 
   feedback: Feedback;
 }
 

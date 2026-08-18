@@ -40,7 +40,7 @@ export async function getCategories(): Promise<Category[]> {
 }
 
 // --- FEEDBACKS ---
-export async function getPosts(options: { 
+export async function getFeedbacks(options: { 
   categoryId?: string, 
   userId?: string, 
   followingOnly?: boolean,
@@ -76,7 +76,7 @@ export async function getPosts(options: {
   return data as unknown as Feedback[];
 }
 
-export async function createPost(content: string, imageUrl?: string, categoryId?: string) {
+export async function createFeedback(content: string, imageUrl?: string, categoryId?: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Não autenticado");
 
