@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
-import CommunityFeed from "@/components/community/CommunityFeed";
-import { getCategories } from "@/lib/community/services";
-import { Category } from "@/lib/community/types";
+import FeedbackFeed from "@/components/feedback/FeedbackFeed";
+import { getCategories } from "@/lib/feedback/services";
+import { Category } from "@/lib/feedback/types";
 import { useState, useEffect } from "react";
 
 export const Route = createFileRoute("/feedback/")({
@@ -10,7 +10,7 @@ export const Route = createFileRoute("/feedback/")({
 
 function CommunityIndex() {
   const [categories, setCategories] = useState<Category[]>([]);
-  const search = useSearch({ from: "/comunidade/" }) as any;
+  const search = useSearch({ from: "/feedback/" }) as any;
   const currentCategory = search.category;
 
   useEffect(() => {
@@ -25,7 +25,7 @@ function CommunityIndex() {
           <ul className="space-y-2">
             <li>
               <Link 
-                to="/comunidade" 
+                to="/feedback" 
                 className={`flex items-center gap-3 p-2 rounded-lg transition-colors font-bold ${
                   !search.filter && !currentCategory ? "bg-primary/10 text-primary" : "hover:bg-muted"
                 }`}
@@ -35,7 +35,7 @@ function CommunityIndex() {
             </li>
             <li>
               <Link 
-                to="/comunidade" 
+                to="/feedback" 
                 search={{ filter: 'trending' }} 
                 className={`flex items-center gap-3 p-2 rounded-lg transition-colors ${
                   search.filter === 'trending' ? "bg-primary/10 text-primary font-bold" : "hover:bg-muted"
@@ -46,7 +46,7 @@ function CommunityIndex() {
             </li>
             <li>
               <Link 
-                to="/comunidade" 
+                to="/feedback" 
                 search={{ filter: 'following' }} 
                 className={`flex items-center gap-3 p-2 rounded-lg transition-colors ${
                   search.filter === 'following' ? "bg-primary/10 text-primary font-bold" : "hover:bg-muted"
@@ -64,7 +64,7 @@ function CommunityIndex() {
                 categories.map(cat => (
                   <li key={cat.id}>
                     <Link 
-                      to="/comunidade" 
+                      to="/feedback" 
                       search={{ category: cat.slug }}
                       className={`flex items-center gap-2 p-2 rounded-lg text-sm transition-colors ${
                         currentCategory === cat.slug ? "bg-primary/5 text-primary font-bold" : "hover:bg-primary/5 hover:text-primary"
@@ -89,7 +89,7 @@ function CommunityIndex() {
 
       {/* Feed Principal */}
       <main className="col-span-1 lg:col-span-6 space-y-6">
-        <CommunityFeed />
+        <FeedbackFeed />
       </main>
 
       {/* Sidebar Direita (Desktop) */}
@@ -100,7 +100,7 @@ function CommunityIndex() {
             Seu espaço para compartilhar ideias, tirar dúvidas e interagir com outros membros.
           </p>
           <div className="mt-4 space-y-2">
-            <Link to="/comunidade/regras" className="w-full btn-3d py-2 rounded-lg text-xs font-bold flex items-center justify-center uppercase tracking-widest">
+            <Link to="/feedback/regras" className="w-full btn-3d py-2 rounded-lg text-xs font-bold flex items-center justify-center uppercase tracking-widest">
               Regras da Casa
             </Link>
           </div>

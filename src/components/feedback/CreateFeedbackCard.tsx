@@ -4,15 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Image, Send, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { createPost } from "@/lib/community/services";
+import { createPost } from "@/lib/feedback/services";
 import { toast } from "sonner";
 import { useUserStats } from "@/hooks/useUserStats";
 
-interface CreatePostCardProps {
+interface CreateFeedbackCardProps {
   onPostCreated?: (post: any) => void;
 }
 
-const CreatePostCard = ({ onPostCreated }: CreatePostCardProps) => {
+const CreateFeedbackCard = ({ onPostCreated }: CreateFeedbackCardProps) => {
   const { profile } = useUserStats();
   const [content, setContent] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
@@ -176,4 +176,4 @@ const CreatePostCard = ({ onPostCreated }: CreatePostCardProps) => {
   );
 };
 
-export default CreatePostCard;
+export default CreateFeedbackCard;

@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getProfileByUsername, getPosts } from "@/lib/community/services";
+import { getProfileByUsername, getPosts } from "@/lib/feedback/services";
 import { useState, useEffect } from "react";
-import { Profile, Post } from "@/lib/community/types";
+import { Profile, Post } from "@/lib/feedback/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import PostCard from "@/components/community/PostCard";
+import FeedbackCard from "@/components/feedback/FeedbackCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Calendar, MapPin, Link as LinkIcon, Edit3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -120,7 +120,7 @@ function UserProfilePage() {
             <p className="text-muted-foreground">Este usuário ainda não fez nenhuma publicação.</p>
           </div>
         ) : (
-          posts.map(post => <PostCard key={post.id} post={post} />)
+          posts.map(post => <FeedbackCard key={post.id} post={post} />)
         )}
       </div>
     </div>

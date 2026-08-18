@@ -43,7 +43,7 @@ const Header = () => {
   const [iptvModalOpen, setIptvModalOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const routerState = useRouterState();
-  const isCommunityPage = pathname.startsWith("/comunidade");
+  const isCommunityPage = pathname.startsWith("/feedback");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);

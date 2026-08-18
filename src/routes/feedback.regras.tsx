@@ -67,7 +67,7 @@ function CommunityRules() {
         </div>
 
         <div className="flex justify-center pt-6">
-          <Link to="/comunidade" className="btn-3d px-8 py-3 rounded-xl font-bold uppercase tracking-widest text-sm">
+          <Link to="/feedback" className="btn-3d px-8 py-3 rounded-xl font-bold uppercase tracking-widest text-sm">
             EU ENTENDO, VOLTAR AO FEED
           </Link>
         </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Comment as CommentType } from "@/lib/community/types";
-import { getComments, addComment } from "@/lib/community/services";
+import { Comment as CommentType } from "@/lib/feedback/types";
+import { getComments, addComment } from "@/lib/feedback/services";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,11 +9,11 @@ import { ptBR } from "date-fns/locale";
 import { Send, Heart } from "lucide-react";
 import { toast } from "sonner";
 
-interface CommentSectionProps {
+interface FeedbackCommentsProps {
   postId: string;
 }
 
-const CommentSection = ({ postId }: CommentSectionProps) => {
+const FeedbackComments = ({ postId }: FeedbackCommentsProps) => {
   const [comments, setComments] = useState<CommentType[]>([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(true);
@@ -118,4 +118,4 @@ const CommentSection = ({ postId }: CommentSectionProps) => {
   );
 };
 
-export default CommentSection;
+export default FeedbackComments;

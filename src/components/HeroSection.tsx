@@ -1250,7 +1250,7 @@ const HeroSection = () => {
 
             <div className="mt-6 flex flex-wrap justify-center gap-3 animate-fade-in">
               <Link 
-                to="/comunidade"
+                to="/feedback"
                 className="group flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full hover:bg-primary/20 hover:border-primary/40 transition-all"
               >
                 <span className="text-xl group-hover:scale-110 transition-transform">👥</span>

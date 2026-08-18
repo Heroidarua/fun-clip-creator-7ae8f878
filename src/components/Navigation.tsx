@@ -75,7 +75,7 @@ export default function SidebarNav() {
             {ITEMS.map((item) => {
               const { to, label, icon: Icon, desc } = item;
               // Show community link everywhere to improve visibility
-              // if ((item as any).community && !pathname.startsWith("/comunidade")) return null;
+              // if ((item as any).community && !pathname.startsWith("/feedback")) return null;
               const active = isActive(to);
               return (
                 <Tooltip key={to}>
@@ -150,7 +150,7 @@ export default function SidebarNav() {
             {ITEMS.map((item) => {
               const { to, label, icon: Icon, desc } = item;
               // Show community link everywhere to improve visibility
-              // if ((item as any).community && !pathname.startsWith("/comunidade")) return null;
+              // if ((item as any).community && !pathname.startsWith("/feedback")) return null;
               const active = isActive(to);
               return (
                 <Link

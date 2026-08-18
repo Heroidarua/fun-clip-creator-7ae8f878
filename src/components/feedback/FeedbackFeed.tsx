@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
-import { Post } from "@/lib/community/types";
-import { getPosts, getCategories } from "@/lib/community/services";
-import { Category } from "@/lib/community/types";
-import PostCard from "./PostCard";
-import CreatePostCard from "./CreatePostCard";
+import { Post } from "@/lib/feedback/types";
+import { getPosts, getCategories } from "@/lib/feedback/services";
+import { Category } from "@/lib/feedback/types";
+import FeedbackCard from "./FeedbackCard";
+import CreateFeedbackCard from "./CreateFeedbackCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useSearch } from "@tanstack/react-router";
 
-const CommunityFeed = () => {
+const FeedbackFeed = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-  const search = useSearch({ from: "/comunidade/" }) as any;
+  const search = useSearch({ from: "/feedback/" }) as any;
   const currentFilter = search.filter || "recent";
 
   useEffect(() => {
@@ -52,7 +52,7 @@ const CommunityFeed = () => {
 
   return (
     <div className="space-y-6">
-      <CreatePostCard onPostCreated={(newPost) => setPosts([newPost as unknown as Post, ...posts])} />
+      <CreateFeedbackCard onPostCreated={(newPost) => setPosts([newPost as unknown as Post, ...posts])} />
       
       <div className="flex items-center justify-between border-b border-border pb-2">
          <h2 className="font-display text-xl">Últimas Publicações</h2>
@@ -77,7 +77,7 @@ const CommunityFeed = () => {
       ) : (
         <div className="space-y-6">
           {posts.map((post) => (
-            <PostCard key={post.id} post={post} />
+            <FeedbackCard key={post.id} post={post} />
           ))}
         </div>
       )}
@@ -85,4 +85,4 @@ const CommunityFeed = () => {
   );
 };
 
-export default CommunityFeed;
+export default FeedbackFeed;

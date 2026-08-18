@@ -1,20 +1,20 @@
-import { Post } from "@/lib/community/types";
+import { Post } from "@/lib/feedback/types";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Heart, MessageCircle, Share2, MoreHorizontal } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { toggleLike } from "@/lib/community/services";
-import CommentSection from "./CommentSection";
+import { toggleLike } from "@/lib/feedback/services";
+import FeedbackComments from "./FeedbackComments";
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
 
-interface PostCardProps {
+interface FeedbackCardProps {
   post: Post;
 }
 
-const PostCard = ({ post }: PostCardProps) => {
+const FeedbackCard = ({ post }: FeedbackCardProps) => {
   const [likes, setLikes] = useState(post.likes_count);
   const [isLiked, setIsLiked] = useState(post.user_has_liked || false);
   const [showComments, setShowComments] = useState(false);
@@ -34,7 +34,7 @@ const PostCard = ({ post }: PostCardProps) => {
   };
 
   const handleCopyLink = () => {
-    const url = `${window.location.origin}/comunidade/post/${post.id}`;
+    const url = `${window.location.origin}/feedback/post/${post.id}`;
     navigator.clipboard.writeText(url);
     toast.success("Link copiado para a área de transferência!");
   };
@@ -45,7 +45,7 @@ const PostCard = ({ post }: PostCardProps) => {
         {/* Header do Post */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <Link to="/comunidade/@$username" params={{ username: authorName }} className="shrink-0">
+            <Link to="/feedback/@$username" params={{ username: authorName }} className="shrink-0">
               <Avatar className="w-10 h-10 border border-border/50">
                 <AvatarImage src={avatarUrl} />
                 <AvatarFallback className="bg-primary/10 text-primary font-bold">
@@ -55,7 +55,7 @@ const PostCard = ({ post }: PostCardProps) => {
             </Link>
             <div>
               <div className="flex items-center gap-2">
-                <Link to="/comunidade/@$username" params={{ username: authorName }} className="font-bold text-sm hover:underline">
+                <Link to="/feedback/@$username" params={{ username: authorName }} className="font-bold text-sm hover:underline">
                   {authorName}
                 </Link>
                 {post.community_categories && (
@@ -124,10 +124,10 @@ const PostCard = ({ post }: PostCardProps) => {
         </div>
 
         {/* Seção de Comentários Condicional */}
-        {showComments && <CommentSection postId={post.id} />}
+        {showComments && <FeedbackComments postId={post.id} />}
       </div>
     </article>
   );
 };
 
-export default PostCard;
+export default FeedbackCard;
