@@ -110,6 +110,7 @@ export const Route = createFileRoute("/api/download-youtube-stream")({
           }
 
           if (!upstream || !upstream.body) {
+            console.warn(`Streaming falhou para videoId ${videoId}, quality ${quality}, sawPartialOnly: ${sawPartialOnly}`);
             if (sawPartialOnly) {
               return Response.json(
                 {
