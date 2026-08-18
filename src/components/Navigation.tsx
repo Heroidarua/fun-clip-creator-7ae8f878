@@ -12,6 +12,7 @@ import {
 
 const ITEMS = [
   { to: "/", label: "Home", icon: Home, desc: "Início" },
+  { to: "/comunidade", label: "Comunidade", icon: Share2, desc: "Espaço Social" },
   { to: "/ferramentas", label: "Ferramentas", icon: Wrench, desc: "Utilidades" },
   { to: "/busca", label: "Busca", icon: Search, desc: "Encontre rápido" },
   { to: "/jogos", label: "Jogos", icon: Gamepad2, desc: "Diversão" },
