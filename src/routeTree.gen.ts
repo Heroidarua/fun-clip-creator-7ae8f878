@@ -25,6 +25,7 @@ import { Route as FerramentasRouteImport } from './routes/ferramentas'
 import { Route as DmcaRouteImport } from './routes/dmca'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContatoRouteImport } from './routes/contato'
+import { Route as ComunidadeRouteImport } from './routes/comunidade'
 import { Route as ComoUsarRouteImport } from './routes/como-usar'
 import { Route as BuscaRouteImport } from './routes/busca'
 import { Route as BlogRouteImport } from './routes/blog'
@@ -32,6 +33,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ComunidadeIndexRouteImport } from './routes/comunidade.index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as FerramentasYoutubeDownloaderRouteImport } from './routes/ferramentas_.youtube-downloader'
 import { Route as FerramentaMelhorarVideoRouteImport } from './routes/ferramenta.melhorar-video'
@@ -147,6 +149,11 @@ const ContatoRoute = ContatoRouteImport.update({
   path: '/contato',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ComunidadeRoute = ComunidadeRouteImport.update({
+  id: '/comunidade',
+  path: '/comunidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ComoUsarRoute = ComoUsarRouteImport.update({
   id: '/como-usar',
   path: '/como-usar',
@@ -181,6 +188,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ComunidadeIndexRoute = ComunidadeIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ComunidadeRoute,
 } as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/',
@@ -373,6 +385,7 @@ export interface FileRoutesByFullPath {
   '/blog': typeof BlogRouteWithChildren
   '/busca': typeof BuscaRoute
   '/como-usar': typeof ComoUsarRoute
+  '/comunidade': typeof ComunidadeRouteWithChildren
   '/contato': typeof ContatoRoute
   '/dashboard': typeof DashboardRoute
   '/dmca': typeof DmcaRoute
@@ -417,6 +430,7 @@ export interface FileRoutesByFullPath {
   '/ferramenta/melhorar-video': typeof FerramentaMelhorarVideoRoute
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/blog/': typeof BlogIndexRoute
+  '/comunidade/': typeof ComunidadeIndexRoute
   '/api/public/mercadopago-webhook': typeof ApiPublicMercadopagoWebhookRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/video-enhancer/process': typeof ApiVideoEnhancerProcessRoute
@@ -475,6 +489,7 @@ export interface FileRoutesByTo {
   '/ferramenta/melhorar-video': typeof FerramentaMelhorarVideoRoute
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/blog': typeof BlogIndexRoute
+  '/comunidade': typeof ComunidadeIndexRoute
   '/api/public/mercadopago-webhook': typeof ApiPublicMercadopagoWebhookRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/video-enhancer/process': typeof ApiVideoEnhancerProcessRoute
@@ -491,6 +506,7 @@ export interface FileRoutesById {
   '/blog': typeof BlogRouteWithChildren
   '/busca': typeof BuscaRoute
   '/como-usar': typeof ComoUsarRoute
+  '/comunidade': typeof ComunidadeRouteWithChildren
   '/contato': typeof ContatoRoute
   '/dashboard': typeof DashboardRoute
   '/dmca': typeof DmcaRoute
@@ -535,6 +551,7 @@ export interface FileRoutesById {
   '/ferramenta/melhorar-video': typeof FerramentaMelhorarVideoRoute
   '/ferramentas_/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/blog/': typeof BlogIndexRoute
+  '/comunidade/': typeof ComunidadeIndexRoute
   '/api/public/mercadopago-webhook': typeof ApiPublicMercadopagoWebhookRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/video-enhancer/process': typeof ApiVideoEnhancerProcessRoute
@@ -552,6 +569,7 @@ export interface FileRouteTypes {
     | '/blog'
     | '/busca'
     | '/como-usar'
+    | '/comunidade'
     | '/contato'
     | '/dashboard'
     | '/dmca'
@@ -596,6 +614,7 @@ export interface FileRouteTypes {
     | '/ferramenta/melhorar-video'
     | '/ferramentas/youtube-downloader'
     | '/blog/'
+    | '/comunidade/'
     | '/api/public/mercadopago-webhook'
     | '/api/public/pinterest-download'
     | '/api/video-enhancer/process'
@@ -654,6 +673,7 @@ export interface FileRouteTypes {
     | '/ferramenta/melhorar-video'
     | '/ferramentas/youtube-downloader'
     | '/blog'
+    | '/comunidade'
     | '/api/public/mercadopago-webhook'
     | '/api/public/pinterest-download'
     | '/api/video-enhancer/process'
@@ -669,6 +689,7 @@ export interface FileRouteTypes {
     | '/blog'
     | '/busca'
     | '/como-usar'
+    | '/comunidade'
     | '/contato'
     | '/dashboard'
     | '/dmca'
@@ -713,6 +734,7 @@ export interface FileRouteTypes {
     | '/ferramenta/melhorar-video'
     | '/ferramentas_/youtube-downloader'
     | '/blog/'
+    | '/comunidade/'
     | '/api/public/mercadopago-webhook'
     | '/api/public/pinterest-download'
     | '/api/video-enhancer/process'
@@ -729,6 +751,7 @@ export interface RootRouteChildren {
   BlogRoute: typeof BlogRouteWithChildren
   BuscaRoute: typeof BuscaRoute
   ComoUsarRoute: typeof ComoUsarRoute
+  ComunidadeRoute: typeof ComunidadeRouteWithChildren
   ContatoRoute: typeof ContatoRoute
   DashboardRoute: typeof DashboardRoute
   DmcaRoute: typeof DmcaRoute
@@ -883,6 +906,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContatoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/comunidade': {
+      id: '/comunidade'
+      path: '/comunidade'
+      fullPath: '/comunidade'
+      preLoaderRoute: typeof ComunidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/como-usar': {
       id: '/como-usar'
       path: '/como-usar'
@@ -931,6 +961,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/comunidade/': {
+      id: '/comunidade/'
+      path: '/'
+      fullPath: '/comunidade/'
+      preLoaderRoute: typeof ComunidadeIndexRouteImport
+      parentRoute: typeof ComunidadeRoute
     }
     '/blog/': {
       id: '/blog/'
@@ -1206,6 +1243,18 @@ const BlogRouteChildren: BlogRouteChildren = {
 
 const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
+interface ComunidadeRouteChildren {
+  ComunidadeIndexRoute: typeof ComunidadeIndexRoute
+}
+
+const ComunidadeRouteChildren: ComunidadeRouteChildren = {
+  ComunidadeIndexRoute: ComunidadeIndexRoute,
+}
+
+const ComunidadeRouteWithChildren = ComunidadeRoute._addFileChildren(
+  ComunidadeRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
@@ -1214,6 +1263,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlogRoute: BlogRouteWithChildren,
   BuscaRoute: BuscaRoute,
   ComoUsarRoute: ComoUsarRoute,
+  ComunidadeRoute: ComunidadeRouteWithChildren,
   ContatoRoute: ContatoRoute,
   DashboardRoute: DashboardRoute,
   DmcaRoute: DmcaRoute,
