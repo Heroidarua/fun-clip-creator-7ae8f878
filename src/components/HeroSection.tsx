@@ -1248,6 +1248,24 @@ const HeroSection = () => {
               </div>
             </div>
 
+            <div className="mt-6 flex flex-wrap justify-center gap-3 animate-fade-in">
+              <Link 
+                to="/comunidade"
+                className="group flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full hover:bg-primary/20 hover:border-primary/40 transition-all"
+              >
+                <span className="text-xl group-hover:scale-110 transition-transform">👥</span>
+                <span className="font-bold text-[11px] sm:text-xs uppercase tracking-wider text-primary">Comunidade SOS01</span>
+                <span className="flex h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
+              </Link>
+              <Link 
+                to="/ferramentas"
+                className="group flex items-center gap-2 px-4 py-2 bg-muted/30 border border-border/50 rounded-full hover:bg-muted/50 hover:border-border transition-all"
+              >
+                <span className="text-xl group-hover:scale-110 transition-transform">🛠️</span>
+                <span className="font-bold text-[11px] sm:text-xs uppercase tracking-wider text-muted-foreground">Ferramentas Premium</span>
+              </Link>
+            </div>
+
             {/* TikTok Maintenance Warning */}
             {!isActive('tiktok') && <MaintenanceWarning />}
 
