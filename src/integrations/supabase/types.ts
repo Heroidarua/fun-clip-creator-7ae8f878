@@ -855,6 +855,48 @@ export type Database = {
         }
         Relationships: []
       }
+      youtube_jobs: {
+        Row: {
+          created_at: string | null
+          error_message: string | null
+          expires_at: string | null
+          file_path: string | null
+          format: string | null
+          id: string
+          progress: number | null
+          quality: string | null
+          status: string
+          title: string | null
+          video_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          error_message?: string | null
+          expires_at?: string | null
+          file_path?: string | null
+          format?: string | null
+          id?: string
+          progress?: number | null
+          quality?: string | null
+          status?: string
+          title?: string | null
+          video_id: string
+        }
+        Update: {
+          created_at?: string | null
+          error_message?: string | null
+          expires_at?: string | null
+          file_path?: string | null
+          format?: string | null
+          id?: string
+          progress?: number | null
+          quality?: string | null
+          status?: string
+          title?: string | null
+          video_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
