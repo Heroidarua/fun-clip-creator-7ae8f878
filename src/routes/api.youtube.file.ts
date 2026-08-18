@@ -93,7 +93,7 @@ export const Route = createFileRoute("/api/youtube/file")({
           const contentType = upstream.headers.get("content-type") || (type === "audio" ? "audio/mp4" : "video/mp4");
           const filename = `${sanitizeFilename(data?.title || title || "youtube", "youtube")}.${ext}`;
           
-          const headers: Record<string, string> = ytCors({
+          const headers: Record<string, string> = {
             "Content-Type": contentType,
             "Content-Disposition": isPreview 
               ? "inline" 
@@ -101,7 +101,8 @@ export const Route = createFileRoute("/api/youtube/file")({
             "Cache-Control": "no-store",
             "Accept-Ranges": "bytes",
             "x-yt-muxed": data?.muxed ? "1" : "0",
-          });
+            ...ytCors(),
+          };
           
           const len = upstream.headers.get("content-length");
           if (len) headers["Content-Length"] = len;
