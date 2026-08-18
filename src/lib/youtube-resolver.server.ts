@@ -12,6 +12,8 @@ export interface YouTubeData {
   height?: number;
   /** true quando o arquivo de vídeo já contém áudio embutido. */
   muxed?: boolean;
+  /** URL opcional já roteada pelo proxy do backend. */
+  proxy_video_url?: string;
 }
 
 /** Equivalente às expressões de formato do yt-dlp (best / 720p+ / worst). */
