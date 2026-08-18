@@ -325,6 +325,7 @@ const HeroSection = () => {
   const youtubeInfoRef = useRef<YoutubeInfo | null>(null);
   const [youtubeFormats, setYoutubeFormats] = useState<YoutubeFormat[]>([]);
   const [youtubeQuality, setYoutubeQuality] = useState<string>("");
+  const [isYoutubeProcessing, setIsYoutubeProcessing] = useState(false);
 
   // Facebook states
   const [facebookUrl, setFacebookUrl] = useState("");
@@ -910,11 +911,6 @@ const HeroSection = () => {
         title: "Vídeo encontrado!",
         description: "Escolha a qualidade e clique em BAIXAR.",
       });
-
-      // Removido o download automático para evitar confusão no mobile e permitir escolha de qualidade
-      // setTimeout(() => {
-      //   handleYoutubeDownload(true);
-      // }, 500);
     } catch (error: any) {
       console.error("Erro completo:", error);
       clearInterval(progressInterval);
@@ -972,10 +968,11 @@ const HeroSection = () => {
 
     try {
       toast({
-        title: isAutoDownload ? "🚀 Iniciando download automático..." : "⏳ Preparando download...",
+        title: "🚀 Preparando download...",
         description: "Baixando o arquivo. Isso pode levar alguns instantes...",
       });
 
+      setIsYoutubeProcessing(true);
       setYoutubeLoading(true);
       setYoutubeProgress(0);
 
@@ -1000,6 +997,7 @@ const HeroSection = () => {
         variant: "destructive",
       });
     } finally {
+      setIsYoutubeProcessing(false);
       setYoutubeLoading(false);
       setYoutubeProgress(0);
     }
