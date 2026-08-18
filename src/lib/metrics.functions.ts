@@ -14,7 +14,7 @@ export const getSiteStats = createServerFn({ method: "GET" })
       const { data: userStats } = await fromTable("user_stats")
         .select("total_downloads");
       
-      const totalDownloads = (userStats || []).reduce((acc, curr) => acc + (curr.total_downloads || 0), 0);
+      const totalDownloads = (userStats as { total_downloads: number }[] || []).reduce((acc: number, curr) => acc + (curr.total_downloads || 0), 0);
 
       // 3. Contagem de perfis/usuários
       const { count: userCount } = await fromTable("profiles")
