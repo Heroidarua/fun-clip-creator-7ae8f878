@@ -1852,7 +1852,7 @@ const HeroSection = () => {
                       title={youtubeData.title}
                       author={youtubeData.author}
                       duration={youtubeData.duration}
-                      mediaUrl={apiUrl('/api/youtube/file') + `?token=${encodeURIComponent(youtubeData.formats[0]?.id || '')}&quality=worst&preview=1`}
+                      mediaUrl={apiUrl('/api/youtube/file') + `?token=${encodeURIComponent(youtubeData.videoId)}&quality=worst&preview=1`}
                     />
                   </div>
 
