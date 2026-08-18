@@ -54,6 +54,7 @@
         "embla-carousel-autoplay": "^8.6.0",
         "embla-carousel-react": "^8.6.0",
         "exifreader": "^4.41.3",
+        "expr-eval": "^2.0.2",
         "fabric": "^7.4.0",
         "framer-motion": "^12.43.0",
         "franc-min": "^6.2.0",
@@ -1172,6 +1173,8 @@
     "exifreader": ["exifreader@4.41.3", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/exifreader/-/exifreader-4.41.3.tgz", { "optionalDependencies": { "@xmldom/xmldom": "^0.9.10" }, "bin": { "exifreader": "bin/cli.js" } }, "sha512-bjc9UGw2OOj5Z0FQec5HRzH8A/gzGpWJLj74+Hffp0ri6JnjmXKtPXa3Ok9qwSaBa3zFsqAdXo8cjAwtj0bD+Q=="],
 
     "expand-template": ["expand-template@2.0.3", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/expand-template/-/expand-template-2.0.3.tgz", {}, "sha512-XYfuKMvj4O35f/pOXLObndIRvyQ+/+6AhODh+OKWj9S9498pHHn/IMszH+gt0fBCRWMNfk1ZSp5x3AifmnI2vg=="],
+
+    "expr-eval": ["expr-eval@2.0.2", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/expr-eval/-/expr-eval-2.0.2.tgz", {}, "sha512-4EMSHGOPSwAfBiibw3ndnP0AvjDWLsMvGOvWEZ2F96IGk0bIVdjQisOHxReSkE13mHcfbuCiXw+G4y0zv6N8Eg=="],
 
     "exsolve": ["exsolve@1.0.8", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/exsolve/-/exsolve-1.0.8.tgz", {}, "sha512-LmDxfWXwcTArk8fUEnOfSZpHOJ6zOMUJKOtFLFqJLoKJetuQG874Uc7/Kki7zFLzYybmZhp1M7+98pfMqeX8yA=="],
 

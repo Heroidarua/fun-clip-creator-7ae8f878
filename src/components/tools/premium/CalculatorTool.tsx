@@ -3,6 +3,7 @@ import { Calculator, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Parser } from "expr-eval";
 
 export default function CalculatorTool() {
   const [val, setVal] = useState("");
@@ -10,11 +11,12 @@ export default function CalculatorTool() {
 
   const calc = () => {
     try {
-      const sanitized = val.replace(/[^-+*/%0-9.()]/g, "");
-      // eslint-disable-next-line no-eval
-      const result = eval(sanitized);
+      const parser = new Parser();
+      const expr = val.replace(/x/g, "*").replace(/÷/g, "/");
+      const result = parser.evaluate(expr);
       setRes(Number(result).toLocaleString("pt-BR", { maximumFractionDigits: 4 }));
-    } catch {
+    } catch (error) {
+      console.error("Erro no cálculo:", error);
       setRes("Erro");
     }
   };

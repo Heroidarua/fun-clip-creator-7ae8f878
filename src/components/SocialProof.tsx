@@ -1,25 +1,45 @@
 import { Download, Users, Gamepad2, Star, Shield, Clock } from "lucide-react";
 import CounterAnimation from "./CounterAnimation";
+import { useEffect, useState } from "react";
+import { getSiteStats } from "@/lib/metrics.functions";
 
 const SocialProof = () => {
+  const [dynamicStats, setDynamicStats] = useState({
+    downloads: 120000,
+    users: 65000,
+    games: 2757
+  });
+
+  useEffect(() => {
+    getSiteStats().then(res => {
+      if (res.success) {
+        setDynamicStats({
+          downloads: res.downloads,
+          users: res.users,
+          games: res.games
+        });
+      }
+    });
+  }, []);
+
   const stats = [
     {
       icon: Download,
-      value: 120000,
+      value: dynamicStats.downloads,
       suffix: "+",
       label: "Downloads Mídias",
       color: "text-primary"
     },
     {
       icon: Users,
-      value: 65000,
+      value: dynamicStats.users,
       suffix: "+", 
       label: "Usuários Ativos",
       color: "text-[hsl(var(--accent))]"
     },
     {
       icon: Gamepad2,
-      value: 2757,
+      value: dynamicStats.games,
       suffix: "+",
       label: "Jogos",
       color: "text-[hsl(var(--retro-cyan))]"
