@@ -37,6 +37,7 @@ export const Route = createFileRoute("/api/youtube/file")({
           }
 
           const { videoId, type, quality, title } = ticket;
+          const isPreview = u.searchParams.get("preview") === "1";
           const canonicalUrl = `https://www.youtube.com/watch?v=${videoId}`;
           const range = request.headers.get("range");
 
@@ -82,7 +83,9 @@ export const Route = createFileRoute("/api/youtube/file")({
           
           const headers: Record<string, string> = ytCors({
             "Content-Type": contentType,
-            "Content-Disposition": `attachment; filename="${filename.replace(/[^\x20-\x7E]/g, "_").replace(/"/g, "")}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
+            "Content-Disposition": isPreview 
+              ? "inline" 
+              : `attachment; filename="${filename.replace(/[^\x20-\x7E]/g, "_").replace(/"/g, "")}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
             "Cache-Control": "no-store",
             "Accept-Ranges": "bytes",
             "x-yt-muxed": data?.muxed ? "1" : "0",
