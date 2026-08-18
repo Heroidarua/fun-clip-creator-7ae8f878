@@ -285,6 +285,7 @@ interface YouTubeData {
   author: string;
   duration?: number;
   download_page_url?: string;
+  proxy_video_url?: string;
 }
 
 
@@ -1845,7 +1846,7 @@ const HeroSection = () => {
                       title={youtubeData.title}
                       author={youtubeData.author}
                       duration={youtubeData.duration}
-                      mediaUrl={apiUrl('/api/download-youtube-stream') + `?url=${encodeURIComponent(parseYouTubeUrl(youtubeUrl)?.canonicalUrl || youtubeUrl)}&type=video&quality=worst&preview=1`}
+                      mediaUrl={youtubeData.proxy_video_url || apiUrl('/api/download-youtube-stream') + `?url=${encodeURIComponent(parseYouTubeUrl(youtubeUrl)?.canonicalUrl || youtubeUrl)}&type=video&quality=worst&preview=1`}
                     />
                   </div>
 

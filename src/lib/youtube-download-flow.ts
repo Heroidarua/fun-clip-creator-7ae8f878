@@ -38,9 +38,10 @@ async function fetchStream(
   container: "mp4" | "m4a",
   quality: string,
   onRatio: (ratio: number | null) => void,
+  isPreview = false,
 ): Promise<StreamResult> {
   const ticket = await requestYoutubeDownload(videoUrl, container, quality);
-  const fileUrl = absoluteDownloadUrl(ticket.downloadUrl);
+  const fileUrl = absoluteDownloadUrl(ticket.downloadUrl) + (isPreview ? "&preview=1" : "");
   const res = await fetch(fileUrl);
   if (!res.ok || !res.body) {
     const data = await res.json().catch(() => null);
@@ -108,6 +109,7 @@ export async function downloadYoutubeMedia({
       onStage?.("Baixando o áudio...");
       const audio = await fetchStream(url, "m4a", quality, (r) =>
         onProgress?.(r == null ? null : Math.round(r * 100)),
+        false
       );
       saveBlob(
         new Blob([audio.bytes.slice().buffer as ArrayBuffer], { type: audio.contentType }),
@@ -120,6 +122,7 @@ export async function downloadYoutubeMedia({
     onStage?.("Baixando o vídeo...");
     const video = await fetchStream(url, "mp4", quality, (r) =>
       onProgress?.(r == null ? null : Math.round(r * 60)),
+      false
     );
 
     if (video.muxed) {
@@ -134,6 +137,7 @@ export async function downloadYoutubeMedia({
     onStage?.("Baixando o áudio...");
     const audio = await fetchStream(url, "m4a", "best", (r) =>
       onProgress?.(60 + (r == null ? 0 : Math.round(r * 20))),
+      false
     );
     onStage?.("Juntando áudio e vídeo (isso pode levar alguns segundos)...");
     const { muxVideoAndAudio } = await import("@/lib/youtube-mux");
