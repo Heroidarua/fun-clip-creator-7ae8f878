@@ -15,7 +15,7 @@ function CommunityIndex() {
             <li>
               <Link to="/comunidade" className="flex items-center gap-3 p-2 rounded-lg bg-primary/10 text-primary font-bold">
                 <span className="text-xl">🏠</span> Início
-              </a>
+              </Link>
             </li>
             <li>
               <Link to="/comunidade" search={{ filter: 'trending' }} className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted transition-colors">
