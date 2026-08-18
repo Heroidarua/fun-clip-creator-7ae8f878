@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { buildSeo } from "@/lib/seo";
 
-export const Route = createFileRoute("/comunidade")({
+export const Route = createFileRoute("/feedback")({
   component: CommunityLayout,
   head: () =>
     buildSeo({

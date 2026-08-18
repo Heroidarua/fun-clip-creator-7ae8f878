@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { ShieldAlert, Info } from "lucide-react";
 
-export const Route = createFileRoute("/comunidade/regras")({
+export const Route = createFileRoute("/feedback/regras")({
   component: CommunityRules,
 });
 

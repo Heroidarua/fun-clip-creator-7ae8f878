@@ -4,7 +4,7 @@ import { getCategories } from "@/lib/community/services";
 import { Category } from "@/lib/community/types";
 import { useState, useEffect } from "react";
 
-export const Route = createFileRoute("/comunidade/")({
+export const Route = createFileRoute("/feedback/")({
   component: CommunityIndex,
 });
 
