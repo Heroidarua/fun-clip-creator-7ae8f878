@@ -17,7 +17,11 @@ function sanitizeFilename(name: string, fallback: string): string {
 }
 
 /** O CDN do YouTube recusa faixas abertas (bytes=0-); usamos blocos fixos. */
-const CHUNK_BYTES = 1_000_000;
+const CHUNK_BYTES = 4_000_000;
+/** O googlevideo bloqueia rajadas de requisições: tentamos novamente com pausa. */
+const MAX_CHUNK_ATTEMPTS = 6;
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 interface ContentRange {
   start: number;
@@ -35,16 +39,66 @@ function parseContentRange(value: string | null): ContentRange | null {
   };
 }
 
+export interface MediaSource {
+  url: string;
+  headers: Record<string, string>;
+}
+
+/** Busca um bloco tentando novamente e renovando o link quando o CDN recusa. */
+async function fetchChunk(
+  source: MediaSource,
+  start: number,
+  end: number,
+  refresh: () => Promise<MediaSource | null>,
+): Promise<{ response: Response; range: ContentRange; source: MediaSource }> {
+  let current = source;
+  let lastError = "upstream chunk failed";
+
+  for (let attempt = 0; attempt < MAX_CHUNK_ATTEMPTS; attempt++) {
+    try {
+      const res = await fetch(current.url, {
+        headers: { ...current.headers, Range: `bytes=${start}-${end}` },
+      });
+      if (res.ok && res.body) {
+        const range = parseContentRange(res.headers.get("content-range"));
+        if (range && range.start === start && range.end >= start) {
+          return { response: res, range, source: current };
+        }
+        const length = Number(res.headers.get("content-length") || 0);
+        if (!range && length > 0) {
+          return {
+            response: res,
+            range: { start, end: start + length - 1, total: start + length },
+            source: current,
+          };
+        }
+      }
+      lastError = `upstream status ${res.status}`;
+      await res.body?.cancel().catch(() => {});
+    } catch (error: any) {
+      lastError = error?.message || lastError;
+    }
+
+    await sleep(Math.min(5000, 500 * 2 ** attempt));
+    if (attempt >= 1) {
+      const renewed = await refresh().catch(() => null);
+      if (renewed) current = renewed;
+    }
+  }
+
+  throw new Error(lastError);
+}
+
 /** Transmite o arquivo inteiro pedindo blocos sequenciais ao CDN. */
 function chunkedStream(
-  mediaUrl: string,
-  baseHeaders: Record<string, string>,
-  start: number,
+  source: MediaSource,
   total: number,
   first: Response,
   firstRange: ContentRange,
+  refresh: () => Promise<MediaSource | null>,
 ): ReadableStream<Uint8Array> {
   let cursor = firstRange.end + 1;
+  let active = source;
   let current: ReadableStreamDefaultReader<Uint8Array> | null =
     first.body!.getReader();
 
@@ -64,21 +118,15 @@ function chunkedStream(
           return;
         }
         const end = Math.min(cursor + CHUNK_BYTES - 1, total - 1);
-        const res = await fetch(mediaUrl, {
-          headers: { ...baseHeaders, Range: `bytes=${cursor}-${end}` },
-        });
-        if (!res.ok || !res.body) {
-          controller.error(new Error("upstream chunk failed"));
+        try {
+          const chunk = await fetchChunk(active, cursor, end, refresh);
+          active = chunk.source;
+          cursor = chunk.range.end + 1;
+          current = chunk.response.body!.getReader();
+        } catch (error) {
+          controller.error(error as Error);
           return;
         }
-        const receivedRange = parseContentRange(res.headers.get("content-range"));
-        if (!receivedRange || receivedRange.start !== cursor || receivedRange.end < cursor) {
-          await res.body.cancel().catch(() => {});
-          controller.error(new Error("upstream returned an invalid byte range"));
-          return;
-        }
-        cursor = receivedRange.end + 1;
-        current = res.body.getReader();
       }
     },
     cancel() {
@@ -110,7 +158,7 @@ export const Route = createFileRoute("/api/youtube/file")({
             );
           }
 
-          const { resolveYoutubeCandidates, isDirectMediaUrl, BROWSER_UA } = await import(
+          const { resolveYoutube, resolveYoutubeCandidates, isDirectMediaUrl, BROWSER_UA } = await import(
             "@/lib/youtube-resolver.server"
           );
 
@@ -122,6 +170,19 @@ export const Route = createFileRoute("/api/youtube/file")({
           let total = 0;
           let title = ticket.title;
           let muxed = false;
+
+          /** Gera um link novo do CDN quando o atual é recusado no meio do download. */
+          const refresh = async (): Promise<MediaSource | null> => {
+            const fresh = await resolveYoutube(canonical, ticket.videoId, ticket.quality);
+            const data = fresh?.data;
+            if (!data) return null;
+            const freshUrl = ticket.type === "audio" ? data.audio_url : data.video_url;
+            if (!isDirectMediaUrl(freshUrl)) return null;
+            return {
+              url: freshUrl!,
+              headers: { "User-Agent": data.media_ua || BROWSER_UA, Accept: "*/*" },
+            };
+          };
 
           for await (const candidate of resolveYoutubeCandidates(
             canonical,
@@ -136,41 +197,27 @@ export const Route = createFileRoute("/api/youtube/file")({
               "User-Agent": candidate.media_ua || BROWSER_UA,
               Accept: "*/*",
             };
+            const source: MediaSource = { url: mediaUrl!, headers: baseHeaders };
             try {
               const firstEnd = rangeStart + CHUNK_BYTES - 1;
-              const res = await fetch(mediaUrl!, {
-                headers: { ...baseHeaders, Range: `bytes=${rangeStart}-${firstEnd}` },
-              });
-              
-              if (res.ok && res.body) {
-                const receivedRange = parseContentRange(res.headers.get("content-range"));
-                const contentLength = Number(res.headers.get("content-length") || 0);
-                if (res.status === 206 && (!receivedRange || receivedRange.start !== rangeStart)) {
-                  await res.body.cancel().catch(() => {});
-                  continue;
-                }
-                total = receivedRange?.total || contentLength;
-                if (total > YT_MAX_FILE_BYTES) {
-                  return Response.json(
-                    { success: false, error: "Arquivo maior que o limite permitido (1 GB)." },
-                    { status: 413, headers: JSON_HEADERS },
-                  );
-                }
-                contentType = res.headers.get("content-type") || "";
-                muxed = candidate.muxed !== false;
-                body = receivedRange && receivedRange.end + 1 < total
-                  ? chunkedStream(
-                      mediaUrl!,
-                      baseHeaders,
-                      rangeStart,
-                      total,
-                      res,
-                      receivedRange,
-                    )
-                  : res.body;
-                title = title || candidate.title;
-                break;
+              const first = await fetchChunk(source, rangeStart, firstEnd, refresh);
+              const receivedRange = first.range;
+              total = receivedRange.total;
+              if (total > YT_MAX_FILE_BYTES) {
+                await first.response.body?.cancel().catch(() => {});
+                return Response.json(
+                  { success: false, error: "Arquivo maior que o limite permitido (3 GB)." },
+                  { status: 413, headers: JSON_HEADERS },
+                );
               }
+              contentType = first.response.headers.get("content-type") || "";
+              muxed = candidate.muxed !== false;
+              body =
+                receivedRange.end + 1 < total
+                  ? chunkedStream(first.source, total, first.response, receivedRange, refresh)
+                  : first.response.body!;
+              title = title || candidate.title;
+              break;
             } catch {
               /* tenta o próximo candidato */
             }

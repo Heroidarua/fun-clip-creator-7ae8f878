@@ -3,9 +3,9 @@
  * Não é usado por nenhum outro módulo do SOS01.
  */
 
-export const YT_MAX_DURATION_SECONDS = 60 * 60; // 1 hora
-export const YT_MAX_FILE_BYTES = 1024 * 1024 * 1024; // 1 GB
-export const YT_LINK_TTL_SECONDS = 600; // 10 minutos
+export const YT_MAX_DURATION_SECONDS = 4 * 60 * 60; // 4 horas
+export const YT_MAX_FILE_BYTES = 3 * 1024 * 1024 * 1024; // 3 GB
+export const YT_LINK_TTL_SECONDS = 3600; // 1 hora
 export const YT_PROCESS_TIMEOUT_MS = 25000;
 
 /** Rate limiting simples por IP (janela deslizante em memória). */
