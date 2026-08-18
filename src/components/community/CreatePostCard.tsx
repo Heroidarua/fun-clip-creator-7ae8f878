@@ -42,10 +42,17 @@ const CreatePostCard = ({ onPostCreated }: CreatePostCardProps) => {
 
     setLoading(true);
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("Você precisa estar logado para publicar!");
+        setLoading(false);
+        return;
+      }
+
       let imageUrl = "";
       if (selectedImage) {
         const fileExt = selectedImage.name.split('.').pop();
-        const fileName = `${Math.random()}.${fileExt}`;
+        const fileName = `${user.id}-${Math.random()}.${fileExt}`;
         const filePath = `posts/${fileName}`;
 
         const { error: uploadError } = await supabase.storage
@@ -69,7 +76,20 @@ const CreatePostCard = ({ onPostCreated }: CreatePostCardProps) => {
       setImagePreview(null);
       setIsExpanded(false);
       
-      if (onPostCreated) onPostCreated(newPost);
+      if (onPostCreated) {
+        // Recarregar o post com os dados do perfil
+        const { data: enrichedPost } = await supabase
+          .from('community_posts')
+          .select(`
+            *,
+            profiles:user_id (avatar_url, display_name, id),
+            community_categories:category_id (name, slug, icon)
+          `)
+          .eq('id', (newPost as any).id)
+          .single();
+          
+        onPostCreated(enrichedPost);
+      }
     } catch (error: any) {
       console.error(error);
       toast.error("Erro ao publicar: " + error.message);

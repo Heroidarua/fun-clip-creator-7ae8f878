@@ -16,16 +16,20 @@ const CommunityFeed = () => {
     async function loadPosts() {
       setLoading(true);
       try {
-        // No futuro, passar o filtro para o serviço
-        const data = await getPosts();
+        const categorySlug = search.category;
+        let categoryId = undefined;
         
-        // Simulação básica de filtros no cliente por enquanto
-        let filtered = [...data];
-        if (currentFilter === "trending") {
-          filtered.sort((a, b) => (b.likes_count + b.comments_count) - (a.likes_count + a.comments_count));
+        if (categorySlug) {
+          const cats = await getCategories();
+          categoryId = cats.find(c => c.slug === categorySlug)?.id;
         }
+
+        const data = await getPosts({
+          categoryId,
+          trending: currentFilter === "trending"
+        });
         
-        setPosts(filtered);
+        setPosts(data);
       } catch (error) {
         console.error("Failed to load posts", error);
       } finally {
@@ -33,7 +37,7 @@ const CommunityFeed = () => {
       }
     }
     loadPosts();
-  }, [currentFilter]);
+  }, [currentFilter, search.category]);
 
   if (loading) {
     return (
