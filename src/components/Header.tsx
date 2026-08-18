@@ -123,10 +123,15 @@ const Header = () => {
 
           {/* Actions */}
           <div className="flex items-center gap-1.5 sm:gap-2">
+            <Link 
+              to="/comunidade" 
+              className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors mr-2"
+            >
+              <span className="text-lg">👥</span>
+              <span className="text-xs font-bold uppercase tracking-wider">Comunidade</span>
+            </Link>
             <DonationButton />
             <InstallAppButton />
-            <div className="hidden sm:block"><NotificationBell /></div>
-
             <div className="hidden sm:block"><NotificationBell /></div>
           </div>
         </div>
