@@ -85,6 +85,7 @@ export const Route = createFileRoute("/api/youtube/file")({
             "Content-Disposition": `attachment; filename="${filename.replace(/[^\x20-\x7E]/g, "_").replace(/"/g, "")}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
             "Cache-Control": "no-store",
             "Accept-Ranges": "bytes",
+            "x-yt-muxed": data?.muxed ? "1" : "0",
           });
           
           const len = upstream.headers.get("content-length");

@@ -48,6 +48,21 @@ async function fetchStream(
   }
   const total = Number(res.headers.get("content-length") || 0);
   const muxed = res.headers.get("x-yt-muxed") !== "0";
+
+  // Se o navegador receber um arquivo que não precisa de muxing (áudio ou vídeo muxed),
+  // redirecionamos diretamente para o link de download para aproveitar o streaming do navegador
+  // e contornar limites de memória de blob (especialmente no mobile/Safari).
+  if (container === "m4a" || muxed) {
+    window.location.href = fileUrl;
+    // Retornamos um resultado "vazio" mas bem-sucedido para que o chamador saiba que acabou
+    return {
+      bytes: new Uint8Array(0),
+      contentType: res.headers.get("content-type") || "application/octet-stream",
+      directUrl: fileUrl,
+      muxed: true,
+    };
+  }
+
   if (total > BROWSER_PROCESS_LIMIT) {
     await res.body.cancel().catch(() => {});
     const err = new Error(TOO_LARGE) as Error & { directUrl?: string; muxed?: boolean };
@@ -109,10 +124,7 @@ export async function downloadYoutubeMedia({
       const audio = await fetchStream(url, "m4a", quality, (r) =>
         onProgress?.(r == null ? null : Math.round(r * 100)),
       );
-      saveBlob(
-        new Blob([audio.bytes.slice().buffer as ArrayBuffer], { type: audio.contentType }),
-        `${name}.m4a`,
-      );
+      // O redirecionamento já foi feito dentro do fetchStream para m4a
       onProgress?.(100);
       return;
     }
@@ -123,10 +135,7 @@ export async function downloadYoutubeMedia({
     );
 
     if (video.muxed) {
-      saveBlob(
-        new Blob([video.bytes.slice().buffer as ArrayBuffer], { type: "video/mp4" }),
-        `${name}.mp4`,
-      );
+      // O redirecionamento já foi feito dentro do fetchStream para vídeo muxed
       onProgress?.(100);
       return;
     }

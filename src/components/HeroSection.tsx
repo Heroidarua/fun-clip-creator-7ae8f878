@@ -325,6 +325,7 @@ const HeroSection = () => {
   const youtubeInfoRef = useRef<YoutubeInfo | null>(null);
   const [youtubeFormats, setYoutubeFormats] = useState<YoutubeFormat[]>([]);
   const [youtubeQuality, setYoutubeQuality] = useState<string>("");
+  const [isYoutubeProcessing, setIsYoutubeProcessing] = useState(false);
 
   // Facebook states
   const [facebookUrl, setFacebookUrl] = useState("");
@@ -908,13 +909,8 @@ const HeroSection = () => {
 
       toast({
         title: "Vídeo encontrado!",
-        description: "Iniciando download automático...",
+        description: "Escolha a qualidade e clique em BAIXAR.",
       });
-
-      // Dispara o download imediatamente após encontrar o vídeo
-      setTimeout(() => {
-        handleYoutubeDownload(true);
-      }, 500);
     } catch (error: any) {
       console.error("Erro completo:", error);
       clearInterval(progressInterval);
@@ -972,10 +968,11 @@ const HeroSection = () => {
 
     try {
       toast({
-        title: isAutoDownload ? "🚀 Iniciando download automático..." : "⏳ Preparando download...",
+        title: "🚀 Preparando download...",
         description: "Baixando o arquivo. Isso pode levar alguns instantes...",
       });
 
+      setIsYoutubeProcessing(true);
       setYoutubeLoading(true);
       setYoutubeProgress(0);
 
@@ -1000,6 +997,7 @@ const HeroSection = () => {
         variant: "destructive",
       });
     } finally {
+      setIsYoutubeProcessing(false);
       setYoutubeLoading(false);
       setYoutubeProgress(0);
     }
@@ -1930,19 +1928,24 @@ const HeroSection = () => {
 
                   <Button
                     onClick={() => handleYoutubeDownload(false)}
+                    disabled={isYoutubeProcessing}
                     className={`w-full h-12 font-pixel text-xs text-white border-2 border-[hsl(var(--retro-cyan))] shadow-[4px_4px_0_hsl(var(--retro-cyan))] hover:shadow-[2px_2px_0_hsl(var(--retro-cyan))] hover:translate-x-[2px] hover:translate-y-[2px] transition-all rounded-sm ${
                       clickedYoutubeButton === "download" ? "translate-x-[2px] translate-y-[2px] shadow-[2px_2px_0_hsl(var(--retro-cyan))]" : ""
                     }`}
                     style={{ backgroundColor: 'hsl(0, 100%, 50%)' }}
                   >
-                    {youtubeDownloadType === "video" ? (
-                      <>
-                        <Download className="mr-2 w-4 h-4" />
-                        BAIXAR
-                      </>
+                    {isYoutubeProcessing ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white animate-spin"></div>
+                        <span>PROCESSANDO...</span>
+                      </div>
                     ) : (
                       <>
-                        <Headphones className="mr-2 w-4 h-4" />
+                        {youtubeDownloadType === "video" ? (
+                          <Download className="mr-2 w-4 h-4" />
+                        ) : (
+                          <Headphones className="mr-2 w-4 h-4" />
+                        )}
                         BAIXAR
                       </>
                     )}
