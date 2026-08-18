@@ -11,6 +11,7 @@ export const Route = createFileRoute("/api/youtube/status/")({
 
       GET: async ({ params }) => {
         try {
+          // @ts-ignore -Params are typed by the route path
           const { id } = params;
           if (!id) {
             return Response.json(
@@ -39,8 +40,6 @@ export const Route = createFileRoute("/api/youtube/status/")({
               progress: job.progress,
               title: job.title,
               error: job.error_message,
-              // Se o job estiver completo, o downloadUrl pode ser gerado ou retornado
-              // Para simplificar agora, focamos no status
             },
             { headers: JSON_HEADERS }
           );
