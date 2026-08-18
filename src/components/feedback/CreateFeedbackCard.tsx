@@ -38,7 +38,15 @@ const CreateFeedbackCard = ({ onFeedbackCreated }: CreateFeedbackCardProps) => {
   };
 
   const handlePublish = async () => {
-    if (!content.trim() && !selectedImage) return;
+    if (!content.trim() && !selectedImage) {
+      toast.error("Por favor, descreva sua sugestão ou anexe uma imagem.");
+      return;
+    }
+
+    if (content.length > 2000) {
+      toast.error("Sugestão muito longa! Máximo de 2000 caracteres.");
+      return;
+    }
 
     setLoading(true);
     try {
@@ -78,7 +86,7 @@ const CreateFeedbackCard = ({ onFeedbackCreated }: CreateFeedbackCardProps) => {
       
       if (onFeedbackCreated) {
         // Recarregar o feedback com os dados do perfil
-        const { data: enrichedFeedback } = await supabase
+        const { data: enrichedFeedback, error: fetchError } = await supabase
           .from('community_posts')
           .select(`
             *,
@@ -88,6 +96,7 @@ const CreateFeedbackCard = ({ onFeedbackCreated }: CreateFeedbackCardProps) => {
           .eq('id', (newFeedback as any).id)
           .single();
           
+        if (fetchError) throw fetchError;
         onFeedbackCreated(enrichedFeedback);
       }
     } catch (error: any) {

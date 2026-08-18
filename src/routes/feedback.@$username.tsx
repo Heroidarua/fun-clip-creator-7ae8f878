@@ -21,12 +21,13 @@ function FeedbackProfilePage() {
   useEffect(() => {
     async function loadData() {
       try {
-        // No contexto atual, usamos display_name como username (@nome)
         const p = await getProfileByUsername(username);
         if (p) {
           setProfile(p);
           const userFeedbacks = await getFeedbacks({ userId: p.user_id });
           setFeedbacks(userFeedbacks);
+        } else {
+          setProfile(null);
         }
       } catch (error) {
         console.error("Erro ao carregar perfil", error);
