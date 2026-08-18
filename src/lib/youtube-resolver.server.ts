@@ -130,12 +130,13 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality | string = "b
   // Progressivo (vídeo + áudio no mesmo arquivo) é o que o navegador reproduz direto
   let muxed = progressive
     .filter((f) => /video\/mp4/.test(f.mimeType || "") && /mp4a/.test(f.mimeType || ""))
-    .filter((f) => (f.height || 0) <= 720) // Limit to 720p
+    .filter((f) => (f.height || 0) <= 1080) // Limit to 1080p
     .sort(quality === "worst" ? asc : desc);
 
   // Priorização de qualidade baseada na string recebida
-  if (quality === "high" || (typeof quality === 'string' && quality.includes("720"))) {
-    const hd = muxed.filter((f) => (f.height || 0) === 720);
+  if (quality === "high" || (typeof quality === 'string' && (quality.includes("720") || quality.includes("1080")))) {
+    const hd = muxed.filter((f) => (f.height || 0) >= 720);
+
     if (hd.length) {
       muxed = hd;
     }
@@ -143,18 +144,19 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality | string = "b
 
   // Sem progressivo (vídeo sem áudio embutido): o proxy precisa transferir o
   // arquivo inteiro, então limitamos o tamanho para não estourar o servidor.
-  const MAX_BYTES = 3 * 1024 * 1024 * 1024; // 3 GB
+  const MAX_BYTES = 5 * 1024 * 1024 * 1024; // 5 GB
   const size = (f: any) => Number(f.contentLength || 0);
   let videoOnly = adaptive
     .filter(
       (f) =>
         /video\/mp4/.test(f.mimeType || "") &&
-        (f.height || 0) <= 720, // Limit to 720p
+        (f.height || 0) <= 1080, // Limit to 1080p
     )
     .sort(quality === "worst" ? asc : desc);
   
-  if (quality === "high" || (typeof quality === 'string' && quality.includes("720"))) {
-    const hd = videoOnly.filter((f) => (f.height || 0) === 720);
+  if (quality === "high" || (typeof quality === 'string' && (quality.includes("720") || quality.includes("1080")))) {
+    const hd = videoOnly.filter((f) => (f.height || 0) >= 720);
+
     if (hd.length) {
       videoOnly = hd;
     }

@@ -7,7 +7,7 @@ const GENERIC_ERROR =
   "Não foi possível processar este vídeo. Verifique a URL e tente novamente.";
 
 /** Acima deste tamanho o arquivo não é processado no navegador. */
-export const BROWSER_PROCESS_LIMIT = 1536 * 1024 * 1024; // 1,5 GB
+export const BROWSER_PROCESS_LIMIT = 2048 * 1024 * 1024; // 2 GB
 
 const TOO_LARGE = "TOO_LARGE";
 

@@ -888,7 +888,7 @@ const HeroSection = () => {
       youtubeInfoRef.current = info;
       setYoutubeFormats(info.formats);
       const firstVideo = info.formats.find((f) => f.type === "video");
-      const highQualityVideo = info.formats.find((f) => f.type === "video" && (f.quality === "high" || f.quality === "best" || f.id.includes("720")));
+      const highQualityVideo = info.formats.find((f) => f.type === "video" && (f.quality === "high" || f.quality === "best" || f.id.includes("720") || f.id.includes("1080")));
       setYoutubeDownloadType(firstVideo ? "video" : "audio");
       setYoutubeQuality(((info as any).ticket || (highQualityVideo || firstVideo || info.formats[0])?.id) ?? "");
 
@@ -1914,7 +1914,7 @@ const HeroSection = () => {
                           })}
                       </div>
                       <p className="font-orbitron text-[10px] text-center mt-2 text-muted-foreground">
-                        Arquivos acima de 100 MB podem falhar no navegador — prefira uma resolução menor.
+                        Arquivos acima de 500 MB podem demorar no processamento — prefira uma resolução menor se estiver com pressa.
                       </p>
                     </div>
                   )}
