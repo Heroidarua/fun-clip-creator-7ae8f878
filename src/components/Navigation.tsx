@@ -12,6 +12,7 @@ import {
 
 const ITEMS = [
   { to: "/", label: "Home", icon: Home, desc: "Início" },
+  { to: "/comunidade", label: "Comunidade", icon: Share2, desc: "Espaço Social", community: true },
   { to: "/ferramentas", label: "Ferramentas", icon: Wrench, desc: "Utilidades" },
   { to: "/busca", label: "Busca", icon: Search, desc: "Encontre rápido" },
   { to: "/jogos", label: "Jogos", icon: Gamepad2, desc: "Diversão" },
@@ -66,7 +67,9 @@ export default function SidebarNav() {
         {/* Links */}
         <div className="flex-1 overflow-y-auto py-4 px-3 space-y-1 custom-scrollbar">
           <TooltipProvider delayDuration={0}>
-            {ITEMS.map(({ to, label, icon: Icon, desc }) => {
+            {ITEMS.map((item) => {
+              const { to, label, icon: Icon, desc } = item;
+              if ((item as any).community && !pathname.startsWith("/comunidade")) return null;
               const active = isActive(to);
               return (
                 <Tooltip key={to}>
@@ -138,7 +141,9 @@ export default function SidebarNav() {
           </div>
 
           <div className="flex-1 overflow-y-auto py-6 px-4 space-y-2 custom-scrollbar">
-            {ITEMS.map(({ to, label, icon: Icon, desc }) => {
+            {ITEMS.map((item) => {
+              const { to, label, icon: Icon, desc } = item;
+              if ((item as any).community && !pathname.startsWith("/comunidade")) return null;
               const active = isActive(to);
               return (
                 <Link
