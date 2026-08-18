@@ -50,7 +50,6 @@ export const Route = createFileRoute("/api/youtube/file")({
           }
 
           const { videoId, type, quality, title } = ticket;
-          const isPreview = u.searchParams.get("preview") === "1";
           const canonicalUrl = `https://www.youtube.com/watch?v=${videoId}`;
           const range = request.headers.get("range");
 
