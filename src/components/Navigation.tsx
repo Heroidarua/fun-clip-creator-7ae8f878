@@ -11,22 +11,27 @@ import {
 } from "@/components/ui/tooltip";
 
 const ITEMS = [
-  { to: "/", label: "Home", icon: Home, desc: "Início" },
+  { to: "/", label: "Início", icon: Home, desc: "Página Principal" },
   { to: "/comunidade", label: "Comunidade", icon: Share2, desc: "Espaço Social", community: true },
-  { to: "/ferramentas", label: "Ferramentas", icon: Wrench, desc: "Utilidades" },
-  { to: "/busca", label: "Busca", icon: Search, desc: "Encontre rápido" },
-  { to: "/jogos", label: "Jogos", icon: Gamepad2, desc: "Diversão" },
-  { to: "/nasa", label: "NASA", icon: Globe2, desc: "Espaço" },
-  { to: "/ferramenta/avioes", label: "Aviões", icon: Plane, desc: "Tempo Real" },
-  { to: "/ferramenta/navios", label: "Navios", icon: Ship, desc: "Marítimo" },
-  { to: "/ferramenta/raios", label: "Raios", icon: CloudLightning, desc: "Ao Vivo" },
-  { to: "/ferramenta/terremotos", label: "Terremotos", icon: Activity, desc: "Sismos" },
-  { to: "/ferramenta/ceu", label: "Céu", icon: Stars, desc: "Estelar" },
-  { to: "/mais-sbt", label: "+SBT", icon: Tv, desc: "TV Ao Vivo" },
-  { to: "/iptv", label: "PLUTO TV", icon: Radio, desc: "Canais" },
-  { to: "/player", label: "IPTV 1.0", icon: PlayCircle, desc: "Premium" },
-  { to: "/blog", label: "Blog", icon: BookOpen, desc: "Notícias" },
   
+  // Categoria: Ferramentas
+  { to: "/ferramentas", label: "Ferramentas", icon: Wrench, desc: "Utilidades & IA" },
+  { to: "/ferramenta/avioes", label: "Rastreio: Aviões", icon: Plane, desc: "Tráfego Aéreo" },
+  { to: "/ferramenta/navios", label: "Rastreio: Navios", icon: Ship, desc: "Marítimo" },
+  { to: "/ferramenta/raios", label: "Clima: Raios", icon: CloudLightning, desc: "Mapa de Raios" },
+  { to: "/ferramenta/terremotos", label: "Sismos", icon: Activity, desc: "Terremotos" },
+  
+  // Categoria: Entretenimento
+  { to: "/jogos", label: "Jogos Retrô", icon: Gamepad2, desc: "2700+ Clássicos" },
+  { to: "/player", label: "IPTV Premium", icon: PlayCircle, desc: "Canais & Filmes" },
+  { to: "/mais-sbt", label: "TV: +SBT", icon: Tv, desc: "Canais SBT" },
+  { to: "/iptv", label: "TV: Pluto", icon: Radio, desc: "Canais Pluto" },
+  
+  // Categoria: Exploração & Outros
+  { to: "/nasa", label: "Espaço: NASA", icon: Globe2, desc: "Imagens Vivas" },
+  { to: "/ferramenta/ceu", label: "Espaço: Céu", icon: Stars, desc: "Mapa Estelar" },
+  { to: "/busca", label: "Busca", icon: Search, desc: "Encontre Tudo" },
+  { to: "/blog", label: "Blog", icon: BookOpen, desc: "Novidades" },
 ] as const;
 
 export default function SidebarNav() {
