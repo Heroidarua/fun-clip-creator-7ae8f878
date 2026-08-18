@@ -139,7 +139,7 @@ export const Route = createFileRoute("/api/download-youtube-stream")({
           const filename = `${sanitizeFilename(data?.title || "", "youtube")}.${ext}`;
           const headers: Record<string, string> = corsHeaders({
             "Content-Type": contentType,
-            "Content-Disposition": `attachment; filename="${filename.replace(/[^\x20-\x7E]/g, "_").replace(/"/g, "")}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
+            "Content-Disposition": `${inline ? "inline" : "attachment"}; filename="${filename.replace(/[^\x20-\x7E]/g, "_").replace(/"/g, "")}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
             "Cache-Control": "no-store",
             "Accept-Ranges": "bytes",
           });
