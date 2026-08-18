@@ -38,6 +38,9 @@ export const Route = createFileRoute("/api/download-youtube-stream")({
           const type =
             (u.searchParams.get("type") || "video") === "audio" ? "audio" : "video";
           const q = (u.searchParams.get("quality") || "best").toLowerCase();
+          // preview=1 entrega o arquivo para tocar no player (inline), sem
+          // forçar o download no navegador.
+          const inline = u.searchParams.get("preview") === "1";
           const quality: "best" | "high" | "worst" =
             q === "high" || q === "hd" ? "high" : q === "worst" || q === "low" ? "worst" : "best";
 
@@ -136,7 +139,7 @@ export const Route = createFileRoute("/api/download-youtube-stream")({
           const filename = `${sanitizeFilename(data?.title || "", "youtube")}.${ext}`;
           const headers: Record<string, string> = corsHeaders({
             "Content-Type": contentType,
-            "Content-Disposition": `attachment; filename="${filename.replace(/[^\x20-\x7E]/g, "_").replace(/"/g, "")}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
+            "Content-Disposition": `${inline ? "inline" : "attachment"}; filename="${filename.replace(/[^\x20-\x7E]/g, "_").replace(/"/g, "")}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
             "Cache-Control": "no-store",
             "Accept-Ranges": "bytes",
           });

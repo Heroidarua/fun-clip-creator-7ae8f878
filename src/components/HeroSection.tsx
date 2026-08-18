@@ -77,18 +77,31 @@ const MediaPreviewOverlay = ({
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [isLoadingPreview, setIsLoadingPreview] = useState(false);
+  const [previewError, setPreviewError] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const togglePlay = (e: React.MouseEvent) => {
+  const togglePlay = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!videoRef.current || !mediaUrl) return;
 
     if (isPlaying) {
       videoRef.current.pause();
-    } else {
-      videoRef.current.play().catch(console.error);
+      setIsPlaying(false);
+      return;
     }
-    setIsPlaying(!isPlaying);
+
+    setPreviewError(false);
+    setIsLoadingPreview(true);
+    try {
+      await videoRef.current.play();
+      setIsPlaying(true);
+    } catch {
+      setPreviewError(true);
+      setIsPlaying(false);
+    } finally {
+      setIsLoadingPreview(false);
+    }
   };
 
   const toggleMute = (e: React.MouseEvent) => {
@@ -110,16 +123,43 @@ const MediaPreviewOverlay = ({
             loop
             muted={false}
             playsInline
+            preload="none"
+            crossOrigin="anonymous"
+            onWaiting={() => setIsLoadingPreview(true)}
+            onPlaying={() => {
+              setIsLoadingPreview(false);
+              setIsPlaying(true);
+            }}
+            onError={() => {
+              setPreviewError(true);
+              setIsPlaying(false);
+              setIsLoadingPreview(false);
+            }}
           />
           
           {!isPlaying && (
-            <div className="absolute inset-0 flex items-center justify-center">
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
               <button
                 onClick={togglePlay}
+                disabled={isLoadingPreview}
                 className="z-20 flex h-14 w-14 items-center justify-center rounded-full border-2 border-primary/50 bg-background/80 text-primary shadow-[0_0_20px_hsl(var(--primary)/0.4)] hover:scale-110 transition-transform cursor-pointer"
               >
-                <Play className="ml-1 h-6 w-6 fill-current" />
+                {isLoadingPreview ? (
+                  <span className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                ) : (
+                  <Play className="ml-1 h-6 w-6 fill-current" />
+                )}
               </button>
+              {isLoadingPreview && (
+                <span className="z-20 font-orbitron text-[10px] text-primary">
+                  Carregando prévia...
+                </span>
+              )}
+              {previewError && !isLoadingPreview && (
+                <span className="z-20 max-w-[240px] text-center font-orbitron text-[10px] text-yellow-400">
+                  Prévia indisponível para este vídeo — o download continua funcionando.
+                </span>
+              )}
             </div>
           )}
 
@@ -1805,7 +1845,7 @@ const HeroSection = () => {
                       title={youtubeData.title}
                       author={youtubeData.author}
                       duration={youtubeData.duration}
-                      mediaUrl={apiUrl('/api/download-youtube-stream') + `?url=${encodeURIComponent(parseYouTubeUrl(youtubeUrl)?.canonicalUrl || youtubeUrl)}&type=video`}
+                      mediaUrl={apiUrl('/api/download-youtube-stream') + `?url=${encodeURIComponent(parseYouTubeUrl(youtubeUrl)?.canonicalUrl || youtubeUrl)}&type=video&quality=worst&preview=1`}
                     />
                   </div>
 
