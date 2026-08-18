@@ -45,7 +45,7 @@ const PostCard = ({ post }: PostCardProps) => {
         {/* Header do Post */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <Link to={`/comunidade/@${authorName}`} className="shrink-0">
+            <Link to="/comunidade/@$username" params={{ username: authorName }} className="shrink-0">
               <Avatar className="w-10 h-10 border border-border/50">
                 <AvatarImage src={avatarUrl} />
                 <AvatarFallback className="bg-primary/10 text-primary font-bold">
@@ -55,7 +55,7 @@ const PostCard = ({ post }: PostCardProps) => {
             </Link>
             <div>
               <div className="flex items-center gap-2">
-                <Link to={`/comunidade/@${authorName}`} className="font-bold text-sm hover:underline">
+                <Link to="/comunidade/@$username" params={{ username: authorName }} className="font-bold text-sm hover:underline">
                   {authorName}
                 </Link>
                 {post.community_categories && (
