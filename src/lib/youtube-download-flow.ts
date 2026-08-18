@@ -47,13 +47,13 @@ async function fetchStream(
     throw new Error(data?.error || GENERIC_ERROR);
   }
   const total = Number(res.headers.get("content-length") || 0);
-  const muxed = res.headers.get("x-yt-muxed") !== "0";
+  const muxed = res.headers.get("x-yt-muxed") === "1";
 
   // Se o navegador receber um arquivo que não precisa de muxing (áudio ou vídeo muxed),
   // redirecionamos diretamente para o link de download para aproveitar o streaming do navegador
   // e contornar limites de memória de blob (especialmente no mobile/Safari).
   if (container === "m4a" || muxed) {
-    window.location.href = fileUrl;
+    window.location.assign(fileUrl);
     // Retornamos um resultado "vazio" mas bem-sucedido para que o chamador saiba que acabou
     return {
       bytes: new Uint8Array(0),
