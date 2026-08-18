@@ -59,6 +59,16 @@ export function requestYoutubeDownload(
   return postJson("/api/youtube/download", { url, format, quality });
 }
 
+export function fetchYoutubeJobStatus(id: string): Promise<{
+  success: true;
+  status: "pending" | "processing" | "completed" | "failed";
+  progress: number;
+  title?: string;
+  error?: string;
+}> {
+  return fetch(`${apiBase()}/api/youtube/status/${id}`).then((r) => r.json());
+}
+
 export function absoluteDownloadUrl(path: string): string {
   return `${apiBase()}${path}`;
 }
