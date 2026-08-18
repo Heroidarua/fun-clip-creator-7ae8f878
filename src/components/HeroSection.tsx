@@ -360,7 +360,7 @@ const HeroSection = () => {
   };
 
   const getPlatformIcon = (platform: string | null) => {
-    if (platform === 'tiktok') return <img src={tiktokIcon} alt="Logotipo do TikTok" className="w-5 h-5" />;
+    if (platform === 'tiktok') return <img src={tiktokIcon} alt="Logotipo do TikTok" className="w-5 h-5" width={20} height={20} />;
     return null;
   };
 
@@ -1133,7 +1133,7 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative bg-background text-foreground flex flex-col w-full min-h-[100dvh]">
+    <section className="relative bg-background text-foreground flex flex-col w-full min-h-[100dvh] lg:min-h-[900px]">
       {/* Simple Black Background */}
       <div className="absolute inset-0 bg-background"></div>
       

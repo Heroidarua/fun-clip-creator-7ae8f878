@@ -37,7 +37,7 @@ const AdvantagesSection = () => {
   ];
 
   return (
-    <section className="py-12 sm:py-16 bg-background relative overflow-hidden">
+    <section className="py-12 sm:py-16 bg-background relative overflow-hidden min-h-[300px]">
       {/* Retro grid background */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0" style={{
