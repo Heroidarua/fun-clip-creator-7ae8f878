@@ -285,6 +285,7 @@ interface YouTubeData {
   author: string;
   duration?: number;
   download_page_url?: string;
+  proxy_video_url?: string;
 }
 
 
