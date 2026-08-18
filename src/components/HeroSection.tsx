@@ -890,7 +890,7 @@ const HeroSection = () => {
       const firstVideo = info.formats.find((f) => f.type === "video");
       const highQualityVideo = info.formats.find((f) => f.type === "video" && (f.quality === "high" || f.quality === "best" || f.id.includes("720")));
       setYoutubeDownloadType(firstVideo ? "video" : "audio");
-      setYoutubeQuality((highQualityVideo || firstVideo || info.formats[0])?.id ?? "");
+      setYoutubeQuality((info as any).ticket || (highQualityVideo || firstVideo || info.formats[0])?.id ?? "");
 
       setYoutubeProgress(100);
       clearInterval(progressInterval);
@@ -1846,7 +1846,7 @@ const HeroSection = () => {
                       title={youtubeData.title}
                       author={youtubeData.author}
                       duration={youtubeData.duration}
-                      mediaUrl={youtubeData.proxy_video_url || apiUrl('/api/download-youtube-stream') + `?url=${encodeURIComponent(parseYouTubeUrl(youtubeUrl)?.canonicalUrl || youtubeUrl)}&type=video&quality=worst&preview=1`}
+                      mediaUrl={youtubeData.proxy_video_url || apiUrl('/api/youtube/file') + `?token=${encodeURIComponent(youtubeQuality)}&preview=1`}
                     />
                   </div>
 
