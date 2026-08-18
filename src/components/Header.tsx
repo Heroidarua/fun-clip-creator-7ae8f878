@@ -125,15 +125,17 @@ const Header = () => {
 
           {/* Actions */}
           <div className="flex items-center gap-1.5 sm:gap-2">
-            {!isCommunityPage && (
-              <Link 
-                to="/comunidade" 
-                className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors mr-2"
-              >
-                <span className="text-lg">👥</span>
-                <span className="text-xs font-bold uppercase tracking-wider">Comunidade</span>
-              </Link>
-            )}
+            <Link 
+              to="/comunidade" 
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-all border ${
+                isCommunityPage 
+                  ? "bg-primary text-primary-foreground border-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.4)]" 
+                  : "bg-primary/10 text-primary border-primary/20 hover:bg-primary/20"
+              } mr-1 sm:mr-2`}
+            >
+              <span className="text-base sm:text-lg">👥</span>
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider hidden xs:inline">Comunidade</span>
+            </Link>
             <DonationButton />
             <InstallAppButton />
             <div className="hidden sm:block"><NotificationBell /></div>
