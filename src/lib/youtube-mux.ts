@@ -16,6 +16,7 @@ export async function muxVideoAndAudio(
   await ffmpeg.load({
     coreURL: await toBlobURL(`${base}/ffmpeg-core.js`, "text/javascript"),
     wasmURL: await toBlobURL(`${base}/ffmpeg-core.wasm`, "application/wasm"),
+    workerURL: await toBlobURL(`${base}/ffmpeg-core.worker.js`, "text/javascript"),
   });
 
   await ffmpeg.writeFile("v.mp4", video);
