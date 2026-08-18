@@ -41,8 +41,8 @@ export const Route = createFileRoute("/api/download-youtube-stream")({
           // preview=1 entrega o arquivo para tocar no player (inline), sem
           // forçar o download no navegador.
           const inline = u.searchParams.get("preview") === "1";
-          const quality: "best" | "high" | "worst" =
-            q === "high" || q === "hd" ? "high" : q === "worst" || q === "low" ? "worst" : "best";
+          const quality: "best" | "high" | "worst" | "preview" =
+            inline ? "preview" : (q === "high" || q === "hd" ? "high" : q === "worst" || q === "low" ? "worst" : "best");
 
           if (!rawUrl || rawUrl.length > 2048) {
             return Response.json(
@@ -74,7 +74,7 @@ export const Route = createFileRoute("/api/download-youtube-stream")({
           for await (const candidate of resolveYoutubeCandidates(canonicalUrl, videoId, quality)) {
             const mediaUrl = type === "audio" ? candidate.audio_url : candidate.video_url;
 
-            if (type === "video" && candidate.muxed === false) {
+            if (type === "video" && candidate.muxed === false && !inline) {
               sawPartialOnly = true;
               continue;
             }
