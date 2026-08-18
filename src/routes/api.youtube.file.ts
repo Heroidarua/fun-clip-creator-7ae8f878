@@ -31,7 +31,20 @@ export const Route = createFileRoute("/api/youtube/file")({
             return Response.json({ success: false, error: "Token ausente." }, { status: 401, headers: JSON_HEADERS });
           }
 
-          const ticket = await verifyTicket(token);
+          let ticket = await verifyTicket(token);
+          const isPreview = u.searchParams.get("preview") === "1";
+
+          // Se for apenas uma prévia e o token for o VideoID (não assinado), geramos um ticket temporário
+          if (!ticket && isPreview && token.length <= 15) {
+            ticket = {
+              videoId: token,
+              type: "video",
+              quality: "worst",
+              title: "preview",
+              exp: Date.now() + 60000
+            };
+          }
+
           if (!ticket) {
             return Response.json({ success: false, error: "Token inválido ou expirado." }, { status: 403, headers: JSON_HEADERS });
           }
@@ -82,7 +95,9 @@ export const Route = createFileRoute("/api/youtube/file")({
           
           const headers: Record<string, string> = ytCors({
             "Content-Type": contentType,
-            "Content-Disposition": `attachment; filename="${filename.replace(/[^\x20-\x7E]/g, "_").replace(/"/g, "")}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
+            "Content-Disposition": isPreview 
+              ? "inline" 
+              : `attachment; filename="${filename.replace(/[^\x20-\x7E]/g, "_").replace(/"/g, "")}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
             "Cache-Control": "no-store",
             "Accept-Ranges": "bytes",
             "x-yt-muxed": data?.muxed ? "1" : "0",

@@ -55,6 +55,11 @@ export const Route = createFileRoute("/api/youtube/download")({
 
           const videoId = parsed.videoId!;
           
+          // Busca informações do vídeo para ter o título real no ticket
+          const { resolveYoutube } = await import("@/lib/youtube-resolver.server");
+          const infoRes = await resolveYoutube(rawUrl, videoId, quality);
+          const title = infoRes?.data?.title || "";
+
           // Registra o job no banco para rastreamento (opcional para stream direto, mas útil)
           const { data: job, error: jobError } = await supabaseAdmin
             .from("youtube_jobs")
@@ -72,7 +77,7 @@ export const Route = createFileRoute("/api/youtube/download")({
             videoId,
             type: format === "m4a" ? "audio" : "video",
             quality,
-            title: "",
+            title,
           });
 
           return Response.json(
