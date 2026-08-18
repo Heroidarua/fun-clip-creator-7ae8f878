@@ -148,6 +148,7 @@ export async function downloadYoutubeMedia({
     onProgress?.(100);
   } catch (e) {
     const err = e as Error & { directUrl?: string; muxed?: boolean };
+    console.error("YouTube download flow error:", err);
     if (err.message === TOO_LARGE) {
       if (err.directUrl && (type === "audio" || err.muxed)) {
         window.location.href = err.directUrl;
