@@ -29,12 +29,14 @@ export const Route = createFileRoute("/api/youtube/download")({
           const rawUrl = typeof body?.url === "string" ? body.url.trim() : "";
           const format = body?.format === "m4a" ? "m4a" : "mp4";
           const requested = String(body?.quality || "best").toLowerCase();
-          const quality: "best" | "high" | "worst" =
-            requested.includes("720") || requested === "high" || requested.includes("mp4-720")
-              ? "high"
-              : requested.includes("worst") || requested.includes("mp4-480")
-                ? "worst"
-                : "best";
+          
+          // Mapeamento compatível com o HeroSection e youtube-resolver.server.ts
+          let quality: "best" | "high" | "worst" = "best";
+          if (requested.includes("720") || requested === "high" || requested.includes("mp4-720")) {
+            quality = "high";
+          } else if (requested.includes("worst") || requested.includes("480") || requested.includes("mp4-480") || requested.includes("360")) {
+            quality = "worst";
+          }
 
           if (!rawUrl || rawUrl.length > 2048) {
             return Response.json(
