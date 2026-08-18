@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import CommunityFeed from "@/components/community/CommunityFeed";
 
 export const Route = createFileRoute("/comunidade/")({
@@ -13,19 +13,19 @@ function CommunityIndex() {
         <nav className="bg-card border border-border rounded-xl p-4 shadow-sm">
           <ul className="space-y-2">
             <li>
-              <a href="/comunidade" className="flex items-center gap-3 p-2 rounded-lg bg-primary/10 text-primary font-bold">
+              <Link to="/comunidade" className="flex items-center gap-3 p-2 rounded-lg bg-primary/10 text-primary font-bold">
                 <span className="text-xl">🏠</span> Início
               </a>
             </li>
             <li>
-              <a href="/comunidade?filter=trending" className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted transition-colors">
+              <Link to="/comunidade" search={{ filter: 'trending' }} className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted transition-colors">
                 <span className="text-xl">🔥</span> Em alta
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="/comunidade/seguindo" className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted transition-colors">
+              <Link to="/comunidade" search={{ filter: 'following' }} className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted transition-colors">
                 <span className="text-xl">👥</span> Seguindo
-              </a>
+              </Link>
             </li>
           </ul>
         </nav>
@@ -54,9 +54,9 @@ function CommunityIndex() {
           <p className="text-sm text-muted-foreground leading-relaxed">
             Este é o espaço oficial para você interagir com outros membros da comunidade SOS01.
           </p>
-          <button className="w-full mt-4 btn-3d py-2 rounded-lg text-sm font-bold">
+          <Link to="/comunidade/regras" className="w-full mt-4 btn-3d py-2 rounded-lg text-sm font-bold flex items-center justify-center">
             CONHECER REGRAS
-          </button>
+          </Link>
         </div>
 
         <div className="bg-card border border-border rounded-xl p-4 shadow-sm">
