@@ -110,7 +110,7 @@ const CreateFeedbackCard = ({ onFeedbackCreated }: CreateFeedbackCardProps) => {
         
         <div className="flex-1 space-y-3">
           <Textarea 
-            placeholder="No que você está pensando?" 
+            placeholder="Dê sua sugestão ou feedback sobre o site..." 
             value={content}
             onChange={(e) => setContent(e.target.value)}
             onFocus={() => setIsExpanded(true)}

@@ -95,9 +95,9 @@ function FeedbackIndex() {
       {/* Sidebar Direita (Desktop) */}
       <aside className="hidden lg:block lg:col-span-3 space-y-6">
         <div className="bg-card border border-border rounded-xl p-5 shadow-sm bg-gradient-to-br from-card to-primary/5 sticky top-24">
-          <h3 className="font-display text-lg mb-2">Comunidade SOS01</h3>
+          <h3 className="font-display text-lg mb-2">Central de Feedback</h3>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Seu espaço para compartilhar ideias, tirar dúvidas e interagir com outros membros.
+            Seu espaço para enviar sugestões de ferramentas, reportar erros ou pedir atualizações no site.
           </p>
           <div className="mt-4 space-y-2">
             <Link to="/feedback/regras" className="w-full btn-3d py-2 rounded-lg text-xs font-bold flex items-center justify-center uppercase tracking-widest">
@@ -106,7 +106,7 @@ function FeedbackIndex() {
           </div>
           
           <div className="mt-8 pt-6 border-t border-border/50">
-             <h3 className="font-display text-[10px] uppercase tracking-widest mb-4 text-muted-foreground font-bold">Trending Topics</h3>
+             <h3 className="font-display text-[10px] uppercase tracking-widest mb-4 text-muted-foreground font-bold">Sugestões Populares</h3>
              <div className="space-y-3">
                 <div className="cursor-pointer group">
                    <p className="text-[10px] text-muted-foreground font-bold uppercase">Em alta em SOS01</p>

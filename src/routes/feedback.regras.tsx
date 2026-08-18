@@ -14,8 +14,8 @@ function FeedbackRules() {
           <ShieldAlert size={32} />
         </div>
         <div>
-          <h1 className="text-3xl font-display">Regras da Comunidade</h1>
-          <p className="text-muted-foreground">O ambiente do SOS01 deve ser seguro e amigável para todos.</p>
+          <h1 className="text-3xl font-display">Regras da Central</h1>
+          <p className="text-muted-foreground">O ambiente do SOS01 deve ser seguro e construtivo para todos.</p>
         </div>
       </div>
 
