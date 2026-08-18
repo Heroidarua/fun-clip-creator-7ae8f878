@@ -646,7 +646,7 @@ export async function* resolveYoutubeCandidates(
     try {
       const res = await p.run();
       if (res?.success && res.data && (res.data.video_url || res.data.audio_url)) {
-        console.log(`▶️ YouTube candidato: ${p.name} (muxed: ${res.data.muxed})`);
+        console.log(`▶️ YouTube candidato: ${p.name}`);
         yield res.data;
       }
     } catch (e) {
