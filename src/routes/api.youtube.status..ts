@@ -4,7 +4,7 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 const JSON_HEADERS = ytCors({ "Content-Type": "application/json" });
 
-export const Route = createFileRoute("/api/youtube/status/$id")({
+export const Route = createFileRoute("/api/youtube/status/")({
   server: {
     handlers: {
       OPTIONS: async () => new Response(null, { status: 204, headers: ytCors() }),

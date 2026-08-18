@@ -7,6 +7,7 @@ import {
   signTicket,
   YT_LINK_TTL_SECONDS,
 } from "@/lib/youtube-tool.server";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 const JSON_HEADERS = ytCors({ "Content-Type": "application/json" });
 
@@ -50,8 +51,23 @@ export const Route = createFileRoute("/api/youtube/download")({
             );
           }
 
+          const videoId = parsed.videoId!;
+          
+          // Registra o job no banco para rastreamento (opcional para stream direto, mas útil)
+          const { data: job, error: jobError } = await supabaseAdmin
+            .from("youtube_jobs")
+            .insert({
+              video_id: videoId,
+              status: "completed", // Para streaming direto, já marcamos como pronto
+              quality,
+              format,
+              progress: 100,
+            })
+            .select()
+            .single();
+
           const token = await signTicket({
-            videoId: parsed.videoId!,
+            videoId,
             type: format === "m4a" ? "audio" : "video",
             quality,
             title: "",
@@ -61,6 +77,7 @@ export const Route = createFileRoute("/api/youtube/download")({
             {
               success: true,
               status: "ready",
+              jobId: job?.id,
               expiresIn: YT_LINK_TTL_SECONDS,
               downloadUrl: `/api/youtube/file?token=${encodeURIComponent(token)}`,
             },

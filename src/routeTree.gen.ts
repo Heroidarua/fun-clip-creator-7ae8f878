@@ -66,6 +66,7 @@ import { Route as ApiYoutubeDownloadRouteImport } from './routes/api.youtube.dow
 import { Route as ApiVideoEnhancerProcessRouteImport } from './routes/api.video-enhancer.process'
 import { Route as ApiPublicPinterestDownloadRouteImport } from './routes/api.public.pinterest-download'
 import { Route as ApiPublicMercadopagoWebhookRouteImport } from './routes/api/public/mercadopago-webhook'
+import { Route as ApiYoutubeStatusRouteImport } from './routes/api.youtube.status.'
 
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
@@ -364,6 +365,11 @@ const ApiPublicMercadopagoWebhookRoute =
     path: '/api/public/mercadopago-webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiYoutubeStatusRoute = ApiYoutubeStatusRouteImport.update({
+  id: '/api/youtube/status/',
+  path: '/api/youtube/status/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -423,6 +429,7 @@ export interface FileRoutesByFullPath {
   '/api/youtube/download': typeof ApiYoutubeDownloadRoute
   '/api/youtube/file': typeof ApiYoutubeFileRoute
   '/api/youtube/info': typeof ApiYoutubeInfoRoute
+  '/api/youtube/status/': typeof ApiYoutubeStatusRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -481,6 +488,7 @@ export interface FileRoutesByTo {
   '/api/youtube/download': typeof ApiYoutubeDownloadRoute
   '/api/youtube/file': typeof ApiYoutubeFileRoute
   '/api/youtube/info': typeof ApiYoutubeInfoRoute
+  '/api/youtube/status': typeof ApiYoutubeStatusRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -541,6 +549,7 @@ export interface FileRoutesById {
   '/api/youtube/download': typeof ApiYoutubeDownloadRoute
   '/api/youtube/file': typeof ApiYoutubeFileRoute
   '/api/youtube/info': typeof ApiYoutubeInfoRoute
+  '/api/youtube/status/': typeof ApiYoutubeStatusRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -602,6 +611,7 @@ export interface FileRouteTypes {
     | '/api/youtube/download'
     | '/api/youtube/file'
     | '/api/youtube/info'
+    | '/api/youtube/status/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -660,6 +670,7 @@ export interface FileRouteTypes {
     | '/api/youtube/download'
     | '/api/youtube/file'
     | '/api/youtube/info'
+    | '/api/youtube/status'
   id:
     | '__root__'
     | '/'
@@ -719,6 +730,7 @@ export interface FileRouteTypes {
     | '/api/youtube/download'
     | '/api/youtube/file'
     | '/api/youtube/info'
+    | '/api/youtube/status/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -767,6 +779,7 @@ export interface RootRouteChildren {
   ApiYoutubeDownloadRoute: typeof ApiYoutubeDownloadRoute
   ApiYoutubeFileRoute: typeof ApiYoutubeFileRoute
   ApiYoutubeInfoRoute: typeof ApiYoutubeInfoRoute
+  ApiYoutubeStatusRoute: typeof ApiYoutubeStatusRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1170,6 +1183,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicMercadopagoWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/youtube/status/': {
+      id: '/api/youtube/status/'
+      path: '/api/youtube/status'
+      fullPath: '/api/youtube/status/'
+      preLoaderRoute: typeof ApiYoutubeStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1252,6 +1272,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiYoutubeDownloadRoute: ApiYoutubeDownloadRoute,
   ApiYoutubeFileRoute: ApiYoutubeFileRoute,
   ApiYoutubeInfoRoute: ApiYoutubeInfoRoute,
+  ApiYoutubeStatusRoute: ApiYoutubeStatusRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
