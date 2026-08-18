@@ -183,10 +183,14 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality | string = "b
   const chosen = muxed[0] || videoOnly[0];
   const chosenMuxed = Boolean(muxed[0]?.url);
 
+  // No modo preview, se não houver vídeo MP4, tenta qualquer vídeo progressivo (webm, etc)
+  const preview = quality === "preview";
+  const finalVideo = chosen?.url || (preview ? formats.find(f => /video/i.test(f.mimeType || ""))?.url : "") || "";
+
   return {
-    video: chosen?.url || "",
+    video: finalVideo,
     audio: audioOnly[0]?.url || (chosenMuxed ? chosen?.url : "") || "",
-    hasMuxed: chosenMuxed,
+    hasMuxed: chosenMuxed || (preview && !!finalVideo),
     height: Number(chosen?.height || 0),
   };
 }
@@ -199,7 +203,7 @@ async function fetchVisitorData(): Promise<string> {
     return visitorDataCache.value;
   }
   try {
-    const r = await fetch("https://www.youtube.com/sw.js_data", {
+    const r = await fetch("https://www.youtube.com/iframe_api", {
       signal: withTimeout(6000),
       headers: { "User-Agent": BROWSER_UA, Accept: "*/*" },
     });
