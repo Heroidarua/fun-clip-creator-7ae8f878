@@ -4,16 +4,28 @@ import { getPosts } from "@/lib/community/services";
 import PostCard from "./PostCard";
 import CreatePostCard from "./CreatePostCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useSearch } from "@tanstack/react-router";
 
 const CommunityFeed = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const search = useSearch({ from: "/comunidade/" }) as any;
+  const currentFilter = search.filter || "recent";
 
   useEffect(() => {
     async function loadPosts() {
+      setLoading(true);
       try {
+        // No futuro, passar o filtro para o serviço
         const data = await getPosts();
-        setPosts(data);
+        
+        // Simulação básica de filtros no cliente por enquanto
+        let filtered = [...data];
+        if (currentFilter === "trending") {
+          filtered.sort((a, b) => (b.likes_count + b.comments_count) - (a.likes_count + a.comments_count));
+        }
+        
+        setPosts(filtered);
       } catch (error) {
         console.error("Failed to load posts", error);
       } finally {
@@ -21,7 +33,7 @@ const CommunityFeed = () => {
       }
     }
     loadPosts();
-  }, []);
+  }, [currentFilter]);
 
   if (loading) {
     return (
