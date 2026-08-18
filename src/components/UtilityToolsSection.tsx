@@ -255,7 +255,7 @@ const UtilityToolsSection = () => {
   const activeTool = tools.find((t) => t.id === openTool) ?? null;
 
   return (
-    <section className="py-12 sm:py-16 px-4 relative overflow-hidden tools-fx-section">
+    <section className="py-12 sm:py-16 px-4 relative overflow-hidden tools-fx-section min-h-[800px]">
       {/* Special FX background — only behind utility tools */}
       <div className="tools-fx-bg pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
         <div className="tools-fx-grid" />

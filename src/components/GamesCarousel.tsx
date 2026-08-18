@@ -29,7 +29,7 @@ function GameCard({ game, isFavorite, onToggleFavorite }: { game: Game; isFavori
             {/* Inner card */}
             <div className="relative bg-[hsl(var(--card))] rounded-[10px] overflow-hidden">
               {/* Image container with top accent bar */}
-              <div className="relative aspect-[4/3] overflow-hidden">
+              <div className="relative aspect-[4/3] overflow-hidden bg-[hsl(var(--muted))]">
                 {/* Top accent bar */}
                 <div className={`absolute top-0 left-0 right-0 h-[3px] z-10 ${
                   isFavorite ? "bg-[hsl(var(--destructive))]" : "bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--accent))]"
@@ -38,9 +38,12 @@ function GameCard({ game, isFavorite, onToggleFavorite }: { game: Game; isFavori
                 <img
                   src={game.img}
                   alt={`Capa do jogo ${game.title}`}
+                  width={280}
+                  height={210}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   draggable={false}
                   loading="lazy"
+                  decoding="async"
                 />
 
                 {/* Subtle vignette overlay */}
@@ -119,7 +122,7 @@ export default function GamesCarousel() {
   );
 
   return (
-    <section className="relative py-12 sm:py-16 overflow-hidden">
+    <section className="relative py-12 sm:py-16 overflow-hidden min-h-[500px] sm:min-h-[600px]">
       {/* Subtle dot pattern background */}
       <div className="absolute inset-0 opacity-[0.03]">
         <div className="absolute inset-0" style={{
