@@ -1,4 +1,4 @@
-import { Post } from "@/lib/feedback/types";
+import { Feedback } from "@/lib/feedback/types";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Heart, MessageCircle, Share2, MoreHorizontal } from "lucide-react";
@@ -11,21 +11,21 @@ import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
 
 interface FeedbackCardProps {
-  post: Post;
+  feedback: Feedback;
 }
 
-const FeedbackCard = ({ post }: FeedbackCardProps) => {
-  const [likes, setLikes] = useState(post.likes_count);
-  const [isLiked, setIsLiked] = useState(post.user_has_liked || false);
+const FeedbackCard = ({ feedback }: FeedbackCardProps) => {
+  const [likes, setLikes] = useState(feedback.likes_count);
+  const [isLiked, setIsLiked] = useState(feedback.user_has_liked || false);
   const [showComments, setShowComments] = useState(false);
   
-  const authorName = post.profiles?.display_name || "Usuário";
-  const avatarUrl = post.profiles?.avatar_url || "";
-  const timeAgo = formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: ptBR });
+  const authorName = feedback.profiles?.display_name || "Usuário";
+  const avatarUrl = feedback.profiles?.avatar_url || "";
+  const timeAgo = formatDistanceToNow(new Date(feedback.created_at), { addSuffix: true, locale: ptBR });
 
   const handleLike = async () => {
     try {
-      await toggleLike(post.id, isLiked);
+      await toggleLike(feedback.id, isLiked);
       setIsLiked(!isLiked);
       setLikes(prev => isLiked ? prev - 1 : prev + 1);
     } catch (error: any) {
@@ -34,7 +34,7 @@ const FeedbackCard = ({ post }: FeedbackCardProps) => {
   };
 
   const handleCopyLink = () => {
-    const url = `${window.location.origin}/feedback/post/${post.id}`;
+    const url = `${window.location.origin}/feedback/feedback/${feedback.id}`;
     navigator.clipboard.writeText(url);
     toast.success("Link copiado para a área de transferência!");
   };
@@ -42,7 +42,7 @@ const FeedbackCard = ({ post }: FeedbackCardProps) => {
   return (
     <article className="bg-card border border-border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
       <div className="p-4">
-        {/* Header do Post */}
+        {/* Header do Feedback */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <Link to="/feedback/@$username" params={{ username: authorName }} className="shrink-0">
@@ -58,9 +58,9 @@ const FeedbackCard = ({ post }: FeedbackCardProps) => {
                 <Link to="/feedback/@$username" params={{ username: authorName }} className="font-bold text-sm hover:underline">
                   {authorName}
                 </Link>
-                {post.community_categories && (
+                {feedback.community_categories && (
                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/5 text-primary border border-primary/10">
-                    {post.community_categories.icon} {post.community_categories.name}
+                    {feedback.community_categories.icon} {feedback.community_categories.name}
                   </span>
                 )}
               </div>
@@ -75,14 +75,14 @@ const FeedbackCard = ({ post }: FeedbackCardProps) => {
         {/* Conteúdo */}
         <div className="space-y-4">
           <p className="text-sm leading-relaxed text-foreground/90 whitespace-pre-wrap">
-            {post.content}
+            {feedback.content}
           </p>
           
-          {post.image_url && (
+          {feedback.image_url && (
             <div className="rounded-lg overflow-hidden border border-border/50 bg-muted/10">
               <img 
-                src={post.image_url} 
-                alt="Post content" 
+                src={feedback.image_url} 
+                alt="Feedback content" 
                 className="w-full h-auto max-h-[500px] object-contain mx-auto"
                 loading="lazy"
               />
@@ -110,7 +110,7 @@ const FeedbackCard = ({ post }: FeedbackCardProps) => {
               <div className={`p-2 rounded-full transition-colors ${showComments ? "bg-primary/10" : "group-hover:bg-primary/10"}`}>
                 <MessageCircle size={20} />
               </div>
-              <span className="text-xs font-bold">{post.comments_count}</span>
+              <span className="text-xs font-bold">{feedback.comments_count}</span>
             </button>
           </div>
 
@@ -124,7 +124,7 @@ const FeedbackCard = ({ post }: FeedbackCardProps) => {
         </div>
 
         {/* Seção de Comentários Condicional */}
-        {showComments && <FeedbackComments postId={post.id} />}
+        {showComments && <FeedbackComments feedbackId={feedback.id} />}
       </div>
     </article>
   );

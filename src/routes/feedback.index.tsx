@@ -5,10 +5,10 @@ import { Category } from "@/lib/feedback/types";
 import { useState, useEffect } from "react";
 
 export const Route = createFileRoute("/feedback/")({
-  component: CommunityIndex,
+  component: FeedbackIndex,
 });
 
-function CommunityIndex() {
+function FeedbackIndex() {
   const [categories, setCategories] = useState<Category[]>([]);
   const search = useSearch({ from: "/feedback/" }) as any;
   const currentCategory = search.category;

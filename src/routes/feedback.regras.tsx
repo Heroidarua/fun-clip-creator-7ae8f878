@@ -3,10 +3,10 @@ import { Link } from "@tanstack/react-router";
 import { ShieldAlert, Info } from "lucide-react";
 
 export const Route = createFileRoute("/feedback/regras")({
-  component: CommunityRules,
+  component: FeedbackRules,
 });
 
-function CommunityRules() {
+function FeedbackRules() {
   return (
     <div className="max-w-3xl mx-auto py-10 space-y-8">
       <div className="flex items-center gap-4 border-b border-border pb-6">

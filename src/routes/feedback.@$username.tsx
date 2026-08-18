@@ -9,10 +9,10 @@ import { Calendar, MapPin, Link as LinkIcon, Edit3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/feedback/@$username")({
-  component: UserProfilePage,
+  component: FeedbackProfilePage,
 });
 
-function UserProfilePage() {
+function FeedbackProfilePage() {
   const { username } = Route.useParams();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);

@@ -10,10 +10,10 @@ import { Send, Heart } from "lucide-react";
 import { toast } from "sonner";
 
 interface FeedbackCommentsProps {
-  postId: string;
+  feedbackId: string;
 }
 
-const FeedbackComments = ({ postId }: FeedbackCommentsProps) => {
+const FeedbackComments = ({ feedbackId }: FeedbackCommentsProps) => {
   const [comments, setComments] = useState<CommentType[]>([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(true);
@@ -22,7 +22,7 @@ const FeedbackComments = ({ postId }: FeedbackCommentsProps) => {
   useEffect(() => {
     async function loadComments() {
       try {
-        const data = await getComments(postId);
+        const data = await getComments(feedbackId);
         setComments(data);
       } catch (error) {
         console.error("Erro ao carregar comentários", error);
@@ -31,16 +31,16 @@ const FeedbackComments = ({ postId }: FeedbackCommentsProps) => {
       }
     }
     loadComments();
-  }, [postId]);
+  }, [feedbackId]);
 
   const handleSubmit = async () => {
     if (!newComment.trim()) return;
 
     setSubmitting(true);
     try {
-      const data = await addComment(postId, newComment);
+      const data = await addComment(feedbackId, newComment);
       // Recarregar comentários para pegar os dados do perfil (ou otimizar inserindo localmente)
-      const updatedComments = await getComments(postId);
+      const updatedComments = await getComments(feedbackId);
       setComments(updatedComments);
       setNewComment("");
       toast.success("Comentário adicionado!");

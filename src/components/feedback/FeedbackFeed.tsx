@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Post } from "@/lib/feedback/types";
-import { getPosts, getCategories } from "@/lib/feedback/services";
+import { Feedback } from "@/lib/feedback/types";
+import { getFeedbacks, getCategories } from "@/lib/feedback/services";
 import { Category } from "@/lib/feedback/types";
 import FeedbackCard from "./FeedbackCard";
 import CreateFeedbackCard from "./CreateFeedbackCard";
@@ -8,13 +8,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useSearch } from "@tanstack/react-router";
 
 const FeedbackFeed = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
   const [loading, setLoading] = useState(true);
   const search = useSearch({ from: "/feedback/" }) as any;
   const currentFilter = search.filter || "recent";
 
   useEffect(() => {
-    async function loadPosts() {
+    async function loadFeedbacks() {
       setLoading(true);
       try {
         const categorySlug = search.category;
@@ -25,19 +25,19 @@ const FeedbackFeed = () => {
           categoryId = cats.find((c: Category) => c.slug === categorySlug)?.id;
         }
 
-        const data = await getPosts({
+        const data = await getFeedbacks({
           categoryId,
           trending: currentFilter === "trending"
         });
         
-        setPosts(data);
+        setFeedbacks(data);
       } catch (error) {
-        console.error("Failed to load posts", error);
+        console.error("Failed to load feedbacks", error);
       } finally {
         setLoading(false);
       }
     }
-    loadPosts();
+    loadFeedbacks();
   }, [currentFilter, search.category]);
 
   if (loading) {
@@ -52,7 +52,7 @@ const FeedbackFeed = () => {
 
   return (
     <div className="space-y-6">
-      <CreateFeedbackCard onPostCreated={(newPost) => setPosts([newPost as unknown as Post, ...posts])} />
+      <CreateFeedbackCard onFeedbackCreated={(newFeedback) => setFeedbacks([newFeedback as unknown as Feedback, ...feedbacks])} />
       
       <div className="flex items-center justify-between border-b border-border pb-2">
          <h2 className="font-display text-xl">Últimas Publicações</h2>
@@ -70,14 +70,14 @@ const FeedbackFeed = () => {
         </div>
       </div>
 
-      {posts.length === 0 ? (
+      {feedbacks.length === 0 ? (
         <div className="text-center py-20 bg-card border border-dashed border-border rounded-xl">
-          <p className="text-muted-foreground">Nenhuma publicação encontrada. Seja o primeiro a postar!</p>
+          <p className="text-muted-foreground">Nenhuma publicação encontrada. Seja o primeiro a feedbackar!</p>
         </div>
       ) : (
         <div className="space-y-6">
-          {posts.map((post) => (
-            <FeedbackCard key={post.id} post={post} />
+          {feedbacks.map((feedback) => (
+            <FeedbackCard key={feedback.id} feedback={feedback} />
           ))}
         </div>
       )}

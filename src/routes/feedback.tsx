@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import { buildSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/feedback")({
-  component: CommunityLayout,
+  component: FeedbackLayout,
   head: () =>
     buildSeo({
       path: "/feedback",
@@ -13,7 +13,7 @@ export const Route = createFileRoute("/feedback")({
     }),
 });
 
-function CommunityLayout() {
+function FeedbackLayout() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
