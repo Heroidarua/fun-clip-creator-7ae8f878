@@ -888,7 +888,7 @@ const HeroSection = () => {
       youtubeInfoRef.current = info;
       setYoutubeFormats(info.formats);
       const firstVideo = info.formats.find((f) => f.type === "video");
-      const highQualityVideo = info.formats.find((f) => f.type === "video" && (f.quality === "high" || f.quality === "best" || f.id.includes("720")));
+      const highQualityVideo = info.formats.find((f) => f.type === "video" && (f.quality === "high" || f.quality === "best" || f.id.includes("720") || f.id.includes("1080")));
       setYoutubeDownloadType(firstVideo ? "video" : "audio");
       setYoutubeQuality(((info as any).ticket || (highQualityVideo || firstVideo || info.formats[0])?.id) ?? "");
 
