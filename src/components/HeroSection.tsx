@@ -908,13 +908,13 @@ const HeroSection = () => {
 
       toast({
         title: "Vídeo encontrado!",
-        description: "Iniciando download automático...",
+        description: "Escolha a qualidade e clique em BAIXAR.",
       });
 
-      // Dispara o download imediatamente após encontrar o vídeo
-      setTimeout(() => {
-        handleYoutubeDownload(true);
-      }, 500);
+      // Removido o download automático para evitar confusão no mobile e permitir escolha de qualidade
+      // setTimeout(() => {
+      //   handleYoutubeDownload(true);
+      // }, 500);
     } catch (error: any) {
       console.error("Erro completo:", error);
       clearInterval(progressInterval);
