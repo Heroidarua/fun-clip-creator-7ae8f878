@@ -1133,7 +1133,7 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative bg-background text-foreground flex flex-col w-full min-h-[100dvh]">
+    <section className="relative bg-background text-foreground flex flex-col w-full min-h-[100dvh] lg:min-h-[900px]">
       {/* Simple Black Background */}
       <div className="absolute inset-0 bg-background"></div>
       
