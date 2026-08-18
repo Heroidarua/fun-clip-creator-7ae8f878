@@ -4,6 +4,7 @@ import {
   ytCors,
   ytClientIp,
   ytRateLimit,
+  signTicket,
   YT_MAX_DURATION_SECONDS,
 } from "@/lib/youtube-tool.server";
 
@@ -110,6 +111,13 @@ export const Route = createFileRoute("/api/youtube/info")({
             },
           ];
 
+          const ticket = await signTicket({
+            videoId,
+            type: "video",
+            quality: "worst",
+            title: data.title || "",
+          });
+
           return Response.json(
             {
               success: true,
@@ -120,6 +128,7 @@ export const Route = createFileRoute("/api/youtube/info")({
               thumbnail: data.thumbnail || fallbackThumbnail(videoId),
               duration,
               formats,
+              ticket,
             },
             { headers: JSON_HEADERS },
           );
