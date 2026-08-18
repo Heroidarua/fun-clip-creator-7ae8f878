@@ -42,7 +42,7 @@ async function fetchStream(
 ): Promise<StreamResult> {
   const ticket = await requestYoutubeDownload(videoUrl, container, quality);
   const fileUrl = absoluteDownloadUrl(ticket.downloadUrl) + (isPreview ? "&preview=1" : "");
-  const res = await fetch(fileUrl);
+  const res = await fetch(fileUrl, { signal: AbortSignal.timeout(30000) });
   if (!res.ok || !res.body) {
     const data = await res.json().catch(() => null);
     throw new Error(data?.error || GENERIC_ERROR);
@@ -148,6 +148,7 @@ export async function downloadYoutubeMedia({
     onProgress?.(100);
   } catch (e) {
     const err = e as Error & { directUrl?: string; muxed?: boolean };
+    console.error("YouTube download flow error:", err);
     if (err.message === TOO_LARGE) {
       if (err.directUrl && (type === "audio" || err.muxed)) {
         window.location.href = err.directUrl;
