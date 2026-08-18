@@ -91,10 +91,12 @@ export const Route = createFileRoute("/api/youtube/file")({
 
           const ext = type === "audio" ? "m4a" : "mp4";
           const contentType = upstream.headers.get("content-type") || (type === "audio" ? "audio/mp4" : "video/mp4");
+          // Force video/mp4 for previews to ensure browser compatibility
+          const finalContentType = isPreview ? "video/mp4" : contentType;
           const filename = `${sanitizeFilename(data?.title || title || "youtube", "youtube")}.${ext}`;
           
           const headers: Record<string, string> = {
-            "Content-Type": contentType,
+            "Content-Type": finalContentType,
             "Content-Disposition": isPreview 
               ? "inline" 
               : `attachment; filename="${filename.replace(/[^\x20-\x7E]/g, "_").replace(/"/g, "")}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
