@@ -189,10 +189,11 @@ export const Route = createFileRoute("/api/youtube/file")({
 
           const ext = ticket.type === "audio" ? "m4a" : "mp4";
           const filename = `${sanitizeFilename(title, "youtube")}.${ext}`;
+          const isPreview = url.searchParams.get("preview") === "1";
           const headers: Record<string, string> = ytCors({
             "Content-Type":
               contentType || (ticket.type === "audio" ? "audio/mp4" : "video/mp4"),
-            "Content-Disposition": `attachment; filename="${filename
+            "Content-Disposition": `${isPreview ? "inline" : "attachment"}; filename="${filename
               .replace(/[^\x20-\x7E]/g, "_")
               .replace(/"/g, "")}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
             "Cache-Control": "no-store",
