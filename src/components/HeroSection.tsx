@@ -1846,7 +1846,7 @@ const HeroSection = () => {
                       title={youtubeData.title}
                       author={youtubeData.author}
                       duration={youtubeData.duration}
-                      mediaUrl={youtubeData.proxy_video_url || absoluteDownloadUrl(apiUrl('/api/youtube/file') + `?token=${encodeURIComponent(btoa(JSON.stringify({ videoId: getYouTubeVideoId(youtubeUrl), type: 'video', quality: 'worst', exp: Date.now() + 60000 })))}&preview=1`)}
+                      mediaUrl={youtubeData.proxy_video_url || apiUrl('/api/youtube/file') + `?token=${encodeURIComponent(btoa(JSON.stringify({ videoId: getYouTubeVideoId(youtubeUrl), type: 'video', quality: 'worst', exp: Date.now() + 60000 })))}&preview=1`}
                     />
                   </div>
 
