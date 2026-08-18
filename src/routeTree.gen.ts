@@ -22,7 +22,6 @@ import { Route as JogosJavaRouteImport } from './routes/jogos-java'
 import { Route as JogosRouteImport } from './routes/jogos'
 import { Route as IptvRouteImport } from './routes/iptv'
 import { Route as FerramentasRouteImport } from './routes/ferramentas'
-import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as DmcaRouteImport } from './routes/dmca'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContatoRouteImport } from './routes/contato'
@@ -33,13 +32,10 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as FeedbackIndexRouteImport } from './routes/feedback.index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as FerramentasYoutubeDownloaderRouteImport } from './routes/ferramentas_.youtube-downloader'
 import { Route as FerramentaMelhorarVideoRouteImport } from './routes/ferramenta.melhorar-video'
 import { Route as FerramentaSlugRouteImport } from './routes/ferramenta.$slug'
-import { Route as FeedbackRegrasRouteImport } from './routes/feedback.regras'
-import { Route as FeedbackAtusernameRouteImport } from './routes/feedback.@$username'
 import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
 import { Route as BlogJogosRetroGratisRouteImport } from './routes/blog.jogos-retro-gratis'
 import { Route as BlogGuiaCompletoClipsaveRouteImport } from './routes/blog.guia-completo-clipsave'
@@ -136,11 +132,6 @@ const FerramentasRoute = FerramentasRouteImport.update({
   path: '/ferramentas',
   getParentRoute: () => rootRouteImport,
 } as any)
-const FeedbackRoute = FeedbackRouteImport.update({
-  id: '/feedback',
-  path: '/feedback',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const DmcaRoute = DmcaRouteImport.update({
   id: '/dmca',
   path: '/dmca',
@@ -191,11 +182,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const FeedbackIndexRoute = FeedbackIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => FeedbackRoute,
-} as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -216,16 +202,6 @@ const FerramentaSlugRoute = FerramentaSlugRouteImport.update({
   id: '/ferramenta/$slug',
   path: '/ferramenta/$slug',
   getParentRoute: () => rootRouteImport,
-} as any)
-const FeedbackRegrasRoute = FeedbackRegrasRouteImport.update({
-  id: '/regras',
-  path: '/regras',
-  getParentRoute: () => FeedbackRoute,
-} as any)
-const FeedbackAtusernameRoute = FeedbackAtusernameRouteImport.update({
-  id: '/@$username',
-  path: '/@$username',
-  getParentRoute: () => FeedbackRoute,
 } as any)
 const CategoriaSlugRoute = CategoriaSlugRouteImport.update({
   id: '/categoria/$slug',
@@ -400,7 +376,6 @@ export interface FileRoutesByFullPath {
   '/contato': typeof ContatoRoute
   '/dashboard': typeof DashboardRoute
   '/dmca': typeof DmcaRoute
-  '/feedback': typeof FeedbackRouteWithChildren
   '/ferramentas': typeof FerramentasRoute
   '/iptv': typeof IptvRoute
   '/jogos': typeof JogosRoute
@@ -438,13 +413,10 @@ export interface FileRoutesByFullPath {
   '/blog/guia-completo-clipsave': typeof BlogGuiaCompletoClipsaveRoute
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
-  '/feedback/@$username': typeof FeedbackAtusernameRoute
-  '/feedback/regras': typeof FeedbackRegrasRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/ferramenta/melhorar-video': typeof FerramentaMelhorarVideoRoute
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/blog/': typeof BlogIndexRoute
-  '/feedback/': typeof FeedbackIndexRoute
   '/api/public/mercadopago-webhook': typeof ApiPublicMercadopagoWebhookRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/video-enhancer/process': typeof ApiVideoEnhancerProcessRoute
@@ -499,13 +471,10 @@ export interface FileRoutesByTo {
   '/blog/guia-completo-clipsave': typeof BlogGuiaCompletoClipsaveRoute
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
-  '/feedback/@$username': typeof FeedbackAtusernameRoute
-  '/feedback/regras': typeof FeedbackRegrasRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/ferramenta/melhorar-video': typeof FerramentaMelhorarVideoRoute
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/blog': typeof BlogIndexRoute
-  '/feedback': typeof FeedbackIndexRoute
   '/api/public/mercadopago-webhook': typeof ApiPublicMercadopagoWebhookRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/video-enhancer/process': typeof ApiVideoEnhancerProcessRoute
@@ -525,7 +494,6 @@ export interface FileRoutesById {
   '/contato': typeof ContatoRoute
   '/dashboard': typeof DashboardRoute
   '/dmca': typeof DmcaRoute
-  '/feedback': typeof FeedbackRouteWithChildren
   '/ferramentas': typeof FerramentasRoute
   '/iptv': typeof IptvRoute
   '/jogos': typeof JogosRoute
@@ -563,13 +531,10 @@ export interface FileRoutesById {
   '/blog/guia-completo-clipsave': typeof BlogGuiaCompletoClipsaveRoute
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
-  '/feedback/@$username': typeof FeedbackAtusernameRoute
-  '/feedback/regras': typeof FeedbackRegrasRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/ferramenta/melhorar-video': typeof FerramentaMelhorarVideoRoute
   '/ferramentas_/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/blog/': typeof BlogIndexRoute
-  '/feedback/': typeof FeedbackIndexRoute
   '/api/public/mercadopago-webhook': typeof ApiPublicMercadopagoWebhookRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/video-enhancer/process': typeof ApiVideoEnhancerProcessRoute
@@ -590,7 +555,6 @@ export interface FileRouteTypes {
     | '/contato'
     | '/dashboard'
     | '/dmca'
-    | '/feedback'
     | '/ferramentas'
     | '/iptv'
     | '/jogos'
@@ -628,13 +592,10 @@ export interface FileRouteTypes {
     | '/blog/guia-completo-clipsave'
     | '/blog/jogos-retro-gratis'
     | '/categoria/$slug'
-    | '/feedback/@$username'
-    | '/feedback/regras'
     | '/ferramenta/$slug'
     | '/ferramenta/melhorar-video'
     | '/ferramentas/youtube-downloader'
     | '/blog/'
-    | '/feedback/'
     | '/api/public/mercadopago-webhook'
     | '/api/public/pinterest-download'
     | '/api/video-enhancer/process'
@@ -689,13 +650,10 @@ export interface FileRouteTypes {
     | '/blog/guia-completo-clipsave'
     | '/blog/jogos-retro-gratis'
     | '/categoria/$slug'
-    | '/feedback/@$username'
-    | '/feedback/regras'
     | '/ferramenta/$slug'
     | '/ferramenta/melhorar-video'
     | '/ferramentas/youtube-downloader'
     | '/blog'
-    | '/feedback'
     | '/api/public/mercadopago-webhook'
     | '/api/public/pinterest-download'
     | '/api/video-enhancer/process'
@@ -714,7 +672,6 @@ export interface FileRouteTypes {
     | '/contato'
     | '/dashboard'
     | '/dmca'
-    | '/feedback'
     | '/ferramentas'
     | '/iptv'
     | '/jogos'
@@ -752,13 +709,10 @@ export interface FileRouteTypes {
     | '/blog/guia-completo-clipsave'
     | '/blog/jogos-retro-gratis'
     | '/categoria/$slug'
-    | '/feedback/@$username'
-    | '/feedback/regras'
     | '/ferramenta/$slug'
     | '/ferramenta/melhorar-video'
     | '/ferramentas_/youtube-downloader'
     | '/blog/'
-    | '/feedback/'
     | '/api/public/mercadopago-webhook'
     | '/api/public/pinterest-download'
     | '/api/video-enhancer/process'
@@ -778,7 +732,6 @@ export interface RootRouteChildren {
   ContatoRoute: typeof ContatoRoute
   DashboardRoute: typeof DashboardRoute
   DmcaRoute: typeof DmcaRoute
-  FeedbackRoute: typeof FeedbackRouteWithChildren
   FerramentasRoute: typeof FerramentasRoute
   IptvRoute: typeof IptvRoute
   JogosRoute: typeof JogosRoute
@@ -909,13 +862,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FerramentasRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/feedback': {
-      id: '/feedback'
-      path: '/feedback'
-      fullPath: '/feedback'
-      preLoaderRoute: typeof FeedbackRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/dmca': {
       id: '/dmca'
       path: '/dmca'
@@ -986,13 +932,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/feedback/': {
-      id: '/feedback/'
-      path: '/'
-      fullPath: '/feedback/'
-      preLoaderRoute: typeof FeedbackIndexRouteImport
-      parentRoute: typeof FeedbackRoute
-    }
     '/blog/': {
       id: '/blog/'
       path: '/'
@@ -1020,20 +959,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/ferramenta/$slug'
       preLoaderRoute: typeof FerramentaSlugRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/feedback/regras': {
-      id: '/feedback/regras'
-      path: '/regras'
-      fullPath: '/feedback/regras'
-      preLoaderRoute: typeof FeedbackRegrasRouteImport
-      parentRoute: typeof FeedbackRoute
-    }
-    '/feedback/@$username': {
-      id: '/feedback/@$username'
-      path: '/@$username'
-      fullPath: '/feedback/@$username'
-      preLoaderRoute: typeof FeedbackAtusernameRouteImport
-      parentRoute: typeof FeedbackRoute
     }
     '/categoria/$slug': {
       id: '/categoria/$slug'
@@ -1281,22 +1206,6 @@ const BlogRouteChildren: BlogRouteChildren = {
 
 const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
-interface FeedbackRouteChildren {
-  FeedbackAtusernameRoute: typeof FeedbackAtusernameRoute
-  FeedbackRegrasRoute: typeof FeedbackRegrasRoute
-  FeedbackIndexRoute: typeof FeedbackIndexRoute
-}
-
-const FeedbackRouteChildren: FeedbackRouteChildren = {
-  FeedbackAtusernameRoute: FeedbackAtusernameRoute,
-  FeedbackRegrasRoute: FeedbackRegrasRoute,
-  FeedbackIndexRoute: FeedbackIndexRoute,
-}
-
-const FeedbackRouteWithChildren = FeedbackRoute._addFileChildren(
-  FeedbackRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
@@ -1308,7 +1217,6 @@ const rootRouteChildren: RootRouteChildren = {
   ContatoRoute: ContatoRoute,
   DashboardRoute: DashboardRoute,
   DmcaRoute: DmcaRoute,
-  FeedbackRoute: FeedbackRouteWithChildren,
   FerramentasRoute: FerramentasRoute,
   IptvRoute: IptvRoute,
   JogosRoute: JogosRoute,

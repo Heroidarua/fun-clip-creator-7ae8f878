@@ -7,7 +7,7 @@ const GENERIC_ERROR =
   "Não foi possível processar este vídeo. Verifique a URL e tente novamente.";
 
 /** Acima deste tamanho o arquivo não é processado no navegador. */
-export const BROWSER_PROCESS_LIMIT = 2048 * 1024 * 1024; // 2 GB
+export const BROWSER_PROCESS_LIMIT = 500 * 1024 * 1024; // 500MB
 
 const TOO_LARGE = "TOO_LARGE";
 
@@ -38,11 +38,10 @@ async function fetchStream(
   container: "mp4" | "m4a",
   quality: string,
   onRatio: (ratio: number | null) => void,
-  isPreview = false,
 ): Promise<StreamResult> {
   const ticket = await requestYoutubeDownload(videoUrl, container, quality);
-  const fileUrl = absoluteDownloadUrl(ticket.downloadUrl) + (isPreview ? "&preview=1" : "");
-  const res = await fetch(fileUrl, { signal: AbortSignal.timeout(30 * 60_000) });
+  const fileUrl = absoluteDownloadUrl(ticket.downloadUrl);
+  const res = await fetch(fileUrl);
   if (!res.ok || !res.body) {
     const data = await res.json().catch(() => null);
     throw new Error(data?.error || GENERIC_ERROR);
@@ -109,7 +108,6 @@ export async function downloadYoutubeMedia({
       onStage?.("Baixando o áudio...");
       const audio = await fetchStream(url, "m4a", quality, (r) =>
         onProgress?.(r == null ? null : Math.round(r * 100)),
-        false
       );
       saveBlob(
         new Blob([audio.bytes.slice().buffer as ArrayBuffer], { type: audio.contentType }),
@@ -122,7 +120,6 @@ export async function downloadYoutubeMedia({
     onStage?.("Baixando o vídeo...");
     const video = await fetchStream(url, "mp4", quality, (r) =>
       onProgress?.(r == null ? null : Math.round(r * 60)),
-      false
     );
 
     if (video.muxed) {
@@ -137,7 +134,6 @@ export async function downloadYoutubeMedia({
     onStage?.("Baixando o áudio...");
     const audio = await fetchStream(url, "m4a", "best", (r) =>
       onProgress?.(60 + (r == null ? 0 : Math.round(r * 20))),
-      false
     );
     onStage?.("Juntando áudio e vídeo (isso pode levar alguns segundos)...");
     const { muxVideoAndAudio } = await import("@/lib/youtube-mux");
@@ -148,14 +144,13 @@ export async function downloadYoutubeMedia({
     onProgress?.(100);
   } catch (e) {
     const err = e as Error & { directUrl?: string; muxed?: boolean };
-    console.error("YouTube download flow error:", err);
     if (err.message === TOO_LARGE) {
       if (err.directUrl && (type === "audio" || err.muxed)) {
         window.location.href = err.directUrl;
         return;
       }
       throw new Error(
-        "Este arquivo é grande demais para ser finalizado no navegador. Escolha uma qualidade menor ou baixe apenas o áudio.",
+        "Este arquivo passa de 500 MB e não pode ser processado no navegador. Escolha uma qualidade menor.",
       );
     }
     throw new Error(err.message || GENERIC_ERROR);

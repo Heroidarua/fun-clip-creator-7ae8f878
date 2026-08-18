@@ -39,22 +39,32 @@ const Index = () => {
         <SectionDivider />
         <AdvantagesSection />
 
+        {/* 3. Ferramentas — o coração do produto */}
+        <SectionDivider />
+        <UtilityToolsSection />
+
         <Suspense fallback={null}>
-          {/* 3. Prova social — reforça a decisão */}
+          {/* 4. Entretenimento — mantém o usuário navegando */}
+          <SectionDivider />
+          <RandomGamePicker />
+          {gamesOn && <GamesCarousel />}
+          {comicsOn && <ComicsSection />}
+
+          {/* 5. Prova social — reforça a decisão */}
           <SectionDivider />
           <SocialProof />
 
-          {/* 4. Como usar e sobre — educa */}
+          {/* 6. Como usar e sobre — educa */}
           <SectionDivider />
           <HowToUse />
           <AboutSection />
 
-          {/* 5. Suporte / informações finais */}
+          {/* 7. Suporte / informações finais */}
           <SectionDivider />
           <FAQ />
           <TechnicalInfoSection />
 
-          {/* 6. Índice de links internos — descoberta de todas as ferramentas */}
+          {/* 8. Índice de links internos — descoberta de todas as ferramentas */}
           <div className="container mx-auto max-w-6xl px-4 pb-12">
             <ToolsIndex />
           </div>

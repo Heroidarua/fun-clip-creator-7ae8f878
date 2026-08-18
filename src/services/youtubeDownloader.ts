@@ -47,7 +47,7 @@ async function postJson<T>(path: string, body: unknown): Promise<T> {
   return data as T;
 }
 
-export function fetchYoutubeInfo(url: string): Promise<YoutubeInfo & { success: true; ticket?: string }> {
+export function fetchYoutubeInfo(url: string): Promise<YoutubeInfo & { success: true }> {
   return postJson("/api/youtube/info", { url });
 }
 

@@ -4,7 +4,6 @@ import {
   ytCors,
   ytClientIp,
   ytRateLimit,
-  signTicket,
   YT_MAX_DURATION_SECONDS,
 } from "@/lib/youtube-tool.server";
 
@@ -86,14 +85,6 @@ export const Route = createFileRoute("/api/youtube/info")({
 
           const formats = [
             {
-              id: "mp4-1080",
-              container: "mp4" as const,
-              type: "video" as const,
-              quality: "high",
-              label: "MP4 — 1080p (Full HD)",
-              estimatedBytes: estimateBytes(duration, 4500),
-            },
-            {
               id: "mp4-720",
               container: "mp4" as const,
               type: "video" as const,
@@ -119,13 +110,6 @@ export const Route = createFileRoute("/api/youtube/info")({
             },
           ];
 
-          const ticket = await signTicket({
-            videoId,
-            type: "video",
-            quality: "worst",
-            title: data.title || "",
-          });
-
           return Response.json(
             {
               success: true,
@@ -136,7 +120,6 @@ export const Route = createFileRoute("/api/youtube/info")({
               thumbnail: data.thumbnail || fallbackThumbnail(videoId),
               duration,
               formats,
-              ticket,
             },
             { headers: JSON_HEADERS },
           );

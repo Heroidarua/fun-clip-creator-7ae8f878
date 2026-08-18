@@ -285,7 +285,6 @@ interface YouTubeData {
   author: string;
   duration?: number;
   download_page_url?: string;
-  proxy_video_url?: string;
 }
 
 
@@ -888,9 +887,9 @@ const HeroSection = () => {
       youtubeInfoRef.current = info;
       setYoutubeFormats(info.formats);
       const firstVideo = info.formats.find((f) => f.type === "video");
-      const highQualityVideo = info.formats.find((f) => f.type === "video" && (f.quality === "high" || f.quality === "best" || f.id.includes("720") || f.id.includes("1080")));
+      const highQualityVideo = info.formats.find((f) => f.type === "video" && (f.quality === "high" || f.quality === "best" || f.id.includes("720")));
       setYoutubeDownloadType(firstVideo ? "video" : "audio");
-      setYoutubeQuality(((info as any).ticket || (highQualityVideo || firstVideo || info.formats[0])?.id) ?? "");
+      setYoutubeQuality((highQualityVideo || firstVideo || info.formats[0])?.id ?? "");
 
       setYoutubeProgress(100);
       clearInterval(progressInterval);
@@ -909,10 +908,10 @@ const HeroSection = () => {
         description: "Iniciando download automático...",
       });
 
-      // Inicia o download imediatamente ao encontrar o vídeo
+      // Dispara o download imediatamente após encontrar o vídeo
       setTimeout(() => {
         handleYoutubeDownload(true);
-      }, 300);
+      }, 500);
     } catch (error: any) {
       console.error("Erro completo:", error);
       clearInterval(progressInterval);
@@ -1246,24 +1245,6 @@ const HeroSection = () => {
                   )}
                 </Button>
               </div>
-            </div>
-
-            <div className="mt-6 flex flex-wrap justify-center gap-3 animate-fade-in">
-              <Link 
-                to="/feedback"
-                className="group flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full hover:bg-primary/20 hover:border-primary/40 transition-all"
-              >
-                <span className="text-xl group-hover:scale-110 transition-transform">👥</span>
-                <span className="font-bold text-[11px] sm:text-xs uppercase tracking-wider text-primary">Comunidade SOS01</span>
-                <span className="flex h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
-              </Link>
-              <Link 
-                to="/ferramentas"
-                className="group flex items-center gap-2 px-4 py-2 bg-muted/30 border border-border/50 rounded-full hover:bg-muted/50 hover:border-border transition-all"
-              >
-                <span className="text-xl group-hover:scale-110 transition-transform">🛠️</span>
-                <span className="font-bold text-[11px] sm:text-xs uppercase tracking-wider text-muted-foreground">Ferramentas Premium</span>
-              </Link>
             </div>
 
             {/* TikTok Maintenance Warning */}
@@ -1864,7 +1845,7 @@ const HeroSection = () => {
                       title={youtubeData.title}
                       author={youtubeData.author}
                       duration={youtubeData.duration}
-                      mediaUrl={youtubeData.proxy_video_url || apiUrl('/api/youtube/file') + `?token=${encodeURIComponent(youtubeQuality)}&preview=1`}
+                      mediaUrl={apiUrl('/api/download-youtube-stream') + `?url=${encodeURIComponent(parseYouTubeUrl(youtubeUrl)?.canonicalUrl || youtubeUrl)}&type=video&quality=worst&preview=1`}
                     />
                   </div>
 
@@ -1932,7 +1913,7 @@ const HeroSection = () => {
                           })}
                       </div>
                       <p className="font-orbitron text-[10px] text-center mt-2 text-muted-foreground">
-                        Arquivos acima de 500 MB podem demorar no processamento — prefira uma resolução menor se estiver com pressa.
+                        Arquivos acima de 100 MB podem falhar no navegador — prefira uma resolução menor.
                       </p>
                     </div>
                   )}

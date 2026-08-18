@@ -29,7 +29,7 @@ export const Route = createFileRoute("/api/youtube/download")({
           const format = body?.format === "m4a" ? "m4a" : "mp4";
           const requested = String(body?.quality || "best").toLowerCase();
           const quality: "best" | "high" | "worst" =
-            requested.includes("1080") || requested.includes("720") || requested === "high" || requested.includes("mp4-720") || requested.includes("mp4-1080")
+            requested.includes("720") || requested === "high" || requested.includes("mp4-720")
               ? "high"
               : requested.includes("worst") || requested.includes("mp4-480")
                 ? "worst"
