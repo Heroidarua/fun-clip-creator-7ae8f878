@@ -187,6 +187,15 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality | string = "b
   const preview = quality === "preview";
   const finalVideo = chosen?.url || (preview ? progressive.find(f => /video/i.test(f.mimeType || ""))?.url || adaptive.find(f => /video/i.test(f.mimeType || ""))?.url : "") || "";
 
+  if (preview && finalVideo) {
+    return {
+      video: finalVideo,
+      audio: "",
+      hasMuxed: true,
+      height: Number(progressive.find(f => f.url === finalVideo)?.height || adaptive.find(f => f.url === finalVideo)?.height || 0),
+    };
+  }
+
   return {
     video: finalVideo,
     audio: audioOnly[0]?.url || (chosenMuxed ? chosen?.url : "") || "",
