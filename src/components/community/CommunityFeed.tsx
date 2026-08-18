@@ -51,10 +51,18 @@ const CommunityFeed = () => {
       
       <div className="flex items-center justify-between border-b border-border pb-2">
          <h2 className="font-display text-xl">Últimas Publicações</h2>
-         <div className="flex gap-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">
-            <button className="text-primary border-b-2 border-primary pb-1">Recentes</button>
-            <button className="hover:text-foreground pb-1">Populares</button>
-         </div>
+        <div className="flex gap-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+          <button 
+            className={`${currentFilter === "recent" ? "text-primary border-b-2 border-primary" : "hover:text-foreground"} pb-1 transition-colors`}
+          >
+            Recentes
+          </button>
+          <button 
+            className={`${currentFilter === "trending" ? "text-primary border-b-2 border-primary" : "hover:text-foreground"} pb-1 transition-colors`}
+          >
+            Populares
+          </button>
+        </div>
       </div>
 
       {posts.length === 0 ? (
