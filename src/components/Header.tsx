@@ -43,7 +43,7 @@ const Header = () => {
   const [iptvModalOpen, setIptvModalOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const routerState = useRouterState();
-  const isCommunityPage = pathname.startsWith("/comunidade");
+  const isCommunityPage = pathname.startsWith("/feedback");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -126,15 +126,15 @@ const Header = () => {
           {/* Actions */}
           <div className="flex items-center gap-1.5 sm:gap-2">
             <Link 
-              to="/comunidade" 
+              to="/feedback" 
               className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-all border ${
                 isCommunityPage 
                   ? "bg-primary text-primary-foreground border-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.4)]" 
                   : "bg-primary/10 text-primary border-primary/20 hover:bg-primary/20"
               } mr-1 sm:mr-2`}
             >
-              <span className="text-base sm:text-lg">👥</span>
-              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider hidden xs:inline">Comunidade</span>
+              <span className="text-base sm:text-lg">📢</span>
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider hidden xs:inline">Feedback</span>
             </Link>
             <DonationButton />
             <InstallAppButton />

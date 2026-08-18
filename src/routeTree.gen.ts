@@ -22,10 +22,10 @@ import { Route as JogosJavaRouteImport } from './routes/jogos-java'
 import { Route as JogosRouteImport } from './routes/jogos'
 import { Route as IptvRouteImport } from './routes/iptv'
 import { Route as FerramentasRouteImport } from './routes/ferramentas'
+import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as DmcaRouteImport } from './routes/dmca'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContatoRouteImport } from './routes/contato'
-import { Route as ComunidadeRouteImport } from './routes/comunidade'
 import { Route as ComoUsarRouteImport } from './routes/como-usar'
 import { Route as BuscaRouteImport } from './routes/busca'
 import { Route as BlogRouteImport } from './routes/blog'
@@ -33,13 +33,13 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ComunidadeIndexRouteImport } from './routes/comunidade.index'
+import { Route as FeedbackIndexRouteImport } from './routes/feedback.index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as FerramentasYoutubeDownloaderRouteImport } from './routes/ferramentas_.youtube-downloader'
 import { Route as FerramentaMelhorarVideoRouteImport } from './routes/ferramenta.melhorar-video'
 import { Route as FerramentaSlugRouteImport } from './routes/ferramenta.$slug'
-import { Route as ComunidadeRegrasRouteImport } from './routes/comunidade.regras'
-import { Route as ComunidadeAtusernameRouteImport } from './routes/comunidade.@$username'
+import { Route as FeedbackRegrasRouteImport } from './routes/feedback.regras'
+import { Route as FeedbackAtusernameRouteImport } from './routes/feedback.@$username'
 import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
 import { Route as BlogJogosRetroGratisRouteImport } from './routes/blog.jogos-retro-gratis'
 import { Route as BlogGuiaCompletoClipsaveRouteImport } from './routes/blog.guia-completo-clipsave'
@@ -136,6 +136,11 @@ const FerramentasRoute = FerramentasRouteImport.update({
   path: '/ferramentas',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FeedbackRoute = FeedbackRouteImport.update({
+  id: '/feedback',
+  path: '/feedback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DmcaRoute = DmcaRouteImport.update({
   id: '/dmca',
   path: '/dmca',
@@ -149,11 +154,6 @@ const DashboardRoute = DashboardRouteImport.update({
 const ContatoRoute = ContatoRouteImport.update({
   id: '/contato',
   path: '/contato',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ComunidadeRoute = ComunidadeRouteImport.update({
-  id: '/comunidade',
-  path: '/comunidade',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ComoUsarRoute = ComoUsarRouteImport.update({
@@ -191,10 +191,10 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ComunidadeIndexRoute = ComunidadeIndexRouteImport.update({
+const FeedbackIndexRoute = FeedbackIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => ComunidadeRoute,
+  getParentRoute: () => FeedbackRoute,
 } as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/',
@@ -217,15 +217,15 @@ const FerramentaSlugRoute = FerramentaSlugRouteImport.update({
   path: '/ferramenta/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ComunidadeRegrasRoute = ComunidadeRegrasRouteImport.update({
+const FeedbackRegrasRoute = FeedbackRegrasRouteImport.update({
   id: '/regras',
   path: '/regras',
-  getParentRoute: () => ComunidadeRoute,
+  getParentRoute: () => FeedbackRoute,
 } as any)
-const ComunidadeAtusernameRoute = ComunidadeAtusernameRouteImport.update({
+const FeedbackAtusernameRoute = FeedbackAtusernameRouteImport.update({
   id: '/@$username',
   path: '/@$username',
-  getParentRoute: () => ComunidadeRoute,
+  getParentRoute: () => FeedbackRoute,
 } as any)
 const CategoriaSlugRoute = CategoriaSlugRouteImport.update({
   id: '/categoria/$slug',
@@ -397,10 +397,10 @@ export interface FileRoutesByFullPath {
   '/blog': typeof BlogRouteWithChildren
   '/busca': typeof BuscaRoute
   '/como-usar': typeof ComoUsarRoute
-  '/comunidade': typeof ComunidadeRouteWithChildren
   '/contato': typeof ContatoRoute
   '/dashboard': typeof DashboardRoute
   '/dmca': typeof DmcaRoute
+  '/feedback': typeof FeedbackRouteWithChildren
   '/ferramentas': typeof FerramentasRoute
   '/iptv': typeof IptvRoute
   '/jogos': typeof JogosRoute
@@ -438,13 +438,13 @@ export interface FileRoutesByFullPath {
   '/blog/guia-completo-clipsave': typeof BlogGuiaCompletoClipsaveRoute
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
-  '/comunidade/@$username': typeof ComunidadeAtusernameRoute
-  '/comunidade/regras': typeof ComunidadeRegrasRoute
+  '/feedback/@$username': typeof FeedbackAtusernameRoute
+  '/feedback/regras': typeof FeedbackRegrasRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/ferramenta/melhorar-video': typeof FerramentaMelhorarVideoRoute
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/blog/': typeof BlogIndexRoute
-  '/comunidade/': typeof ComunidadeIndexRoute
+  '/feedback/': typeof FeedbackIndexRoute
   '/api/public/mercadopago-webhook': typeof ApiPublicMercadopagoWebhookRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/video-enhancer/process': typeof ApiVideoEnhancerProcessRoute
@@ -499,13 +499,13 @@ export interface FileRoutesByTo {
   '/blog/guia-completo-clipsave': typeof BlogGuiaCompletoClipsaveRoute
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
-  '/comunidade/@$username': typeof ComunidadeAtusernameRoute
-  '/comunidade/regras': typeof ComunidadeRegrasRoute
+  '/feedback/@$username': typeof FeedbackAtusernameRoute
+  '/feedback/regras': typeof FeedbackRegrasRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/ferramenta/melhorar-video': typeof FerramentaMelhorarVideoRoute
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/blog': typeof BlogIndexRoute
-  '/comunidade': typeof ComunidadeIndexRoute
+  '/feedback': typeof FeedbackIndexRoute
   '/api/public/mercadopago-webhook': typeof ApiPublicMercadopagoWebhookRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/video-enhancer/process': typeof ApiVideoEnhancerProcessRoute
@@ -522,10 +522,10 @@ export interface FileRoutesById {
   '/blog': typeof BlogRouteWithChildren
   '/busca': typeof BuscaRoute
   '/como-usar': typeof ComoUsarRoute
-  '/comunidade': typeof ComunidadeRouteWithChildren
   '/contato': typeof ContatoRoute
   '/dashboard': typeof DashboardRoute
   '/dmca': typeof DmcaRoute
+  '/feedback': typeof FeedbackRouteWithChildren
   '/ferramentas': typeof FerramentasRoute
   '/iptv': typeof IptvRoute
   '/jogos': typeof JogosRoute
@@ -563,13 +563,13 @@ export interface FileRoutesById {
   '/blog/guia-completo-clipsave': typeof BlogGuiaCompletoClipsaveRoute
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
-  '/comunidade/@$username': typeof ComunidadeAtusernameRoute
-  '/comunidade/regras': typeof ComunidadeRegrasRoute
+  '/feedback/@$username': typeof FeedbackAtusernameRoute
+  '/feedback/regras': typeof FeedbackRegrasRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/ferramenta/melhorar-video': typeof FerramentaMelhorarVideoRoute
   '/ferramentas_/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/blog/': typeof BlogIndexRoute
-  '/comunidade/': typeof ComunidadeIndexRoute
+  '/feedback/': typeof FeedbackIndexRoute
   '/api/public/mercadopago-webhook': typeof ApiPublicMercadopagoWebhookRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/video-enhancer/process': typeof ApiVideoEnhancerProcessRoute
@@ -587,10 +587,10 @@ export interface FileRouteTypes {
     | '/blog'
     | '/busca'
     | '/como-usar'
-    | '/comunidade'
     | '/contato'
     | '/dashboard'
     | '/dmca'
+    | '/feedback'
     | '/ferramentas'
     | '/iptv'
     | '/jogos'
@@ -628,13 +628,13 @@ export interface FileRouteTypes {
     | '/blog/guia-completo-clipsave'
     | '/blog/jogos-retro-gratis'
     | '/categoria/$slug'
-    | '/comunidade/@$username'
-    | '/comunidade/regras'
+    | '/feedback/@$username'
+    | '/feedback/regras'
     | '/ferramenta/$slug'
     | '/ferramenta/melhorar-video'
     | '/ferramentas/youtube-downloader'
     | '/blog/'
-    | '/comunidade/'
+    | '/feedback/'
     | '/api/public/mercadopago-webhook'
     | '/api/public/pinterest-download'
     | '/api/video-enhancer/process'
@@ -689,13 +689,13 @@ export interface FileRouteTypes {
     | '/blog/guia-completo-clipsave'
     | '/blog/jogos-retro-gratis'
     | '/categoria/$slug'
-    | '/comunidade/@$username'
-    | '/comunidade/regras'
+    | '/feedback/@$username'
+    | '/feedback/regras'
     | '/ferramenta/$slug'
     | '/ferramenta/melhorar-video'
     | '/ferramentas/youtube-downloader'
     | '/blog'
-    | '/comunidade'
+    | '/feedback'
     | '/api/public/mercadopago-webhook'
     | '/api/public/pinterest-download'
     | '/api/video-enhancer/process'
@@ -711,10 +711,10 @@ export interface FileRouteTypes {
     | '/blog'
     | '/busca'
     | '/como-usar'
-    | '/comunidade'
     | '/contato'
     | '/dashboard'
     | '/dmca'
+    | '/feedback'
     | '/ferramentas'
     | '/iptv'
     | '/jogos'
@@ -752,13 +752,13 @@ export interface FileRouteTypes {
     | '/blog/guia-completo-clipsave'
     | '/blog/jogos-retro-gratis'
     | '/categoria/$slug'
-    | '/comunidade/@$username'
-    | '/comunidade/regras'
+    | '/feedback/@$username'
+    | '/feedback/regras'
     | '/ferramenta/$slug'
     | '/ferramenta/melhorar-video'
     | '/ferramentas_/youtube-downloader'
     | '/blog/'
-    | '/comunidade/'
+    | '/feedback/'
     | '/api/public/mercadopago-webhook'
     | '/api/public/pinterest-download'
     | '/api/video-enhancer/process'
@@ -775,10 +775,10 @@ export interface RootRouteChildren {
   BlogRoute: typeof BlogRouteWithChildren
   BuscaRoute: typeof BuscaRoute
   ComoUsarRoute: typeof ComoUsarRoute
-  ComunidadeRoute: typeof ComunidadeRouteWithChildren
   ContatoRoute: typeof ContatoRoute
   DashboardRoute: typeof DashboardRoute
   DmcaRoute: typeof DmcaRoute
+  FeedbackRoute: typeof FeedbackRouteWithChildren
   FerramentasRoute: typeof FerramentasRoute
   IptvRoute: typeof IptvRoute
   JogosRoute: typeof JogosRoute
@@ -909,6 +909,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FerramentasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/feedback': {
+      id: '/feedback'
+      path: '/feedback'
+      fullPath: '/feedback'
+      preLoaderRoute: typeof FeedbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dmca': {
       id: '/dmca'
       path: '/dmca'
@@ -928,13 +935,6 @@ declare module '@tanstack/react-router' {
       path: '/contato'
       fullPath: '/contato'
       preLoaderRoute: typeof ContatoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/comunidade': {
-      id: '/comunidade'
-      path: '/comunidade'
-      fullPath: '/comunidade'
-      preLoaderRoute: typeof ComunidadeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/como-usar': {
@@ -986,12 +986,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/comunidade/': {
-      id: '/comunidade/'
+    '/feedback/': {
+      id: '/feedback/'
       path: '/'
-      fullPath: '/comunidade/'
-      preLoaderRoute: typeof ComunidadeIndexRouteImport
-      parentRoute: typeof ComunidadeRoute
+      fullPath: '/feedback/'
+      preLoaderRoute: typeof FeedbackIndexRouteImport
+      parentRoute: typeof FeedbackRoute
     }
     '/blog/': {
       id: '/blog/'
@@ -1021,19 +1021,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FerramentaSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/comunidade/regras': {
-      id: '/comunidade/regras'
+    '/feedback/regras': {
+      id: '/feedback/regras'
       path: '/regras'
-      fullPath: '/comunidade/regras'
-      preLoaderRoute: typeof ComunidadeRegrasRouteImport
-      parentRoute: typeof ComunidadeRoute
+      fullPath: '/feedback/regras'
+      preLoaderRoute: typeof FeedbackRegrasRouteImport
+      parentRoute: typeof FeedbackRoute
     }
-    '/comunidade/@$username': {
-      id: '/comunidade/@$username'
+    '/feedback/@$username': {
+      id: '/feedback/@$username'
       path: '/@$username'
-      fullPath: '/comunidade/@$username'
-      preLoaderRoute: typeof ComunidadeAtusernameRouteImport
-      parentRoute: typeof ComunidadeRoute
+      fullPath: '/feedback/@$username'
+      preLoaderRoute: typeof FeedbackAtusernameRouteImport
+      parentRoute: typeof FeedbackRoute
     }
     '/categoria/$slug': {
       id: '/categoria/$slug'
@@ -1281,20 +1281,20 @@ const BlogRouteChildren: BlogRouteChildren = {
 
 const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
-interface ComunidadeRouteChildren {
-  ComunidadeAtusernameRoute: typeof ComunidadeAtusernameRoute
-  ComunidadeRegrasRoute: typeof ComunidadeRegrasRoute
-  ComunidadeIndexRoute: typeof ComunidadeIndexRoute
+interface FeedbackRouteChildren {
+  FeedbackAtusernameRoute: typeof FeedbackAtusernameRoute
+  FeedbackRegrasRoute: typeof FeedbackRegrasRoute
+  FeedbackIndexRoute: typeof FeedbackIndexRoute
 }
 
-const ComunidadeRouteChildren: ComunidadeRouteChildren = {
-  ComunidadeAtusernameRoute: ComunidadeAtusernameRoute,
-  ComunidadeRegrasRoute: ComunidadeRegrasRoute,
-  ComunidadeIndexRoute: ComunidadeIndexRoute,
+const FeedbackRouteChildren: FeedbackRouteChildren = {
+  FeedbackAtusernameRoute: FeedbackAtusernameRoute,
+  FeedbackRegrasRoute: FeedbackRegrasRoute,
+  FeedbackIndexRoute: FeedbackIndexRoute,
 }
 
-const ComunidadeRouteWithChildren = ComunidadeRoute._addFileChildren(
-  ComunidadeRouteChildren,
+const FeedbackRouteWithChildren = FeedbackRoute._addFileChildren(
+  FeedbackRouteChildren,
 )
 
 const rootRouteChildren: RootRouteChildren = {
@@ -1305,10 +1305,10 @@ const rootRouteChildren: RootRouteChildren = {
   BlogRoute: BlogRouteWithChildren,
   BuscaRoute: BuscaRoute,
   ComoUsarRoute: ComoUsarRoute,
-  ComunidadeRoute: ComunidadeRouteWithChildren,
   ContatoRoute: ContatoRoute,
   DashboardRoute: DashboardRoute,
   DmcaRoute: DmcaRoute,
+  FeedbackRoute: FeedbackRouteWithChildren,
   FerramentasRoute: FerramentasRoute,
   IptvRoute: IptvRoute,
   JogosRoute: JogosRoute,

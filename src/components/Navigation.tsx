@@ -12,7 +12,7 @@ import {
 
 const ITEMS = [
   { to: "/", label: "Início", icon: Home, desc: "Página Principal" },
-  { to: "/comunidade", label: "Comunidade", icon: Share2, desc: "Espaço Social", community: true },
+  { to: "/feedback", label: "Feedback", icon: Share2, desc: "Sugestões e relatos", community: true },
   
   // Categoria: Ferramentas
   { to: "/ferramentas", label: "Ferramentas", icon: Wrench, desc: "Utilidades & IA" },
@@ -75,7 +75,7 @@ export default function SidebarNav() {
             {ITEMS.map((item) => {
               const { to, label, icon: Icon, desc } = item;
               // Show community link everywhere to improve visibility
-              // if ((item as any).community && !pathname.startsWith("/comunidade")) return null;
+              // if ((item as any).community && !pathname.startsWith("/feedback")) return null;
               const active = isActive(to);
               return (
                 <Tooltip key={to}>
@@ -150,7 +150,7 @@ export default function SidebarNav() {
             {ITEMS.map((item) => {
               const { to, label, icon: Icon, desc } = item;
               // Show community link everywhere to improve visibility
-              // if ((item as any).community && !pathname.startsWith("/comunidade")) return null;
+              // if ((item as any).community && !pathname.startsWith("/feedback")) return null;
               const active = isActive(to);
               return (
                 <Link

@@ -18,7 +18,7 @@ export interface Category {
   description: string | null;
 }
 
-export interface Post {
+export interface Feedback {
   id: string;
   user_id: string;
   content: string | null;

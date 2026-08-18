@@ -1,21 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getProfileByUsername, getPosts } from "@/lib/community/services";
+import { getProfileByUsername, getFeedbacks } from "@/lib/feedback/services";
 import { useState, useEffect } from "react";
-import { Profile, Post } from "@/lib/community/types";
+import { Profile, Feedback } from "@/lib/feedback/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import PostCard from "@/components/community/PostCard";
+import FeedbackCard from "@/components/feedback/FeedbackCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Calendar, MapPin, Link as LinkIcon, Edit3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export const Route = createFileRoute("/comunidade/@$username")({
-  component: UserProfilePage,
+export const Route = createFileRoute("/feedback/@$username")({
+  component: FeedbackProfilePage,
 });
 
-function UserProfilePage() {
+function FeedbackProfilePage() {
   const { username } = Route.useParams();
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setFeedbacks] = useState<Feedback[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -25,8 +25,8 @@ function UserProfilePage() {
         const p = await getProfileByUsername(username);
         if (p) {
           setProfile(p);
-          const userPosts = await getPosts({ userId: p.user_id });
-          setPosts(userPosts);
+          const userFeedbacks = await getFeedbacks({ userId: p.user_id });
+          setFeedbacks(userFeedbacks);
         }
       } catch (error) {
         console.error("Erro ao carregar perfil", error);
@@ -120,7 +120,7 @@ function UserProfilePage() {
             <p className="text-muted-foreground">Este usuário ainda não fez nenhuma publicação.</p>
           </div>
         ) : (
-          posts.map(post => <PostCard key={post.id} post={post} />)
+          posts.map(post => <FeedbackCard key={post.id} post={post} />)
         )}
       </div>
     </div>

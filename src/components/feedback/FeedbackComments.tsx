@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Comment as CommentType } from "@/lib/community/types";
-import { getComments, addComment } from "@/lib/community/services";
+import { Comment as CommentType } from "@/lib/feedback/types";
+import { getComments, addComment } from "@/lib/feedback/services";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,11 +9,11 @@ import { ptBR } from "date-fns/locale";
 import { Send, Heart } from "lucide-react";
 import { toast } from "sonner";
 
-interface CommentSectionProps {
-  postId: string;
+interface FeedbackCommentsProps {
+  feedbackId: string;
 }
 
-const CommentSection = ({ postId }: CommentSectionProps) => {
+const FeedbackComments = ({ feedbackId }: FeedbackCommentsProps) => {
   const [comments, setComments] = useState<CommentType[]>([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(true);
@@ -22,7 +22,7 @@ const CommentSection = ({ postId }: CommentSectionProps) => {
   useEffect(() => {
     async function loadComments() {
       try {
-        const data = await getComments(postId);
+        const data = await getComments(feedbackId);
         setComments(data);
       } catch (error) {
         console.error("Erro ao carregar comentários", error);
@@ -31,16 +31,16 @@ const CommentSection = ({ postId }: CommentSectionProps) => {
       }
     }
     loadComments();
-  }, [postId]);
+  }, [feedbackId]);
 
   const handleSubmit = async () => {
     if (!newComment.trim()) return;
 
     setSubmitting(true);
     try {
-      const data = await addComment(postId, newComment);
+      const data = await addComment(feedbackId, newComment);
       // Recarregar comentários para pegar os dados do perfil (ou otimizar inserindo localmente)
-      const updatedComments = await getComments(postId);
+      const updatedComments = await getComments(feedbackId);
       setComments(updatedComments);
       setNewComment("");
       toast.success("Comentário adicionado!");
@@ -118,4 +118,4 @@ const CommentSection = ({ postId }: CommentSectionProps) => {
   );
 };
 
-export default CommentSection;
+export default FeedbackComments;

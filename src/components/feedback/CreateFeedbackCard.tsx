@@ -4,15 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Image, Send, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { createPost } from "@/lib/community/services";
+import { createFeedback } from "@/lib/feedback/services";
 import { toast } from "sonner";
 import { useUserStats } from "@/hooks/useUserStats";
 
-interface CreatePostCardProps {
-  onPostCreated?: (post: any) => void;
+interface CreateFeedbackCardProps {
+  onFeedbackCreated?: (feedback: any) => void;
 }
 
-const CreatePostCard = ({ onPostCreated }: CreatePostCardProps) => {
+const CreateFeedbackCard = ({ onFeedbackCreated }: CreateFeedbackCardProps) => {
   const { profile } = useUserStats();
   const [content, setContent] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
@@ -53,7 +53,7 @@ const CreatePostCard = ({ onPostCreated }: CreatePostCardProps) => {
       if (selectedImage) {
         const fileExt = selectedImage.name.split('.').pop();
         const fileName = `${user.id}-${Math.random()}.${fileExt}`;
-        const filePath = `posts/${fileName}`;
+        const filePath = `feedbacks/${fileName}`;
 
         const { error: uploadError } = await supabase.storage
           .from('community')
@@ -68,7 +68,7 @@ const CreatePostCard = ({ onPostCreated }: CreatePostCardProps) => {
         imageUrl = publicUrl;
       }
 
-      const newPost = await createPost(content, imageUrl);
+      const newFeedback = await createFeedback(content, imageUrl);
       
       toast.success("Publicado com sucesso!");
       setContent("");
@@ -76,19 +76,19 @@ const CreatePostCard = ({ onPostCreated }: CreatePostCardProps) => {
       setImagePreview(null);
       setIsExpanded(false);
       
-      if (onPostCreated) {
-        // Recarregar o post com os dados do perfil
-        const { data: enrichedPost } = await supabase
-          .from('community_posts')
+      if (onFeedbackCreated) {
+        // Recarregar o feedback com os dados do perfil
+        const { data: enrichedFeedback } = await supabase
+          .from('community_feedbacks')
           .select(`
             *,
             profiles:user_id (avatar_url, display_name, id),
             community_categories:category_id (name, slug, icon)
           `)
-          .eq('id', (newPost as any).id)
+          .eq('id', (newFeedback as any).id)
           .single();
           
-        onPostCreated(enrichedPost);
+        onFeedbackCreated(enrichedFeedback);
       }
     } catch (error: any) {
       console.error(error);
@@ -110,7 +110,7 @@ const CreatePostCard = ({ onPostCreated }: CreatePostCardProps) => {
         
         <div className="flex-1 space-y-3">
           <Textarea 
-            placeholder="No que você está pensando?" 
+            placeholder="Dê sua sugestão ou feedback sobre o site..." 
             value={content}
             onChange={(e) => setContent(e.target.value)}
             onFocus={() => setIsExpanded(true)}
@@ -176,4 +176,4 @@ const CreatePostCard = ({ onPostCreated }: CreatePostCardProps) => {
   );
 };
 
-export default CreatePostCard;
+export default CreateFeedbackCard;

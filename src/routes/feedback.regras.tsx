@@ -2,11 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { ShieldAlert, Info } from "lucide-react";
 
-export const Route = createFileRoute("/comunidade/regras")({
-  component: CommunityRules,
+export const Route = createFileRoute("/feedback/regras")({
+  component: FeedbackRules,
 });
 
-function CommunityRules() {
+function FeedbackRules() {
   return (
     <div className="max-w-3xl mx-auto py-10 space-y-8">
       <div className="flex items-center gap-4 border-b border-border pb-6">
@@ -14,8 +14,8 @@ function CommunityRules() {
           <ShieldAlert size={32} />
         </div>
         <div>
-          <h1 className="text-3xl font-display">Regras da Comunidade</h1>
-          <p className="text-muted-foreground">O ambiente do SOS01 deve ser seguro e amigável para todos.</p>
+          <h1 className="text-3xl font-display">Regras da Central</h1>
+          <p className="text-muted-foreground">O ambiente do SOS01 deve ser seguro e construtivo para todos.</p>
         </div>
       </div>
 
@@ -67,7 +67,7 @@ function CommunityRules() {
         </div>
 
         <div className="flex justify-center pt-6">
-          <Link to="/comunidade" className="btn-3d px-8 py-3 rounded-xl font-bold uppercase tracking-widest text-sm">
+          <Link to="/feedback" className="btn-3d px-8 py-3 rounded-xl font-bold uppercase tracking-widest text-sm">
             EU ENTENDO, VOLTAR AO FEED
           </Link>
         </div>
