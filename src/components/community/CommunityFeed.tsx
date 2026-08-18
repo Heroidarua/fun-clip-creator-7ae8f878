@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Post } from "@/lib/community/types";
-import { getPosts } from "@/lib/community/services";
+import { getPosts, getCategories } from "@/lib/community/services";
+import { Category } from "@/lib/community/types";
 import PostCard from "./PostCard";
 import CreatePostCard from "./CreatePostCard";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -21,7 +22,7 @@ const CommunityFeed = () => {
         
         if (categorySlug) {
           const cats = await getCategories();
-          categoryId = cats.find(c => c.slug === categorySlug)?.id;
+          categoryId = cats.find((c: Category) => c.slug === categorySlug)?.id;
         }
 
         const data = await getPosts({
