@@ -1,8 +1,8 @@
 import { supabase } from "@/integrations/supabase/client";
-import { Post, Comment, Profile, Category, Notification } from "./types";
+import { Feedback, Comment, Profile, Category, Notification } from "./types";
 
 /**
- * Funções de serviço para a Comunidade SOS01
+ * Funções de serviço para a Central de Feedback SOS01
  */
 
 // --- PERFIL ---
@@ -10,7 +10,7 @@ export async function getProfileByUsername(username: string): Promise<Profile | 
   const { data, error } = await supabase
     .from('profiles')
     .select('*')
-    .eq('display_name', username) // Assumindo que display_name ou outro campo seja o username único
+    .eq('display_name', username)
     .single();
   
   if (error) return null;
@@ -39,7 +39,7 @@ export async function getCategories(): Promise<Category[]> {
   return data as Category[];
 }
 
-// --- POSTS ---
+// --- FEEDBACKS ---
 export async function getPosts(options: { 
   categoryId?: string, 
   userId?: string, 
@@ -47,8 +47,8 @@ export async function getPosts(options: {
   limit?: number,
   offset?: number,
   trending?: boolean
-} = {}): Promise<Post[]> {
-  const { categoryId, userId, followingOnly, limit = 10, offset = 0, trending } = options;
+} = {}): Promise<Feedback[]> {
+  const { categoryId, userId, limit = 10, offset = 0, trending } = options;
   
   let query = supabase
     .from('community_posts')
@@ -70,10 +70,10 @@ export async function getPosts(options: {
   const { data, error } = await query.range(offset, offset + limit - 1);
   
   if (error) {
-    console.error("Error fetching posts:", error);
+    console.error("Error fetching feedbacks:", error);
     return [];
   }
-  return data as unknown as Post[];
+  return data as unknown as Feedback[];
 }
 
 export async function createPost(content: string, imageUrl?: string, categoryId?: string) {
@@ -149,32 +149,4 @@ export async function addComment(postId: string, content: string, parentId?: str
 
   if (error) throw error;
   return data;
-}
-
-// --- FOLLOWS ---
-export async function followUser(followingId: string) {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Não autenticado");
-
-  const { error } = await supabase
-    .from('community_follows')
-    .insert({
-      follower_id: user.id,
-      following_id: followingId
-    });
-  
-  if (error) throw error;
-}
-
-export async function unfollowUser(followingId: string) {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Não autenticado");
-
-  const { error } = await supabase
-    .from('community_follows')
-    .delete()
-    .eq('follower_id', user.id)
-    .eq('following_id', followingId);
-  
-  if (error) throw error;
 }

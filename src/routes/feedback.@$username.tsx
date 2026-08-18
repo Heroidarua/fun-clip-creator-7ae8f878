@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getProfileByUsername, getPosts } from "@/lib/feedback/services";
+import { getProfileByUsername, getFeedbacks } from "@/lib/feedback/services";
 import { useState, useEffect } from "react";
-import { Profile, Post } from "@/lib/feedback/types";
+import { Profile, Feedback } from "@/lib/feedback/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import FeedbackCard from "@/components/feedback/FeedbackCard";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -15,7 +15,7 @@ export const Route = createFileRoute("/feedback/@$username")({
 function FeedbackProfilePage() {
   const { username } = Route.useParams();
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setFeedbacks] = useState<Feedback[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -25,8 +25,8 @@ function FeedbackProfilePage() {
         const p = await getProfileByUsername(username);
         if (p) {
           setProfile(p);
-          const userPosts = await getPosts({ userId: p.user_id });
-          setPosts(userPosts);
+          const userFeedbacks = await getFeedbacks({ userId: p.user_id });
+          setFeedbacks(userFeedbacks);
         }
       } catch (error) {
         console.error("Erro ao carregar perfil", error);
