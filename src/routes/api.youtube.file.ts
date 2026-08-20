@@ -9,11 +9,6 @@ import {
 
 const JSON_HEADERS = { "Content-Type": "application/json", ...ytCors() };
 
-// Helper to create Response with correct headers in Workers/TanStack
-function createResponse(body: any, status: number, headers: Headers) {
-  return new Response(body, { status, headers });
-}
-
 function sanitizeFilename(name: string, fallback: string): string {
   const cleaned = (name || "")
     .replace(/[\\/:*?"<>|\n\r\t]+/g, " ")
@@ -26,7 +21,11 @@ function sanitizeFilename(name: string, fallback: string): string {
 export const Route = createFileRoute("/api/youtube/file")({
   server: {
     handlers: {
-      OPTIONS: async () => new Response(null, { status: 204, headers: { ...ytCors() } }),
+      OPTIONS: async () => {
+        const h = new Headers();
+        Object.entries(ytCors()).forEach(([k, v]) => h.set(k, v));
+        return new Response(null, { status: 204, headers: h });
+      },
 
       GET: async ({ request }) => {
         try {
@@ -111,25 +110,28 @@ export const Route = createFileRoute("/api/youtube/file")({
           const finalContentType = isPreview ? "video/mp4" : contentType;
           const filename = `${sanitizeFilename(data?.title || title || "youtube", "youtube")}.${ext}`;
           
-          const headers = new Headers();
-          headers.set("Content-Type", finalContentType);
-          headers.set("Content-Disposition", isPreview 
+          const responseHeaders = new Headers();
+          responseHeaders.set("Content-Type", finalContentType);
+          responseHeaders.set("Content-Disposition", isPreview 
             ? "inline" 
             : `attachment; filename="${filename.replace(/[^\x20-\x7E]/g, "_").replace(/"/g, "")}"; filename*=UTF-8''${encodeURIComponent(filename)}`);
-          headers.set("Cache-Control", "no-store");
-          headers.set("Accept-Ranges", "bytes");
-          headers.set("x-yt-muxed", data?.muxed ? "1" : "0");
+          responseHeaders.set("Cache-Control", "no-store");
+          responseHeaders.set("Accept-Ranges", "bytes");
+          responseHeaders.set("x-yt-muxed", data?.muxed ? "1" : "0");
           
           const cors = ytCors();
-          Object.entries(cors).forEach(([k, v]) => headers.set(k, v));
+          Object.entries(cors).forEach(([k, v]) => responseHeaders.set(k, v));
           
           const len = upstream.headers.get("content-length");
-          if (len) headers.set("Content-Length", len);
+          if (len) responseHeaders.set("Content-Length", len);
           
           const contentRange = upstream.headers.get("content-range");
-          if (range && contentRange) headers.set("Content-Range", contentRange);
+          if (range && contentRange) responseHeaders.set("Content-Range", contentRange);
 
-          return createResponse(upstream.body, range && upstream.status === 206 ? 206 : 200, headers);
+          return new Response(upstream.body, {
+            status: range && upstream.status === 206 ? 206 : 200,
+            headers: responseHeaders,
+          });
         } catch (error: any) {
           console.error("youtube/file error:", error);
           const h = new Headers();
