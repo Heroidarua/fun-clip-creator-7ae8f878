@@ -9,6 +9,7 @@ import AdminLayout from "@/components/admin/layout/AdminLayout";
 import DashboardSection from "@/components/admin/sections/DashboardSection";
 import AnnouncementsSection from "@/components/admin/sections/AnnouncementsSection";
 import VideoSection from "@/components/admin/sections/VideoSection";
+import AppearanceSection from "@/components/admin/sections/AppearanceSection";
 
 export default function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -93,7 +94,8 @@ export default function Admin() {
       {activeTab === "dashboard" && <DashboardSection password={password} />}
       {activeTab === "announcements" && <AnnouncementsSection password={password} />}
       {activeTab === "video" && <VideoSection password={password} />}
-      {!["dashboard", "announcements", "video"].includes(activeTab) && (
+      {activeTab === "appearance" && <AppearanceSection password={password} />}
+      {!["dashboard", "announcements", "video", "appearance"].includes(activeTab) && (
         <div className="flex flex-col items-center justify-center min-h-[50vh] text-center space-y-4">
           <div className="bg-muted rounded-full p-6">
             <Lock className="w-12 h-12 text-muted-foreground" />
