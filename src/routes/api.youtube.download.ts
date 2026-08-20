@@ -32,7 +32,9 @@ export const Route = createFileRoute("/api/youtube/download")({
           
           // Mapeamento compatível com o HeroSection e youtube-resolver.server.ts
           let quality: "best" | "high" | "worst" = "best";
-          if (requested.includes("720") || requested === "high" || requested.includes("mp4-720")) {
+          if (requested.includes("1080")) {
+            quality = "best";
+          } else if (requested.includes("720") || requested === "high" || requested.includes("mp4-720")) {
             quality = "high";
           } else if (requested.includes("worst") || requested.includes("480") || requested.includes("mp4-480") || requested.includes("360")) {
             quality = "worst";
