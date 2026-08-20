@@ -102,7 +102,7 @@ export interface DownloadOptions {
   quality?: string;
   title: string;
   onStage?: (stage: string) => void;
-  onProgress?: (percent: number | null) => void;
+  onProgress?: (percent: number | null, stage?: string) => void;
 }
 
 /**
