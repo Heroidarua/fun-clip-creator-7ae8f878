@@ -9,6 +9,11 @@ import {
 
 const JSON_HEADERS = { "Content-Type": "application/json", ...ytCors() };
 
+// Helper to create Response with correct headers in Workers/TanStack
+function createResponse(body: any, status: number, headers: Headers) {
+  return new Response(body, { status, headers });
+}
+
 function sanitizeFilename(name: string, fallback: string): string {
   const cleaned = (name || "")
     .replace(/[\\/:*?"<>|\n\r\t]+/g, " ")
@@ -28,10 +33,9 @@ export const Route = createFileRoute("/api/youtube/file")({
           const u = new URL(request.url);
           const token = u.searchParams.get("token");
           if (!token) {
-            return new Response(JSON.stringify({ success: false, error: "Token ausente." }), { 
-              status: 401, 
-              headers: JSON_HEADERS 
-            });
+            const h = new Headers();
+            Object.entries(JSON_HEADERS).forEach(([k, v]) => h.set(k, v));
+            return createResponse(JSON.stringify({ success: false, error: "Token ausente." }), 401, h);
           }
 
           let ticket = await verifyTicket(token);
@@ -49,10 +53,9 @@ export const Route = createFileRoute("/api/youtube/file")({
           }
 
           if (!ticket) {
-            return new Response(JSON.stringify({ success: false, error: "Token inválido ou expirado." }), { 
-              status: 403, 
-              headers: JSON_HEADERS 
-            });
+            const h = new Headers();
+            Object.entries(JSON_HEADERS).forEach(([k, v]) => h.set(k, v));
+            return createResponse(JSON.stringify({ success: false, error: "Token inválido ou expirado." }), 403, h);
           }
 
           const { videoId, type, quality, title } = ticket;
@@ -95,10 +98,9 @@ export const Route = createFileRoute("/api/youtube/file")({
           }
 
           if (!upstream || !upstream.body) {
-            return new Response(JSON.stringify({ success: false, error: "Não foi possível conectar ao YouTube." }), { 
-              status: 502, 
-              headers: JSON_HEADERS 
-            });
+            const h = new Headers();
+            Object.entries(JSON_HEADERS).forEach(([k, v]) => h.set(k, v));
+            return createResponse(JSON.stringify({ success: false, error: "Não foi possível conectar ao YouTube." }), 502, h);
           }
 
           const ext = type === "audio" ? "m4a" : "mp4";
@@ -127,16 +129,12 @@ export const Route = createFileRoute("/api/youtube/file")({
           const contentRange = upstream.headers.get("content-range");
           if (range && contentRange) headers.set("Content-Range", contentRange);
 
-          return new Response(upstream.body, {
-            status: range && upstream.status === 206 ? 206 : 200,
-            headers,
-          });
+          return createResponse(upstream.body, range && upstream.status === 206 ? 206 : 200, headers);
         } catch (error: any) {
           console.error("youtube/file error:", error);
-          return new Response(JSON.stringify({ success: false, error: "Erro ao baixar arquivo." }), { 
-            status: 500, 
-            headers: JSON_HEADERS 
-          });
+          const h = new Headers();
+          Object.entries(JSON_HEADERS).forEach(([k, v]) => h.set(k, v));
+          return createResponse(JSON.stringify({ success: false, error: "Erro ao baixar arquivo." }), 500, h);
         }
       },
     },
