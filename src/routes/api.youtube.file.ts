@@ -7,7 +7,7 @@ import {
   BROWSER_UA,
 } from "@/lib/youtube-resolver.server";
 
-const JSON_HEADERS = ytCors({ "Content-Type": "application/json" });
+const JSON_HEADERS = { "Content-Type": "application/json", ...ytCors() };
 
 function sanitizeFilename(name: string, fallback: string): string {
   const cleaned = (name || "")
@@ -21,7 +21,7 @@ function sanitizeFilename(name: string, fallback: string): string {
 export const Route = createFileRoute("/api/youtube/file")({
   server: {
     handlers: {
-      OPTIONS: async () => new Response(null, { status: 204, headers: ytCors() }),
+      OPTIONS: async () => new Response(null, { status: 204, headers: { ...ytCors() } }),
 
       GET: async ({ request }) => {
         try {
@@ -128,7 +128,7 @@ export const Route = createFileRoute("/api/youtube/file")({
 
           return new Response(upstream.body, {
             status: range && upstream.status === 206 ? 206 : 200,
-            headers,
+            headers: { ...headers },
           });
         } catch (error: any) {
           console.error("youtube/file error:", error);
