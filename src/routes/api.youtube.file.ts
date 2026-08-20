@@ -87,7 +87,7 @@ export const Route = createFileRoute("/api/youtube/file")({
               try {
                 const res = await fetch(mediaUrl!, {
                   headers: upstreamHeaders,
-                  signal: AbortSignal.timeout(20000),
+                  signal: AbortSignal.timeout(YT_PROCESS_TIMEOUT_MS),
                 });
                 
                 if (res.ok && res.body) {
