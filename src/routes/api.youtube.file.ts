@@ -83,7 +83,8 @@ export const Route = createFileRoute("/api/youtube/file")({
                 Referer: "https://www.youtube.com/",
                 Accept: "*/*",
               };
-              if (range) upstreamHeaders["Range"] = range;
+              // O googlevideo devolve 403 quando a requisição não tem Range.
+              upstreamHeaders["Range"] = range || "bytes=0-";
               
               try {
                 const res = await fetch(mediaUrl!, {
