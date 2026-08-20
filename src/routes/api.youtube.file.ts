@@ -28,7 +28,10 @@ export const Route = createFileRoute("/api/youtube/file")({
           const u = new URL(request.url);
           const token = u.searchParams.get("token");
           if (!token) {
-            return Response.json({ success: false, error: "Token ausente." }, { status: 401, headers: JSON_HEADERS });
+            return new Response(JSON.stringify({ success: false, error: "Token ausente." }), { 
+              status: 401, 
+              headers: JSON_HEADERS 
+            });
           }
 
           let ticket = await verifyTicket(token);
@@ -46,7 +49,10 @@ export const Route = createFileRoute("/api/youtube/file")({
           }
 
           if (!ticket) {
-            return Response.json({ success: false, error: "Token inválido ou expirado." }, { status: 403, headers: JSON_HEADERS });
+            return new Response(JSON.stringify({ success: false, error: "Token inválido ou expirado." }), { 
+              status: 403, 
+              headers: JSON_HEADERS 
+            });
           }
 
           const { videoId, type, quality, title } = ticket;
@@ -56,6 +62,7 @@ export const Route = createFileRoute("/api/youtube/file")({
           let upstream: Response | null = null;
           let data: any = null;
 
+          // Tentamos resolver candidatos até conseguir um stream válido
           for await (const candidate of resolveYoutubeCandidates(canonicalUrl, videoId, quality)) {
             const mediaUrl = type === "audio" ? candidate.audio_url : candidate.video_url;
 
@@ -68,11 +75,13 @@ export const Route = createFileRoute("/api/youtube/file")({
                 Accept: "*/*",
               };
               if (range) upstreamHeaders["Range"] = range;
+              
               try {
                 const res = await fetch(mediaUrl!, {
                   headers: upstreamHeaders,
                   signal: AbortSignal.timeout(20000),
                 });
+                
                 if (res.ok && res.body) {
                   upstream = res;
                   data = candidate;
@@ -86,11 +95,16 @@ export const Route = createFileRoute("/api/youtube/file")({
           }
 
           if (!upstream || !upstream.body) {
-            return Response.json({ success: false, error: "Não foi possível conectar ao YouTube." }, { status: 502, headers: JSON_HEADERS });
+            return new Response(JSON.stringify({ success: false, error: "Não foi possível conectar ao YouTube." }), { 
+              status: 502, 
+              headers: JSON_HEADERS 
+            });
           }
 
           const ext = type === "audio" ? "m4a" : "mp4";
-          const contentType = upstream.headers.get("content-type") || (type === "audio" ? "audio/mp4" : "video/mp4");
+          const upstreamType = upstream.headers.get("content-type");
+          const contentType = upstreamType || (type === "audio" ? "audio/mp4" : "video/mp4");
+          
           // Force video/mp4 for previews to ensure browser compatibility
           const finalContentType = isPreview ? "video/mp4" : contentType;
           const filename = `${sanitizeFilename(data?.title || title || "youtube", "youtube")}.${ext}`;
@@ -108,6 +122,7 @@ export const Route = createFileRoute("/api/youtube/file")({
           
           const len = upstream.headers.get("content-length");
           if (len) headers["Content-Length"] = len;
+          
           const contentRange = upstream.headers.get("content-range");
           if (range && contentRange) headers["Content-Range"] = contentRange;
 
@@ -117,7 +132,10 @@ export const Route = createFileRoute("/api/youtube/file")({
           });
         } catch (error: any) {
           console.error("youtube/file error:", error);
-          return Response.json({ success: false, error: "Erro ao baixar arquivo." }, { status: 500, headers: JSON_HEADERS });
+          return new Response(JSON.stringify({ success: false, error: "Erro ao baixar arquivo." }), { 
+            status: 500, 
+            headers: JSON_HEADERS 
+          });
         }
       },
     },
