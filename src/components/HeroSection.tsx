@@ -958,7 +958,14 @@ const HeroSection = () => {
     setClickedYoutubeButton("download");
     setTimeout(() => setClickedYoutubeButton(null), 200);
     
-    if (!youtubeData) return;
+    if (!youtubeData) {
+      toast({
+        title: "Dados indisponíveis",
+        description: "Busque o vídeo novamente antes de baixar.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     const info = youtubeInfoRef.current;
     const canonical =
@@ -977,7 +984,8 @@ const HeroSection = () => {
 
       setIsYoutubeProcessing(true);
       setYoutubeLoading(true);
-      setYoutubeProgress(0);
+      setYoutubeProgress(1); // Início visual imediato
+      setYoutubeDownloadStage("Iniciando...");
 
       await downloadYoutubeMedia({
         url: canonical,

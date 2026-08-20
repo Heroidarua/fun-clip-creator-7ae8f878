@@ -16,14 +16,21 @@ export function safeFileName(title: string) {
 }
 
 export function saveBlob(blob: Blob, filename: string) {
-  const objectUrl = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = objectUrl;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
+  try {
+    const objectUrl = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = objectUrl;
+    a.download = filename;
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
+    return true;
+  } catch (e) {
+    console.error("saveBlob error:", e);
+    return false;
+  }
 }
 
 interface StreamResult {
@@ -52,13 +59,19 @@ async function fetchStream(
   // Se o navegador receber um arquivo que não precisa de muxing (áudio ou vídeo muxed),
   // usamos um link oculto com o atributo download para forçar o salvamento em vez de apenas navegar.
   if (container === "m4a" || muxed) {
-    const a = document.createElement("a");
-    a.href = fileUrl;
-    // O navegador tentará honrar o atributo 'download' mesmo que o link seja cross-origin se os cabeçalhos Content-Disposition estiverem corretos
-    a.download = ""; 
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    try {
+      const a = document.createElement("a");
+      a.href = fileUrl;
+      // O navegador tentará honrar o atributo 'download' mesmo que o link seja cross-origin se os cabeçalhos Content-Disposition estiverem corretos
+      a.download = ""; 
+      a.style.display = "none";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch (e) {
+      console.warn("Direct download link failed, falling back to location.assign", e);
+      window.location.assign(fileUrl);
+    }
     
     return {
       bytes: new Uint8Array(0),
