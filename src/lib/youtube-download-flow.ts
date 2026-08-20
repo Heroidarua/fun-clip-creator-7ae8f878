@@ -152,7 +152,7 @@ export async function downloadYoutubeMedia({
 
     const videoStage = "Processando Vídeo...";
     onStage?.(videoStage);
-    const video = await fetchStream(url, "mp4", quality, (r) =>
+    const video = await fetchStream(url, "mp4", quality || "best", (r) =>
       onProgress?.(r == null ? null : Math.round(r * 60), videoStage),
     );
 
