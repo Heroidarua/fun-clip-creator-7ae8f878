@@ -6,6 +6,7 @@ import {
   isDirectMediaUrl,
   BROWSER_UA,
 } from "@/lib/youtube-resolver.server";
+import { YT_PROCESS_TIMEOUT_MS } from "@/lib/youtube-tool.server";
 
 const JSON_HEADERS = { "Content-Type": "application/json", ...ytCors() };
 
@@ -87,7 +88,7 @@ export const Route = createFileRoute("/api/youtube/file")({
               try {
                 const res = await fetch(mediaUrl!, {
                   headers: upstreamHeaders,
-                  signal: AbortSignal.timeout(20000),
+                  signal: AbortSignal.timeout(YT_PROCESS_TIMEOUT_MS),
                 });
                 
                 if (res.ok && res.body) {
