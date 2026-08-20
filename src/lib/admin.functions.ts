@@ -47,10 +47,11 @@ export const adminAction = createServerFn({ method: "POST" })
 
       case "get-metrics": {
         // Fetch key metrics for the dashboard
+        // Note: Using head: true to only get counts efficiently
         const [
-          { count: totalTools },
-          { count: activeAnnouncements },
-          { count: pendingVideoJobs }
+          totalToolsRes,
+          activeAnnouncementsRes,
+          pendingVideoJobsRes
         ] = await Promise.all([
           supabaseAdmin.from("downloader_status").select("*", { count: 'exact', head: true }),
           supabaseAdmin.from("announcements").select("*", { count: 'exact', head: true }).eq("active", true),
@@ -60,9 +61,9 @@ export const adminAction = createServerFn({ method: "POST" })
         return { 
           success: true, 
           data: { 
-            totalTools: totalTools || 0,
-            activeAnnouncements: activeAnnouncements || 0,
-            pendingVideoJobs: pendingVideoJobs || 0
+            totalTools: totalToolsRes.count || 0,
+            activeAnnouncements: activeAnnouncementsRes.count || 0,
+            pendingVideoJobs: pendingVideoJobsRes.count || 0
           } 
         };
       }
