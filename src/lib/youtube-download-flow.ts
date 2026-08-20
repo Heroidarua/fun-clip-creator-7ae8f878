@@ -120,37 +120,42 @@ export async function downloadYoutubeMedia({
   const name = safeFileName(title);
   try {
     if (type === "audio") {
-      onStage?.("Baixando o áudio...");
+      const stage = "Processando Áudio...";
+      onStage?.(stage);
       const audio = await fetchStream(url, "m4a", quality, (r) =>
-        onProgress?.(r == null ? null : Math.round(r * 100)),
+        onProgress?.(r == null ? null : Math.round(r * 100), stage),
       );
       // O redirecionamento já foi feito dentro do fetchStream para m4a
-      onProgress?.(100);
+      onProgress?.(100, "Concluído!");
       return;
     }
 
-    onStage?.("Baixando o vídeo...");
+    const videoStage = "Processando Vídeo...";
+    onStage?.(videoStage);
     const video = await fetchStream(url, "mp4", quality, (r) =>
-      onProgress?.(r == null ? null : Math.round(r * 60)),
+      onProgress?.(r == null ? null : Math.round(r * 60), videoStage),
     );
 
     if (video.muxed) {
       // O redirecionamento já foi feito dentro do fetchStream para vídeo muxed
-      onProgress?.(100);
+      onProgress?.(100, "Concluído!");
       return;
     }
 
-    onStage?.("Baixando o áudio...");
+    const audioStage = "Processando Áudio...";
+    onStage?.(audioStage);
     const audio = await fetchStream(url, "m4a", "best", (r) =>
-      onProgress?.(60 + (r == null ? 0 : Math.round(r * 20))),
+      onProgress?.(60 + (r == null ? 0 : Math.round(r * 20)), audioStage),
     );
-    onStage?.("Juntando áudio e vídeo (isso pode levar alguns segundos)...");
+    
+    const muxStage = "Juntando áudio e vídeo...";
+    onStage?.(muxStage);
     const { muxVideoAndAudio } = await import("@/lib/youtube-mux");
     const blob = await muxVideoAndAudio(video.bytes, audio.bytes, (ratio) =>
-      onProgress?.(80 + Math.min(20, Math.round((ratio || 0) * 20))),
+      onProgress?.(80 + Math.min(20, Math.round((ratio || 0) * 20)), muxStage),
     );
     saveBlob(blob, `${name}.mp4`);
-    onProgress?.(100);
+    onProgress?.(100, "Download Concluído!");
   } catch (e) {
     const err = e as Error & { directUrl?: string; muxed?: boolean };
     if (err.message === TOO_LARGE) {
