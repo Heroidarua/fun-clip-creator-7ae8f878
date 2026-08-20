@@ -72,8 +72,7 @@ export const Route = createFileRoute("/api/youtube/file")({
           let data: any = null;
 
           // Tentamos resolver candidatos até conseguir um stream válido
-          const resolvedQuality = type === "video" ? "worst" : quality;
-          for await (const candidate of resolveYoutubeCandidates(canonicalUrl, videoId, resolvedQuality)) {
+          for await (const candidate of resolveYoutubeCandidates(canonicalUrl, videoId, quality)) {
             const mediaUrl = type === "audio" ? candidate.audio_url : candidate.video_url;
 
             if (!isDirectMediaUrl(mediaUrl)) continue;
@@ -97,7 +96,6 @@ export const Route = createFileRoute("/api/youtube/file")({
                   data = candidate;
                   break;
                 }
-                console.warn("YouTube upstream recusou candidato:", res.status, candidate.height, candidate.muxed);
               } catch (e) {
                 console.warn("Candidato falhou:", (e as Error).message);
               }

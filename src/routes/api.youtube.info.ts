@@ -83,14 +83,14 @@ export const Route = createFileRoute("/api/youtube/info")({
             );
           }
 
-          const directHeight = Math.max(144, Number(data.height) || 360);
+          const directHeight = Math.max(144, Number(data.height) || 720);
           const formats = [
             {
               id: `mp4-${directHeight}`,
               container: "mp4" as const,
               type: "video" as const,
-              quality: "worst",
-              label: `MP4 — ${directHeight}p (vídeo + áudio)`,
+              quality: "high",
+              label: `MP4 — ${directHeight}p`,
               estimatedBytes: estimateBytes(duration, directHeight >= 720 ? 2500 : 1200),
             },
             {
