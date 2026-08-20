@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { useHydrated } from "@/hooks/useHydrated";
 
 const BG = "#124F7D";
 const TOTAL_MS = 3200;
@@ -16,7 +15,6 @@ type Particle = {
 };
 
 export default function SplashScreen() {
-  const isHydrated = useHydrated();
   const [visible, setVisible] = useState(true);
   const [fading, setFading] = useState(false);
 
@@ -59,7 +57,7 @@ export default function SplashScreen() {
     };
   }, []);
 
-  if (!isHydrated || !visible) {
+  if (!visible) {
     return null;
   }
 

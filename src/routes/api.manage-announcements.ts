@@ -46,9 +46,6 @@ export const Route = createFileRoute("/api/manage-announcements")({
             );
           }
           const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
-          const body = await request.json();
-          const { action, password, data: payload } = body;
-
           if (!ADMIN_PASSWORD) {
             console.error("ADMIN_PASSWORD env var is not configured");
             return Response.json(
@@ -56,6 +53,8 @@ export const Route = createFileRoute("/api/manage-announcements")({
               { status: 500, headers: corsHeaders(request) }
             );
           }
+          const body = await request.json();
+          const { action, password, data: payload } = body;
 
           if (typeof password !== "string" || !timingSafeEqual(password, ADMIN_PASSWORD)) {
             return Response.json(
