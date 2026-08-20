@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { adminAction } from "@/lib/admin.functions";
 import { LayoutDashboard, Megaphone, Video } from "lucide-react";
+import { MetricsResponse } from "@/lib/admin.schemas";
 
 interface DashboardSectionProps {
   password?: string;
@@ -16,8 +17,9 @@ export default function DashboardSection({ password }: DashboardSectionProps) {
           payload: { action: "get-metrics" }
         }
       });
-      return result.data;
+      return result.data as MetricsResponse;
     },
+
     enabled: !!password,
   });
 

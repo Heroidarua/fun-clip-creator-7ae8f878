@@ -38,6 +38,14 @@ export const AdminActionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("get-button-settings") }),
   z.object({ action: z.literal("save-button-settings"), data: ButtonSettingsSchema }),
   z.object({ action: z.literal("get-metrics") }),
+  z.object({ action: z.literal("list-jobs") }),
 ]);
 
+export type MetricsResponse = {
+  totalTools: number;
+  activeAnnouncements: number;
+  pendingVideoJobs: number;
+};
+
 export type AdminAction = z.infer<typeof AdminActionSchema>;
+
