@@ -327,6 +327,7 @@ const HeroSection = () => {
   const [youtubeFormats, setYoutubeFormats] = useState<YoutubeFormat[]>([]);
   const [youtubeQuality, setYoutubeQuality] = useState<string>("");
   const [isYoutubeProcessing, setIsYoutubeProcessing] = useState(false);
+  const [youtubeDownloadStage, setYoutubeDownloadStage] = useState("");
 
   // Facebook states
   const [facebookUrl, setFacebookUrl] = useState("");
