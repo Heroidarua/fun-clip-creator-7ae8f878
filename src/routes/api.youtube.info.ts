@@ -58,7 +58,7 @@ export const Route = createFileRoute("/api/youtube/info")({
           const { resolveYoutube, fallbackThumbnail } = await import(
             "@/lib/youtube-resolver.server"
           );
-          const result = await resolveYoutube(parsed.canonicalUrl, videoId);
+          const result = await resolveYoutube(parsed.canonicalUrl, videoId, "preview");
           const data = result.data;
 
           if (!result.success || !data) {
