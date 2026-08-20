@@ -265,7 +265,7 @@ async function fetchInnerTube(
       const status = player?.playabilityStatus?.status;
       if (!player || (status && status !== "OK")) continue;
 
-      const { video, audio, hasMuxed, height } = pickInnertubeFormats(player, quality);
+      const { video, audio, hasMuxed, height } = pickInnertubeFormats(player, quality || "best");
       if (!video && !audio) continue;
 
       const details = player.videoDetails || {};
