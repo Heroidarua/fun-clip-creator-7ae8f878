@@ -87,6 +87,16 @@ export const adminAction = createServerFn({ method: "POST" })
         };
       }
 
+      case "get-marquee": {
+        const { data: marquee, error } = await supabaseAdmin
+          .from("marquee_settings")
+          .select("*")
+          .limit(1)
+          .maybeSingle();
+        if (error) throw error;
+        return { success: true, data: marquee };
+      }
+
       case "save-marquee": {
         const { error } = await supabaseAdmin
           .from("marquee_settings")
