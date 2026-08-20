@@ -143,13 +143,15 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality | string = "b
   // arquivo inteiro, então limitamos o tamanho para não estourar o servidor.
   const MAX_BYTES = 1024 * 1024 * 1024; // 1 GB
   const size = (f: any) => Number(f.contentLength || 0);
-  let videoOnly = adaptive
-    .filter(
-      (f) =>
-        /video\/mp4/.test(f.mimeType || "") &&
-        (f.height || 0) <= 1080, // Aumentado para 1080p
-    )
-    .sort(quality === "worst" ? asc : desc);
+  const isH264 = (f: any) => /avc1/.test(f.mimeType || "");
+  const mp4Video = adaptive.filter(
+    (f) => /video\/mp4/.test(f.mimeType || "") && (f.height || 0) <= 1080,
+  );
+  // avc1 (H.264) é o codec com maior compatibilidade em navegadores e players.
+  let videoOnly = (mp4Video.filter(isH264).length ? mp4Video.filter(isH264) : mp4Video).sort(
+    quality === "worst" ? asc : desc,
+  );
+  
   
   if (quality === "high" || (typeof quality === 'string' && quality.includes("720"))) {
     const hd = videoOnly.filter((f) => (f.height || 0) >= 720);
@@ -180,21 +182,16 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality | string = "b
     if (anyAudio.length) audioOnly.push(anyAudio[0]);
   }
 
+  // Sempre preferimos o progressivo (vídeo + áudio); se o YouTube não oferecer,
+  // caímos para o vídeo adaptativo, que será unido ao áudio no navegador.
   const chosen = muxed[0] || videoOnly[0];
   const chosenMuxed = Boolean(muxed[0]?.url);
 
-  // No modo preview, se não houver vídeo MP4, tenta qualquer vídeo progressivo (webm, etc)
-  const preview = quality === "preview" || quality === "worst";
-  const previewFormat = preview ? muxed[0] : undefined;
-  const finalVideo = preview
-    ? previewFormat?.url || ""
-    : chosen?.url || "";
-
   return {
-    video: finalVideo,
+    video: chosen?.url || "",
     audio: audioOnly[0]?.url || (chosenMuxed ? chosen?.url : "") || "",
-    hasMuxed: preview ? Boolean(previewFormat?.url) : chosenMuxed,
-    height: Number((previewFormat || chosen)?.height || 0),
+    hasMuxed: chosenMuxed,
+    height: Number(chosen?.height || 0),
   };
 }
 
