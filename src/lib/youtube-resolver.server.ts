@@ -128,14 +128,14 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality | string = "b
   // Progressivo (vídeo + áudio no mesmo arquivo) é o que o navegador reproduz direto
   let muxed = progressive
     .filter((f) => /video\/mp4/.test(f.mimeType || "") && /mp4a/.test(f.mimeType || ""))
-    .filter((f) => (f.height || 0) <= 720) // Limit to 720p
+    .filter((f) => (f.height || 0) <= 1080) // Aumentado limite para 1080p
     .sort(quality === "worst" ? asc : desc);
 
   // Priorização de qualidade baseada na string recebida
   if (quality === "high" || (typeof quality === 'string' && quality.includes("720"))) {
-    const hd = muxed.filter((f) => (f.height || 0) === 720);
+    const hd = muxed.filter((f) => (f.height || 0) >= 720);
     if (hd.length) {
-      muxed = hd;
+      muxed = hd.sort(desc);
     }
   }
 
