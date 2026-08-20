@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import AdminPwa from "@/components/AdminPwa";
 import AdminLayout from "@/components/admin/layout/AdminLayout";
 import DashboardSection from "@/components/admin/sections/DashboardSection";
+import AnnouncementsSection from "@/components/admin/sections/AnnouncementsSection";
+import VideoSection from "@/components/admin/sections/VideoSection";
 
 export default function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -89,13 +91,15 @@ export default function Admin() {
   return (
     <AdminLayout activeTab={activeTab} onTabChange={setActiveTab} onLogout={handleLogout}>
       {activeTab === "dashboard" && <DashboardSection password={password} />}
-      {activeTab !== "dashboard" && (
+      {activeTab === "announcements" && <AnnouncementsSection password={password} />}
+      {activeTab === "video" && <VideoSection password={password} />}
+      {!["dashboard", "announcements", "video"].includes(activeTab) && (
         <div className="flex flex-col items-center justify-center min-h-[50vh] text-center space-y-4">
           <div className="bg-muted rounded-full p-6">
             <Lock className="w-12 h-12 text-muted-foreground" />
           </div>
           <h2 className="text-xl font-bold">Em Construção</h2>
-          <p className="text-muted-foreground">Esta seção está sendo migrada para a nova arquitetura modular.</p>
+          <p className="text-muted-foreground">Esta seção ({activeTab}) está sendo migrada para a nova arquitetura modular.</p>
         </div>
       )}
     </AdminLayout>

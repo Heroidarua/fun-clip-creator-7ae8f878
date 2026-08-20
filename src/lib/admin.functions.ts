@@ -45,9 +45,28 @@ export const adminAction = createServerFn({ method: "POST" })
         return { success: true, data: announcements };
       }
 
+      case "create-announcement": {
+        const { error } = await supabaseAdmin
+          .from("announcements")
+          .insert({
+            title: (payload as any).data.title,
+            message: (payload as any).data.message,
+            active: true
+          });
+        if (error) throw error;
+        return { success: true };
+      }
+
+      case "delete-announcement": {
+        const { error } = await supabaseAdmin
+          .from("announcements")
+          .delete()
+          .eq("id", (payload as any).id);
+        if (error) throw error;
+        return { success: true };
+      }
+
       case "get-metrics": {
-        // Fetch key metrics for the dashboard
-        // Note: Using head: true to only get counts efficiently
         const [
           totalToolsRes,
           activeAnnouncementsRes,
@@ -78,7 +97,6 @@ export const adminAction = createServerFn({ method: "POST" })
         return { success: true, data: marquee };
       }
 
-      // Add other cases as needed following the schema...
       default:
         throw new Error("Ação não implementada");
     }
