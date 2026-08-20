@@ -132,25 +132,33 @@ export async function downloadYoutubeMedia({
   const name = safeFileName(title);
   try {
     if (type === "audio") {
-      const stage = "Processando Áudio...";
+      const stage = "Baixando o áudio...";
       onStage?.(stage);
       const audio = await fetchStream(url, "m4a", quality, (r) =>
         onProgress?.(r == null ? null : Math.round(r * 100), stage),
       );
-      // O redirecionamento já foi feito dentro do fetchStream para m4a
-      onProgress?.(100, "Concluído!");
+      saveBlob(
+        new Blob([audio.bytes.slice().buffer as ArrayBuffer], {
+          type: audio.contentType || "audio/mp4",
+        }),
+        `${name}.m4a`,
+      );
+      onProgress?.(100, "Download concluído!");
       return;
     }
 
-    const videoStage = "Processando Vídeo...";
+    const videoStage = "Baixando o vídeo...";
     onStage?.(videoStage);
     const video = await fetchStream(url, "mp4", quality || "best", (r) =>
       onProgress?.(r == null ? null : Math.round(r * 60), videoStage),
     );
 
     if (video.muxed) {
-      // O redirecionamento já foi feito dentro do fetchStream para vídeo muxed
-      onProgress?.(100, "Concluído!");
+      saveBlob(
+        new Blob([video.bytes.slice().buffer as ArrayBuffer], { type: "video/mp4" }),
+        `${name}.mp4`,
+      );
+      onProgress?.(100, "Download concluído!");
       return;
     }
 
