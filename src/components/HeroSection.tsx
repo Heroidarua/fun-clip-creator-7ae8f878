@@ -1966,7 +1966,38 @@ const HeroSection = () => {
                     </div>
                   )}
 
-                  
+                  <Button
+                    onClick={() => handleYoutubeDownload(false)}
+                    disabled={isYoutubeProcessing}
+                    className={`w-full h-12 font-pixel text-xs text-white border-2 border-[hsl(var(--retro-cyan))] shadow-[4px_4px_0_hsl(var(--retro-cyan))] hover:shadow-[2px_2px_0_hsl(var(--retro-cyan))] hover:translate-x-[2px] hover:translate-y-[2px] transition-all rounded-sm ${
+                      clickedYoutubeButton === "download" ? "translate-x-[2px] translate-y-[2px] shadow-[2px_2px_0_hsl(var(--retro-cyan))]" : ""
+                    }`}
+                    style={{ backgroundColor: 'hsl(0, 100%, 50%)' }}
+                  >
+                    {isYoutubeProcessing ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white animate-spin"></div>
+                        <span>PROCESSANDO...</span>
+                      </div>
+                    ) : (
+                      <>
+                        {youtubeDownloadType === "video" ? (
+                          <Download className="mr-2 w-4 h-4" />
+                        ) : (
+                          <Headphones className="mr-2 w-4 h-4" />
+                        )}
+                        BAIXAR
+                      </>
+                    )}
+                  </Button>
+
+                  <p className="font-retro text-lg text-center mt-4 text-muted-foreground">
+                    OBRIGADO POR USAR sos01!
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* Facebook Section */}
           <div className="pixel-card rounded-sm p-5 sm:p-6 lg:p-8 mt-6" style={{ borderColor: 'hsl(217 89% 50% / 0.5)' }}>

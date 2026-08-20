@@ -83,8 +83,7 @@ export const Route = createFileRoute("/api/youtube/file")({
                 Referer: "https://www.youtube.com/",
                 Accept: "*/*",
               };
-              // O googlevideo devolve 403 quando a requisição não tem Range.
-              upstreamHeaders["Range"] = range || "bytes=0-";
+              if (range) upstreamHeaders["Range"] = range;
               
               try {
                 const res = await fetch(mediaUrl!, {
@@ -97,8 +96,6 @@ export const Route = createFileRoute("/api/youtube/file")({
                   data = candidate;
                   break;
                 }
-                console.warn("Upstream recusou:", res.status, mediaUrl?.slice(0, 60));
-                await res.body?.cancel().catch(() => undefined);
               } catch (e) {
                 console.warn("Candidato falhou:", (e as Error).message);
               }

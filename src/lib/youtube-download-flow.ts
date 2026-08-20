@@ -40,22 +40,6 @@ interface StreamResult {
   muxed: boolean;
 }
 
-function triggerBrowserDownload(fileUrl: string, filename: string) {
-  const a = document.createElement("a");
-  a.href = fileUrl;
-  a.download = filename;
-  a.rel = "noopener";
-  a.style.display = "none";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-}
-
-/**
- * Baixa o stream completo em memória, informando o progresso.
- * Quando o arquivo já vem com áudio embutido (muxed), o download é entregue
- * diretamente pelo navegador.
- */
 async function fetchStream(
   videoUrl: string,
   container: "mp4" | "m4a",
@@ -64,48 +48,25 @@ async function fetchStream(
 ): Promise<StreamResult> {
   const ticket = await requestYoutubeDownload(videoUrl, container, quality);
   const fileUrl = absoluteDownloadUrl(ticket.downloadUrl);
-
-  const res = await fetch(fileUrl, { signal: AbortSignal.timeout(300000) });
-  const contentType = res.headers.get("content-type") || "";
-  if (!res.ok || !res.body || contentType.includes("application/json")) {
-    const data = await res.json().catch(() => null);
+  const validation = await fetch(fileUrl, {
+    headers: { Range: "bytes=0-0" },
+    signal: AbortSignal.timeout(120000),
+  });
+  const contentType = validation.headers.get("content-type") || "";
+  if (!validation.ok || contentType.includes("application/json")) {
+    const data = await validation.json().catch(() => null);
     throw new Error(data?.error || GENERIC_ERROR);
   }
+  await validation.body?.cancel().catch(() => undefined);
 
-  const muxed = res.headers.get("x-yt-muxed") === "1";
-  const total = Number(res.headers.get("content-length") || 0);
-
-  if (total > BROWSER_PROCESS_LIMIT) {
-    await res.body.cancel().catch(() => undefined);
-    const err = new Error(TOO_LARGE) as Error & {
-      directUrl?: string;
-      muxed?: boolean;
-    };
-    err.directUrl = fileUrl;
-    err.muxed = muxed;
-    throw err;
-  }
-
-  const reader = res.body.getReader();
-  const chunks: Uint8Array[] = [];
-  let received = 0;
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    if (value) {
-      chunks.push(value);
-      received += value.length;
-      onRatio(total ? received / total : null);
-    }
-  }
-  const bytes = new Uint8Array(received);
-  let offset = 0;
-  for (const chunk of chunks) {
-    bytes.set(chunk, offset);
-    offset += chunk.length;
-  }
-
-  return { bytes, contentType, directUrl: fileUrl, muxed };
+  window.location.assign(fileUrl);
+  onRatio(1);
+  return {
+    bytes: new Uint8Array(0),
+    contentType,
+    directUrl: fileUrl,
+    muxed: true,
+  };
 }
 
 export interface DownloadOptions {
@@ -132,37 +93,29 @@ export async function downloadYoutubeMedia({
   const name = safeFileName(title);
   try {
     if (type === "audio") {
-      const stage = "Baixando o áudio...";
+      const stage = "Processando Áudio...";
       onStage?.(stage);
       const audio = await fetchStream(url, "m4a", quality, (r) =>
         onProgress?.(r == null ? null : Math.round(r * 100), stage),
       );
-      saveBlob(
-        new Blob([audio.bytes.slice().buffer as ArrayBuffer], {
-          type: audio.contentType || "audio/mp4",
-        }),
-        `${name}.m4a`,
-      );
-      onProgress?.(100, "Download concluído!");
+      // O redirecionamento já foi feito dentro do fetchStream para m4a
+      onProgress?.(100, "Concluído!");
       return;
     }
 
-    const videoStage = "Baixando o vídeo...";
+    const videoStage = "Processando Vídeo...";
     onStage?.(videoStage);
     const video = await fetchStream(url, "mp4", quality || "best", (r) =>
       onProgress?.(r == null ? null : Math.round(r * 60), videoStage),
     );
 
     if (video.muxed) {
-      saveBlob(
-        new Blob([video.bytes.slice().buffer as ArrayBuffer], { type: "video/mp4" }),
-        `${name}.mp4`,
-      );
-      onProgress?.(100, "Download concluído!");
+      // O redirecionamento já foi feito dentro do fetchStream para vídeo muxed
+      onProgress?.(100, "Concluído!");
       return;
     }
 
-    const audioStage = "Baixando o áudio...";
+    const audioStage = "Processando Áudio...";
     onStage?.(audioStage);
     const audio = await fetchStream(url, "m4a", "best", (r) =>
       onProgress?.(60 + (r == null ? 0 : Math.round(r * 20)), audioStage),
@@ -180,10 +133,7 @@ export async function downloadYoutubeMedia({
     const err = e as Error & { directUrl?: string; muxed?: boolean };
     if (err.message === TOO_LARGE) {
       if (err.directUrl && (type === "audio" || err.muxed)) {
-        triggerBrowserDownload(
-          err.directUrl,
-          `${name}.${type === "audio" ? "m4a" : "mp4"}`,
-        );
+        window.location.href = err.directUrl;
         return;
       }
       throw new Error(
