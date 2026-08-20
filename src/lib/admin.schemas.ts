@@ -39,6 +39,12 @@ export const AdminActionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("save-button-settings"), data: ButtonSettingsSchema }),
   z.object({ action: z.literal("get-metrics") }),
   z.object({ action: z.literal("list-jobs") }),
+  z.object({ action: z.literal("list-tools") }),
+  z.object({ 
+    action: z.literal("update-tool-status"),
+    id: z.string().uuid(),
+    status: z.enum(["active", "maintenance"])
+  }),
 ]);
 
 export type MetricsResponse = {
