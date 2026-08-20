@@ -1808,9 +1808,6 @@ const HeroSection = () => {
                   <div className="absolute inset-0 scanlines pointer-events-none opacity-30"></div>
                   
                   <div className="relative text-center mb-4">
-                    <h3 className="font-pixel text-xs sm:text-sm animate-pulse" style={{ color: 'hsl(0, 100%, 50%)' }}>
-                      PROCESSANDO...
-                    </h3>
                     <div className="mt-2">
                       <span className="font-retro text-3xl sm:text-4xl text-[hsl(var(--retro-cyan))]">
                         {Math.round(youtubeProgress)}%
