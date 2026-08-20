@@ -48,71 +48,23 @@ async function fetchStream(
 ): Promise<StreamResult> {
   const ticket = await requestYoutubeDownload(videoUrl, container, quality);
   const fileUrl = absoluteDownloadUrl(ticket.downloadUrl);
-  
-  // Timeout maior para fetch de streaming
-  const res = await fetch(fileUrl, { signal: AbortSignal.timeout(120000) });
-  if (!res.ok || !res.body) {
-    const data = await res.json().catch(() => null);
-    throw new Error(data?.error || GENERIC_ERROR);
-  }
-  const total = Number(res.headers.get("content-length") || 0);
-  const muxed = res.headers.get("x-yt-muxed") === "1";
 
-  // Se o navegador receber um arquivo que não precisa de muxing (áudio ou vídeo muxed),
-  // usamos um link oculto com o atributo download para forçar o salvamento em vez de apenas navegar.
-  if (container === "m4a" || muxed) {
-    try {
-      const a = document.createElement("a");
-      a.href = fileUrl;
-      // O navegador tentará honrar o atributo 'download' mesmo que o link seja cross-origin se os cabeçalhos Content-Disposition estiverem corretos
-      a.download = ""; 
-      a.style.display = "none";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    } catch (e) {
-      console.warn("Direct download link failed, falling back to location.assign", e);
-      window.location.assign(fileUrl);
-    }
-    
-    return {
-      bytes: new Uint8Array(0),
-      contentType: res.headers.get("content-type") || "application/octet-stream",
-      directUrl: fileUrl,
-      muxed: true,
-    };
-  }
+  // O endpoint já responde com Content-Disposition: attachment. Abrir o link
+  // diretamente evita baixar o mesmo arquivo duas vezes e funciona também em
+  // celulares, onde um fetch grande pode ser encerrado pelo navegador.
+  const a = document.createElement("a");
+  a.href = fileUrl;
+  a.download = "";
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 
-  if (total > BROWSER_PROCESS_LIMIT) {
-    await res.body.cancel().catch(() => {});
-    const err = new Error(TOO_LARGE) as Error & { directUrl?: string; muxed?: boolean };
-    err.directUrl = fileUrl;
-    err.muxed = muxed;
-    throw err;
-  }
-  const reader = res.body.getReader();
-  const chunks: Uint8Array[] = [];
-  let received = 0;
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    if (value) {
-      chunks.push(value);
-      received += value.length;
-      onRatio(total ? received / total : null);
-    }
-  }
-  const bytes = new Uint8Array(received);
-  let offset = 0;
-  for (const chunk of chunks) {
-    bytes.set(chunk, offset);
-    offset += chunk.length;
-  }
   return {
-    bytes,
-    contentType: res.headers.get("content-type") || "application/octet-stream",
+    bytes: new Uint8Array(0),
+    contentType: container === "m4a" ? "audio/mp4" : "video/mp4",
     directUrl: fileUrl,
-    muxed,
+    muxed: true,
   };
 }
 

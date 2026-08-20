@@ -72,7 +72,8 @@ export const Route = createFileRoute("/api/youtube/file")({
           let data: any = null;
 
           // Tentamos resolver candidatos até conseguir um stream válido
-          for await (const candidate of resolveYoutubeCandidates(canonicalUrl, videoId, quality)) {
+          const resolvedQuality = type === "video" ? "worst" : quality;
+          for await (const candidate of resolveYoutubeCandidates(canonicalUrl, videoId, resolvedQuality)) {
             const mediaUrl = type === "audio" ? candidate.audio_url : candidate.video_url;
 
             if (!isDirectMediaUrl(mediaUrl)) continue;
