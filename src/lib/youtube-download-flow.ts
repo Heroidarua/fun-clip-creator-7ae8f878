@@ -48,21 +48,22 @@ async function fetchStream(
 ): Promise<StreamResult> {
   const ticket = await requestYoutubeDownload(videoUrl, container, quality);
   const fileUrl = absoluteDownloadUrl(ticket.downloadUrl);
+  const validation = await fetch(fileUrl, {
+    headers: { Range: "bytes=0-0" },
+    signal: AbortSignal.timeout(120000),
+  });
+  const contentType = validation.headers.get("content-type") || "";
+  if (!validation.ok || contentType.includes("application/json")) {
+    const data = await validation.json().catch(() => null);
+    throw new Error(data?.error || GENERIC_ERROR);
+  }
+  await validation.body?.cancel().catch(() => undefined);
 
-  // O endpoint já responde com Content-Disposition: attachment. Abrir o link
-  // diretamente evita baixar o mesmo arquivo duas vezes e funciona também em
-  // celulares, onde um fetch grande pode ser encerrado pelo navegador.
-  const a = document.createElement("a");
-  a.href = fileUrl;
-  a.download = "";
-  a.style.display = "none";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-
+  window.location.assign(fileUrl);
+  onRatio(1);
   return {
     bytes: new Uint8Array(0),
-    contentType: container === "m4a" ? "audio/mp4" : "video/mp4",
+    contentType,
     directUrl: fileUrl,
     muxed: true,
   };

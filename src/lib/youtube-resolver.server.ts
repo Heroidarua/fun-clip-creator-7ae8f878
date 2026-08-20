@@ -128,7 +128,11 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality | string = "b
   // Progressivo (vídeo + áudio no mesmo arquivo) é o que o navegador reproduz direto
   let muxed = progressive
     .filter((f) => (/video\/(mp4|webm|x-matroska|quicktime)/.test(f.mimeType || "")))
-    .filter((f) => (/mp4a|opus|vorbis/.test(f.mimeType || "") || f.hasAudio !== false || f.audioQuality !== undefined))
+    .filter((f) =>
+      /mp4a|opus|vorbis/.test(f.mimeType || "") ||
+      Boolean(f.audioQuality) ||
+      Number(f.audioChannels || 0) > 0,
+    )
     .filter((f) => (f.height || 0) <= 1080)
     .sort(quality === "worst" ? asc : desc);
 
@@ -186,22 +190,16 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality | string = "b
 
   // No modo preview, se não houver vídeo MP4, tenta qualquer vídeo progressivo (webm, etc)
   const preview = quality === "preview" || quality === "worst";
-  const finalVideo = chosen?.url || (preview ? progressive.find(f => /video/i.test(f.mimeType || ""))?.url || adaptive.find(f => /video/i.test(f.mimeType || ""))?.url : "") || "";
-
-  if (preview && finalVideo && !chosenMuxed) {
-    return {
-      video: finalVideo,
-      audio: "",
-      hasMuxed: true,
-      height: Number(progressive.find(f => f.url === finalVideo)?.height || adaptive.find(f => f.url === finalVideo)?.height || 0),
-    };
-  }
+  const previewFormat = preview ? muxed[0] : undefined;
+  const finalVideo = preview
+    ? previewFormat?.url || ""
+    : chosen?.url || "";
 
   return {
     video: finalVideo,
     audio: audioOnly[0]?.url || (chosenMuxed ? chosen?.url : "") || "",
-    hasMuxed: chosenMuxed || (preview && !!finalVideo),
-    height: Number(chosen?.height || 0),
+    hasMuxed: preview ? Boolean(previewFormat?.url) : chosenMuxed,
+    height: Number((previewFormat || chosen)?.height || 0),
   };
 }
 
