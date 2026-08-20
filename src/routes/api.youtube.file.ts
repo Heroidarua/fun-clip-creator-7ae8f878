@@ -109,26 +109,27 @@ export const Route = createFileRoute("/api/youtube/file")({
           const finalContentType = isPreview ? "video/mp4" : contentType;
           const filename = `${sanitizeFilename(data?.title || title || "youtube", "youtube")}.${ext}`;
           
-          const headers: Record<string, string> = {
-            "Content-Type": finalContentType,
-            "Content-Disposition": isPreview 
-              ? "inline" 
-              : `attachment; filename="${filename.replace(/[^\x20-\x7E]/g, "_").replace(/"/g, "")}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
-            "Cache-Control": "no-store",
-            "Accept-Ranges": "bytes",
-            "x-yt-muxed": data?.muxed ? "1" : "0",
-            ...ytCors(),
-          };
+          const headers = new Headers();
+          headers.set("Content-Type", finalContentType);
+          headers.set("Content-Disposition", isPreview 
+            ? "inline" 
+            : `attachment; filename="${filename.replace(/[^\x20-\x7E]/g, "_").replace(/"/g, "")}"; filename*=UTF-8''${encodeURIComponent(filename)}`);
+          headers.set("Cache-Control", "no-store");
+          headers.set("Accept-Ranges", "bytes");
+          headers.set("x-yt-muxed", data?.muxed ? "1" : "0");
+          
+          const cors = ytCors();
+          Object.entries(cors).forEach(([k, v]) => headers.set(k, v));
           
           const len = upstream.headers.get("content-length");
-          if (len) headers["Content-Length"] = len;
+          if (len) headers.set("Content-Length", len);
           
           const contentRange = upstream.headers.get("content-range");
-          if (range && contentRange) headers["Content-Range"] = contentRange;
+          if (range && contentRange) headers.set("Content-Range", contentRange);
 
           return new Response(upstream.body, {
             status: range && upstream.status === 206 ? 206 : 200,
-            headers: { ...headers },
+            headers,
           });
         } catch (error: any) {
           console.error("youtube/file error:", error);
