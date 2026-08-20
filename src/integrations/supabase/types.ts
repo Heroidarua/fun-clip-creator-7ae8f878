@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_logs: {
+        Row: {
+          action: string
+          created_at: string | null
+          details: Json | null
+          id: string
+          ip_address: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+        }
+        Relationships: []
+      }
       ai_usage_log: {
         Row: {
           id: string
@@ -690,6 +714,33 @@ export type Database = {
           referral_code?: string
           referred_id?: string
           referrer_id?: string
+        }
+        Relationships: []
+      }
+      site_config: {
+        Row: {
+          description: string | null
+          id: string
+          key: string
+          singleton: boolean | null
+          updated_at: string | null
+          value: Json
+        }
+        Insert: {
+          description?: string | null
+          id?: string
+          key: string
+          singleton?: boolean | null
+          updated_at?: string | null
+          value: Json
+        }
+        Update: {
+          description?: string | null
+          id?: string
+          key?: string
+          singleton?: boolean | null
+          updated_at?: string | null
+          value?: Json
         }
         Relationships: []
       }
