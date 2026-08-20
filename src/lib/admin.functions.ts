@@ -16,17 +16,19 @@ export const adminAction = createServerFn({ method: "POST" })
     password: z.string(),
     payload: AdminActionSchema 
   }))
-  .handler(async ({ data, request }) => {
+  .handler(async ({ data }) => {
     const adminPassword = process.env['ADMIN_PASSWORD'];
     if (!adminPassword || data.password !== adminPassword) {
       throw new Error("Não autorizado");
     }
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { action } = data.payload;
+    const payload = data.payload;
+    const action = payload.action;
 
     // Log the attempt
-    await logAdminAction(supabaseAdmin, action, data.payload, request);
+    await logAdminAction(supabaseAdmin, action, payload);
+
 
     switch (action) {
       case "list-announcements": {
