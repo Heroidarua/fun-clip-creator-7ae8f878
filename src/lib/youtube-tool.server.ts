@@ -112,7 +112,8 @@ export function ytCors(extra: Record<string, string> = {}): Record<string, strin
   return {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Headers": "Content-Type, Range",
+    "Access-Control-Expose-Headers": "Content-Length, Content-Range, Content-Type, x-yt-muxed",
     ...extra,
   };
 }
