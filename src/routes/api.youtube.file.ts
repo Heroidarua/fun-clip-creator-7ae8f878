@@ -97,6 +97,8 @@ export const Route = createFileRoute("/api/youtube/file")({
                   data = candidate;
                   break;
                 }
+                console.warn("Upstream recusou:", res.status, mediaUrl?.slice(0, 60));
+                await res.body?.cancel().catch(() => undefined);
               } catch (e) {
                 console.warn("Candidato falhou:", (e as Error).message);
               }
