@@ -182,21 +182,16 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality | string = "b
     if (anyAudio.length) audioOnly.push(anyAudio[0]);
   }
 
+  // Sempre preferimos o progressivo (vídeo + áudio); se o YouTube não oferecer,
+  // caímos para o vídeo adaptativo, que será unido ao áudio no navegador.
   const chosen = muxed[0] || videoOnly[0];
   const chosenMuxed = Boolean(muxed[0]?.url);
 
-  // No modo preview, se não houver vídeo MP4, tenta qualquer vídeo progressivo (webm, etc)
-  const preview = quality === "preview" || quality === "worst";
-  const previewFormat = preview ? muxed[0] : undefined;
-  const finalVideo = preview
-    ? previewFormat?.url || ""
-    : chosen?.url || "";
-
   return {
-    video: finalVideo,
+    video: chosen?.url || "",
     audio: audioOnly[0]?.url || (chosenMuxed ? chosen?.url : "") || "",
-    hasMuxed: preview ? Boolean(previewFormat?.url) : chosenMuxed,
-    height: Number((previewFormat || chosen)?.height || 0),
+    hasMuxed: chosenMuxed,
+    height: Number(chosen?.height || 0),
   };
 }
 
