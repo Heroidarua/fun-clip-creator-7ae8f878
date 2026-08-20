@@ -1,31 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
-import { adminAction } from "@/lib/admin.functions";
 import { ShieldAlert, Terminal, Eye, AlertCircle } from "lucide-react";
 
 interface SecuritySectionProps {
   password?: string;
 }
 
-export default function SecuritySection({ password }: SecuritySectionProps) {
-  const { data: logs, isLoading } = useQuery({
-    queryKey: ["admin-logs", password],
-    queryFn: async () => {
-      // Note: We'll reuse adminAction to list logs
-      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      const { data, error } = await supabaseAdmin
-        .from("admin_logs")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(50);
-      if (error) throw error;
-      return data;
-    },
-    // This is a direct server-side query trick via TanStack Start, 
-    // but for consistency we should have added it to adminAction switch.
-    // I'll fix it in adminAction first.
-    enabled: false 
-  });
-
+export default function SecuritySection({ password: _password }: SecuritySectionProps) {
   return (
     <div className="space-y-8">
       <div>
