@@ -34,7 +34,10 @@ export const Route = createFileRoute("/api/youtube/file")({
           if (!token) {
             const h = new Headers();
             Object.entries(JSON_HEADERS).forEach(([k, v]) => h.set(k, v));
-            return createResponse(JSON.stringify({ success: false, error: "Token ausente." }), 401, h);
+            return new Response(JSON.stringify({ success: false, error: "Token ausente." }), { 
+              status: 401, 
+              headers: h 
+            });
           }
 
           let ticket = await verifyTicket(token);
@@ -54,7 +57,10 @@ export const Route = createFileRoute("/api/youtube/file")({
           if (!ticket) {
             const h = new Headers();
             Object.entries(JSON_HEADERS).forEach(([k, v]) => h.set(k, v));
-            return createResponse(JSON.stringify({ success: false, error: "Token inválido ou expirado." }), 403, h);
+            return new Response(JSON.stringify({ success: false, error: "Token inválido ou expirado." }), { 
+              status: 403, 
+              headers: h 
+            });
           }
 
           const { videoId, type, quality, title } = ticket;
@@ -99,7 +105,10 @@ export const Route = createFileRoute("/api/youtube/file")({
           if (!upstream || !upstream.body) {
             const h = new Headers();
             Object.entries(JSON_HEADERS).forEach(([k, v]) => h.set(k, v));
-            return createResponse(JSON.stringify({ success: false, error: "Não foi possível conectar ao YouTube." }), 502, h);
+            return new Response(JSON.stringify({ success: false, error: "Não foi possível conectar ao YouTube." }), { 
+              status: 502, 
+              headers: h 
+            });
           }
 
           const ext = type === "audio" ? "m4a" : "mp4";
@@ -136,7 +145,10 @@ export const Route = createFileRoute("/api/youtube/file")({
           console.error("youtube/file error:", error);
           const h = new Headers();
           Object.entries(JSON_HEADERS).forEach(([k, v]) => h.set(k, v));
-          return createResponse(JSON.stringify({ success: false, error: "Erro ao baixar arquivo." }), 500, h);
+          return new Response(JSON.stringify({ success: false, error: "Erro ao baixar arquivo." }), { 
+            status: 500, 
+            headers: h 
+          });
         }
       },
     },
