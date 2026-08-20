@@ -180,7 +180,10 @@ export async function downloadYoutubeMedia({
     const err = e as Error & { directUrl?: string; muxed?: boolean };
     if (err.message === TOO_LARGE) {
       if (err.directUrl && (type === "audio" || err.muxed)) {
-        window.location.href = err.directUrl;
+        triggerBrowserDownload(
+          err.directUrl,
+          `${name}.${type === "audio" ? "m4a" : "mp4"}`,
+        );
         return;
       }
       throw new Error(
