@@ -126,7 +126,7 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality | string = "b
   const asc = (a: any, b: any) => (a.height || 0) - (b.height || 0);
 
   // Progressivo (vídeo + áudio no mesmo arquivo) é o que o navegador reproduz direto
-  let muxed = progressive
+  console.log("Progressive formats:", progressive.map(f => f.mimeType)); let muxed = progressive
     .filter((f) => (/video\/(mp4|webm|x-matroska|quicktime)/.test(f.mimeType || "")))
     .filter((f) => (/mp4a|opus|vorbis/.test(f.mimeType || "") || f.hasAudio !== false || f.audioQuality !== undefined))
     .filter((f) => (f.height || 0) <= 1080)
