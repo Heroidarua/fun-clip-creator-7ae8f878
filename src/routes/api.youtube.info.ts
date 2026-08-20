@@ -83,30 +83,15 @@ export const Route = createFileRoute("/api/youtube/info")({
             );
           }
 
+          const directHeight = Math.max(144, Number(data.height) || 720);
           const formats = [
             {
-              id: "mp4-1080",
-              container: "mp4" as const,
-              type: "video" as const,
-              quality: "best",
-              label: "MP4 — 1080p (Full HD)",
-              estimatedBytes: estimateBytes(duration, 4500),
-            },
-            {
-              id: "mp4-720",
+              id: `mp4-${directHeight}`,
               container: "mp4" as const,
               type: "video" as const,
               quality: "high",
-              label: "MP4 — 720p (HD)",
-              estimatedBytes: estimateBytes(duration, 2500),
-            },
-            {
-              id: "mp4-480",
-              container: "mp4" as const,
-              type: "video" as const,
-              quality: "worst",
-              label: "MP4 — 480p (Qualidade SD)",
-              estimatedBytes: estimateBytes(duration, 1200),
+              label: `MP4 — ${directHeight}p`,
+              estimatedBytes: estimateBytes(duration, directHeight >= 720 ? 2500 : 1200),
             },
             {
               id: "m4a-audio",

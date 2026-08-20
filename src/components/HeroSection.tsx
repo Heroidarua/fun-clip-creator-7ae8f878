@@ -207,6 +207,23 @@ const MediaPreviewOverlay = ({
   );
 };
 
+const YouTubePreview = ({
+  videoId,
+  title,
+}: {
+  videoId: string;
+  title: string;
+}) => (
+  <iframe
+    src={`https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?rel=0&playsinline=1`}
+    title={`Prévia de ${title}`}
+    className="absolute inset-0 h-full w-full"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowFullScreen
+    loading="lazy"
+  />
+);
+
 
 interface VideoData {
   video_urls: {
@@ -1865,12 +1882,18 @@ const HeroSection = () => {
                       alt={`Capa do vídeo ${youtubeData.title}`}
                       className="w-full h-[220px] object-contain opacity-0 pointer-events-none"
                     />
-                    <MediaPreviewOverlay
-                      title={youtubeData.title}
-                      author={youtubeData.author}
-                      duration={youtubeData.duration}
-                      mediaUrl={apiUrl('/api/youtube/file') + `?token=${encodeURIComponent(youtubeData.videoId || '')}&quality=worst&preview=1`}
-                    />
+                    {youtubeData.videoId ? (
+                      <YouTubePreview
+                        videoId={youtubeData.videoId}
+                        title={youtubeData.title}
+                      />
+                    ) : (
+                      <MediaPreviewOverlay
+                        title={youtubeData.title}
+                        author={youtubeData.author}
+                        duration={youtubeData.duration}
+                      />
+                    )}
                   </div>
 
 
