@@ -162,7 +162,7 @@ export async function downloadYoutubeMedia({
       return;
     }
 
-    const audioStage = "Processando Áudio...";
+    const audioStage = "Baixando o áudio...";
     onStage?.(audioStage);
     const audio = await fetchStream(url, "m4a", "best", (r) =>
       onProgress?.(60 + (r == null ? 0 : Math.round(r * 20)), audioStage),
