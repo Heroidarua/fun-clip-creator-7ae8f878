@@ -50,11 +50,16 @@ async function fetchStream(
   const muxed = res.headers.get("x-yt-muxed") === "1";
 
   // Se o navegador receber um arquivo que não precisa de muxing (áudio ou vídeo muxed),
-  // redirecionamos diretamente para o link de download para aproveitar o streaming do navegador
-  // e contornar limites de memória de blob (especialmente no mobile/Safari).
+  // usamos um link oculto com o atributo download para forçar o salvamento em vez de apenas navegar.
   if (container === "m4a" || muxed) {
-    window.location.assign(fileUrl);
-    // Retornamos um resultado "vazio" mas bem-sucedido para que o chamador saiba que acabou
+    const a = document.createElement("a");
+    a.href = fileUrl;
+    // O navegador tentará honrar o atributo 'download' mesmo que o link seja cross-origin se os cabeçalhos Content-Disposition estiverem corretos
+    a.download = ""; 
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    
     return {
       bytes: new Uint8Array(0),
       contentType: res.headers.get("content-type") || "application/octet-stream",
