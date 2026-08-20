@@ -143,13 +143,15 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality | string = "b
   // arquivo inteiro, então limitamos o tamanho para não estourar o servidor.
   const MAX_BYTES = 1024 * 1024 * 1024; // 1 GB
   const size = (f: any) => Number(f.contentLength || 0);
-  let videoOnly = adaptive
-    .filter(
-      (f) =>
-        /video\/mp4/.test(f.mimeType || "") &&
-        (f.height || 0) <= 1080, // Aumentado para 1080p
-    )
-    .sort(quality === "worst" ? asc : desc);
+  const isH264 = (f: any) => /avc1/.test(f.mimeType || "");
+  const mp4Video = adaptive.filter(
+    (f) => /video\/mp4/.test(f.mimeType || "") && (f.height || 0) <= 1080,
+  );
+  // avc1 (H.264) é o codec com maior compatibilidade em navegadores e players.
+  let videoOnly = (mp4Video.filter(isH264).length ? mp4Video.filter(isH264) : mp4Video).sort(
+    quality === "worst" ? asc : desc,
+  );
+  
   
   if (quality === "high" || (typeof quality === 'string' && quality.includes("720"))) {
     const hd = videoOnly.filter((f) => (f.height || 0) >= 720);
