@@ -327,6 +327,7 @@ const HeroSection = () => {
   const [youtubeFormats, setYoutubeFormats] = useState<YoutubeFormat[]>([]);
   const [youtubeQuality, setYoutubeQuality] = useState<string>("");
   const [isYoutubeProcessing, setIsYoutubeProcessing] = useState(false);
+  const [youtubeDownloadStage, setYoutubeDownloadStage] = useState("");
 
   // Facebook states
   const [facebookUrl, setFacebookUrl] = useState("");
@@ -981,9 +982,12 @@ const HeroSection = () => {
       await downloadYoutubeMedia({
         url: canonical,
         type: wantedType,
-        quality: format?.id || "best", // Passamos o ID exato para a API de download resolver
+        quality: format?.id || "best", 
         title: youtubeData.title || "youtube",
-        onProgress: (p) => setYoutubeProgress(p ?? 0),
+        onProgress: (p, stage) => {
+          setYoutubeProgress(p ?? 0);
+          if (stage) setYoutubeDownloadStage(stage);
+        },
       });
 
       toast({
@@ -1002,6 +1006,7 @@ const HeroSection = () => {
       setIsYoutubeProcessing(false);
       setYoutubeLoading(false);
       setYoutubeProgress(0);
+      setYoutubeDownloadStage("");
     }
   };
 
@@ -1810,6 +1815,11 @@ const HeroSection = () => {
                       <span className="font-retro text-3xl sm:text-4xl text-[hsl(var(--retro-cyan))]">
                         {Math.round(youtubeProgress)}%
                       </span>
+                      {youtubeDownloadStage && (
+                        <p className="mt-1 font-orbitron text-[10px] text-white/70 uppercase tracking-widest">
+                          {youtubeDownloadStage}
+                        </p>
+                      )}
                     </div>
                   </div>
                   
