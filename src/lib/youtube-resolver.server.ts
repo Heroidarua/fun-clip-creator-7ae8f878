@@ -127,8 +127,8 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality | string = "b
 
   // Progressivo (vídeo + áudio no mesmo arquivo) é o que o navegador reproduz direto
   let muxed = progressive
-    .filter((f) => /video\/mp4/.test(f.mimeType || "") && (/mp4a/.test(f.mimeType || "") || f.hasAudio !== false))
-    .filter((f) => (f.height || 0) <= 1080) // Aumentado limite para 1080p
+    .filter((f) => /video\/mp4/.test(f.mimeType || "") && (/mp4a/.test(f.mimeType || "") || f.hasAudio !== false || f.audioQuality !== undefined))
+    .filter((f) => (f.height || 0) <= 1080)
     .sort(quality === "worst" ? asc : desc);
 
   // Priorização de qualidade baseada na string recebida
@@ -265,7 +265,7 @@ async function fetchInnerTube(
       const status = player?.playabilityStatus?.status;
       if (!player || (status && status !== "OK")) continue;
 
-      const { video, audio, hasMuxed, height } = pickInnertubeFormats(player, quality);
+      const { video, audio, hasMuxed, height } = pickInnertubeFormats(player, quality || "best");
       if (!video && !audio) continue;
 
       const details = player.videoDetails || {};
