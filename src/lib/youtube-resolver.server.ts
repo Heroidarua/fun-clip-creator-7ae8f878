@@ -147,14 +147,14 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality | string = "b
     .filter(
       (f) =>
         /video\/mp4/.test(f.mimeType || "") &&
-        (f.height || 0) <= 720, // Limit to 720p
+        (f.height || 0) <= 1080, // Aumentado para 1080p
     )
     .sort(quality === "worst" ? asc : desc);
   
   if (quality === "high" || (typeof quality === 'string' && quality.includes("720"))) {
-    const hd = videoOnly.filter((f) => (f.height || 0) === 720);
+    const hd = videoOnly.filter((f) => (f.height || 0) >= 720);
     if (hd.length) {
-      videoOnly = hd;
+      videoOnly = hd.sort(desc);
     }
   }
   const fitsSize = videoOnly.filter((f) => size(f) > 0 && size(f) <= MAX_BYTES);
