@@ -157,7 +157,7 @@ const MediaPreviewOverlay = ({
               )}
               {previewError && !isLoadingPreview && (
                 <span className="z-20 max-w-[240px] text-center font-orbitron text-[10px] text-yellow-400">
-                  Prévia indisponível para este vídeo — o download continua funcionando.
+                  Prévia indisponível para este vídeo.
                 </span>
               )}
             </div>
