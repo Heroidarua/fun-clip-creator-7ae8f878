@@ -184,10 +184,10 @@ function pickInnertubeFormats(player: any, quality: YouTubeQuality | string = "b
   const chosenMuxed = Boolean(muxed[0]?.url);
 
   // No modo preview, se não houver vídeo MP4, tenta qualquer vídeo progressivo (webm, etc)
-  const preview = quality === "preview";
+  const preview = quality === "preview" || quality === "worst";
   const finalVideo = chosen?.url || (preview ? progressive.find(f => /video/i.test(f.mimeType || ""))?.url || adaptive.find(f => /video/i.test(f.mimeType || ""))?.url : "") || "";
 
-  if (preview && finalVideo) {
+  if (preview && finalVideo && !chosenMuxed) {
     return {
       video: finalVideo,
       audio: "",
