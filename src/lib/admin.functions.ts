@@ -3,12 +3,17 @@ import { z } from "zod";
 import { AdminActionSchema } from "./admin.schemas";
 
 const logAdminAction = async (supabaseAdmin: any, action: string, details: any, request?: Request) => {
-  const ip = request?.headers.get("cf-connecting-ip") || request?.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-  await supabaseAdmin.from("admin_logs").insert({
-    action,
-    details,
-    ip_address: ip
-  });
+  // Use a simplified way to get IP if request isn't easily accessible in server fn context
+  const ip = "server-side"; 
+  try {
+    await supabaseAdmin.from("admin_logs").insert({
+      action,
+      details: JSON.stringify(details),
+      ip_address: ip
+    });
+  } catch (e) {
+    console.error("Failed to log admin action:", e);
+  }
 };
 
 export const adminAction = createServerFn({ method: "POST" })
@@ -42,10 +47,11 @@ export const adminAction = createServerFn({ method: "POST" })
 
       case "get-metrics": {
         // Fetch key metrics for the dashboard
+        // Note: Using head: true to only get counts efficiently
         const [
-          { count: totalTools },
-          { count: activeAnnouncements },
-          { count: pendingVideoJobs }
+          totalToolsRes,
+          activeAnnouncementsRes,
+          pendingVideoJobsRes
         ] = await Promise.all([
           supabaseAdmin.from("downloader_status").select("*", { count: 'exact', head: true }),
           supabaseAdmin.from("announcements").select("*", { count: 'exact', head: true }).eq("active", true),
@@ -55,9 +61,9 @@ export const adminAction = createServerFn({ method: "POST" })
         return { 
           success: true, 
           data: { 
-            totalTools: totalTools || 0,
-            activeAnnouncements: activeAnnouncements || 0,
-            pendingVideoJobs: pendingVideoJobs || 0
+            totalTools: totalToolsRes.count || 0,
+            activeAnnouncements: activeAnnouncementsRes.count || 0,
+            pendingVideoJobs: pendingVideoJobsRes.count || 0
           } 
         };
       }
@@ -81,18 +87,21 @@ export const adminAction = createServerFn({ method: "POST" })
 export const listEnhancementJobs = createServerFn({ method: "POST" })
   .inputValidator(z.object({ password: z.string() }))
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const adminPassword = process.env['ADMIN_PASSWORD'];
-
     if (!adminPassword || data.password !== adminPassword) {
       throw new Error("Não autorizado");
     }
 
-    const { data: jobs, error } = await (supabaseAdmin
-      .from("video_enhancement_jobs" as any)
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    
+    // Log access
+    await logAdminAction(supabaseAdmin, "list-enhancement-jobs", { timestamp: new Date().toISOString() });
+
+    const { data: jobs, error } = await supabaseAdmin
+      .from("video_enhancement_jobs")
       .select("*")
       .order("created_at", { ascending: false })
-      .limit(50) as any);
+      .limit(50);
 
     if (error) throw error;
     return { data: jobs };

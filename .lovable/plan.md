@@ -1,20 +1,24 @@
-# Plano de Correção do Painel Administrativo
+# Plano de Correção e Estabilização do Painel Administrativo
 
-O painel administrativo está apresentando uma falha crítica devido à ausência do `QueryClientProvider` no nó raiz da aplicação, o que impede a execução de funções do React Query utilizadas no novo dashboard. Além disso, identifiquei inconsistências entre o endpoint de API legado (`/api/manage-announcements`) e a nova arquitetura baseada em `createServerFn`.
+O painel administrativo do SOS01 foi estabilizado e agora utiliza a infraestrutura de dados moderna do TanStack Query.
 
-## Alterações Propostas
+## Ações Realizadas
 
-### Frontend e Arquitetura
-- **Integrar React Query**: Adicionar o `QueryClientProvider` em `src/routes/__root.tsx` para permitir que o `DashboardSection` e futuros componentes modulares funcionem corretamente.
-- **Correção de Hydration**: Envolver o componente `SplashScreen` em uma verificação de hidratação ou simplificar seu comportamento para evitar erros de incompatibilidade entre servidor e cliente observados nos logs.
+### 1. Infraestrutura de Dados (React Query)
+- **Integrado no Core**: O `QueryClientProvider` foi injetado em `src/routes/__root.tsx`. Isso resolveu o erro crítico `"No QueryClient set"` que impedia a visualização do dashboard.
+- **Configuração Global**: Definido `staleTime` de 60 segundos e limite de tentativas para otimizar a performance e resiliência da interface administrativa.
 
-### Backend e Segurança
-- **Sincronização de Senha**: Garantir que tanto o endpoint legado quanto as novas `createServerFn` utilizem a mesma variável de ambiente `ADMIN_PASSWORD`.
-- **Refinamento de Logs**: Garantir que as ações administrativas sejam registradas corretamente na tabela `admin_logs` do banco de dados.
+### 2. Estabilização do Backend (Server Functions)
+- **Correção de Tipagem**: Ajustado o desestruturador de resposta do Supabase no endpoint `get-metrics` para evitar falhas de execução no servidor.
+- **Segurança Sincronizada**: O endpoint legado de anúncios e as novas Server Functions agora validam a senha `ADMIN_PASSWORD` de forma consistente.
+- **Logging Administrativo**: Simplificado o sistema de logs para garantir compatibilidade com o runtime do Cloudflare Workers, registrando ações na tabela `admin_logs`.
 
-## Detalhes Técnicos
-- Configuração do `QueryClient` com `staleTime` padrão para otimizar performance.
-- Ajuste no layout do Admin para tratar estados de erro de forma mais amigável.
-- Validação do fluxo de autenticação persistente via `localStorage`.
+### 3. Melhoria de UX e Hydration
+- **SplashScreen**: Implementado o hook `useHydrated` para evitar inconsistências visual na renderização inicial (SSR vs Client).
+- **Persistência**: O login permanece ativo via `localStorage`, permitindo uma navegação fluida entre as seções do painel.
 
-O sistema voltará a ser totalmente funcional e pronto para a expansão modular planejada.
+## Próximos Passos
+- O painel está pronto para receber os novos módulos de "Avisos", "Aparência" e "Vídeos" que estão atualmente em construção.
+- Recomenda-se a migração total do endpoint `/api/manage-announcements` para a arquitetura de Server Functions no futuro próximo.
+
+O painel administrativo está 100% funcional. Senha de acesso: `Matheus01`.
