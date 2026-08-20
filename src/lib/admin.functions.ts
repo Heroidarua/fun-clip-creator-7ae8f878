@@ -87,14 +87,57 @@ export const adminAction = createServerFn({ method: "POST" })
         };
       }
 
-      case "get-marquee": {
-        const { data: marquee, error } = await supabaseAdmin
+      case "save-marquee": {
+        const { error } = await supabaseAdmin
           .from("marquee_settings")
+          .upsert({
+            ...(payload as any).data,
+            singleton: true
+          }, { onConflict: 'singleton' });
+        if (error) throw error;
+        return { success: true };
+      }
+
+      case "get-button-settings": {
+        const { data, error } = await supabaseAdmin
+          .from("button_settings")
           .select("*")
           .limit(1)
           .maybeSingle();
         if (error) throw error;
-        return { success: true, data: marquee };
+        return { success: true, data };
+      }
+
+      case "save-button-settings": {
+        const { error } = await supabaseAdmin
+          .from("button_settings")
+          .upsert({
+            ...(payload as any).data,
+            singleton: true
+          }, { onConflict: 'singleton' });
+        if (error) throw error;
+        return { success: true };
+      }
+
+      case "list-tools": {
+        const { data, error } = await supabaseAdmin
+          .from("downloader_status")
+          .select("*")
+          .order("feature_name", { ascending: true });
+        if (error) throw error;
+        return { success: true, data };
+      }
+
+      case "update-tool-status": {
+        const { error } = await supabaseAdmin
+          .from("downloader_status")
+          .update({ 
+            status: (payload as any).status,
+            last_checked: new Date().toISOString()
+          })
+          .eq("id", (payload as any).id);
+        if (error) throw error;
+        return { success: true };
       }
 
       default:
