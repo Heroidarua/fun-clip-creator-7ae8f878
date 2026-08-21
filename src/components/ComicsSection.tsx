@@ -79,8 +79,106 @@ const TRANSLATIONS: Record<string, string> = {
 
 const t = (text?: string | null) => {
   if (!text) return "—";
-  if (text === "-") return "—";
-  return TRANSLATIONS[text] || text;
+  if (text === "-" || text.toLowerCase() === "n/a") return "—";
+
+  // Mapeamento manual para termos comuns
+  const commonTranslations: Record<string, string> = {
+    "No relatives": "Sem parentes",
+    "Formerly": "Anteriormente",
+    "active": "ativo",
+    "unknown": "desconhecido",
+  };
+
+  let translated = TRANSLATIONS[text] || text;
+
+  // Se ainda estiver em inglês e for uma lista ou frase curta
+  if (translated === text) {
+    Object.entries(commonTranslations).forEach(([eng, pt]) => {
+      translated = translated.replace(new RegExp(eng, "gi"), pt);
+    });
+  }
+
+  return translated;
+};
+
+// Hook para tradução via IA (opcional, mas vamos usar um mapeamento mais robusto)
+const translateText = (text?: string | null) => {
+  if (!text || text === "-" || text.toLowerCase() === "n/a") return "—";
+  
+  // Como o volume de dados é grande e dinâmico da API, 
+  // vamos focar em traduzir os campos principais e deixar os detalhes técnicos.
+  // Para ocupação e grupos, faremos um mapeamento dos termos mais frequentes.
+  
+  const terms: Record<string, string> = {
+    "Journalist": "Jornalista",
+    "Reporter": "Repórter",
+    "Student": "Estudante",
+    "Adventurer": "Aventureiro",
+    "Hero": "Herói",
+    "Criminal": "Criminoso",
+    "Assassin": "Assassino",
+    "Mercenary": "Mercenário",
+    "Soldier": "Soldado",
+    "Scientist": "Cientista",
+    "Doctor": "Médico",
+    "Billionaire": "Bilionário",
+    "Inventor": "Inventor",
+    "King": "Rei",
+    "Queen": "Rainha",
+    "Prince": "Príncipe",
+    "Princess": "Princesa",
+    "God": "Deus",
+    "Goddess": "Deusa",
+    "Warrior": "Guerreiro",
+    "Vigilante": "Vigilante",
+    "Mutant": "Mutante",
+    "Alien": "Alienígena",
+    "Detective": "Detetive",
+    "Police Officer": "Policial",
+    "Lawyer": "Advogado",
+    "Leader": "Líder",
+    "Member of": "Membro de",
+    "Founding member": "Membro fundador",
+    "Justice League": "Liga da Justiça",
+    "Avengers": "Vingadores",
+    "X-Men": "X-Men",
+    "Fantastic Four": "Quarteto Fantástico",
+    "Suicide Squad": "Esquadrão Suicida",
+    "Teen Titans": "Jovens Titãs",
+    "Defenders": "Defensores",
+    "Inhumans": "Inumanos",
+    "Guardians of the Galaxy": "Guardiões da Galáxia",
+    "Sinister Six": "Sexteto Sinistro",
+    "Brotherhood of Mutants": "Irmandade de Mutantes",
+    "Hydra": "Hidra",
+    "S.H.I.E.L.D.": "S.H.I.E.L.D.",
+    "A.I.M.": "I.D.E.I.A.",
+    "B.P.R.D.": "B.P.R.D.",
+    "Daily Planet": "Planeta Diário",
+    "Stark Industries": "Indústrias Stark",
+    "Wayne Enterprises": "Empresas Wayne",
+    "Gotham City": "Cidade de Gotham",
+    "Metropolis": "Metrópolis",
+    "New York": "Nova York",
+    "Earth": "Terra",
+    "Mars": "Marte",
+    "Space": "Espaço",
+    "Professional": "Profissional",
+    "Freelance": "Autônomo",
+    "Pilot": "Piloto",
+    "Photographer": "Fotógrafo",
+    "None": "Nenhum",
+    "Unknown": "Desconhecido",
+  };
+
+  let result = text;
+  Object.entries(terms).forEach(([eng, pt]) => {
+    // Substitui palavras inteiras para evitar erros
+    const regex = new RegExp(`\\b${eng}\\b`, "gi");
+    result = result.replace(regex, pt);
+  });
+
+  return result;
 };
 
 const publisherClass = (pub?: string | null) => {
@@ -377,11 +475,11 @@ const ComicsSection = () => {
               </div>
               <div>
                 <h4 className="font-pixel text-[8px] text-muted-foreground mb-1">OCUPAÇÃO</h4>
-                <p>{selected.work?.occupation || "—"}</p>
+                <p>{translateText(selected.work?.occupation)}</p>
               </div>
               <div>
                 <h4 className="font-pixel text-[8px] text-muted-foreground mb-1">GRUPOS</h4>
-                <p>{selected.connections?.groupAffiliation || "—"}</p>
+                <p>{translateText(selected.connections?.groupAffiliation)}</p>
               </div>
               <div className="sm:col-span-2">
                 <h4 className="font-pixel text-[8px] text-muted-foreground mb-1">APELIDOS</h4>
