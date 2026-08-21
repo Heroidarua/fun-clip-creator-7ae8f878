@@ -203,6 +203,7 @@ export default function SidebarNav() {
           }
           header .container {
              max-width: none;
+             padding-left: 2rem;
              padding-right: 2rem;
           }
         }
