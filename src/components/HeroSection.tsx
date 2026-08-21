@@ -1873,7 +1873,7 @@ const HeroSection = () => {
                   
                   {/* Video Preview */}
                   <div
-                    className="relative w-full mb-4 border-2 border-[hsl(0,100%,50%)]/30 bg-background/50 overflow-hidden min-h-[220px] bg-center bg-no-repeat bg-cover"
+                    className="relative w-full border-2 border-[hsl(0,100%,50%)]/30 bg-background/50 overflow-hidden min-h-[220px] bg-center bg-no-repeat bg-cover"
                     style={{ backgroundImage: `url(${youtubeData.thumbnail})` }}
                     aria-label={`Capa do vídeo ${youtubeData.title}`}
                   >
