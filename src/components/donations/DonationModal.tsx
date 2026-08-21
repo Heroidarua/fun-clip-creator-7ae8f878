@@ -19,7 +19,12 @@ interface DonationModalProps {
   onClose: () => void;
 }
 
-const PRESET_VALUES = [5, 10, 20, 50];
+const DONATION_OPTIONS = [
+  { value: 5, description: "Cafezinho para os Devs" },
+  { value: 10, description: "Manter o SOS01 no ar" },
+  { value: 20, description: "Suporte Premium SOS" },
+  { value: 50, description: "VIP SOS Master" },
+];
 
 export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose }) => {
   const { toast } = useToast();
@@ -180,30 +185,46 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
         <div className="py-4">
           {step === "select" && (
             <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-3">
-                {PRESET_VALUES.map((val) => (
-                  <Button
-                    key={val}
-                    variant={amount === val ? "default" : "outline"}
-                    className={`h-16 text-lg font-bold transition-all duration-300 ${
-                      amount === val ? "bg-green-600 hover:bg-green-700 scale-[1.02] shadow-lg" : "hover:border-green-500/50"
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {DONATION_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all duration-500 group relative overflow-hidden ${
+                      amount === opt.value 
+                        ? "border-green-500 bg-green-500/5 shadow-[0_0_20px_rgba(34,197,94,0.2)] scale-[1.02]" 
+                        : "border-secondary/30 bg-secondary/5 hover:border-green-500/50 hover:bg-green-500/5"
                     }`}
-                    onClick={() => {
-                      setAmount(val);
-                    }}
+                    onClick={() => setAmount(opt.value)}
                   >
-                    R$ {val}
-                  </Button>
+                    <span className={`text-2xl font-black mb-1 transition-colors duration-300 ${
+                      amount === opt.value ? "text-green-600" : "text-foreground"
+                    }`}>
+                      R$ {opt.value}
+                    </span>
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground group-hover:text-green-600/70 transition-colors">
+                      {opt.description}
+                    </span>
+                    
+                    {amount === opt.value && (
+                      <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-green-500 animate-ping" />
+                    )}
+                  </button>
                 ))}
-                <Button
-                  variant={amount === "custom" ? "default" : "outline"}
-                  className={`h-16 text-lg font-bold transition-all duration-300 col-span-2 ${
-                    amount === "custom" ? "bg-green-600 hover:bg-green-700 scale-[1.02] shadow-lg" : "hover:border-green-500/50"
+                
+                <button
+                  className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all duration-500 col-span-1 sm:col-span-2 ${
+                    amount === "custom" 
+                      ? "border-green-500 bg-green-500/5 shadow-[0_0_20px_rgba(34,197,94,0.2)] scale-[1.02]" 
+                      : "border-secondary/30 bg-secondary/5 hover:border-green-500/50 hover:bg-green-500/5"
                   }`}
                   onClick={() => setAmount("custom")}
                 >
-                  Outro valor
-                </Button>
+                  <span className={`text-lg font-black transition-colors duration-300 ${
+                    amount === "custom" ? "text-green-600" : "text-foreground"
+                  }`}>
+                    Outro Valor
+                  </span>
+                </button>
               </div>
 
               {amount === "custom" && (
