@@ -82,7 +82,7 @@ const InstallAppButton = ({ variant = "pill", onClick }: Props) => {
   const base =
     variant === "mobile"
       ? "flex items-center justify-center gap-2 px-4 py-3 min-h-11 rounded-full border-2 border-foreground text-sm font-semibold text-foreground hover:bg-foreground hover:text-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-      : "hidden md:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-border hover:border-foreground/40 text-foreground/80 hover:text-foreground text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+      : "inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full border border-border hover:border-foreground/40 text-foreground/80 hover:text-foreground text-[10px] sm:text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
   return (
     <>
