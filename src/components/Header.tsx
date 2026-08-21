@@ -123,7 +123,9 @@ const Header = () => {
 
           {/* Actions */}
           <div className="flex items-center gap-4 relative z-[51]">
-            <DonationButton />
+            <div className="flex items-center">
+              <DonationButton />
+            </div>
             <div className="hidden sm:flex items-center gap-2">
               <NotificationBell />
             </div>
