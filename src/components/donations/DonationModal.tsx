@@ -240,6 +240,9 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
                   }`}>
                     Outro Valor
                   </span>
+                  <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider text-muted-foreground group-hover:text-green-600/70 transition-colors text-center px-1">
+                    VOCÊ ESCOLHE: CAFÉ, LANCHE OU ALEGRIA DO DEV
+                  </span>
                 </button>
               </div>
 
