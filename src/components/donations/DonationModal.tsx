@@ -29,7 +29,21 @@ const DONATION_OPTIONS = [
 export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose }) => {
   const { toast } = useToast();
   const [step, setStep] = useState<"select" | "generating" | "payment" | "success" | "error">("select");
-  const [amount, setAmount] = useState<number | "custom">(10);
+  const [amount, setAmount] = useState<number | "custom">(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("sos01_donation_amount");
+      if (saved === "custom") return "custom";
+      if (saved) return Number(saved);
+    }
+    return 10;
+  });
+
+  useEffect(() => {
+    if (amount) {
+      localStorage.setItem("sos01_donation_amount", String(amount));
+    }
+  }, [amount]);
+
   const [customAmount, setCustomAmount] = useState<string>("");
   const [donationData, setDonationData] = useState<any>(null);
   const [timeLeft, setTimeLeft] = useState<number>(600); // 10 minutes
