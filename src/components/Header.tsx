@@ -127,7 +127,6 @@ const Header = () => {
             <div className="h-6 w-px bg-border/40 mx-1 hidden sm:block" />
             <InstallAppButton />
             <div className="hidden sm:flex items-center gap-2">
-              <ThemeToggle />
               <NotificationBell />
             </div>
           </div>
