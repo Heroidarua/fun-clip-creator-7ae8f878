@@ -103,6 +103,7 @@ export const Route = createRootRoute({
           name: "SOS01",
           url: "https://sos01.com.br",
           logo: "https://sos01.com.br/favicon.png",
+          image: "https://sos01.com.br/favicon.png",
           description: "Plataforma 100% gratuita de utilidades digitais: downloaders, ferramentas com IA, jogos retrô e biblioteca de quadrinhos.",
         }),
       },
