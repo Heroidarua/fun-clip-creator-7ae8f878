@@ -200,9 +200,11 @@ export default function SidebarNav() {
           main, header, footer {
             margin-left: ${isCollapsed ? '80px' : '256px'};
             transition: margin-left 300ms cubic-bezier(0.4, 0, 0.2, 1);
+            width: calc(100% - ${isCollapsed ? '80px' : '256px'});
           }
           header .container {
              max-width: none;
+             width: 100%;
              padding-left: 2rem;
              padding-right: 2rem;
           }
