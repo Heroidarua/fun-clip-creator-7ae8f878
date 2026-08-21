@@ -199,7 +199,11 @@ export default function SidebarNav() {
         @media (min-width: 768px) {
           main, header, footer {
             margin-left: ${isCollapsed ? '80px' : '256px'};
-            transition: margin-left 300ms ease-in-out;
+            transition: margin-left 300ms cubic-bezier(0.4, 0, 0.2, 1);
+          }
+          header .container {
+             max-width: none;
+             padding-right: 2rem;
           }
         }
         @media (max-width: 767px) {
