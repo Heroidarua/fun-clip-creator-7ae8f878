@@ -1188,7 +1188,7 @@ const HeroSection = () => {
           
           <h1 className="font-pixel text-lg sm:text-xl md:text-2xl lg:text-3xl mb-4 tracking-wider leading-relaxed">
             <span className="block text-primary neon-text mb-2">SOS 01.</span>
-            <span className="block text-[hsl(var(--accent))]">Ferramentas Online Grátis, Jogos e Serviços</span>
+            <span className="block text-[hsl(var(--accent))]">Ferramentas, jogos e serviços</span>
           </h1>
           
           <p className="font-retro text-xl sm:text-2xl text-[hsl(var(--retro-red))] mb-6">
