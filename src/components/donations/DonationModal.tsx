@@ -20,10 +20,12 @@ interface DonationModalProps {
 }
 
 const DONATION_OPTIONS = [
-  { value: 5, description: "Cafezinho para os Devs" },
-  { value: 10, description: "Manter o SOS01 no ar" },
-  { value: 20, description: "Suporte Premium SOS" },
-  { value: 50, description: "VIP SOS Master" },
+  { value: 5, description: "CAFÉ PARA O DEV NÃO DORMIR NO TELEFONE" },
+  { value: 10, description: "SEGURA A TOMADA: O SITE FICA NO AR!" },
+  { value: 20, description: "AJUDA A ESPANTAR OS ERROS E BUGS" },
+  { value: 30, description: "COMBUSTÍVEL PARA CRIAR NOVAS FUNÇÕES" },
+  { value: 50, description: "O DEV FICA SEU FÃ Nº1" },
+  { value: 100, description: "VOCÊ É O HERÓI DO SOS01!" },
 ];
 
 export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose }) => {
@@ -237,6 +239,9 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
                     amount === "custom" ? "text-green-600" : "text-foreground"
                   }`}>
                     Outro Valor
+                  </span>
+                  <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider text-muted-foreground group-hover:text-green-600/70 transition-colors text-center px-1">
+                    VOCÊ ESCOLHE: CAFÉ, LANCHE OU ALEGRIA DO DEV
                   </span>
                 </button>
               </div>
