@@ -185,41 +185,41 @@ export const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose })
         <div className="py-4">
           {step === "select" && (
             <div className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 max-h-[40vh] overflow-y-auto px-1 scrollbar-thin scrollbar-thumb-secondary/20">
                 {DONATION_OPTIONS.map((opt) => (
                   <button
                     key={opt.value}
-                    className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all duration-500 group relative overflow-hidden ${
+                    className={`flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 transition-all duration-500 group relative overflow-hidden ${
                       amount === opt.value 
                         ? "border-green-500 bg-green-500/5 shadow-[0_0_20px_rgba(34,197,94,0.2)] scale-[1.02]" 
                         : "border-secondary/30 bg-secondary/5 hover:border-green-500/50 hover:bg-green-500/5"
                     }`}
                     onClick={() => setAmount(opt.value)}
                   >
-                    <span className={`text-2xl font-black mb-1 transition-colors duration-300 ${
+                    <span className={`text-xl sm:text-2xl font-black mb-0.5 sm:mb-1 transition-colors duration-300 ${
                       amount === opt.value ? "text-green-600" : "text-foreground"
                     }`}>
                       R$ {opt.value}
                     </span>
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground group-hover:text-green-600/70 transition-colors">
+                    <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider text-muted-foreground group-hover:text-green-600/70 transition-colors text-center px-1">
                       {opt.description}
                     </span>
                     
                     {amount === opt.value && (
-                      <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-green-500 animate-ping" />
+                      <div className="absolute top-1 right-1 sm:top-2 sm:right-2 w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-green-500 animate-ping" />
                     )}
                   </button>
                 ))}
                 
                 <button
-                  className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all duration-500 col-span-1 sm:col-span-2 ${
+                  className={`flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 transition-all duration-500 col-span-1 sm:col-span-2 ${
                     amount === "custom" 
                       ? "border-green-500 bg-green-500/5 shadow-[0_0_20px_rgba(34,197,94,0.2)] scale-[1.02]" 
                       : "border-secondary/30 bg-secondary/5 hover:border-green-500/50 hover:bg-green-500/5"
                   }`}
                   onClick={() => setAmount("custom")}
                 >
-                  <span className={`text-lg font-black transition-colors duration-300 ${
+                  <span className={`text-base sm:text-lg font-black transition-colors duration-300 ${
                     amount === "custom" ? "text-green-600" : "text-foreground"
                   }`}>
                     Outro Valor
