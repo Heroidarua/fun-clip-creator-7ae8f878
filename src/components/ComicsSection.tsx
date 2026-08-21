@@ -475,11 +475,11 @@ const ComicsSection = () => {
               </div>
               <div>
                 <h4 className="font-pixel text-[8px] text-muted-foreground mb-1">OCUPAÇÃO</h4>
-                <p>{selected.work?.occupation || "—"}</p>
+                <p>{translateText(selected.work?.occupation)}</p>
               </div>
               <div>
                 <h4 className="font-pixel text-[8px] text-muted-foreground mb-1">GRUPOS</h4>
-                <p>{selected.connections?.groupAffiliation || "—"}</p>
+                <p>{translateText(selected.connections?.groupAffiliation)}</p>
               </div>
               <div className="sm:col-span-2">
                 <h4 className="font-pixel text-[8px] text-muted-foreground mb-1">APELIDOS</h4>
