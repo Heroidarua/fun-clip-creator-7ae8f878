@@ -971,7 +971,7 @@ const HeroSection = () => {
   };
 
 
-  const handleYoutubeDownload = async (isAutoDownload = false) => {
+  const handleYoutubeDownload = async (overrideType?: "video" | "audio") => {
     setClickedYoutubeButton("download");
     setTimeout(() => setClickedYoutubeButton(null), 200);
     
@@ -987,16 +987,17 @@ const HeroSection = () => {
     const info = youtubeInfoRef.current;
     const canonical =
       info?.url || parseYouTubeUrl(youtubeUrl)?.canonicalUrl || youtubeUrl.trim();
-    const wantedType = youtubeDownloadType;
-    const format =
-      youtubeFormats.find((f) => f.id === youtubeQuality && f.type === wantedType) ||
-      youtubeFormats.find((f) => f.type === wantedType) ||
-      info?.formats.find((f) => f.type === wantedType);
+    
+    const wantedType = overrideType || youtubeDownloadType;
+    
+    // Simplificação: pega a melhor qualidade disponível para o tipo
+    const availableFormats = youtubeFormats.filter(f => f.type === wantedType);
+    const format = availableFormats.length > 0 ? availableFormats[0] : null;
 
     try {
       toast({
         title: "🚀 Preparando download...",
-        description: "Baixando o arquivo. Isso pode levar alguns instantes...",
+        description: `Baixando o ${wantedType === "video" ? "vídeo" : "áudio"}. Isso pode levar alguns instantes...`,
       });
 
       setIsYoutubeProcessing(true);
@@ -1898,102 +1899,45 @@ const HeroSection = () => {
 
 
                   {/* Download type selector */}
-                  <div className="mb-4">
+                  <div className="mb-0">
                     <h3 className="font-pixel text-[10px] text-center mb-3 text-muted-foreground">SELECT TYPE:</h3>
                     <div className="flex gap-3 justify-center">
                       <Button
                         variant={youtubeDownloadType === "video" ? "default" : "outline"}
-                        onClick={() => selectYoutubeType("video")}
-                        disabled={!youtubeFormats.some(f => f.type === "video")}
-                        className={`font-pixel text-[10px] rounded-sm ${youtubeDownloadType === "video" ? "border-2 border-[hsl(var(--retro-cyan))]" : "border-2 border-muted-foreground/50"}`}
+                        onClick={() => {
+                          setYoutubeDownloadType("video");
+                          handleYoutubeDownload("video");
+                        }}
+                        disabled={isYoutubeProcessing || !youtubeFormats.some(f => f.type === "video")}
+                        className={`font-pixel text-[10px] rounded-sm relative ${youtubeDownloadType === "video" ? "border-2 border-[hsl(var(--retro-cyan))]" : "border-2 border-muted-foreground/50"}`}
                         style={youtubeDownloadType === "video" ? { backgroundColor: 'hsl(0, 100%, 50%)' } : {}}
                       >
-                        VIDEO MP4
+                        {isYoutubeProcessing && youtubeDownloadType === "video" ? (
+                          <span className="flex items-center gap-2">
+                            <span className="w-3 h-3 border-2 border-white/30 border-t-white animate-spin rounded-full"></span>
+                            ...
+                          </span>
+                        ) : "VIDEO MP4"}
                       </Button>
                       <Button
                         variant={youtubeDownloadType === "audio" ? "default" : "outline"}
-                        onClick={() => selectYoutubeType("audio")}
-                        disabled={!youtubeFormats.some(f => f.type === "audio")}
-                        className={`font-pixel text-[10px] rounded-sm ${youtubeDownloadType === "audio" ? "border-2 border-[hsl(var(--retro-cyan))]" : "border-2 border-muted-foreground/50"}`}
+                        onClick={() => {
+                          setYoutubeDownloadType("audio");
+                          handleYoutubeDownload("audio");
+                        }}
+                        disabled={isYoutubeProcessing || !youtubeFormats.some(f => f.type === "audio")}
+                        className={`font-pixel text-[10px] rounded-sm relative ${youtubeDownloadType === "audio" ? "border-2 border-[hsl(var(--retro-cyan))]" : "border-2 border-muted-foreground/50"}`}
                         style={youtubeDownloadType === "audio" ? { backgroundColor: 'hsl(0, 100%, 50%)' } : {}}
                       >
-                        AUDIO MP3
+                        {isYoutubeProcessing && youtubeDownloadType === "audio" ? (
+                          <span className="flex items-center gap-2">
+                            <span className="w-3 h-3 border-2 border-white/30 border-t-white animate-spin rounded-full"></span>
+                            ...
+                          </span>
+                        ) : "AUDIO MP3"}
                       </Button>
                     </div>
                   </div>
-
-                  {/* Seletor de qualidade/resolução */}
-                  {youtubeFormats.some((f) => f.type === youtubeDownloadType) && (
-                    <div className="mb-4">
-                      <h3 className="font-pixel text-[10px] text-center mb-3 text-muted-foreground">
-                        {youtubeDownloadType === "video" ? "SELECIONE A RESOLUÇÃO:" : "SELECIONE A QUALIDADE:"}
-                      </h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                        {youtubeFormats
-                          .filter((f) => f.type === youtubeDownloadType)
-                          .map((f) => {
-                            const tooBig =
-                              !!f.estimatedBytes && f.estimatedBytes > BROWSER_PROCESS_LIMIT;
-                            const active = youtubeQuality === f.id;
-                            return (
-                              <button
-                                key={f.id}
-                                type="button"
-                                onClick={() => setYoutubeQuality(f.id)}
-                                aria-pressed={active}
-                                className={`flex flex-col items-center justify-center gap-1.5 px-3 py-3 rounded-sm border-2 transition-all ${
-                                  active
-                                    ? "border-[hsl(var(--retro-cyan))] bg-[hsl(0,100%,50%)]/20 shadow-[0_0_15px_hsl(var(--retro-cyan),0.3)]"
-                                    : "border-muted-foreground/30 bg-background/40 hover:border-muted-foreground/60"
-                                }`}
-                              >
-                                <span className="font-pixel text-[11px] text-foreground leading-tight">{f.label}</span>
-                                <span className="font-orbitron text-[10px] text-muted-foreground">
-                                  {formatBytes(f.estimatedBytes)}
-                                </span>
-                                {tooBig && (
-                                  <span className="font-orbitron text-[9px] text-yellow-400 mt-0.5">
-                                    acima de 500 MB
-                                  </span>
-                                )}
-                              </button>
-                            );
-                          })}
-                      </div>
-                      <p className="font-orbitron text-[10px] text-center mt-2 text-muted-foreground">
-                        Arquivos acima de 100 MB podem falhar no navegador — prefira uma resolução menor.
-                      </p>
-                    </div>
-                  )}
-
-                  <Button
-                    onClick={() => handleYoutubeDownload(false)}
-                    disabled={isYoutubeProcessing}
-                    className={`w-full h-12 font-pixel text-xs text-white border-2 border-[hsl(var(--retro-cyan))] shadow-[4px_4px_0_hsl(var(--retro-cyan))] hover:shadow-[2px_2px_0_hsl(var(--retro-cyan))] hover:translate-x-[2px] hover:translate-y-[2px] transition-all rounded-sm ${
-                      clickedYoutubeButton === "download" ? "translate-x-[2px] translate-y-[2px] shadow-[2px_2px_0_hsl(var(--retro-cyan))]" : ""
-                    }`}
-                    style={{ backgroundColor: 'hsl(0, 100%, 50%)' }}
-                  >
-                    {isYoutubeProcessing ? (
-                      <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 border-2 border-white/30 border-t-white animate-spin"></div>
-                        <span>PROCESSANDO...</span>
-                      </div>
-                    ) : (
-                      <>
-                        {youtubeDownloadType === "video" ? (
-                          <Download className="mr-2 w-4 h-4" />
-                        ) : (
-                          <Headphones className="mr-2 w-4 h-4" />
-                        )}
-                        BAIXAR
-                      </>
-                    )}
-                  </Button>
-
-                  <p className="font-retro text-lg text-center mt-4 text-muted-foreground">
-                    OBRIGADO POR USAR sos01!
-                  </p>
                 </div>
               </div>
             )}
