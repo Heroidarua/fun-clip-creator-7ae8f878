@@ -1,152 +1,131 @@
-import { useMemo, useState } from "react";
-import { Book, ExternalLink, Filter, ShieldCheck } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Search, ShieldCheck, X } from "lucide-react";
 import ScrollReveal from "./ScrollReveal";
-import batmanGif from "@/assets/batman-walking.gif";
-import supermanGif from "@/assets/superman-pixel.gif";
 
-type Category = "Todos" | "HQ" | "Mangá" | "Domínio Público" | "Indie";
+const API_URL = "https://cdn.jsdelivr.net/gh/akabab/superhero-api@0.3.0/api/all.json";
+const PAGE_SIZE = 24;
 
-type Source = {
+type Hero = {
+  id: number;
   name: string;
-  url: string;
-  category: Exclude<Category, "Todos">;
-  emoji: string;
-  tagline: string;
-  description: string;
-  highlight?: string;
+  slug: string;
+  powerstats: Record<string, number>;
+  appearance: { gender?: string; race?: string | null; height?: string[]; weight?: string[] };
+  biography: {
+    fullName?: string;
+    publisher?: string | null;
+    alignment?: string;
+    aliases?: string[];
+    firstAppearance?: string;
+    placeOfBirth?: string;
+  };
+  work?: { occupation?: string; base?: string };
+  connections?: { groupAffiliation?: string; relatives?: string };
+  images?: { xs: string; sm: string; md: string; lg: string };
 };
 
-const SOURCES: Source[] = [
-  {
-    name: "MANGA Plus",
-    url: "https://mangaplus.shueisha.co.jp/",
-    category: "Mangá",
-    emoji: "🎌",
-    tagline: "Shueisha oficial",
-    description: "One Piece, Jujutsu Kaisen, MHA, Chainsaw Man — capítulos oficiais grátis.",
-    highlight: "OFICIAL",
-  },
-  {
-    name: "Viz Shonen Jump",
-    url: "https://www.viz.com/shonenjump",
-    category: "Mangá",
-    emoji: "📕",
-    tagline: "Jump em inglês",
-    description: "Capítulo mais recente + 3 primeiros de cada série, grátis e oficial.",
-    highlight: "OFICIAL",
-  },
-  {
-    name: "Webtoons",
-    url: "https://www.webtoons.com/",
-    category: "HQ",
-    emoji: "📱",
-    tagline: "Webcomics coreanos",
-    description: "Milhares de séries originais em PT-BR, atualizações semanais.",
-    highlight: "PT-BR",
-  },
-  {
-    name: "Tapas",
-    url: "https://tapas.io/",
-    category: "Indie",
-    emoji: "🎨",
-    tagline: "HQs independentes",
-    description: "Catálogo enorme de webcomics indie em inglês, leitura grátis.",
-  },
-  {
-    name: "GlobalComix",
-    url: "https://globalcomix.com/",
-    category: "Indie",
-    emoji: "🌎",
-    tagline: "Biblioteca global",
-    description: "Editoras indie + clássicos liberados gratuitamente.",
-  },
-  {
-    name: "Marvel Comics",
-    url: "https://www.marvel.com/comics/discover/443/free-digital-comics",
-    category: "HQ",
-    emoji: "🦸",
-    tagline: "Free Digital Comics",
-    description: "Seleção rotativa de HQs Marvel grátis para ler online.",
-    highlight: "OFICIAL",
-  },
-  {
-    name: "DC Universe Infinite",
-    url: "https://www.dc.com/comics",
-    category: "HQ",
-    emoji: "🦇",
-    tagline: "DC oficial",
-    description: "Edições selecionadas grátis + catálogo de personagens.",
-    highlight: "OFICIAL",
-  },
-  {
-    name: "Internet Archive Comics",
-    url: "https://archive.org/details/comics",
-    category: "Domínio Público",
-    emoji: "🏛️",
-    tagline: "Golden Age",
-    description: "Action Comics, Detective Comics e clássicos pré-1964. Download liberado.",
-    highlight: "LEGAL",
-  },
-  {
-    name: "Digital Comic Museum",
-    url: "https://digitalcomicmuseum.com/",
-    category: "Domínio Público",
-    emoji: "📜",
-    tagline: "CBR/CBZ grátis",
-    description: "Milhares de HQs em domínio público para download direto.",
-    highlight: "LEGAL",
-  },
+const PUBLISHERS = [
+  { value: "all", label: "TODAS" },
+  { value: "Marvel Comics", label: "MARVEL" },
+  { value: "DC Comics", label: "DC" },
+  { value: "Dark Horse Comics", label: "DARK HORSE" },
+  { value: "Image Comics", label: "IMAGE" },
 ];
 
-const CATEGORIES: Category[] = ["Todos", "HQ", "Mangá", "Domínio Público", "Indie"];
+const ALIGNMENTS = [
+  { value: "all", label: "TODOS" },
+  { value: "good", label: "HERÓIS" },
+  { value: "bad", label: "VILÕES" },
+  { value: "neutral", label: "NEUTROS" },
+];
+
+const STAT_LABELS: Record<string, string> = {
+  intelligence: "Inteligência",
+  strength: "Força",
+  speed: "Velocidade",
+  durability: "Resistência",
+  power: "Poder",
+  combat: "Combate",
+};
+
+const publisherClass = (pub?: string | null) => {
+  if (!pub) return "text-muted-foreground";
+  if (pub.includes("Marvel")) return "text-[#ec1d24]";
+  if (pub.includes("DC")) return "text-[#0476f2]";
+  return "text-accent";
+};
+
+const FALLBACK_IMG =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='300'%3E%3Crect width='200' height='300' fill='%23161b22'/%3E%3C/svg%3E";
 
 const ComicsSection = () => {
-  const [selectedCategory, setSelectedCategory] = useState<Category>("Todos");
+  const [heroes, setHeroes] = useState<Hero[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [search, setSearch] = useState("");
+  const [publisher, setPublisher] = useState("all");
+  const [alignment, setAlignment] = useState("all");
+  const [visible, setVisible] = useState(PAGE_SIZE);
+  const [selected, setSelected] = useState<Hero | null>(null);
 
-  const filtered = useMemo(
-    () => (selectedCategory === "Todos" ? SOURCES : SOURCES.filter((s) => s.category === selectedCategory)),
-    [selectedCategory],
-  );
+  useEffect(() => {
+    let active = true;
+    fetch(API_URL)
+      .then((r) => r.json())
+      .then((data: Hero[]) => {
+        if (!active) return;
+        setHeroes(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        if (!active) return;
+        setError(true);
+        setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const filtered = useMemo(() => {
+    const term = search.toLowerCase().trim();
+    return heroes.filter((hero) => {
+      if (term) {
+        const haystack = [
+          hero.name,
+          hero.biography?.fullName ?? "",
+          hero.biography?.publisher ?? "",
+          (hero.biography?.aliases ?? []).join(" "),
+        ]
+          .join(" ")
+          .toLowerCase();
+        if (!haystack.includes(term)) return false;
+      }
+      if (publisher !== "all" && hero.biography?.publisher !== publisher) return false;
+      if (alignment !== "all" && hero.biography?.alignment !== alignment) return false;
+      return true;
+    });
+  }, [heroes, search, publisher, alignment]);
+
+  useEffect(() => {
+    setVisible(PAGE_SIZE);
+  }, [search, publisher, alignment]);
 
   return (
     <section className="relative py-12 px-4 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background" />
-
-      <div className="absolute inset-0 opacity-5 pointer-events-none">
-        <div
-          className="w-full h-full"
-          style={{
-            backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.3) 2px, rgba(0,0,0,0.3) 4px)',
-          }}
-        />
-      </div>
-
       <div className="relative z-10 max-w-7xl mx-auto">
-        {/* Header */}
         <ScrollReveal>
-          <div className="relative text-center mb-8">
-            <img
-              src={batmanGif}
-              alt="Batman pixelado" loading="lazy" decoding="async"
-              className="absolute left-0 sm:left-6 -top-4 w-12 h-12 sm:w-14 sm:h-14 drop-shadow-[0_0_10px_rgba(255,255,0,0.5)]"
-              style={{ imageRendering: "pixelated" }}
-            />
-            <img
-              src={supermanGif}
-              alt="Superman pixelado" loading="lazy" decoding="async"
-              className="absolute right-0 sm:right-6 -top-4 w-12 h-12 sm:w-14 sm:h-14 drop-shadow-[0_0_10px_rgba(0,100,255,0.5)]"
-              style={{ imageRendering: "pixelated" }}
-            />
+          <div className="text-center mb-8">
             <h2 className="font-pixel text-lg sm:text-xl md:text-2xl text-primary neon-text mb-2">
-              📚 CENTRAL DE QUADRINHOS
+              ⚡ SUPER-HERÓIS
             </h2>
             <p className="font-pixel text-[8px] sm:text-[10px] text-muted-foreground max-w-xl mx-auto">
-              SERVIÇOS OFICIAIS E LEGAIS COM LEITURA GRATUITA
+              731+ PERSONAGENS DA MARVEL, DC, DARK HORSE, IMAGE E MAIS
             </p>
             <div className="inline-flex items-center gap-2 mt-3 px-3 py-1.5 bg-primary/10 border border-primary/40 rounded">
               <ShieldCheck className="w-3.5 h-3.5 text-primary" />
               <span className="font-pixel text-[8px] sm:text-[10px] text-primary">
-                100% LEGAL · SEM CADASTRO NA SOS/01
+                CONSULTA GRÁTIS · SEM CADASTRO
               </span>
             </div>
           </div>
@@ -154,86 +133,226 @@ const ComicsSection = () => {
 
         {/* Filtros */}
         <ScrollReveal>
-          <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
-            <Filter className="w-4 h-4 text-primary mr-1" />
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-3 py-1.5 font-pixel text-[8px] sm:text-[10px] border-2 rounded transition-all ${
-                  selectedCategory === cat
-                    ? "bg-primary text-primary-foreground border-primary shadow-[0_0_10px_rgba(40,182,255,0.5)]"
-                    : "bg-background text-muted-foreground border-primary/30 hover:border-primary hover:text-primary"
-                }`}
-              >
-                {cat.toUpperCase()}
-              </button>
-            ))}
-          </div>
-        </ScrollReveal>
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3 mb-6 items-stretch sm:items-center">
+            <div className="relative flex-1 min-w-[200px]">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Buscar por nome, editora ou apelido..."
+                className="w-full pl-9 pr-3 py-2 bg-background border-2 border-primary/30 focus:border-primary rounded font-inter text-sm text-foreground outline-none transition-colors"
+              />
+            </div>
 
-        {/* Grid de fontes */}
-        <ScrollReveal>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filtered.map((src) => (
-              <a
-                key={src.name}
-                href={src.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative flex flex-col p-4 bg-background border-2 border-primary/30 hover:border-primary rounded-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(40,182,255,0.3)]"
-              >
-                {src.highlight && (
-                  <span className="absolute -top-2 right-3 px-2 py-0.5 bg-primary text-primary-foreground font-pixel text-[7px] sm:text-[8px] rounded">
-                    {src.highlight}
-                  </span>
-                )}
+            <div className="flex flex-wrap gap-2">
+              {PUBLISHERS.map((p) => (
+                <button
+                  key={p.value}
+                  onClick={() => setPublisher(p.value)}
+                  className={`px-3 py-1.5 font-pixel text-[8px] sm:text-[10px] border-2 rounded transition-all ${
+                    publisher === p.value
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-background text-muted-foreground border-primary/30 hover:border-primary hover:text-primary"
+                  }`}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
 
-                <div className="flex items-start gap-3 mb-3">
-                  <div className="text-3xl sm:text-4xl">{src.emoji}</div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-pixel text-[10px] sm:text-xs text-primary group-hover:neon-text truncate">
-                      {src.name}
-                    </h3>
-                    <p className="font-pixel text-[7px] sm:text-[8px] text-muted-foreground mt-1">
-                      {src.tagline}
-                    </p>
-                  </div>
-                </div>
-
-                <p className="font-inter text-xs sm:text-sm text-foreground/80 leading-relaxed flex-1">
-                  {src.description}
-                </p>
-
-                <div className="flex items-center justify-between mt-3 pt-3 border-t border-primary/20">
-                  <span className="font-pixel text-[7px] sm:text-[8px] text-accent">
-                    {src.category.toUpperCase()}
-                  </span>
-                  <span className="inline-flex items-center gap-1 font-pixel text-[8px] sm:text-[10px] text-primary group-hover:translate-x-1 transition-transform">
-                    ABRIR
-                    <ExternalLink className="w-3 h-3" />
-                  </span>
-                </div>
-              </a>
-            ))}
-          </div>
-        </ScrollReveal>
-
-        {/* Aviso legal */}
-        <ScrollReveal>
-          <div className="mt-8 max-w-3xl mx-auto p-4 bg-background/60 border border-primary/20 rounded-lg">
-            <div className="flex items-start gap-3">
-              <Book className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-              <p className="font-inter text-xs text-muted-foreground leading-relaxed">
-                A SOS/01 apenas indica plataformas oficiais e gratuitas mantidas por terceiros
-                (Shueisha, Viz, Marvel, DC, Internet Archive, Webtoons, Tapas, GlobalComix, Digital
-                Comic Museum). Não hospedamos nem distribuímos conteúdo protegido por direitos
-                autorais. Cada link abre o site oficial em uma nova aba.
-              </p>
+            <div className="flex flex-wrap gap-2">
+              {ALIGNMENTS.map((a) => (
+                <button
+                  key={a.value}
+                  onClick={() => setAlignment(a.value)}
+                  className={`px-3 py-1.5 font-pixel text-[8px] sm:text-[10px] border-2 rounded transition-all ${
+                    alignment === a.value
+                      ? "bg-accent text-background border-accent"
+                      : "bg-background text-muted-foreground border-accent/30 hover:border-accent hover:text-accent"
+                  }`}
+                >
+                  {a.label}
+                </button>
+              ))}
             </div>
           </div>
         </ScrollReveal>
+
+        {loading && (
+          <p className="text-center font-pixel text-[10px] text-muted-foreground py-12">
+            CARREGANDO PERSONAGENS...
+          </p>
+        )}
+        {error && (
+          <p className="text-center font-pixel text-[10px] text-destructive py-12">
+            ERRO AO CARREGAR OS DADOS. TENTE NOVAMENTE MAIS TARDE.
+          </p>
+        )}
+
+        {!loading && !error && (
+          <>
+            <p className="font-pixel text-[8px] sm:text-[10px] text-muted-foreground mb-4 text-right">
+              {filtered.length} DE {heroes.length} PERSONAGENS
+            </p>
+
+            {filtered.length === 0 ? (
+              <p className="text-center font-pixel text-[10px] text-muted-foreground py-12">
+                NENHUM PERSONAGEM ENCONTRADO.
+              </p>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                {filtered.slice(0, visible).map((hero) => (
+                  <button
+                    key={hero.id}
+                    onClick={() => setSelected(hero)}
+                    className="group text-left bg-background border-2 border-primary/30 hover:border-primary rounded-lg overflow-hidden transition-all duration-300 hover:-translate-y-1"
+                  >
+                    <img
+                      src={hero.images?.sm ?? FALLBACK_IMG}
+                      alt={hero.name}
+                      loading="lazy"
+                      decoding="async"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = FALLBACK_IMG;
+                      }}
+                      className="w-full h-48 sm:h-60 object-cover bg-muted"
+                    />
+                    <div className="p-3">
+                      <h3 className="font-pixel text-[9px] sm:text-[10px] text-primary truncate">
+                        {hero.name}
+                      </h3>
+                      <p
+                        className={`font-inter text-[11px] mt-1 truncate ${publisherClass(hero.biography?.publisher)}`}
+                      >
+                        {hero.biography?.publisher || "Desconhecida"}
+                      </p>
+                      <div className="flex flex-wrap gap-1 mt-2 font-inter text-[10px] text-muted-foreground">
+                        <span className="px-1.5 py-0.5 border border-primary/20 rounded">
+                          💪 {hero.powerstats?.strength ?? "?"}
+                        </span>
+                        <span className="px-1.5 py-0.5 border border-primary/20 rounded">
+                          🧠 {hero.powerstats?.intelligence ?? "?"}
+                        </span>
+                        <span className="px-1.5 py-0.5 border border-primary/20 rounded">
+                          ⚡ {hero.powerstats?.speed ?? "?"}
+                        </span>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {visible < filtered.length && (
+              <div className="text-center mt-8">
+                <button
+                  onClick={() => setVisible((v) => v + PAGE_SIZE)}
+                  className="px-6 py-2.5 font-pixel text-[10px] bg-primary text-primary-foreground border-2 border-primary rounded hover:opacity-90 transition-opacity"
+                >
+                  CARREGAR MAIS
+                </button>
+              </div>
+            )}
+          </>
+        )}
       </div>
+
+      {/* Modal */}
+      {selected && (
+        <div
+          className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          onClick={() => setSelected(null)}
+        >
+          <div
+            className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-background border-2 border-primary/40 rounded-xl p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setSelected(null)}
+              aria-label="Fechar"
+              className="absolute top-3 right-3 text-muted-foreground hover:text-destructive transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex flex-col sm:flex-row gap-5 items-center sm:items-start text-center sm:text-left">
+              <img
+                src={selected.images?.lg ?? FALLBACK_IMG}
+                alt={selected.name}
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).src = FALLBACK_IMG;
+                }}
+                className="w-40 h-52 object-cover rounded-lg shrink-0 bg-muted"
+              />
+              <div className="min-w-0">
+                <h3 className="font-pixel text-sm sm:text-base text-primary">{selected.name}</h3>
+                <p className="font-inter text-xs text-muted-foreground mt-1">
+                  {selected.biography?.fullName || "Identidade desconhecida"}
+                </p>
+                <p
+                  className={`font-inter text-sm font-semibold mt-2 ${publisherClass(selected.biography?.publisher)}`}
+                >
+                  {selected.biography?.publisher || "Editora desconhecida"}
+                </p>
+                <p className="font-inter text-xs text-muted-foreground mt-1">
+                  Alinhamento:{" "}
+                  {selected.biography?.alignment === "good"
+                    ? "Herói"
+                    : selected.biography?.alignment === "bad"
+                      ? "Vilão"
+                      : "Neutro"}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-5">
+              <h4 className="font-pixel text-[8px] text-muted-foreground mb-2">PODERES</h4>
+              <div className="flex flex-col gap-2">
+                {Object.entries(selected.powerstats ?? {}).map(([key, value]) => (
+                  <div key={key} className="flex items-center gap-3">
+                    <span className="w-24 font-inter text-xs text-muted-foreground">
+                      {STAT_LABELS[key] ?? key}
+                    </span>
+                    <div className="flex-1 h-2.5 bg-muted rounded overflow-hidden">
+                      <div
+                        className="h-full bg-primary rounded transition-all duration-500"
+                        style={{ width: `${Math.max(0, Math.min(100, Number(value) || 0))}%` }}
+                      />
+                    </div>
+                    <span className="w-8 text-right font-inter text-xs text-foreground">
+                      {Number.isFinite(Number(value)) ? value : "?"}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid sm:grid-cols-2 gap-4 mt-5 font-inter text-xs text-foreground/80">
+              <div>
+                <h4 className="font-pixel text-[8px] text-muted-foreground mb-1">PRIMEIRA APARIÇÃO</h4>
+                <p>{selected.biography?.firstAppearance || "—"}</p>
+              </div>
+              <div>
+                <h4 className="font-pixel text-[8px] text-muted-foreground mb-1">LOCAL DE NASCIMENTO</h4>
+                <p>{selected.biography?.placeOfBirth || "—"}</p>
+              </div>
+              <div>
+                <h4 className="font-pixel text-[8px] text-muted-foreground mb-1">OCUPAÇÃO</h4>
+                <p>{selected.work?.occupation || "—"}</p>
+              </div>
+              <div>
+                <h4 className="font-pixel text-[8px] text-muted-foreground mb-1">GRUPOS</h4>
+                <p>{selected.connections?.groupAffiliation || "—"}</p>
+              </div>
+              <div className="sm:col-span-2">
+                <h4 className="font-pixel text-[8px] text-muted-foreground mb-1">APELIDOS</h4>
+                <p>{(selected.biography?.aliases ?? []).join(", ") || "—"}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
