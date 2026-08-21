@@ -25,7 +25,7 @@ const ITEMS = [
   { to: "/iptv", label: "PLUTO TV", icon: Radio, desc: "Canais" },
   { to: "/player", label: "IPTV 1.0", icon: PlayCircle, desc: "Premium" },
   { to: "/blog", label: "Blog", icon: BookOpen, desc: "Notícias" },
-  { to: "/admin", label: "Admin", icon: Lock, desc: "Painel" },
+  
 ] as const;
 
 export default function SidebarNav() {
