@@ -48,6 +48,41 @@ const STAT_LABELS: Record<string, string> = {
   combat: "Combate",
 };
 
+const TRANSLATIONS: Record<string, string> = {
+  // Genders
+  Male: "Masculino",
+  Female: "Feminino",
+  // Races
+  Human: "Humano",
+  "Mutant": "Mutante",
+  "Radiation": "Radiação",
+  "Cyborg": "Cyborg",
+  "Android": "Androide",
+  "Alien": "Alienígena",
+  "Inhuman": "Inumano",
+  "God / Eternal": "Deus / Eterno",
+  "New God": "Novo Deus",
+  "Asgardian": "Asgardiano",
+  "Kryptonian": "Kriptoniano",
+  "Atlantean": "Atlante",
+  "Symbiote": "Simbionte",
+  "Vampire": "Vampiro",
+  "Zombie": "Zumbi",
+  "Metahuman": "Meta-humano",
+  "Demon": "Demônio",
+  "Angel": "Anjo",
+  // Alignments
+  good: "Herói",
+  bad: "Vilão",
+  neutral: "Neutro",
+};
+
+const t = (text?: string | null) => {
+  if (!text) return "—";
+  if (text === "-") return "—";
+  return TRANSLATIONS[text] || text;
+};
+
 const publisherClass = (pub?: string | null) => {
   if (!pub) return "text-muted-foreground";
   if (pub.includes("Marvel")) return "text-[#ec1d24]";
@@ -295,14 +330,17 @@ const ComicsSection = () => {
                 >
                   {selected.biography?.publisher || "Editora desconhecida"}
                 </p>
-                <p className="font-inter text-xs text-muted-foreground mt-1">
-                  Alinhamento:{" "}
-                  {selected.biography?.alignment === "good"
-                    ? "Herói"
-                    : selected.biography?.alignment === "bad"
-                      ? "Vilão"
-                      : "Neutro"}
-                </p>
+                <div className="flex flex-wrap justify-center sm:justify-start gap-x-3 gap-y-1 mt-2 font-inter text-xs text-muted-foreground">
+                  <p>
+                    Gênero: {t(selected.appearance?.gender)}
+                  </p>
+                  <p>
+                    Raça: {t(selected.appearance?.race)}
+                  </p>
+                  <p>
+                    Alinhamento: {t(selected.biography?.alignment)}
+                  </p>
+                </div>
               </div>
             </div>
 
