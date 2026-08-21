@@ -8,39 +8,45 @@ export const DonationButton = () => {
 
   return (
     <>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className={`group relative flex items-center justify-between rounded-full p-1 pl-4 pr-1 transition-all duration-500 shadow-lg active:scale-95 border-2 ${
-          isOpen 
-            ? "bg-green-600 border-green-400 ring-4 ring-green-600/20" 
-            : "bg-[#C41230] border-[#E82C4D] hover:bg-[#A80F29]"
-        }`}
-        aria-label="Apoie o SOS01"
-      >
-        <span className={`text-white font-bold text-xs sm:text-sm tracking-tight mr-3 uppercase transition-all duration-500 ${
-          isOpen ? "opacity-100 scale-110" : "opacity-90"
-        }`}>
-          {isOpen ? "ON" : "DONATE"}
-        </span>
-        <div 
-          className={`relative w-7 h-7 sm:w-8 sm:h-8 bg-white rounded-full flex items-center justify-center overflow-hidden border-2 transition-all duration-500 ease-in-out shadow-sm ${
-            isOpen ? "translate-x-0 border-green-600 rotate-[360deg] scale-105" : "border-[#C41230]"
+      <div className="flex flex-col items-center gap-1">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className={`group relative w-20 h-10 sm:w-24 sm:h-12 rounded-full p-1 transition-all duration-500 shadow-[inset_0_2px_4px_rgba(0,0,0,0.3),0_1px_0_rgba(255,255,255,0.1)] active:scale-95 border-b-2 border-t border-black/20 ${
+            isOpen 
+              ? "bg-green-600 shadow-[inset_0_2px_10px_rgba(0,0,0,0.5)]" 
+              : "bg-[#C41230] shadow-[inset_0_2px_10px_rgba(0,0,0,0.5)]"
           }`}
+          aria-label="Apoie o SOS01"
         >
-          <img 
-            src="/favicon.png" 
-            alt="Icon" 
-            className={`w-4 h-4 sm:w-5 sm:h-5 object-contain transition-transform duration-500 ${
-              isOpen ? "scale-110" : "scale-100"
+          {/* Fundo do trilho do interruptor */}
+          <div className="absolute inset-0 rounded-full opacity-50 bg-gradient-to-b from-black/20 to-transparent" />
+          
+          {/* Esfera / Knob do Interruptor */}
+          <div 
+            className={`absolute top-1 bottom-1 w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-full flex items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.4),0_0_2px_rgba(0,0,0,0.2)] border border-gray-200 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+              isOpen 
+                ? "left-[calc(100%-2.25rem)] sm:left-[calc(100%-2.75rem)] rotate-[360deg]" 
+                : "left-1 rotate-0"
             }`}
-          />
-        </div>
+          >
+            <img 
+              src="/favicon.png" 
+              alt="Icon" 
+              className={`w-5 h-5 sm:w-6 sm:h-6 object-contain transition-transform duration-500 ${
+                isOpen ? "scale-110" : "scale-100"
+              }`}
+            />
+          </div>
 
-        {/* Efeito de brilho quando ligado */}
-        {isOpen && (
-          <span className="absolute inset-0 rounded-full bg-white/20 animate-pulse pointer-events-none" />
-        )}
-      </button>
+          {/* Luz indicadora (LED) interna */}
+          <div className={`absolute top-1/2 -translate-y-1/2 transition-all duration-500 text-[10px] font-black tracking-tighter ${
+            isOpen ? "left-3 text-green-900/40" : "right-3 text-red-900/40"
+          }`}>
+            {isOpen ? "ON" : "OFF"}
+          </div>
+        </button>
+        <span className="text-[10px] font-black tracking-[0.2em] text-foreground/50 uppercase">Donate</span>
+      </div>
 
       <DonationModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
     </>
