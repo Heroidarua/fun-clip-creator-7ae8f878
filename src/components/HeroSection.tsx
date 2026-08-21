@@ -1873,7 +1873,7 @@ const HeroSection = () => {
                   
                   {/* Video Preview */}
                   <div
-                    className="relative w-full mb-4 border-2 border-[hsl(0,100%,50%)]/30 bg-background/50 overflow-hidden min-h-[220px] bg-center bg-no-repeat bg-cover"
+                    className="relative w-full border-2 border-[hsl(0,100%,50%)]/30 bg-background/50 overflow-hidden min-h-[220px] bg-center bg-no-repeat bg-cover"
                     style={{ backgroundImage: `url(${youtubeData.thumbnail})` }}
                     aria-label={`Capa do vídeo ${youtubeData.title}`}
                   >
@@ -1898,46 +1898,7 @@ const HeroSection = () => {
                   </div>
 
 
-                  {/* Download type selector */}
-                  <div className="mb-0">
-                    <h3 className="font-pixel text-[10px] text-center mb-3 text-muted-foreground">SELECT TYPE:</h3>
-                    <div className="flex gap-3 justify-center">
-                      <Button
-                        variant={youtubeDownloadType === "video" ? "default" : "outline"}
-                        onClick={() => {
-                          setYoutubeDownloadType("video");
-                          handleYoutubeDownload("video");
-                        }}
-                        disabled={isYoutubeProcessing || !youtubeFormats.some(f => f.type === "video")}
-                        className={`font-pixel text-[10px] rounded-sm relative ${youtubeDownloadType === "video" ? "border-2 border-[hsl(var(--retro-cyan))]" : "border-2 border-muted-foreground/50"}`}
-                        style={youtubeDownloadType === "video" ? { backgroundColor: 'hsl(0, 100%, 50%)' } : {}}
-                      >
-                        {isYoutubeProcessing && youtubeDownloadType === "video" ? (
-                          <span className="flex items-center gap-2">
-                            <span className="w-3 h-3 border-2 border-white/30 border-t-white animate-spin rounded-full"></span>
-                            ...
-                          </span>
-                        ) : "VIDEO MP4"}
-                      </Button>
-                      <Button
-                        variant={youtubeDownloadType === "audio" ? "default" : "outline"}
-                        onClick={() => {
-                          setYoutubeDownloadType("audio");
-                          handleYoutubeDownload("audio");
-                        }}
-                        disabled={isYoutubeProcessing || !youtubeFormats.some(f => f.type === "audio")}
-                        className={`font-pixel text-[10px] rounded-sm relative ${youtubeDownloadType === "audio" ? "border-2 border-[hsl(var(--retro-cyan))]" : "border-2 border-muted-foreground/50"}`}
-                        style={youtubeDownloadType === "audio" ? { backgroundColor: 'hsl(0, 100%, 50%)' } : {}}
-                      >
-                        {isYoutubeProcessing && youtubeDownloadType === "audio" ? (
-                          <span className="flex items-center gap-2">
-                            <span className="w-3 h-3 border-2 border-white/30 border-t-white animate-spin rounded-full"></span>
-                            ...
-                          </span>
-                        ) : "AUDIO MP3"}
-                      </Button>
-                    </div>
-                  </div>
+                  {/* As funções de download continuam funcionando via youtubeDownloadType e handleYoutubeDownload */}
                 </div>
               </div>
             )}
