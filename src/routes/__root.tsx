@@ -132,6 +132,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        <div style={{ display: 'none' }}>Verificar no Google Search Console se o favicon e os metadados aparecem corretamente após a atualização.</div>
         {children}
         <Scripts />
       </body>
