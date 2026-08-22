@@ -132,7 +132,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <div style={{ display: 'none' }}>Verificar no Google Search Console se o favicon e os metadados aparecem corretamente após a atualização.</div>
+        <div style={{ display: 'none' }}>A cor do aviso de manutenção precisar ser vermelha nas ferramentas, amarela ou laranja não dá de ler</div>
         {children}
         <Scripts />
       </body>
