@@ -18,17 +18,17 @@ export function FeatureGate({ featureKey, label, children }: FeatureGateProps) {
   if (loading || isActive(featureKey)) return <div>{children}</div>;
 
   return (
-    <div className="rounded-sm border-2 border-orange-500/40 bg-orange-500/10 p-6 text-center">
-      <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full border-2 border-orange-500/40 bg-orange-500/20">
-        <Wrench className="h-6 w-6 text-orange-400" />
+    <div className="rounded-sm border-2 border-red-500/40 bg-red-500/10 p-6 text-center">
+      <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full border-2 border-red-500/40 bg-red-500/20">
+        <Wrench className="h-6 w-6 text-red-500" />
       </div>
       <div className="flex items-center justify-center gap-2 mb-1">
-        <AlertTriangle className="w-4 h-4 text-orange-400" />
-        <span className="font-pixel text-[11px] text-orange-400 uppercase">
+        <AlertTriangle className="w-4 h-4 text-red-500" />
+        <span className="font-pixel text-[11px] text-red-500 uppercase">
           em manutenção
         </span>
       </div>
-      <p className="text-sm text-orange-100 mt-1">
+      <p className="text-sm text-red-50 mt-1">
         {label ? `${label} está` : "Esta ferramenta está"} temporariamente
         indisponível para reparos. Volte em breve!
       </p>
