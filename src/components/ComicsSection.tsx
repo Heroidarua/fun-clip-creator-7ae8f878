@@ -222,9 +222,12 @@ const ComicsSection = () => {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [showWatermark, setShowWatermark] = useState(true);
   const [watermarkText, setWatermarkText] = useState("sos01.com.br");
-  const [watermarkPos, setWatermarkPos] = useState<"bottom" | "top" | "center">("bottom");
+  const [watermarkPos, setWatermarkPos] = useState<{x: number, y: number}>({ x: 50, y: 90 });
   const [watermarkOpacity, setWatermarkOpacity] = useState(60);
   const [fighterPositions, setFighterPositions] = useState<[{x: number, y: number}, {x: number, y: number}]>([{x: 0, y: 0}, {x: 0, y: 0}]);
+  const [isDraggingWatermark, setIsDraggingWatermark] = useState(false);
+  const dragRef = useRef<{ startX: number, startY: number, startPos: {x: number, y: number} } | null>(null);
+
   const modalRef = useRef<HTMLDivElement>(null);
 
   // Focus trap implementation
@@ -389,13 +392,54 @@ const ComicsSection = () => {
     });
     // Reset positions when fighters change
     setFighterPositions([{x: 0, y: 0}, {x: 0, y: 0}]);
+    setWatermarkPos({ x: 50, y: 90 });
   };
 
   const resetDuel = () => {
     setDuelFighters([null, null]);
     setShowDuelResult(false);
     setFighterPositions([{x: 0, y: 0}, {x: 0, y: 0}]);
+    setWatermarkPos({ x: 50, y: 90 });
   };
+
+  const handleWatermarkMouseDown = (e: React.MouseEvent) => {
+    setIsDraggingWatermark(true);
+    dragRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      startPos: { ...watermarkPos }
+    };
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isDraggingWatermark && dragRef.current) {
+        const deltaX = ((e.clientX - dragRef.current.startX) / window.innerWidth) * 100;
+        const deltaY = ((e.clientY - dragRef.current.startY) / window.innerHeight) * 100;
+        
+        setWatermarkPos({
+          x: Math.max(0, Math.min(100, dragRef.current.startPos.x + deltaX)),
+          y: Math.max(0, Math.min(100, dragRef.current.startPos.y + deltaY))
+        });
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsDraggingWatermark(false);
+      dragRef.current = null;
+    };
+
+    if (isDraggingWatermark) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDraggingWatermark, watermarkPos]);
+
 
   useEffect(() => {
     let active = true;
@@ -913,17 +957,23 @@ const ComicsSection = () => {
 
                 {/* Watermark inside combat area */}
                 <div 
-                  className={`clip-watermark absolute z-50 pointer-events-none transition-all duration-300 ${
-                    watermarkPos === 'top' ? 'top-10 left-1/2 -translate-x-1/2' :
-                    watermarkPos === 'center' ? 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2' :
-                    'bottom-10 left-1/2 -translate-x-1/2'
+                  onMouseDown={handleWatermarkMouseDown}
+                  className={`clip-watermark absolute z-50 transition-shadow duration-300 cursor-move select-none group/watermark ${
+                    isDraggingWatermark ? 'ring-2 ring-primary ring-offset-2 ring-offset-transparent' : ''
                   }`}
-                  style={{ opacity: watermarkOpacity / 100 }}
+                  style={{ 
+                    opacity: watermarkOpacity / 100,
+                    left: `${watermarkPos.x}%`,
+                    top: `${watermarkPos.y}%`,
+                    transform: 'translate(-50%, -50%)',
+                  }}
                 >
                   <span className={`font-pixel text-[14px] sm:text-[24px] font-bold uppercase tracking-[0.4em] drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`}>
                     {watermarkText}
                   </span>
+                  <div className="absolute -inset-2 border-2 border-dashed border-primary/40 rounded opacity-0 group-hover/watermark:opacity-100 transition-opacity pointer-events-none" />
                 </div>
+
                 <div className={`clip-config-section mt-6 p-4 border rounded-2xl w-full max-w-lg mx-auto ${clipTheme === 'comic' ? 'bg-black/5 border-black/20' : 'bg-primary/10 border-primary/20'}`}>
                   <h4 className="font-pixel text-[10px] text-primary mb-3 text-center uppercase tracking-wider">CONFIGURAÇÕES DO FUN-CLIP</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -1034,19 +1084,25 @@ const ComicsSection = () => {
                               />
                             </div>
                             <div className="space-y-2">
-                              <span className="font-pixel text-[7px] text-muted-foreground uppercase">Posição</span>
+                              <span className="font-pixel text-[7px] text-muted-foreground uppercase">Posição Rápida</span>
                               <div className="flex justify-center gap-2">
-                                {['top', 'center', 'bottom'].map((pos) => (
+                                {[
+                                  { label: 'TOPO', x: 50, y: 10 },
+                                  { label: 'MEIO', x: 50, y: 50 },
+                                  { label: 'BASE', x: 50, y: 90 }
+                                ].map((pos) => (
                                   <button
-                                    key={pos}
-                                    onClick={() => setWatermarkPos(pos as any)}
-                                    className={`px-2 py-1 rounded font-pixel text-[8px] transition-all border ${watermarkPos === pos ? 'bg-primary text-primary-foreground border-primary' : 'bg-background border-primary/20 text-muted-foreground'}`}
+                                    key={pos.label}
+                                    onClick={() => setWatermarkPos({ x: pos.x, y: pos.y })}
+                                    className={`px-2 py-1 rounded font-pixel text-[8px] transition-all border ${watermarkPos.x === pos.x && watermarkPos.y === pos.y ? 'bg-primary text-primary-foreground border-primary' : 'bg-background border-primary/20 text-muted-foreground'}`}
                                   >
-                                    {pos === 'top' ? 'TOPO' : pos === 'center' ? 'MEIO' : 'BASE'}
+                                    {pos.label}
                                   </button>
                                 ))}
                               </div>
+                              <p className="font-pixel text-[6px] text-primary/60 mt-1">Ou arraste a marca no clip!</p>
                             </div>
+
                             <div className="space-y-2">
                               <span className="font-pixel text-[7px] text-muted-foreground uppercase">Opacidade: {watermarkOpacity}%</span>
                               <input 
