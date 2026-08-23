@@ -659,8 +659,8 @@ const ComicsSection = () => {
                 </div>
               </div>
 
-              <div className="mt-4 text-center bg-primary/5 border-2 border-primary/20 p-6 rounded-3xl max-w-2xl w-full shadow-inner">
-                <p className="font-inter text-base sm:text-lg text-foreground/90 leading-relaxed">
+              <div className="mt-2 sm:mt-4 text-center bg-primary/5 border-2 border-primary/20 p-4 sm:p-6 rounded-2xl sm:rounded-3xl max-w-2xl w-full shadow-inner">
+                <p className="font-inter text-sm sm:text-lg text-foreground/90 leading-relaxed">
                   {calculateTotalStats(duelFighters[0]) > calculateTotalStats(duelFighters[1]) 
                     ? `DOMINÂNCIA TOTAL! Com um arsenal de ${calculateTotalStats(duelFighters[0])} pontos, ${duelFighters[0].name} não deu chances para ${duelFighters[1].name} e triunfa como o supremo guerreiro!`
                     : calculateTotalStats(duelFighters[1]) > calculateTotalStats(duelFighters[0])
