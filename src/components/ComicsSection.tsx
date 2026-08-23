@@ -1137,13 +1137,9 @@ const ComicsSection = () => {
                                 />
                               </div>
                             </div>
-                                value={watermarkOpacity}
-                                onChange={(e) => setWatermarkOpacity(Number(e.target.value))}
-                                className="w-full accent-primary"
-                              />
-                            </div>
                           </div>
                         </div>
+                      )}
                       )}
 
                       <div className="space-y-2 border-t border-primary/10 pt-3">
