@@ -525,26 +525,26 @@ const ComicsSection = () => {
 
               <div className="w-full grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-8 sm:gap-12 items-center">
                 {/* Fighter 1 Card */}
-                <div className={`flex flex-col items-center gap-6 p-4 rounded-2xl transition-all duration-700 ${
+                <div className={`flex flex-col items-center gap-6 p-6 rounded-3xl transition-all duration-1000 ease-out ${
                   calculateTotalStats(duelFighters[0]) > calculateTotalStats(duelFighters[1]) 
-                    ? "bg-primary/5 ring-4 ring-primary ring-offset-4 ring-offset-background scale-105" 
-                    : "opacity-60 grayscale"
-                }`}>
-                  <div className="relative group overflow-hidden rounded-2xl shadow-2xl">
+                    ? "bg-primary/10 ring-4 ring-primary ring-offset-8 ring-offset-background scale-110 shadow-[0_0_50px_rgba(var(--primary),0.3)] z-10" 
+                    : "opacity-40 grayscale translate-y-4 scale-95"
+                } animate-in fade-in slide-in-from-left duration-700`}>
+                  <div className="relative group overflow-hidden rounded-2xl shadow-2xl border-4 border-primary/20">
                     <img 
                       src={duelFighters[0].images?.lg} 
                       alt={duelFighters[0].name} 
-                      className="w-48 h-64 sm:w-72 sm:h-96 object-cover transition-transform duration-700 group-hover:scale-110" 
+                      className="w-48 h-64 sm:w-72 sm:h-96 object-cover transition-transform duration-1000 group-hover:scale-110" 
                     />
                     {calculateTotalStats(duelFighters[0]) > calculateTotalStats(duelFighters[1]) && (
-                      <div className="absolute top-0 inset-x-0 bg-primary py-2 text-center font-pixel text-xs text-primary-foreground shadow-lg uppercase tracking-widest animate-pulse">
+                      <div className="absolute top-0 inset-x-0 bg-primary py-3 text-center font-pixel text-xs text-primary-foreground shadow-lg uppercase tracking-[0.2em] animate-pulse z-20">
                         VENCEDOR
                       </div>
                     )}
                   </div>
                   <div className="text-center">
-                    <h3 className="font-pixel text-lg sm:text-2xl text-primary uppercase">{duelFighters[0].name}</h3>
-                    <p className="font-inter text-xs text-muted-foreground uppercase tracking-widest mt-1">{duelFighters[0].biography?.publisher}</p>
+                    <h3 className="font-pixel text-xl sm:text-3xl text-primary uppercase tracking-tighter">{duelFighters[0].name}</h3>
+                    <p className="font-inter text-[10px] sm:text-xs text-muted-foreground uppercase tracking-[0.3em] mt-2 font-bold opacity-70">{duelFighters[0].biography?.publisher}</p>
                   </div>
                 </div>
 
@@ -554,86 +554,105 @@ const ComicsSection = () => {
                     <span className="font-pixel text-4xl text-primary italic">VS</span>
                   </div>
 
-                  <div className="w-full space-y-6">
-                    {Object.entries(STAT_LABELS).map(([key, label]) => {
+                  <div className="w-full space-y-8">
+                    {Object.entries(STAT_LABELS).map(([key, label], index) => {
                       const stat1 = Number(duelFighters[0]!.powerstats[key]) || 0;
                       const stat2 = Number(duelFighters[1]!.powerstats[key]) || 0;
                       const winner = stat1 > stat2 ? 1 : stat2 > stat1 ? 2 : 0;
                       
                       return (
-                        <div key={key} className="space-y-2">
+                        <div key={key} className="space-y-3">
                           <div className="flex justify-between items-end px-1">
-                            <span className={`font-pixel text-[8px] sm:text-[10px] ${winner === 1 ? 'text-primary' : 'text-muted-foreground'}`}>
+                            <span className={`font-pixel text-[10px] sm:text-xs transition-colors duration-500 ${winner === 1 ? 'text-primary' : 'text-muted-foreground'}`}>
                               {winner === 1 && "★ "}{stat1}
                             </span>
-                            <span className="font-pixel text-[10px] sm:text-xs text-foreground uppercase text-center flex-1">{label}</span>
-                            <span className={`font-pixel text-[8px] sm:text-[10px] ${winner === 2 ? 'text-primary' : 'text-muted-foreground'}`}>
+                            <span className="font-pixel text-xs sm:text-sm text-foreground uppercase text-center flex-1">{label}</span>
+                            <span className={`font-pixel text-[10px] sm:text-xs transition-colors duration-500 ${winner === 2 ? 'text-primary' : 'text-muted-foreground'}`}>
                               {stat2}{winner === 2 && " ★"}
                             </span>
                           </div>
                           
-                          <div className="h-4 bg-muted/30 rounded-full flex overflow-hidden border border-primary/20 p-[2px]">
+                          <div className="h-6 bg-muted/20 rounded-full flex overflow-hidden border-2 border-primary/10 p-[3px] shadow-inner relative group">
                             {/* Bar Hero 1 */}
-                            <div className="flex-1 h-full flex justify-end">
+                            <div className="flex-1 h-full flex justify-end overflow-hidden">
                               <div 
-                                className={`h-full rounded-l-full transition-all duration-1000 delay-300 ${winner === 1 ? 'bg-primary' : 'bg-primary/30'}`}
-                                style={{ width: `${(stat1 / (stat1 + stat2 || 1)) * 100}%` }}
+                                className={`h-full rounded-l-full transition-all duration-1000 ease-out shadow-[inset_0_2px_4px_rgba(255,255,255,0.1)] ${winner === 1 ? 'bg-primary neon-shadow animate-pulse-subtle' : 'bg-primary/20'}`}
+                                style={{ 
+                                  width: showDuelResult ? `${(stat1 / (stat1 + stat2 || 1)) * 100}%` : '0%',
+                                  transitionDelay: `${index * 150}ms`
+                                }}
                               />
                             </div>
-                            {/* Separator */}
-                            <div className="w-[2px] bg-background z-10" />
+                            
+                            {/* Separator / Center Point */}
+                            <div className="w-[2px] bg-background/50 z-10" />
+                            
                             {/* Bar Hero 2 */}
-                            <div className="flex-1 h-full flex justify-start">
+                            <div className="flex-1 h-full flex justify-start overflow-hidden">
                               <div 
-                                className={`h-full rounded-r-full transition-all duration-1000 delay-300 ${winner === 2 ? 'bg-primary' : 'bg-primary/30'}`}
-                                style={{ width: `${(stat2 / (stat1 + stat2 || 1)) * 100}%` }}
+                                className={`h-full rounded-r-full transition-all duration-1000 ease-out shadow-[inset_0_2px_4px_rgba(255,255,255,0.1)] ${winner === 2 ? 'bg-primary neon-shadow animate-pulse-subtle' : 'bg-primary/20'}`}
+                                style={{ 
+                                  width: showDuelResult ? `${(stat2 / (stat1 + stat2 || 1)) * 100}%` : '0%',
+                                  transitionDelay: `${index * 150}ms`
+                                }}
                               />
                             </div>
+
+                            {/* Flash effect on animation completion */}
+                            <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                           </div>
-                          <div className="text-center font-inter text-[9px] text-muted-foreground italic">
-                            {winner === 1 ? `${duelFighters[0]!.name} é superior em ${label.toLowerCase()}` : 
-                             winner === 2 ? `${duelFighters[1]!.name} domina em ${label.toLowerCase()}` : 
-                             "Poderes equivalentes nesta categoria"}
+                          <div className={`text-center font-inter text-[10px] sm:text-xs italic transition-all duration-700 delay-[${index * 150 + 500}ms] ${showDuelResult ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
+                            {winner === 1 ? (
+                              <span className="text-primary/90">✦ {duelFighters[0]!.name} é superior em {label.toLowerCase()}</span>
+                            ) : winner === 2 ? (
+                              <span className="text-primary/90">✦ {duelFighters[1]!.name} domina em {label.toLowerCase()}</span>
+                            ) : (
+                              <span className="text-muted-foreground">Forças equilibradas em {label.toLowerCase()}</span>
+                            )}
                           </div>
                         </div>
                       );
                     })}
                   </div>
 
-                  <div className="mt-10 flex justify-between w-full px-4 items-center">
+                  <div className="mt-12 flex justify-between w-full px-8 items-center bg-primary/5 py-6 rounded-2xl border border-primary/10 shadow-inner">
                     <div className="flex flex-col items-start">
-                      <span className="font-pixel text-[10px] text-muted-foreground">TOTAL</span>
-                      <span className="font-pixel text-3xl text-primary">{calculateTotalStats(duelFighters[0])}</span>
+                      <span className="font-pixel text-[10px] sm:text-xs text-muted-foreground mb-1">TOTAL POWER</span>
+                      <span className="font-pixel text-3xl sm:text-5xl text-primary animate-in fade-in slide-in-from-left duration-1000 delay-1000">
+                        {calculateTotalStats(duelFighters[0])}
+                      </span>
                     </div>
-                    <div className="h-10 w-px bg-primary/20" />
+                    <div className="h-16 w-px bg-primary/20 mx-4" />
                     <div className="flex flex-col items-end">
-                      <span className="font-pixel text-[10px] text-muted-foreground">TOTAL</span>
-                      <span className="font-pixel text-3xl text-primary">{calculateTotalStats(duelFighters[1])}</span>
+                      <span className="font-pixel text-[10px] sm:text-xs text-muted-foreground mb-1">TOTAL POWER</span>
+                      <span className="font-pixel text-3xl sm:text-5xl text-primary animate-in fade-in slide-in-from-right duration-1000 delay-1000">
+                        {calculateTotalStats(duelFighters[1])}
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 {/* Fighter 2 Card */}
-                <div className={`flex flex-col items-center gap-6 p-4 rounded-2xl transition-all duration-700 ${
+                <div className={`flex flex-col items-center gap-6 p-6 rounded-3xl transition-all duration-1000 ease-out ${
                   calculateTotalStats(duelFighters[1]) > calculateTotalStats(duelFighters[0]) 
-                    ? "bg-primary/5 ring-4 ring-primary ring-offset-4 ring-offset-background scale-105" 
-                    : "opacity-60 grayscale"
-                }`}>
-                  <div className="relative group overflow-hidden rounded-2xl shadow-2xl">
+                    ? "bg-primary/10 ring-4 ring-primary ring-offset-8 ring-offset-background scale-110 shadow-[0_0_50px_rgba(var(--primary),0.3)] z-10" 
+                    : "opacity-40 grayscale translate-y-4 scale-95"
+                } animate-in fade-in slide-in-from-right duration-700`}>
+                  <div className="relative group overflow-hidden rounded-2xl shadow-2xl border-4 border-primary/20">
                     <img 
                       src={duelFighters[1].images?.lg} 
                       alt={duelFighters[1].name} 
-                      className="w-48 h-64 sm:w-72 sm:h-96 object-cover transition-transform duration-700 group-hover:scale-110" 
+                      className="w-48 h-64 sm:w-72 sm:h-96 object-cover transition-transform duration-1000 group-hover:scale-110" 
                     />
                     {calculateTotalStats(duelFighters[1]) > calculateTotalStats(duelFighters[0]) && (
-                      <div className="absolute top-0 inset-x-0 bg-primary py-2 text-center font-pixel text-xs text-primary-foreground shadow-lg uppercase tracking-widest animate-pulse">
+                      <div className="absolute top-0 inset-x-0 bg-primary py-3 text-center font-pixel text-xs text-primary-foreground shadow-lg uppercase tracking-[0.2em] animate-pulse z-20">
                         VENCEDOR
                       </div>
                     )}
                   </div>
                   <div className="text-center">
-                    <h3 className="font-pixel text-lg sm:text-2xl text-primary uppercase">{duelFighters[1].name}</h3>
-                    <p className="font-inter text-xs text-muted-foreground uppercase tracking-widest mt-1">{duelFighters[1].biography?.publisher}</p>
+                    <h3 className="font-pixel text-xl sm:text-3xl text-primary uppercase tracking-tighter">{duelFighters[1].name}</h3>
+                    <p className="font-inter text-[10px] sm:text-xs text-muted-foreground uppercase tracking-[0.3em] mt-2 font-bold opacity-70">{duelFighters[1].biography?.publisher}</p>
                   </div>
                 </div>
               </div>
