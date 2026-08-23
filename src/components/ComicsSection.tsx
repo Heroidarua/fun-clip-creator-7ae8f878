@@ -1247,6 +1247,7 @@ const ComicsSection = () => {
             </div>
           </div>
         </div>
+        </div>
       )}
 
 
