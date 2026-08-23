@@ -298,8 +298,10 @@ const ComicsSection = () => {
       if (watermark && !showWatermark) (watermark as HTMLElement).style.display = 'none';
 
       const options = {
-        quality: 0.95,
-        backgroundColor: '#000',
+        quality: 1,
+        backgroundColor: clipTheme === 'comic' ? '#fefce8' : 
+                         clipTheme === 'modern' ? '#0a0a0a' : 
+                         clipTheme === 'cyberpunk' ? '#000000' : '#ffffff',
         pixelRatio: clipScale,
         style: {
           borderRadius: '0px',
@@ -904,7 +906,7 @@ const ComicsSection = () => {
 
                 {/* Watermark */}
                 <div className="clip-watermark absolute bottom-2 left-1/2 -translate-x-1/2 opacity-60 z-0 pointer-events-none">
-                  <span className="font-pixel text-[12px] sm:text-[18px] text-primary/40 font-bold uppercase tracking-[0.3em]">
+                  <span className={`font-pixel text-[12px] sm:text-[18px] font-bold uppercase tracking-[0.3em] ${clipTheme === 'comic' ? 'text-black/40' : 'text-primary/40'}`}>
                     sos01.com.br
                   </span>
                 </div>
