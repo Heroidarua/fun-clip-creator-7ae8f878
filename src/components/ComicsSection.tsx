@@ -668,7 +668,7 @@ const ComicsSection = () => {
                     : "EMPATE LENDÁRIO! Em um confronto onde cada grama de força foi igualada, nenhum dos combatentes cedeu. A batalha termina sem um vencedor definido, mas com o respeito mútuo garantido."
                   }
                 </p>
-                <div className="mt-8 flex flex-wrap justify-center gap-4">
+                <div className="mt-6 sm:mt-8 flex flex-wrap justify-center gap-3 sm:gap-4">
                   <button
                     onClick={resetDuel}
                     className="px-10 py-4 bg-primary text-primary-foreground font-pixel text-xs rounded-xl border-b-4 border-primary-foreground/20 hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(var(--primary),0.3)]"
