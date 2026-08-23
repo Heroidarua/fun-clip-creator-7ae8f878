@@ -221,6 +221,9 @@ const ComicsSection = () => {
   const [showGuides, setShowGuides] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [showWatermark, setShowWatermark] = useState(true);
+  const [watermarkText, setWatermarkText] = useState("sos01.com.br");
+  const [watermarkPos, setWatermarkPos] = useState<"bottom" | "top" | "center">("bottom");
+  const [watermarkOpacity, setWatermarkOpacity] = useState(60);
   const [fighterPositions, setFighterPositions] = useState<[{x: number, y: number}, {x: number, y: number}]>([{x: 0, y: 0}, {x: 0, y: 0}]);
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -908,10 +911,17 @@ const ComicsSection = () => {
                   }
                 </p>
 
-                {/* Watermark */}
-                <div className="clip-watermark absolute bottom-2 left-1/2 -translate-x-1/2 opacity-60 z-0 pointer-events-none">
-                  <span className={`font-pixel text-[12px] sm:text-[18px] font-bold uppercase tracking-[0.3em] ${clipTheme === 'comic' ? 'text-black/40' : 'text-primary/40'}`}>
-                    sos01.com.br
+                {/* Watermark inside combat area */}
+                <div 
+                  className={`clip-watermark absolute z-50 pointer-events-none transition-all duration-300 ${
+                    watermarkPos === 'top' ? 'top-10 left-1/2 -translate-x-1/2' :
+                    watermarkPos === 'center' ? 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2' :
+                    'bottom-10 left-1/2 -translate-x-1/2'
+                  }`}
+                  style={{ opacity: watermarkOpacity / 100 }}
+                >
+                  <span className={`font-pixel text-[14px] sm:text-[24px] font-bold uppercase tracking-[0.4em] drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`}>
+                    {watermarkText}
                   </span>
                 </div>
                 <div className={`clip-config-section mt-6 p-4 border rounded-2xl w-full max-w-lg mx-auto ${clipTheme === 'comic' ? 'bg-black/5 border-black/20' : 'bg-primary/10 border-primary/20'}`}>
@@ -1004,8 +1014,57 @@ const ComicsSection = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="sm:col-span-3 space-y-2 text-center border-t border-primary/10 pt-3">
-                      <span id="label-tema" className="font-pixel text-[8px] text-muted-foreground uppercase flex items-center justify-center gap-2">
+
+                    <div className="sm:col-span-3 space-y-4 text-center border-t border-primary/10 pt-3">
+                      {showWatermark && (
+                        <div className="space-y-3 animate-in fade-in slide-in-from-top-2">
+                          <span className="font-pixel text-[8px] text-muted-foreground uppercase flex items-center justify-center gap-2">
+                            <ShieldCheck className="w-3 h-3" />
+                            Personalizar Marca D'Água
+                          </span>
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center px-2">
+                            <div className="space-y-2">
+                              <span className="font-pixel text-[7px] text-muted-foreground uppercase">Texto</span>
+                              <input 
+                                type="text" 
+                                value={watermarkText}
+                                onChange={(e) => setWatermarkText(e.target.value)}
+                                className="w-full px-2 py-1 bg-background border border-primary/20 rounded font-pixel text-[9px] text-foreground outline-none focus:border-primary"
+                                placeholder="Texto da marca..."
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <span className="font-pixel text-[7px] text-muted-foreground uppercase">Posição</span>
+                              <div className="flex justify-center gap-2">
+                                {['top', 'center', 'bottom'].map((pos) => (
+                                  <button
+                                    key={pos}
+                                    onClick={() => setWatermarkPos(pos as any)}
+                                    className={`px-2 py-1 rounded font-pixel text-[8px] transition-all border ${watermarkPos === pos ? 'bg-primary text-primary-foreground border-primary' : 'bg-background border-primary/20 text-muted-foreground'}`}
+                                  >
+                                    {pos === 'top' ? 'TOPO' : pos === 'center' ? 'MEIO' : 'BASE'}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                            <div className="space-y-2">
+                              <span className="font-pixel text-[7px] text-muted-foreground uppercase">Opacidade: {watermarkOpacity}%</span>
+                              <input 
+                                type="range" 
+                                min="10" 
+                                max="100" 
+                                step="10"
+                                value={watermarkOpacity}
+                                onChange={(e) => setWatermarkOpacity(Number(e.target.value))}
+                                className="w-full accent-primary"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="space-y-2 border-t border-primary/10 pt-3">
+                        <span id="label-tema" className="font-pixel text-[8px] text-muted-foreground uppercase flex items-center justify-center gap-2">
                         <Palette className="w-3 h-3" />
                         Temas Visuais
                       </span>
@@ -1068,6 +1127,7 @@ const ComicsSection = () => {
           </div>
         </div>
       )}
+
 
       {/* Modal */}
       {selected && (
@@ -1165,24 +1225,11 @@ const ComicsSection = () => {
               </div>
             </div>
           </div>
-                <div className="flex flex-wrap justify-center sm:justify-start gap-3 mt-4">
-                  <button
-                    onClick={() => {
-                      setDuelMode(true);
-                      handleSelectForDuel(selected);
-                      setSelected(null);
-                      toast.success(`${selected.name} selecionado para o duelo!`);
-                    }}
-                    className="px-4 py-2 bg-primary text-primary-foreground font-pixel text-[8px] sm:text-[10px] rounded border-b-2 border-primary-foreground/20 hover:translate-y-[1px] hover:border-b-0 transition-all flex items-center gap-2"
-                  >
-                    <Swords className="w-3.5 h-3.5" />
-                    LUTAR
-                  </button>
-                </div>
-              </div>
+        </div>
       )}
     </section>
   );
 };
 
 export default ComicsSection;
+
