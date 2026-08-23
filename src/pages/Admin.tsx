@@ -55,19 +55,7 @@ export default function Admin() {
   const [buttonSettings, setButtonSettings] = useState<ButtonSettings>(DEFAULT_BUTTON_SETTINGS);
   const [buttonSaving, setButtonSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<"general" | "video" | "appearance">("general");
-  const [captchaAnswer, setCaptchaAnswer] = useState("");
-  const [captchaQuestion, setCaptchaQuestion] = useState({ a: 0, b: 0 });
 
-  useEffect(() => {
-    generateCaptcha();
-  }, []);
-
-  const generateCaptcha = () => {
-    const a = Math.floor(Math.random() * 10) + 1;
-    const b = Math.floor(Math.random() * 10) + 1;
-    setCaptchaQuestion({ a, b });
-    setCaptchaAnswer("");
-  };
 
   const invokeManageAnnouncements = async (body: any) => {
     const resp = await fetch('/api/manage-announcements', {
@@ -163,11 +151,6 @@ export default function Admin() {
   };
 
   const authenticate = async () => {
-    if (parseInt(captchaAnswer) !== captchaQuestion.a + captchaQuestion.b) {
-      toast({ title: "CAPTCHA incorreto", description: "Por favor, resolva a soma corretamente.", variant: "destructive" });
-      generateCaptcha();
-      return;
-    }
 
     setLoading(true);
     try {
@@ -181,7 +164,6 @@ export default function Admin() {
       toast({ title: "Login realizado com sucesso!" });
     } catch {
       toast({ title: "Senha incorreta", variant: "destructive" });
-      generateCaptcha();
     }
     setLoading(false);
   };
@@ -300,19 +282,6 @@ export default function Admin() {
               />
             </div>
             
-            <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                Verificação: {captchaQuestion.a} + {captchaQuestion.b} = ?
-              </label>
-              <Input
-                type="number"
-                placeholder="Resultado da soma"
-                value={captchaAnswer}
-                onChange={(e) => setCaptchaAnswer(e.target.value)}
-                className="bg-background"
-                required
-              />
-            </div>
 
             <Button 
               type="submit" 
