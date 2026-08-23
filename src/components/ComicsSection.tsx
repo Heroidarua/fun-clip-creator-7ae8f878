@@ -708,7 +708,15 @@ const ComicsSection = () => {
                     : "EMPATE LENDÁRIO! Em um confronto onde cada grama de força foi igualada, nenhum dos combatentes cedeu. A batalha termina sem um vencedor definido, mas com o respeito mútuo garantido."
                   }
                 </p>
-                <div className="mt-6 sm:mt-8 flex flex-wrap justify-center gap-3 sm:gap-4">
+                <div className="clip-action-buttons mt-6 sm:mt-8 flex flex-wrap justify-center gap-3 sm:gap-4">
+                  <button
+                    onClick={handleDownloadClip}
+                    disabled={isGeneratingClip}
+                    className="px-6 sm:px-10 py-3 sm:py-4 bg-accent text-accent-foreground font-pixel text-[10px] sm:text-xs rounded-xl border-b-4 border-accent-foreground/20 hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(var(--accent),0.3)] flex items-center gap-2"
+                  >
+                    {isGeneratingClip ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+                    GERAR FUN-CLIP
+                  </button>
                   <button
                     onClick={resetDuel}
                     className="px-6 sm:px-10 py-3 sm:py-4 bg-primary text-primary-foreground font-pixel text-[10px] sm:text-xs rounded-xl border-b-4 border-primary-foreground/20 hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(var(--primary),0.3)]"
