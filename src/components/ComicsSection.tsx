@@ -671,13 +671,13 @@ const ComicsSection = () => {
                 <div className="mt-6 sm:mt-8 flex flex-wrap justify-center gap-3 sm:gap-4">
                   <button
                     onClick={resetDuel}
-                    className="px-10 py-4 bg-primary text-primary-foreground font-pixel text-xs rounded-xl border-b-4 border-primary-foreground/20 hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(var(--primary),0.3)]"
+                    className="px-6 sm:px-10 py-3 sm:py-4 bg-primary text-primary-foreground font-pixel text-[10px] sm:text-xs rounded-xl border-b-4 border-primary-foreground/20 hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(var(--primary),0.3)]"
                   >
                     NOVA BATALHA
                   </button>
                   <button
                     onClick={() => setShowDuelResult(false)}
-                    className="px-8 py-4 bg-background text-muted-foreground font-pixel text-xs rounded-xl border-2 border-muted-foreground/20 hover:text-foreground transition-all"
+                    className="px-6 sm:px-8 py-3 sm:py-4 bg-background text-muted-foreground font-pixel text-[10px] sm:text-xs rounded-xl border-2 border-muted-foreground/20 hover:text-foreground transition-all"
                   >
                     FECHAR
                   </button>
