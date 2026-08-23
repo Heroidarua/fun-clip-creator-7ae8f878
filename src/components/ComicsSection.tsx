@@ -1045,7 +1045,22 @@ const ComicsSection = () => {
                         </button>
                       </div>
                     </div>
+                    <div className="space-y-2 text-center">
+                      <span id="label-auto-enquadramento" className="font-pixel text-[8px] text-muted-foreground uppercase">Ajustes</span>
+                      <div className="flex flex-col items-center gap-2">
+                        <button
+                          onClick={autoFrameFighters}
+                          aria-label="Auto-enquadramento"
+                          title="Auto-enquadramento"
+                          className="flex items-center gap-1.5 px-3 py-1.5 bg-background border border-primary/20 text-primary hover:bg-primary/5 rounded-md font-pixel text-[9px] transition-all"
+                        >
+                          <LayoutGrid className="w-3.5 h-3.5" />
+                          AUTO
+                        </button>
+                      </div>
+                    </div>
                     <div className="sm:col-span-3 space-y-2 text-center border-t border-primary/10 pt-3">
+
                       <span id="label-tema" className="font-pixel text-[8px] text-muted-foreground uppercase flex items-center justify-center gap-2">
                         <Palette className="w-3 h-3" />
                         Temas Visuais
