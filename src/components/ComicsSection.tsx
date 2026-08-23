@@ -1074,6 +1074,33 @@ const ComicsSection = () => {
                     </div>
 
                     <div className="sm:col-span-3 space-y-4 text-center border-t border-primary/10 pt-3">
+                      <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto">
+                        <div className="space-y-2">
+                          <span className="font-pixel text-[7px] text-muted-foreground uppercase">Escala Herói 1: {fighterScales[0].toFixed(1)}x</span>
+                          <input 
+                            type="range" 
+                            min="0.5" 
+                            max="2" 
+                            step="0.1"
+                            value={fighterScales[0]}
+                            onChange={(e) => setFighterScales([Number(e.target.value), fighterScales[1]])}
+                            className="w-full accent-primary h-1.5"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <span className="font-pixel text-[7px] text-muted-foreground uppercase">Escala Herói 2: {fighterScales[1].toFixed(1)}x</span>
+                          <input 
+                            type="range" 
+                            min="0.5" 
+                            max="2" 
+                            step="0.1"
+                            value={fighterScales[1]}
+                            onChange={(e) => setFighterScales([fighterScales[0], Number(e.target.value)])}
+                            className="w-full accent-primary h-1.5"
+                          />
+                        </div>
+                      </div>
+
                       {showWatermark && (
                         <div className="space-y-3 animate-in fade-in slide-in-from-top-2">
                           <span className="font-pixel text-[8px] text-muted-foreground uppercase flex items-center justify-center gap-2">
