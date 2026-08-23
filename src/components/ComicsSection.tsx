@@ -1127,7 +1127,6 @@ const ComicsSection = () => {
                               <div className="flex justify-center gap-2">
                                 {[
                                   { label: 'TOPO', x: 50, y: 10 },
-                                  { label: 'MEIO', x: 50, y: 50 },
                                   { label: 'BASE', x: 50, y: 90 }
                                 ].map((pos) => (
                                   <button
