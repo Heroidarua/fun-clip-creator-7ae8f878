@@ -56,16 +56,6 @@ export default function Admin() {
   const [buttonSaving, setButtonSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<"general" | "video" | "appearance">("general");
 
-  useEffect(() => {
-    generateCaptcha();
-  }, []);
-
-  const generateCaptcha = () => {
-    const a = Math.floor(Math.random() * 10) + 1;
-    const b = Math.floor(Math.random() * 10) + 1;
-    setCaptchaQuestion({ a, b });
-    setCaptchaAnswer("");
-  };
 
   const invokeManageAnnouncements = async (body: any) => {
     const resp = await fetch('/api/manage-announcements', {
