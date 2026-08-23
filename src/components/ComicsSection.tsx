@@ -200,6 +200,33 @@ const ComicsSection = () => {
   const [alignment, setAlignment] = useState("all");
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [selected, setSelected] = useState<Hero | null>(null);
+  const [duelMode, setDuelMode] = useState(false);
+  const [duelFighters, setDuelFighters] = useState<[Hero | null, Hero | null]>([null, null]);
+  const [showDuelResult, setShowDuelResult] = useState(false);
+
+  const calculateTotalStats = (hero: Hero) => {
+    return Object.values(hero.powerstats || {}).reduce((acc, curr) => acc + (Number(curr) || 0), 0);
+  };
+
+  const handleSelectForDuel = (hero: Hero) => {
+    setDuelFighters(prev => {
+      // Se o herói já está selecionado, remove ele
+      if (prev[0]?.id === hero.id) return [null, prev[1]];
+      if (prev[1]?.id === hero.id) return [prev[0], null];
+      
+      // Caso contrário, adiciona no primeiro espaço vazio
+      if (!prev[0]) return [hero, prev[1]];
+      if (!prev[1]) return [prev[0], hero];
+      
+      // Se ambos estão ocupados, substitui o segundo
+      return [prev[0], hero];
+    });
+  };
+
+  const resetDuel = () => {
+    setDuelFighters([null, null]);
+    setShowDuelResult(false);
+  };
 
   useEffect(() => {
     let active = true;
