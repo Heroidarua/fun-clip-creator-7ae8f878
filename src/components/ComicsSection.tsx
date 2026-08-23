@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { Search, ShieldCheck, X, Swords, Trophy, RotateCcw, Download, Loader2, Share2 } from "lucide-react";
 import ScrollReveal from "./ScrollReveal";
-import { toPng } from 'html-to-image';
+import { toPng, toJpeg } from 'html-to-image';
 import download from 'downloadjs';
+import { toast } from "sonner";
 
 const API_URL = "https://cdn.jsdelivr.net/gh/akabab/superhero-api@0.3.0/api/all.json";
 const PAGE_SIZE = 24;
