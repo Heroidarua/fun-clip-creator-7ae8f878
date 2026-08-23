@@ -224,7 +224,9 @@ const ComicsSection = () => {
   const [watermarkText, setWatermarkText] = useState("sos01.com.br");
   const [watermarkPos, setWatermarkPos] = useState<{x: number, y: number}>({ x: 50, y: 90 });
   const [watermarkOpacity, setWatermarkOpacity] = useState(60);
+  const [watermarkScale, setWatermarkScale] = useState(1);
   const [fighterPositions, setFighterPositions] = useState<[{x: number, y: number}, {x: number, y: number}]>([{x: 0, y: 0}, {x: 0, y: 0}]);
+  const [fighterScales, setFighterScales] = useState<[number, number]>([1, 1]);
   const [isDraggingWatermark, setIsDraggingWatermark] = useState(false);
   const dragRef = useRef<{ startX: number, startY: number, startPos: {x: number, y: number} } | null>(null);
 
@@ -393,6 +395,8 @@ const ComicsSection = () => {
     // Reset positions when fighters change
     setFighterPositions([{x: 0, y: 0}, {x: 0, y: 0}]);
     setWatermarkPos({ x: 50, y: 90 });
+    setWatermarkScale(1);
+    setFighterScales([1, 1]);
   };
 
   const resetDuel = () => {
@@ -400,6 +404,8 @@ const ComicsSection = () => {
     setShowDuelResult(false);
     setFighterPositions([{x: 0, y: 0}, {x: 0, y: 0}]);
     setWatermarkPos({ x: 50, y: 90 });
+    setWatermarkScale(1);
+    setFighterScales([1, 1]);
   };
 
   const handleWatermarkMouseDown = (e: React.MouseEvent) => {
@@ -797,7 +803,8 @@ const ComicsSection = () => {
                       <img 
                         src={duelFighters[0].images?.lg} 
                         alt={duelFighters[0].name} 
-                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+                        className="w-full h-full object-cover transition-transform duration-1000" 
+                        style={{ transform: `scale(${fighterScales[0]})` }}
                       />
                       {calculateTotalStats(duelFighters[0]) > calculateTotalStats(duelFighters[1]) && (
                         <div className="absolute top-0 inset-x-0 bg-primary py-1.5 sm:py-3 text-center font-pixel text-[8px] sm:text-xs text-primary-foreground shadow-lg uppercase tracking-[0.2em] animate-pulse z-20">
@@ -836,7 +843,8 @@ const ComicsSection = () => {
                       <img 
                         src={duelFighters[1].images?.lg} 
                         alt={duelFighters[1].name} 
-                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+                        className="w-full h-full object-cover transition-transform duration-1000" 
+                        style={{ transform: `scale(${fighterScales[1]})` }}
                       />
                       {calculateTotalStats(duelFighters[1]) > calculateTotalStats(duelFighters[0]) && (
                         <div className="absolute top-0 inset-x-0 bg-primary py-1.5 sm:py-3 text-center font-pixel text-[8px] sm:text-xs text-primary-foreground shadow-lg uppercase tracking-[0.2em] animate-pulse z-20">
@@ -965,7 +973,7 @@ const ComicsSection = () => {
                     opacity: watermarkOpacity / 100,
                     left: `${watermarkPos.x}%`,
                     top: `${watermarkPos.y}%`,
-                    transform: 'translate(-50%, -50%)',
+                    transform: `translate(-50%, -50%) scale(${watermarkScale})`,
                   }}
                 >
                   <span className={`font-pixel text-[14px] sm:text-[24px] font-bold uppercase tracking-[0.4em] drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`}>
@@ -1066,6 +1074,33 @@ const ComicsSection = () => {
                     </div>
 
                     <div className="sm:col-span-3 space-y-4 text-center border-t border-primary/10 pt-3">
+                      <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto">
+                        <div className="space-y-2">
+                          <span className="font-pixel text-[7px] text-muted-foreground uppercase">Escala Herói 1: {fighterScales[0].toFixed(1)}x</span>
+                          <input 
+                            type="range" 
+                            min="0.5" 
+                            max="2" 
+                            step="0.1"
+                            value={fighterScales[0]}
+                            onChange={(e) => setFighterScales([Number(e.target.value), fighterScales[1]])}
+                            className="w-full accent-primary h-1.5"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <span className="font-pixel text-[7px] text-muted-foreground uppercase">Escala Herói 2: {fighterScales[1].toFixed(1)}x</span>
+                          <input 
+                            type="range" 
+                            min="0.5" 
+                            max="2" 
+                            step="0.1"
+                            value={fighterScales[1]}
+                            onChange={(e) => setFighterScales([fighterScales[0], Number(e.target.value)])}
+                            className="w-full accent-primary h-1.5"
+                          />
+                        </div>
+                      </div>
+
                       {showWatermark && (
                         <div className="space-y-3 animate-in fade-in slide-in-from-top-2">
                           <span className="font-pixel text-[8px] text-muted-foreground uppercase flex items-center justify-center gap-2">
@@ -1103,17 +1138,31 @@ const ComicsSection = () => {
                               <p className="font-pixel text-[6px] text-primary/60 mt-1">Ou arraste a marca no clip!</p>
                             </div>
 
-                            <div className="space-y-2">
-                              <span className="font-pixel text-[7px] text-muted-foreground uppercase">Opacidade: {watermarkOpacity}%</span>
-                              <input 
-                                type="range" 
-                                min="10" 
-                                max="100" 
-                                step="10"
-                                value={watermarkOpacity}
-                                onChange={(e) => setWatermarkOpacity(Number(e.target.value))}
-                                className="w-full accent-primary"
-                              />
+                            <div className="space-y-4">
+                              <div className="space-y-2">
+                                <span className="font-pixel text-[7px] text-muted-foreground uppercase">Opacidade: {watermarkOpacity}%</span>
+                                <input 
+                                  type="range" 
+                                  min="10" 
+                                  max="100" 
+                                  step="10"
+                                  value={watermarkOpacity}
+                                  onChange={(e) => setWatermarkOpacity(Number(e.target.value))}
+                                  className="w-full accent-primary h-1.5"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <span className="font-pixel text-[7px] text-muted-foreground uppercase">Escala Marca: {watermarkScale.toFixed(1)}x</span>
+                                <input 
+                                  type="range" 
+                                  min="0.5" 
+                                  max="3" 
+                                  step="0.1"
+                                  value={watermarkScale}
+                                  onChange={(e) => setWatermarkScale(Number(e.target.value))}
+                                  className="w-full accent-primary h-1.5"
+                                />
+                              </div>
                             </div>
                           </div>
                         </div>
