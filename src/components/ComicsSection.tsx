@@ -225,6 +225,7 @@ const ComicsSection = () => {
   const [watermarkPos, setWatermarkPos] = useState<{x: number, y: number}>({ x: 50, y: 90 });
   const [watermarkOpacity, setWatermarkOpacity] = useState(60);
   const [watermarkScale, setWatermarkScale] = useState(1);
+  const [watermarkRotation, setWatermarkRotation] = useState(0);
   const [fighterPositions, setFighterPositions] = useState<[{x: number, y: number}, {x: number, y: number}]>([{x: 0, y: 0}, {x: 0, y: 0}]);
   const [fighterScales, setFighterScales] = useState<[number, number]>([1, 1]);
   const [isDraggingWatermark, setIsDraggingWatermark] = useState(false);
