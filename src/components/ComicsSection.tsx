@@ -80,6 +80,13 @@ const TRANSLATIONS: Record<string, string> = {
   neutral: "Neutro",
 };
 
+const DUEL_THEMES = [
+  { id: 'retro', label: 'RETRO', class: 'theme-retro' },
+  { id: 'modern', label: 'MODERN', class: 'theme-modern' },
+  { id: 'comic', label: 'COMIC', class: 'theme-comic' },
+  { id: 'cyberpunk', label: 'CYBER', class: 'theme-cyberpunk' },
+];
+
 const t = (text?: string | null) => {
   if (!text) return "—";
   if (text === "-" || text.toLowerCase() === "n/a") return "—";
