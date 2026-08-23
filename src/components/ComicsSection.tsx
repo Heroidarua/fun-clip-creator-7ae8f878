@@ -1232,3 +1232,4 @@ const ComicsSection = () => {
 };
 
 export default ComicsSection;
+
