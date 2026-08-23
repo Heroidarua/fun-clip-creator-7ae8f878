@@ -209,6 +209,42 @@ const ComicsSection = () => {
   const [isGeneratingClip, setIsGeneratingClip] = useState(false);
   const [clipFormat, setClipFormat] = useState<"png" | "jpg">("png");
   const [clipScale, setClipScale] = useState(2);
+  const [clipFit, setClipFit] = useState<"contain" | "cover" | "zoom">("contain");
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  // Focus trap implementation
+  useEffect(() => {
+    if (showDuelResult && modalRef.current) {
+      const focusableElements = modalRef.current.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      const firstElement = focusableElements[0] as HTMLElement;
+      const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+
+      const handleTabKey = (e: KeyboardEvent) => {
+        if (e.key === 'Tab') {
+          if (e.shiftKey) {
+            if (document.activeElement === firstElement) {
+              e.preventDefault();
+              lastElement.focus();
+            }
+          } else {
+            if (document.activeElement === lastElement) {
+              e.preventDefault();
+              firstElement.focus();
+            }
+          }
+        }
+        if (e.key === 'Escape') {
+          setShowDuelResult(false);
+        }
+      };
+
+      document.addEventListener('keydown', handleTabKey);
+      firstElement?.focus();
+      return () => document.removeEventListener('keydown', handleTabKey);
+    }
+  }, [showDuelResult]);
 
   const generateClipData = async () => {
     const element = document.getElementById('duel-combat-result');
