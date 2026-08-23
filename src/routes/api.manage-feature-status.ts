@@ -19,7 +19,7 @@ export const Route = createFileRoute("/api/manage-feature-status")({
               { status: 403, headers: corsHeaders(request) }
             );
           }
-          if (isRateLimited(request)) {
+          if (await isRateLimited(request)) {
             return Response.json(
               { error: "Muitas tentativas. Aguarde um minuto." },
               { status: 429, headers: corsHeaders(request) }
