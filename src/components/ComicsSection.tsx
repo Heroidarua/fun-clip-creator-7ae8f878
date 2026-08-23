@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { Search, ShieldCheck, X, Swords, Trophy, RotateCcw, Download, Loader2, Share2 } from "lucide-react";
+import { useEffect, useMemo, useState, useRef } from "react";
+import { Search, ShieldCheck, X, Swords, Trophy, RotateCcw, Download, Loader2, Share2, Maximize, Minimize, ZoomIn } from "lucide-react";
 import ScrollReveal from "./ScrollReveal";
 import { toPng, toJpeg } from 'html-to-image';
 import download from 'downloadjs';
@@ -209,6 +209,42 @@ const ComicsSection = () => {
   const [isGeneratingClip, setIsGeneratingClip] = useState(false);
   const [clipFormat, setClipFormat] = useState<"png" | "jpg">("png");
   const [clipScale, setClipScale] = useState(2);
+  const [clipFit, setClipFit] = useState<"contain" | "cover" | "zoom">("contain");
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  // Focus trap implementation
+  useEffect(() => {
+    if (showDuelResult && modalRef.current) {
+      const focusableElements = modalRef.current.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      const firstElement = focusableElements[0] as HTMLElement;
+      const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+
+      const handleTabKey = (e: KeyboardEvent) => {
+        if (e.key === 'Tab') {
+          if (e.shiftKey) {
+            if (document.activeElement === firstElement) {
+              e.preventDefault();
+              lastElement.focus();
+            }
+          } else {
+            if (document.activeElement === lastElement) {
+              e.preventDefault();
+              firstElement.focus();
+            }
+          }
+        }
+        if (e.key === 'Escape') {
+          setShowDuelResult(false);
+        }
+      };
+
+      document.addEventListener('keydown', handleTabKey);
+      firstElement?.focus();
+      return () => document.removeEventListener('keydown', handleTabKey);
+    }
+  }, [showDuelResult]);
 
   const generateClipData = async () => {
     const element = document.getElementById('duel-combat-result');
@@ -589,10 +625,23 @@ const ComicsSection = () => {
 
       {/* Duel Result Modal */}
       {showDuelResult && duelFighters[0] && duelFighters[1] && (
-        <div className="fixed inset-0 z-[1100] flex items-start sm:items-center justify-center p-0 sm:p-4 bg-black/95 backdrop-blur-md overflow-y-auto">
-          <div id="duel-combat-result" className="relative w-full max-w-5xl bg-background sm:border-4 border-primary/50 sm:rounded-3xl p-4 sm:p-12 shadow-[0_0_80px_rgba(var(--primary),0.2)] animate-in zoom-in-95 duration-300 m-0 sm:my-8">
+        <div 
+          className="fixed inset-0 z-[1100] flex items-start sm:items-center justify-center p-0 sm:p-4 bg-black/95 backdrop-blur-md overflow-y-auto"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="duel-modal-title"
+        >
+          <div 
+            id="duel-combat-result" 
+            ref={modalRef}
+            className={`relative w-full max-w-5xl bg-background sm:border-4 border-primary/50 sm:rounded-3xl p-4 sm:p-12 shadow-[0_0_80px_rgba(var(--primary),0.2)] animate-in zoom-in-95 duration-300 m-0 sm:my-8 transition-all duration-500 ${
+              clipFit === 'cover' ? 'aspect-video flex flex-col justify-center' : 
+              clipFit === 'zoom' ? 'scale-110' : ''
+            }`}
+          >
             <button
               onClick={() => setShowDuelResult(false)}
+              aria-label="Fechar resultado do duelo"
               className="clip-close-button absolute top-4 right-4 sm:top-6 sm:right-6 text-muted-foreground hover:text-destructive z-50 bg-background/80 p-2 rounded-full border border-primary/20 transition-all hover:rotate-90 shadow-lg"
             >
               <X className="w-6 h-6" />
@@ -601,7 +650,7 @@ const ComicsSection = () => {
             <div className="flex flex-col items-center gap-6 sm:gap-12 pt-12 sm:pt-0">
               <div className="flex items-center justify-center gap-3 sm:gap-4 px-6 sm:px-8 py-2 sm:py-3 bg-primary/20 border-2 border-primary rounded-full animate-bounce shadow-[0_0_20px_rgba(var(--primary),0.3)] w-fit mx-auto">
                 <Swords className="w-5 h-5 sm:w-8 sm:h-8 text-primary shrink-0" />
-                <h2 className="font-pixel text-base sm:text-4xl text-primary neon-text tracking-tighter text-center">
+                <h2 id="duel-modal-title" className="font-pixel text-base sm:text-4xl text-primary neon-text tracking-tighter text-center">
                   COMBATE FINAL
                 </h2>
                 <Swords className="w-5 h-5 sm:w-8 sm:h-8 text-primary shrink-0" />
@@ -757,17 +806,18 @@ const ComicsSection = () => {
                     : "EMPATE LENDÁRIO! Em um confronto onde cada grama de força foi igualada, nenhum dos combatentes cedeu. A batalha termina sem um vencedor definido, mas com o respeito mútuo garantido."
                   }
                 </p>
-                {/* Configuração do Clip */}
                 <div className="clip-config-section mt-6 p-4 bg-primary/10 border border-primary/20 rounded-2xl w-full max-w-lg mx-auto">
                   <h4 className="font-pixel text-[10px] text-primary mb-3 text-center uppercase tracking-wider">CONFIGURAÇÕES DO FUN-CLIP</h4>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="space-y-2 text-center">
-                      <span className="font-pixel text-[8px] text-muted-foreground uppercase">Formato</span>
-                      <div className="flex justify-center gap-2">
+                      <span id="label-formato" className="font-pixel text-[8px] text-muted-foreground uppercase">Formato</span>
+                      <div className="flex justify-center gap-2" role="group" aria-labelledby="label-formato">
                         {['png', 'jpg'].map((fmt) => (
                           <button
                             key={fmt}
                             onClick={() => setClipFormat(fmt as any)}
+                            aria-pressed={clipFormat === fmt}
+                            aria-label={`Selecionar formato ${fmt.toUpperCase()}`}
                             className={`px-3 py-1 rounded-md font-pixel text-[9px] transition-all ${clipFormat === fmt ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
                           >
                             {fmt.toUpperCase()}
@@ -776,17 +826,51 @@ const ComicsSection = () => {
                       </div>
                     </div>
                     <div className="space-y-2 text-center">
-                      <span className="font-pixel text-[8px] text-muted-foreground uppercase">Resolução</span>
-                      <div className="flex justify-center gap-2">
+                      <span id="label-resolucao" className="font-pixel text-[8px] text-muted-foreground uppercase">Resolução</span>
+                      <div className="flex justify-center gap-2" role="group" aria-labelledby="label-resolucao">
                         {[1, 2, 3].map((s) => (
                           <button
                             key={s}
                             onClick={() => setClipScale(s)}
+                            aria-pressed={clipScale === s}
+                            aria-label={`Selecionar resolução ${s}x`}
                             className={`px-3 py-1 rounded-md font-pixel text-[9px] transition-all ${clipScale === s ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
                           >
                             {s}X
                           </button>
                         ))}
+                      </div>
+                    </div>
+                    <div className="space-y-2 text-center">
+                      <span id="label-enquadramento" className="font-pixel text-[8px] text-muted-foreground uppercase">Enquadramento</span>
+                      <div className="flex justify-center gap-2" role="group" aria-labelledby="label-enquadramento">
+                        <button
+                          onClick={() => setClipFit('contain')}
+                          aria-pressed={clipFit === 'contain'}
+                          aria-label="Enquadramento: Centralizado"
+                          title="Centralizado"
+                          className={`p-2 rounded-md transition-all ${clipFit === 'contain' ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
+                        >
+                          <Minimize className="w-3 h-3" />
+                        </button>
+                        <button
+                          onClick={() => setClipFit('cover')}
+                          aria-pressed={clipFit === 'cover'}
+                          aria-label="Enquadramento: Manter Proporção"
+                          title="Manter Proporção"
+                          className={`p-2 rounded-md transition-all ${clipFit === 'cover' ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
+                        >
+                          <Maximize className="w-3 h-3" />
+                        </button>
+                        <button
+                          onClick={() => setClipFit('zoom')}
+                          aria-pressed={clipFit === 'zoom'}
+                          aria-label="Enquadramento: Zoom"
+                          title="Zoom"
+                          className={`p-2 rounded-md transition-all ${clipFit === 'zoom' ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
+                        >
+                          <ZoomIn className="w-3 h-3" />
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -796,6 +880,7 @@ const ComicsSection = () => {
                   <button
                     onClick={handleDownloadClip}
                     disabled={isGeneratingClip}
+                    aria-label="Baixar Fun-Clip"
                     className="px-6 sm:px-10 py-3 sm:py-4 bg-accent text-accent-foreground font-pixel text-[10px] sm:text-xs rounded-xl border-b-4 border-accent-foreground/20 hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(var(--accent),0.3)] flex items-center gap-2"
                   >
                     {isGeneratingClip ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
@@ -804,6 +889,7 @@ const ComicsSection = () => {
                   <button
                     onClick={handleShareClip}
                     disabled={isGeneratingClip}
+                    aria-label="Compartilhar Fun-Clip"
                     className="px-6 sm:px-10 py-3 sm:py-4 bg-retro-magenta text-white font-pixel text-[10px] sm:text-xs rounded-xl border-b-4 border-black/20 hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(var(--retro-magenta),0.3)] flex items-center gap-2"
                   >
                     {isGeneratingClip ? <Loader2 className="w-4 h-4 animate-spin" /> : <Share2 className="w-4 h-4" />}
@@ -811,12 +897,14 @@ const ComicsSection = () => {
                   </button>
                   <button
                     onClick={resetDuel}
+                    aria-label="Iniciar nova batalha"
                     className="px-6 sm:px-10 py-3 sm:py-4 bg-primary text-primary-foreground font-pixel text-[10px] sm:text-xs rounded-xl border-b-4 border-primary-foreground/20 hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(var(--primary),0.3)]"
                   >
                     NOVA BATALHA
                   </button>
                   <button
                     onClick={() => setShowDuelResult(false)}
+                    aria-label="Fechar e voltar à lista de heróis"
                     className="px-6 sm:px-8 py-3 sm:py-4 bg-background text-muted-foreground font-pixel text-[10px] sm:text-xs rounded-xl border-2 border-muted-foreground/20 hover:text-foreground transition-all"
                   >
                     FECHAR
