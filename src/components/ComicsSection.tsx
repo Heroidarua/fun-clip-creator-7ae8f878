@@ -912,9 +912,16 @@ const ComicsSection = () => {
                 </p>
 
                 {/* Watermark */}
-                <div className="clip-watermark absolute bottom-2 left-1/2 -translate-x-1/2 opacity-60 z-0 pointer-events-none">
-                  <span className={`font-pixel text-[12px] sm:text-[18px] font-bold uppercase tracking-[0.3em] ${clipTheme === 'comic' ? 'text-black/40' : 'text-primary/40'}`}>
-                    sos01.com.br
+                <div 
+                  className={`clip-watermark absolute z-0 pointer-events-none transition-all duration-300 ${
+                    watermarkPos === 'top' ? 'top-4 left-1/2 -translate-x-1/2' :
+                    watermarkPos === 'center' ? 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2' :
+                    'bottom-2 left-1/2 -translate-x-1/2'
+                  }`}
+                  style={{ opacity: watermarkOpacity / 100 }}
+                >
+                  <span className={`font-pixel text-[12px] sm:text-[18px] font-bold uppercase tracking-[0.3em] ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`}>
+                    {watermarkText}
                   </span>
                 </div>
                 <div className={`clip-config-section mt-6 p-4 border rounded-2xl w-full max-w-lg mx-auto ${clipTheme === 'comic' ? 'bg-black/5 border-black/20' : 'bg-primary/10 border-primary/20'}`}>
