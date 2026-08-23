@@ -911,16 +911,16 @@ const ComicsSection = () => {
                   }
                 </p>
 
-                {/* Watermark */}
+                {/* Watermark inside combat area */}
                 <div 
-                  className={`clip-watermark absolute z-0 pointer-events-none transition-all duration-300 ${
-                    watermarkPos === 'top' ? 'top-4 left-1/2 -translate-x-1/2' :
+                  className={`clip-watermark absolute z-50 pointer-events-none transition-all duration-300 ${
+                    watermarkPos === 'top' ? 'top-10 left-1/2 -translate-x-1/2' :
                     watermarkPos === 'center' ? 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2' :
-                    'bottom-2 left-1/2 -translate-x-1/2'
+                    'bottom-10 left-1/2 -translate-x-1/2'
                   }`}
                   style={{ opacity: watermarkOpacity / 100 }}
                 >
-                  <span className={`font-pixel text-[12px] sm:text-[18px] font-bold uppercase tracking-[0.3em] ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`}>
+                  <span className={`font-pixel text-[14px] sm:text-[24px] font-bold uppercase tracking-[0.4em] drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`}>
                     {watermarkText}
                   </span>
                 </div>
