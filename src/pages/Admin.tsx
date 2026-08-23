@@ -282,19 +282,6 @@ export default function Admin() {
               />
             </div>
             
-            <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                Verificação: {captchaQuestion.a} + {captchaQuestion.b} = ?
-              </label>
-              <Input
-                type="number"
-                placeholder="Resultado da soma"
-                value={captchaAnswer}
-                onChange={(e) => setCaptchaAnswer(e.target.value)}
-                className="bg-background"
-                required
-              />
-            </div>
 
             <Button 
               type="submit" 
