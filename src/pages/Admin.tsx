@@ -280,7 +280,14 @@ export default function Admin() {
             </div>
           </div>
           <h1 className="text-xl font-bold text-center mb-6">Área Administrativa</h1>
-          <form onSubmit={(e) => { e.preventDefault(); authenticate(); }} className="space-y-4">
+          <form 
+            onSubmit={(e) => { 
+              e.preventDefault(); 
+              console.log("Form submit triggered, authenticating...");
+              authenticate(); 
+            }} 
+            className="space-y-4"
+          >
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Senha</label>
               <Input
@@ -289,6 +296,7 @@ export default function Admin() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="bg-background"
+                required
               />
             </div>
             
@@ -302,10 +310,16 @@ export default function Admin() {
                 value={captchaAnswer}
                 onChange={(e) => setCaptchaAnswer(e.target.value)}
                 className="bg-background"
+                required
               />
             </div>
 
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button 
+              type="submit" 
+              className="w-full" 
+              disabled={loading}
+              onClick={() => console.log("Button clicked")}
+            >
               {loading ? "Verificando..." : "Entrar"}
             </Button>
           </form>
