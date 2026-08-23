@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import { Search, ShieldCheck, X, Swords, Trophy, RotateCcw } from "lucide-react";
+import { Search, ShieldCheck, X, Swords, Trophy, RotateCcw, Download, Loader2 } from "lucide-react";
 import ScrollReveal from "./ScrollReveal";
+import { toPng } from 'html-to-image';
+import download from 'downloadjs';
 
 const API_URL = "https://cdn.jsdelivr.net/gh/akabab/superhero-api@0.3.0/api/all.json";
 const PAGE_SIZE = 24;
@@ -203,6 +205,39 @@ const ComicsSection = () => {
   const [duelMode, setDuelMode] = useState(false);
   const [duelFighters, setDuelFighters] = useState<[Hero | null, Hero | null]>([null, null]);
   const [showDuelResult, setShowDuelResult] = useState(false);
+  const [isGeneratingClip, setIsGeneratingClip] = useState(false);
+
+  const handleDownloadClip = async () => {
+    const element = document.getElementById('duel-combat-result');
+    if (!element) return;
+
+    try {
+      setIsGeneratingClip(true);
+      // Ocultar os botões temporariamente para a captura
+      const actionButtons = element.querySelector('.clip-action-buttons');
+      const closeButton = element.querySelector('.clip-close-button');
+      if (actionButtons) (actionButtons as HTMLElement).style.display = 'none';
+      if (closeButton) (closeButton as HTMLElement).style.display = 'none';
+
+      const dataUrl = await toPng(element, {
+        quality: 0.95,
+        backgroundColor: '#000',
+        style: {
+          borderRadius: '0px',
+        },
+      });
+
+      // Restaurar os botões
+      if (actionButtons) (actionButtons as HTMLElement).style.display = 'flex';
+      if (closeButton) (closeButton as HTMLElement).style.display = 'flex';
+
+      download(dataUrl, `fun-clip-duelo-${duelFighters[0]?.name}-vs-${duelFighters[1]?.name}.png`);
+    } catch (err) {
+      console.error('Erro ao gerar clip:', err);
+    } finally {
+      setIsGeneratingClip(false);
+    }
+  };
 
   const calculateTotalStats = (hero: Hero) => {
     return Object.values(hero.powerstats || {}).reduce((acc, curr) => acc + (Number(curr) || 0), 0);
@@ -506,10 +541,10 @@ const ComicsSection = () => {
       {/* Duel Result Modal */}
       {showDuelResult && duelFighters[0] && duelFighters[1] && (
         <div className="fixed inset-0 z-[1100] flex items-start sm:items-center justify-center p-0 sm:p-4 bg-black/95 backdrop-blur-md overflow-y-auto">
-          <div className="relative w-full max-w-5xl bg-background sm:border-4 border-primary/50 sm:rounded-3xl p-4 sm:p-12 shadow-[0_0_80px_rgba(var(--primary),0.2)] animate-in zoom-in-95 duration-300 m-0 sm:my-8">
+          <div id="duel-combat-result" className="relative w-full max-w-5xl bg-background sm:border-4 border-primary/50 sm:rounded-3xl p-4 sm:p-12 shadow-[0_0_80px_rgba(var(--primary),0.2)] animate-in zoom-in-95 duration-300 m-0 sm:my-8">
             <button
               onClick={() => setShowDuelResult(false)}
-              className="absolute top-4 right-4 sm:top-6 sm:right-6 text-muted-foreground hover:text-destructive z-50 bg-background/80 p-2 rounded-full border border-primary/20 transition-all hover:rotate-90 shadow-lg"
+              className="clip-close-button absolute top-4 right-4 sm:top-6 sm:right-6 text-muted-foreground hover:text-destructive z-50 bg-background/80 p-2 rounded-full border border-primary/20 transition-all hover:rotate-90 shadow-lg"
             >
               <X className="w-6 h-6" />
             </button>
@@ -673,7 +708,15 @@ const ComicsSection = () => {
                     : "EMPATE LENDÁRIO! Em um confronto onde cada grama de força foi igualada, nenhum dos combatentes cedeu. A batalha termina sem um vencedor definido, mas com o respeito mútuo garantido."
                   }
                 </p>
-                <div className="mt-6 sm:mt-8 flex flex-wrap justify-center gap-3 sm:gap-4">
+                <div className="clip-action-buttons mt-6 sm:mt-8 flex flex-wrap justify-center gap-3 sm:gap-4">
+                  <button
+                    onClick={handleDownloadClip}
+                    disabled={isGeneratingClip}
+                    className="px-6 sm:px-10 py-3 sm:py-4 bg-accent text-accent-foreground font-pixel text-[10px] sm:text-xs rounded-xl border-b-4 border-accent-foreground/20 hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(var(--accent),0.3)] flex items-center gap-2"
+                  >
+                    {isGeneratingClip ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+                    GERAR FUN-CLIP
+                  </button>
                   <button
                     onClick={resetDuel}
                     className="px-6 sm:px-10 py-3 sm:py-4 bg-primary text-primary-foreground font-pixel text-[10px] sm:text-xs rounded-xl border-b-4 border-primary-foreground/20 hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(var(--primary),0.3)]"
