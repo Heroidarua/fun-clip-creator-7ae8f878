@@ -491,6 +491,124 @@ const ComicsSection = () => {
         </div>
       )}
 
+      {/* Duel Result Modal */}
+      {showDuelResult && duelFighters[0] && duelFighters[1] && (
+        <div className="fixed inset-0 z-[1100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+          <div className="relative w-full max-w-4xl max-h-[95vh] overflow-y-auto bg-background border-4 border-primary/50 rounded-2xl p-6 sm:p-10 shadow-[0_0_50px_rgba(var(--primary),0.3)]">
+            <button
+              onClick={() => setShowDuelResult(false)}
+              className="absolute top-4 right-4 text-muted-foreground hover:text-destructive z-10 bg-background/50 p-2 rounded-full"
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            <div className="flex flex-col items-center gap-8">
+              <div className="flex items-center gap-2 px-6 py-2 bg-primary/20 border-2 border-primary rounded-full animate-bounce">
+                <Trophy className="w-6 h-6 text-primary" />
+                <h2 className="font-pixel text-lg sm:text-2xl text-primary neon-text">
+                  DUELO ÉPICO!
+                </h2>
+                <Trophy className="w-6 h-6 text-primary" />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-8 w-full items-start">
+                {/* Fighter 1 */}
+                <div className={`flex flex-col items-center gap-4 transition-all duration-700 ${
+                  calculateTotalStats(duelFighters[0]) > calculateTotalStats(duelFighters[1]) 
+                    ? "scale-105" 
+                    : "opacity-70 grayscale-[0.5]"
+                }`}>
+                  <div className={`relative rounded-xl overflow-hidden border-4 ${
+                    calculateTotalStats(duelFighters[0]) > calculateTotalStats(duelFighters[1]) ? "border-primary shadow-[0_0_30px_rgba(var(--primary),0.5)]" : "border-muted-foreground/30"
+                  }`}>
+                    <img src={duelFighters[0].images?.lg} alt={duelFighters[0].name} className="w-48 h-64 sm:w-64 sm:h-80 object-cover" />
+                    {calculateTotalStats(duelFighters[0]) > calculateTotalStats(duelFighters[1]) && (
+                      <div className="absolute top-0 inset-x-0 bg-primary py-1 text-center font-pixel text-[10px] text-primary-foreground">VENCEDOR</div>
+                    )}
+                  </div>
+                  <h3 className="font-pixel text-sm sm:text-lg text-primary text-center">{duelFighters[0].name}</h3>
+                  <div className="w-full space-y-2">
+                    {Object.entries(duelFighters[0].powerstats).map(([key, val]) => (
+                      <div key={key} className="flex items-center justify-between text-[10px] font-inter">
+                        <span className="text-muted-foreground">{STAT_LABELS[key]}</span>
+                        <div className="flex-1 mx-2 h-1.5 bg-muted rounded-full overflow-hidden">
+                          <div className="h-full bg-primary" style={{ width: `${val}%` }} />
+                        </div>
+                        <span className={Number(val) > Number(duelFighters[1]!.powerstats[key]) ? "text-primary font-bold" : "text-foreground"}>
+                          {val}
+                        </span>
+                      </div>
+                    ))}
+                    <div className="pt-2 border-t border-primary/20 flex justify-between items-center">
+                      <span className="font-pixel text-[8px] text-muted-foreground">TOTAL</span>
+                      <span className="font-pixel text-lg text-primary">{calculateTotalStats(duelFighters[0])}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* VS */}
+                <div className="flex flex-col items-center justify-center py-8">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 bg-primary/10 border-4 border-primary/40 rounded-full flex items-center justify-center rotate-12">
+                    <span className="font-pixel text-2xl sm:text-4xl text-primary animate-pulse">VS</span>
+                  </div>
+                </div>
+
+                {/* Fighter 2 */}
+                <div className={`flex flex-col items-center gap-4 transition-all duration-700 ${
+                  calculateTotalStats(duelFighters[1]) > calculateTotalStats(duelFighters[0]) 
+                    ? "scale-105" 
+                    : "opacity-70 grayscale-[0.5]"
+                }`}>
+                  <div className={`relative rounded-xl overflow-hidden border-4 ${
+                    calculateTotalStats(duelFighters[1]) > calculateTotalStats(duelFighters[0]) ? "border-primary shadow-[0_0_30px_rgba(var(--primary),0.5)]" : "border-muted-foreground/30"
+                  }`}>
+                    <img src={duelFighters[1].images?.lg} alt={duelFighters[1].name} className="w-48 h-64 sm:w-64 sm:h-80 object-cover" />
+                    {calculateTotalStats(duelFighters[1]) > calculateTotalStats(duelFighters[0]) && (
+                      <div className="absolute top-0 inset-x-0 bg-primary py-1 text-center font-pixel text-[10px] text-primary-foreground">VENCEDOR</div>
+                    )}
+                  </div>
+                  <h3 className="font-pixel text-sm sm:text-lg text-primary text-center">{duelFighters[1].name}</h3>
+                  <div className="w-full space-y-2">
+                    {Object.entries(duelFighters[1].powerstats).map(([key, val]) => (
+                      <div key={key} className="flex items-center justify-between text-[10px] font-inter">
+                        <span className={Number(val) > Number(duelFighters[0]!.powerstats[key]) ? "text-primary font-bold" : "text-foreground"}>
+                          {val}
+                        </span>
+                        <div className="flex-1 mx-2 h-1.5 bg-muted rounded-full overflow-hidden">
+                          <div className="h-full bg-primary" style={{ width: `${val}%` }} />
+                        </div>
+                        <span className="text-muted-foreground text-right">{STAT_LABELS[key]}</span>
+                      </div>
+                    ))}
+                    <div className="pt-2 border-t border-primary/20 flex justify-between items-center">
+                      <span className="font-pixel text-lg text-primary">{calculateTotalStats(duelFighters[1])}</span>
+                      <span className="font-pixel text-[8px] text-muted-foreground">TOTAL</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 text-center bg-primary/10 border-2 border-primary/30 p-4 rounded-xl max-w-lg w-full">
+                <p className="font-inter text-sm text-foreground/90 italic">
+                  {calculateTotalStats(duelFighters[0]) > calculateTotalStats(duelFighters[1]) 
+                    ? `Com uma pontuação total de ${calculateTotalStats(duelFighters[0])}, ${duelFighters[0].name} derrota ${duelFighters[1].name} em um combate lendário!`
+                    : calculateTotalStats(duelFighters[1]) > calculateTotalStats(duelFighters[0])
+                    ? `Em uma reviravolta impressionante, ${duelFighters[1].name} supera ${duelFighters[0].name} com ${calculateTotalStats(duelFighters[1])} pontos!`
+                    : "Um empate técnico! Ambos os guerreiros demonstraram um poder equivalente e a batalha termina sem um vencedor claro."
+                  }
+                </p>
+                <button
+                  onClick={resetDuel}
+                  className="mt-6 px-8 py-3 bg-primary text-primary-foreground font-pixel text-xs rounded-lg border-2 border-primary hover:scale-105 transition-transform"
+                >
+                  NOVO DUELO
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Modal */}
       {selected && (
         <div
