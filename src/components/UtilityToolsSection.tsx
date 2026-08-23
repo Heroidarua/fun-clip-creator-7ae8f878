@@ -278,7 +278,7 @@ const UtilityToolsSection = () => {
                 <Wrench className="w-6 h-6 text-primary-foreground" />
               </div>
               <h2 className="font-pixel text-lg sm:text-xl text-primary neon-text">
-                FERRAMENTAS ÚTEIS
+                FERRAMENTAS
               </h2>
             </div>
             <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
