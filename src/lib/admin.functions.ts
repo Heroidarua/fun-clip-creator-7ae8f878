@@ -1,11 +1,19 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
+import { isRateLimited } from "./admin-auth.server";
 
 export const listEnhancementJobs = createServerFn({ method: "POST" })
   .inputValidator(z.object({ password: z.string() }))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const adminPassword = process.env['ADMIN_PASSWORD'];
+
+    // Rate limiting check
+    const request = getRequest();
+    if (await isRateLimited(request)) {
+      throw new Error("Muitas tentativas. Aguarde alguns minutos.");
+    }
 
     if (!adminPassword || data.password !== adminPassword) {
       throw new Error("Não autorizado");
@@ -26,6 +34,12 @@ export const deleteEnhancementJob = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const adminPassword = process.env['ADMIN_PASSWORD'];
+
+    // Rate limiting check
+    const request = getRequest();
+    if (await isRateLimited(request)) {
+      throw new Error("Muitas tentativas. Aguarde alguns minutos.");
+    }
 
     if (!adminPassword || data.password !== adminPassword) {
       throw new Error("Não autorizado");

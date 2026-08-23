@@ -2,31 +2,82 @@
  * Shared helpers for the internal admin HTTP endpoints.
  * - Constant-time password comparison (avoids timing oracles)
  * - Same-origin CORS (blocks cross-site brute force from other pages)
- * - In-memory rate limiting per IP
+ * - Database-backed rate limiting per IP (Cloudflare Worker compatible)
  */
 
-const attempts = new Map<string, { count: number; resetAt: number }>();
-const WINDOW_MS = 60_000;
-const MAX_ATTEMPTS = 10;
+const WINDOW_MS = 60_000 * 5; // 5 minutos de janela
+const MAX_ATTEMPTS = 5; // Máximo de 5 tentativas por janela
 
-export function clientIp(request: Request): string {
+export function clientIp(request: Request | { headers: Headers }): string {
+  const headers = request instanceof Request ? request.headers : request.headers;
   return (
-    request.headers.get("cf-connecting-ip") ||
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    headers.get("cf-connecting-ip") ||
+    headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
     "unknown"
   );
 }
 
-export function isRateLimited(request: Request): boolean {
+export async function isRateLimited(request: Request | { headers: Headers }): Promise<boolean> {
   const ip = clientIp(request);
-  const now = Date.now();
-  const entry = attempts.get(ip);
-  if (!entry || now > entry.resetAt) {
-    attempts.set(ip, { count: 1, resetAt: now + WINDOW_MS });
+  if (ip === "unknown") return false;
+
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const now = new Date();
+
+  // Buscar registro de rate limit para o IP
+  const { data: entry, error } = await supabaseAdmin
+    .from("admin_rate_limit")
+    .select("*")
+    .eq("ip", ip)
+    .single();
+
+  if (error && error.code !== "PGRST116") {
+    console.error("Rate limit query error:", error);
+    return false; // Falha segura: permite em caso de erro no banco
+  }
+
+  // Se bloqueado, verificar se o tempo expirou
+  if (entry?.blocked_until) {
+    const blockedUntil = new Date(entry.blocked_until);
+    if (now < blockedUntil) {
+      return true;
+    }
+  }
+
+  // Se não existe ou janela expirou, criar/resetar
+  const lastAttempt = entry?.last_attempt ? new Date(entry.last_attempt) : null;
+  const resetAt = lastAttempt ? new Date(lastAttempt.getTime() + WINDOW_MS) : null;
+  
+  if (!entry || (resetAt && now > resetAt)) {
+    const { error: upsertError } = await (supabaseAdmin
+      .from("admin_rate_limit")
+      .upsert({ 
+        ip, 
+        attempts: 1, 
+        last_attempt: now.toISOString(),
+        blocked_until: null 
+      } as any) as any);
+    
+    if (upsertError) console.error("Rate limit upsert error:", upsertError);
     return false;
   }
-  entry.count += 1;
-  return entry.count > MAX_ATTEMPTS;
+
+  // Incrementar contador
+  const newAttempts = (entry.attempts || 0) + 1;
+  const isLimited = newAttempts > MAX_ATTEMPTS;
+  const blockedUntil = isLimited ? new Date(now.getTime() + WINDOW_MS).toISOString() : null;
+
+  const { error: updateError } = await (supabaseAdmin
+    .from("admin_rate_limit")
+    .update({ 
+      attempts: newAttempts, 
+      last_attempt: now.toISOString(),
+      blocked_until: blockedUntil 
+    } as any)
+    .eq("ip", ip) as any);
+
+  if (updateError) console.error("Rate limit update error:", updateError);
+  return isLimited;
 }
 
 export function timingSafeEqual(a: string, b: string): boolean {

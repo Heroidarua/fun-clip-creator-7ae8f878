@@ -38,6 +38,27 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_rate_limit: {
+        Row: {
+          attempts: number | null
+          blocked_until: string | null
+          ip: string
+          last_attempt: string | null
+        }
+        Insert: {
+          attempts?: number | null
+          blocked_until?: string | null
+          ip: string
+          last_attempt?: string | null
+        }
+        Update: {
+          attempts?: number | null
+          blocked_until?: string | null
+          ip?: string
+          last_attempt?: string | null
+        }
+        Relationships: []
+      }
       ai_usage_log: {
         Row: {
           id: string
