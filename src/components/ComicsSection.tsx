@@ -505,22 +505,22 @@ const ComicsSection = () => {
 
       {/* Duel Result Modal */}
       {showDuelResult && duelFighters[0] && duelFighters[1] && (
-        <div className="fixed inset-0 z-[1100] flex items-center justify-center p-4 bg-black/95 backdrop-blur-md overflow-y-auto">
-          <div className="relative w-full max-w-5xl my-auto bg-background border-4 border-primary/50 rounded-3xl p-6 sm:p-12 shadow-[0_0_80px_rgba(var(--primary),0.2)] animate-in zoom-in-95 duration-300">
+        <div className="fixed inset-0 z-[1100] flex items-center justify-center sm:p-4 bg-black/95 backdrop-blur-md overflow-y-auto">
+          <div className="relative w-full max-w-5xl min-h-full sm:min-h-0 sm:my-auto bg-background sm:border-4 border-primary/50 sm:rounded-3xl p-4 sm:p-12 shadow-[0_0_80px_rgba(var(--primary),0.2)] animate-in zoom-in-95 duration-300">
             <button
               onClick={() => setShowDuelResult(false)}
-              className="absolute top-6 right-6 text-muted-foreground hover:text-destructive z-20 bg-background/50 p-2 rounded-full border border-primary/20 transition-all hover:rotate-90"
+              className="absolute top-4 right-4 sm:top-6 sm:right-6 text-muted-foreground hover:text-destructive z-30 bg-background/50 p-2 rounded-full border border-primary/20 transition-all hover:rotate-90"
             >
               <X className="w-6 h-6" />
             </button>
 
-            <div className="flex flex-col items-center gap-8 sm:gap-12">
-              <div className="flex items-center gap-4 px-8 py-3 bg-primary/20 border-2 border-primary rounded-full animate-bounce shadow-[0_0_20px_rgba(var(--primary),0.3)]">
-                <Swords className="w-8 h-8 text-primary" />
-                <h2 className="font-pixel text-xl sm:text-4xl text-primary neon-text tracking-tighter">
+            <div className="flex flex-col items-center gap-6 sm:gap-12 pt-8 sm:pt-0">
+              <div className="flex items-center gap-3 sm:gap-4 px-6 sm:px-8 py-2 sm:py-3 bg-primary/20 border-2 border-primary rounded-full animate-bounce shadow-[0_0_20px_rgba(var(--primary),0.3)]">
+                <Swords className="w-5 h-5 sm:w-8 sm:h-8 text-primary" />
+                <h2 className="font-pixel text-base sm:text-4xl text-primary neon-text tracking-tighter">
                   COMBATE FINAL
                 </h2>
-                <Swords className="w-8 h-8 text-primary" />
+                <Swords className="w-5 h-5 sm:w-8 sm:h-8 text-primary" />
               </div>
 
               <div className="w-full grid grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-12 items-start">
@@ -591,9 +591,9 @@ const ComicsSection = () => {
                 </div>
 
                 {/* Comparison Row (Span both columns) */}
-                <div className="lg:col-span-2 flex flex-col items-center w-full max-w-4xl mx-auto mt-4">
-                  <div className="mb-6 sm:mb-12 w-12 h-12 sm:w-20 sm:h-20 bg-primary/10 border-2 sm:border-4 border-primary/50 rounded-full flex items-center justify-center -rotate-12 shadow-[0_0_30px_rgba(var(--primary),0.3)]">
-                    <span className="font-pixel text-xl sm:text-4xl text-primary italic">VS</span>
+                <div className="lg:col-span-2 flex flex-col items-center w-full max-w-4xl mx-auto mt-2 sm:mt-4">
+                  <div className="mb-4 sm:mb-12 w-10 h-10 sm:w-20 sm:h-20 bg-primary/10 border-2 sm:border-4 border-primary/50 rounded-full flex items-center justify-center -rotate-12 shadow-[0_0_30px_rgba(var(--primary),0.3)] shrink-0">
+                    <span className="font-pixel text-lg sm:text-4xl text-primary italic">VS</span>
                   </div>
 
                   <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-6 sm:gap-x-12 gap-y-6 sm:gap-y-8">
@@ -603,18 +603,18 @@ const ComicsSection = () => {
                       const winner = stat1 > stat2 ? 1 : stat2 > stat1 ? 2 : 0;
                       
                       return (
-                        <div key={key} className="space-y-3">
-                          <div className="flex justify-between items-end px-1">
-                            <span className={`font-pixel text-[10px] sm:text-xs transition-colors duration-500 ${winner === 1 ? 'text-primary font-bold' : 'text-muted-foreground'}`}>
+                        <div key={key} className="space-y-2 sm:space-y-3">
+                          <div className="flex justify-between items-end px-1 gap-2">
+                            <span className={`font-pixel text-[8px] sm:text-xs transition-colors duration-500 shrink-0 ${winner === 1 ? 'text-primary font-bold' : 'text-muted-foreground'}`}>
                               {winner === 1 && "★ "}{stat1}
                             </span>
-                            <span className="font-pixel text-xs sm:text-sm text-foreground uppercase text-center flex-1">{label}</span>
-                            <span className={`font-pixel text-[10px] sm:text-xs transition-colors duration-500 ${winner === 2 ? 'text-primary font-bold' : 'text-muted-foreground'}`}>
+                            <span className="font-pixel text-[9px] sm:text-sm text-foreground uppercase text-center flex-1 truncate">{label}</span>
+                            <span className={`font-pixel text-[8px] sm:text-xs transition-colors duration-500 shrink-0 ${winner === 2 ? 'text-primary font-bold' : 'text-muted-foreground'}`}>
                               {stat2}{winner === 2 && " ★"}
                             </span>
                           </div>
                           
-                          <div className="h-6 bg-muted/20 rounded-full flex overflow-hidden border-2 border-primary/10 p-[3px] shadow-inner relative group">
+                          <div className="h-4 sm:h-6 bg-muted/20 rounded-full flex overflow-hidden border-2 border-primary/10 p-[2px] sm:p-[3px] shadow-inner relative group">
                             {/* Bar Hero 1 */}
                             <div className="flex-1 h-full flex justify-end overflow-hidden">
                               <div 
@@ -659,8 +659,8 @@ const ComicsSection = () => {
                 </div>
               </div>
 
-              <div className="mt-4 text-center bg-primary/5 border-2 border-primary/20 p-6 rounded-3xl max-w-2xl w-full shadow-inner">
-                <p className="font-inter text-base sm:text-lg text-foreground/90 leading-relaxed">
+              <div className="mt-2 sm:mt-4 text-center bg-primary/5 border-2 border-primary/20 p-4 sm:p-6 rounded-2xl sm:rounded-3xl max-w-2xl w-full shadow-inner">
+                <p className="font-inter text-sm sm:text-lg text-foreground/90 leading-relaxed">
                   {calculateTotalStats(duelFighters[0]) > calculateTotalStats(duelFighters[1]) 
                     ? `DOMINÂNCIA TOTAL! Com um arsenal de ${calculateTotalStats(duelFighters[0])} pontos, ${duelFighters[0].name} não deu chances para ${duelFighters[1].name} e triunfa como o supremo guerreiro!`
                     : calculateTotalStats(duelFighters[1]) > calculateTotalStats(duelFighters[0])
@@ -668,16 +668,16 @@ const ComicsSection = () => {
                     : "EMPATE LENDÁRIO! Em um confronto onde cada grama de força foi igualada, nenhum dos combatentes cedeu. A batalha termina sem um vencedor definido, mas com o respeito mútuo garantido."
                   }
                 </p>
-                <div className="mt-8 flex flex-wrap justify-center gap-4">
+                <div className="mt-6 sm:mt-8 flex flex-wrap justify-center gap-3 sm:gap-4">
                   <button
                     onClick={resetDuel}
-                    className="px-10 py-4 bg-primary text-primary-foreground font-pixel text-xs rounded-xl border-b-4 border-primary-foreground/20 hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(var(--primary),0.3)]"
+                    className="px-6 sm:px-10 py-3 sm:py-4 bg-primary text-primary-foreground font-pixel text-[10px] sm:text-xs rounded-xl border-b-4 border-primary-foreground/20 hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(var(--primary),0.3)]"
                   >
                     NOVA BATALHA
                   </button>
                   <button
                     onClick={() => setShowDuelResult(false)}
-                    className="px-8 py-4 bg-background text-muted-foreground font-pixel text-xs rounded-xl border-2 border-muted-foreground/20 hover:text-foreground transition-all"
+                    className="px-6 sm:px-8 py-3 sm:py-4 bg-background text-muted-foreground font-pixel text-[10px] sm:text-xs rounded-xl border-2 border-muted-foreground/20 hover:text-foreground transition-all"
                   >
                     FECHAR
                   </button>
