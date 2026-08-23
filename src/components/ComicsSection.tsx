@@ -678,19 +678,20 @@ const ComicsSection = () => {
           aria-modal="true"
           aria-labelledby="duel-modal-title"
         >
-          <div 
-            id="duel-combat-result" 
-            ref={modalRef}
-            className={`relative w-full max-w-5xl transition-all duration-500 m-0 sm:my-8 overflow-hidden p-4 sm:p-12 sm:border-4 sm:rounded-3xl ${
-              clipTheme === 'modern' ? 'bg-[#0a0a0a] border-white/10 rounded-[40px] shadow-2xl' :
-              clipTheme === 'comic' ? 'bg-yellow-50 border-black border-[6px] shadow-[12px_12px_0_0_#000]' :
-              clipTheme === 'cyberpunk' ? 'bg-black border-retro-magenta border-b-[10px] border-r-[10px] shadow-[0_0_40px_rgba(255,0,255,0.2)]' :
-              'bg-background border-primary/50 shadow-[0_0_80px_rgba(var(--primary),0.2)]'
-            } ${
-              clipFit === 'cover' ? 'aspect-video flex flex-col justify-center' : 
-              clipFit === 'zoom' ? 'scale-110' : ''
-            }`}
-          >
+          <div className="relative w-full max-w-5xl flex flex-col items-center gap-6 m-0 sm:my-8">
+            <div 
+              id="duel-combat-result" 
+              ref={modalRef}
+              className={`relative w-full transition-all duration-500 overflow-hidden p-4 sm:p-12 sm:border-4 sm:rounded-3xl ${
+                clipTheme === 'modern' ? 'bg-[#0a0a0a] border-white/10 rounded-[40px] shadow-2xl' :
+                clipTheme === 'comic' ? 'bg-yellow-50 border-black border-[6px] shadow-[12px_12px_0_0_#000]' :
+                clipTheme === 'cyberpunk' ? 'bg-black border-retro-magenta border-b-[10px] border-r-[10px] shadow-[0_0_40px_rgba(255,0,255,0.2)]' :
+                'bg-background border-primary/50 shadow-[0_0_80px_rgba(var(--primary),0.2)]'
+              } ${
+                clipFit === 'cover' ? 'aspect-video flex flex-col justify-center' : 
+                clipFit === 'zoom' ? 'scale-110' : ''
+              }`}
+            >
             {/* Comic theme texture */}
             {clipTheme === 'comic' && (
               <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[radial-gradient(#000_1.5px,transparent_1.5px)] bg-[size:15px_15px] z-0" />
