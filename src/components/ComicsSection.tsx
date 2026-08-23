@@ -966,6 +966,7 @@ const ComicsSection = () => {
                   }
                 </p>
 
+
                 {/* Watermark inside combat area */}
                 <div 
                   onMouseDown={handleWatermarkMouseDown}
@@ -1246,8 +1247,8 @@ const ComicsSection = () => {
             </div>
           </div>
         </div>
-        </div>
       )}
+
 
 
       {/* Modal */}
