@@ -1084,19 +1084,25 @@ const ComicsSection = () => {
                               />
                             </div>
                             <div className="space-y-2">
-                              <span className="font-pixel text-[7px] text-muted-foreground uppercase">Posição</span>
+                              <span className="font-pixel text-[7px] text-muted-foreground uppercase">Posição Rápida</span>
                               <div className="flex justify-center gap-2">
-                                {['top', 'center', 'bottom'].map((pos) => (
+                                {[
+                                  { label: 'TOPO', x: 50, y: 10 },
+                                  { label: 'MEIO', x: 50, y: 50 },
+                                  { label: 'BASE', x: 50, y: 90 }
+                                ].map((pos) => (
                                   <button
-                                    key={pos}
-                                    onClick={() => setWatermarkPos(pos as any)}
-                                    className={`px-2 py-1 rounded font-pixel text-[8px] transition-all border ${watermarkPos === pos ? 'bg-primary text-primary-foreground border-primary' : 'bg-background border-primary/20 text-muted-foreground'}`}
+                                    key={pos.label}
+                                    onClick={() => setWatermarkPos({ x: pos.x, y: pos.y })}
+                                    className={`px-2 py-1 rounded font-pixel text-[8px] transition-all border ${watermarkPos.x === pos.x && watermarkPos.y === pos.y ? 'bg-primary text-primary-foreground border-primary' : 'bg-background border-primary/20 text-muted-foreground'}`}
                                   >
-                                    {pos === 'top' ? 'TOPO' : pos === 'center' ? 'MEIO' : 'BASE'}
+                                    {pos.label}
                                   </button>
                                 ))}
                               </div>
+                              <p className="font-pixel text-[6px] text-primary/60 mt-1">Ou arraste a marca no clip!</p>
                             </div>
+
                             <div className="space-y-2">
                               <span className="font-pixel text-[7px] text-muted-foreground uppercase">Opacidade: {watermarkOpacity}%</span>
                               <input 
