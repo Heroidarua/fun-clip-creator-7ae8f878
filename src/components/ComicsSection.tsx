@@ -1140,7 +1140,6 @@ const ComicsSection = () => {
                           </div>
                         </div>
                       )}
-                      )}
 
                       <div className="space-y-2 border-t border-primary/10 pt-3">
                         <span id="label-tema" className="font-pixel text-[8px] text-muted-foreground uppercase flex items-center justify-center gap-2">
