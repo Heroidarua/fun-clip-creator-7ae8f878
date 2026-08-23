@@ -380,8 +380,18 @@ const ComicsSection = () => {
                 {filtered.slice(0, visible).map((hero) => (
                   <button
                     key={hero.id}
-                    onClick={() => setSelected(hero)}
-                    className="group text-left bg-background border-2 border-primary/30 hover:border-primary rounded-lg overflow-hidden transition-all duration-300 hover:-translate-y-1"
+                    onClick={() => {
+                      if (duelMode) {
+                        handleSelectForDuel(hero);
+                      } else {
+                        setSelected(hero);
+                      }
+                    }}
+                    className={`group text-left bg-background border-2 rounded-lg overflow-hidden transition-all duration-300 hover:-translate-y-1 ${
+                      duelMode 
+                        ? (duelFighters.some(f => f?.id === hero.id) ? "border-primary scale-[0.98] ring-2 ring-primary/50 ring-offset-2 ring-offset-background" : "border-primary/20 grayscale-[0.5] hover:grayscale-0")
+                        : "border-primary/30 hover:border-primary"
+                    }`}
                   >
                     <img
                       src={hero.images?.sm ?? FALLBACK_IMG}
