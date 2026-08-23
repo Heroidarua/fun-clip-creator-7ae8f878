@@ -1128,6 +1128,7 @@ const ComicsSection = () => {
         </div>
       )}
 
+
       {/* Modal */}
       {selected && (
         <div
