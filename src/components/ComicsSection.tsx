@@ -310,6 +310,7 @@ const ComicsSection = () => {
       if (actionButtons) (actionButtons as HTMLElement).style.display = 'flex';
       if (closeButton) (closeButton as HTMLElement).style.display = 'flex';
       if (configSection) (configSection as HTMLElement).style.display = 'block';
+      if (guides) (guides as HTMLElement).style.display = 'block';
 
       return dataUrl;
     } catch (err) {
