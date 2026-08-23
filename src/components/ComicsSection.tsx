@@ -505,22 +505,22 @@ const ComicsSection = () => {
 
       {/* Duel Result Modal */}
       {showDuelResult && duelFighters[0] && duelFighters[1] && (
-        <div className="fixed inset-0 z-[1100] flex items-center justify-center p-4 bg-black/95 backdrop-blur-md overflow-y-auto">
-          <div className="relative w-full max-w-5xl my-auto bg-background border-4 border-primary/50 rounded-3xl p-6 sm:p-12 shadow-[0_0_80px_rgba(var(--primary),0.2)] animate-in zoom-in-95 duration-300">
+        <div className="fixed inset-0 z-[1100] flex items-center justify-center sm:p-4 bg-black/95 backdrop-blur-md overflow-y-auto">
+          <div className="relative w-full max-w-5xl min-h-full sm:min-h-0 sm:my-auto bg-background sm:border-4 border-primary/50 sm:rounded-3xl p-4 sm:p-12 shadow-[0_0_80px_rgba(var(--primary),0.2)] animate-in zoom-in-95 duration-300">
             <button
               onClick={() => setShowDuelResult(false)}
-              className="absolute top-6 right-6 text-muted-foreground hover:text-destructive z-20 bg-background/50 p-2 rounded-full border border-primary/20 transition-all hover:rotate-90"
+              className="absolute top-4 right-4 sm:top-6 sm:right-6 text-muted-foreground hover:text-destructive z-30 bg-background/50 p-2 rounded-full border border-primary/20 transition-all hover:rotate-90"
             >
               <X className="w-6 h-6" />
             </button>
 
-            <div className="flex flex-col items-center gap-8 sm:gap-12">
-              <div className="flex items-center gap-4 px-8 py-3 bg-primary/20 border-2 border-primary rounded-full animate-bounce shadow-[0_0_20px_rgba(var(--primary),0.3)]">
-                <Swords className="w-8 h-8 text-primary" />
-                <h2 className="font-pixel text-xl sm:text-4xl text-primary neon-text tracking-tighter">
+            <div className="flex flex-col items-center gap-6 sm:gap-12 pt-8 sm:pt-0">
+              <div className="flex items-center gap-3 sm:gap-4 px-6 sm:px-8 py-2 sm:py-3 bg-primary/20 border-2 border-primary rounded-full animate-bounce shadow-[0_0_20px_rgba(var(--primary),0.3)]">
+                <Swords className="w-5 h-5 sm:w-8 sm:h-8 text-primary" />
+                <h2 className="font-pixel text-base sm:text-4xl text-primary neon-text tracking-tighter">
                   COMBATE FINAL
                 </h2>
-                <Swords className="w-8 h-8 text-primary" />
+                <Swords className="w-5 h-5 sm:w-8 sm:h-8 text-primary" />
               </div>
 
               <div className="w-full grid grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-12 items-start">
