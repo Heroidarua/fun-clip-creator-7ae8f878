@@ -591,8 +591,8 @@ const ComicsSection = () => {
                             </div>
                           </div>
                           <div className="text-center font-inter text-[9px] text-muted-foreground italic">
-                            {winner === 1 ? `${duelFighters[0].name} é superior em ${label.toLowerCase()}` : 
-                             winner === 2 ? `${duelFighters[1].name} domina em ${label.toLowerCase()}` : 
+                            {winner === 1 ? `${duelFighters[0]!.name} é superior em ${label.toLowerCase()}` : 
+                             winner === 2 ? `${duelFighters[1]!.name} domina em ${label.toLowerCase()}` : 
                              "Poderes equivalentes nesta categoria"}
                           </div>
                         </div>
