@@ -1059,6 +1059,33 @@ const ComicsSection = () => {
                         ))}
                       </div>
                     </div>
+                    <div className="sm:col-span-3 space-y-2 text-center border-t border-primary/10 pt-3">
+                      <span id="label-watermark" className="font-pixel text-[8px] text-muted-foreground uppercase">Marca D'água</span>
+                      <div className="flex justify-center gap-2" role="group" aria-labelledby="label-watermark">
+                        <button
+                          onClick={() => setShowWatermark(true)}
+                          aria-pressed={showWatermark}
+                          className={`px-4 py-1.5 rounded-lg font-pixel text-[9px] transition-all border-2 ${
+                            showWatermark 
+                              ? 'bg-primary border-primary text-primary-foreground shadow-lg' 
+                              : 'bg-background border-primary/20 text-muted-foreground hover:border-primary/40'
+                          }`}
+                        >
+                          LIGADA
+                        </button>
+                        <button
+                          onClick={() => setShowWatermark(false)}
+                          aria-pressed={!showWatermark}
+                          className={`px-4 py-1.5 rounded-lg font-pixel text-[9px] transition-all border-2 ${
+                            !showWatermark 
+                              ? 'bg-destructive border-destructive text-white shadow-lg' 
+                              : 'bg-background border-primary/20 text-muted-foreground hover:border-primary/40'
+                          }`}
+                        >
+                          DESLIGADA
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
