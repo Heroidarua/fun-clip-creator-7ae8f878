@@ -305,6 +305,9 @@ const ComicsSection = () => {
         pixelRatio: clipScale,
         style: {
           borderRadius: '0px',
+          backgroundColor: clipTheme === 'comic' ? '#fefce8' : 
+                         clipTheme === 'modern' ? '#0a0a0a' : 
+                         clipTheme === 'cyberpunk' ? '#000000' : '#ffffff',
         },
       };
 
