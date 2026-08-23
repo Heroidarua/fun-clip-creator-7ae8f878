@@ -10,7 +10,8 @@ export const listEnhancementJobs = createServerFn({ method: "POST" })
     const adminPassword = process.env['ADMIN_PASSWORD'];
 
     // Rate limiting check
-    if (await isRateLimited({ headers: new Headers() } as any)) {
+    const request = getRequest();
+    if (await isRateLimited(request)) {
       throw new Error("Muitas tentativas. Aguarde alguns minutos.");
     }
 
