@@ -31,7 +31,7 @@ const NAV = [
   { to: "/nasa", label: "🌎 NASA", icon: Wrench, desc: "Satélites em tempo real", premium: false },
   { to: "/mais-sbt", label: "+SBT 📺", icon: Tv, desc: "Assista +SBT grátis" },
   { to: "/iptv", label: "IPTV", icon: Tv, desc: "Pluto TV grátis" },
-  { to: "/player", label: "IPTV 1.0 🎬", icon: Tv, desc: "Canais e mídia premium", premium: true },
+  { to: "/player", label: "IPTV 1.0 🎬", icon: Tv, desc: "Canais e mídia grátis", premium: false },
   { to: "/blog", label: "Blog", icon: BookOpen, desc: "Guias e novidades" },
   { to: "/precos", label: "Preços", icon: Tag, desc: "Planos e benefícios" },
 ] as const;
