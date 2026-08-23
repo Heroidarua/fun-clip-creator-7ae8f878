@@ -749,9 +749,15 @@ const ComicsSection = () => {
                       <p className="font-inter text-[8px] sm:text-xs text-muted-foreground uppercase tracking-[0.2em] mt-1 sm:mt-2 font-bold opacity-70 truncate">{duelFighters[0].biography?.publisher}</p>
                     </div>
 
-                    <div className="w-full flex flex-col items-center bg-primary/5 py-2 sm:py-4 rounded-lg sm:rounded-xl border border-primary/10">
-                      <span className="font-pixel text-[6px] sm:text-[10px] text-muted-foreground mb-0.5">TOTAL POWER</span>
-                      <span className="font-pixel text-lg sm:text-4xl text-primary animate-in fade-in slide-in-from-left duration-1000 delay-1000">
+                    <div className={`w-full flex flex-col items-center py-2 sm:py-4 rounded-lg sm:rounded-xl border ${
+                      clipTheme === 'comic' ? 'bg-black/5 border-black/20' :
+                      clipTheme === 'modern' ? 'bg-white/5 border-white/10' :
+                      'bg-primary/5 border-primary/10'
+                    }`}>
+                      <span className="font-pixel text-[6px] sm:text-[10px] text-muted-foreground mb-0.5 uppercase">Power Rank</span>
+                      <span className={`font-pixel text-lg sm:text-4xl animate-in fade-in slide-in-from-left duration-1000 delay-1000 ${
+                        clipTheme === 'comic' ? 'text-black' : 'text-primary'
+                      }`}>
                         {calculateTotalStats(duelFighters[0])}
                       </span>
                     </div>
