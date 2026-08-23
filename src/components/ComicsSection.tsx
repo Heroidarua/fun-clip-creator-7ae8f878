@@ -298,11 +298,17 @@ const ComicsSection = () => {
       if (watermark && !showWatermark) (watermark as HTMLElement).style.display = 'none';
 
       const options = {
-        quality: 0.95,
-        backgroundColor: '#000',
+        quality: 1,
+        backgroundColor: clipTheme === 'comic' ? '#fefce8' : 
+                         clipTheme === 'modern' ? '#0a0a0a' : 
+                         clipTheme === 'cyberpunk' ? '#000000' : '#ffffff',
         pixelRatio: clipScale,
         style: {
           borderRadius: '0px',
+          backgroundColor: clipTheme === 'comic' ? '#fefce8' : 
+                         clipTheme === 'modern' ? '#0a0a0a' : 
+                         clipTheme === 'cyberpunk' ? '#000000' : '#ffffff',
+          color: clipTheme === 'comic' ? '#000000' : '',
         },
       };
 
@@ -904,11 +910,11 @@ const ComicsSection = () => {
 
                 {/* Watermark */}
                 <div className="clip-watermark absolute bottom-2 left-1/2 -translate-x-1/2 opacity-60 z-0 pointer-events-none">
-                  <span className="font-pixel text-[12px] sm:text-[18px] text-primary/40 font-bold uppercase tracking-[0.3em]">
+                  <span className={`font-pixel text-[12px] sm:text-[18px] font-bold uppercase tracking-[0.3em] ${clipTheme === 'comic' ? 'text-black/40' : 'text-primary/40'}`}>
                     sos01.com.br
                   </span>
                 </div>
-                <div className="clip-config-section mt-6 p-4 bg-primary/10 border border-primary/20 rounded-2xl w-full max-w-lg mx-auto">
+                <div className={`clip-config-section mt-6 p-4 border rounded-2xl w-full max-w-lg mx-auto ${clipTheme === 'comic' ? 'bg-black/5 border-black/20' : 'bg-primary/10 border-primary/20'}`}>
                   <h4 className="font-pixel text-[10px] text-primary mb-3 text-center uppercase tracking-wider">CONFIGURAÇÕES DO FUN-CLIP</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="space-y-2 text-center">
