@@ -9,9 +9,7 @@ export const listEnhancementJobs = createServerFn({ method: "POST" })
     const adminPassword = process.env['ADMIN_PASSWORD'];
 
     // Rate limiting check
-    // Nota: Em server functions, o objeto Request não é passado diretamente.
-    // Usamos um objeto simulado para o rate limiter in-memory por enquanto.
-    if (isRateLimited({ headers: new Headers() } as any)) {
+    if (await isRateLimited({ headers: new Headers() } as any)) {
       throw new Error("Muitas tentativas. Aguarde alguns minutos.");
     }
 
