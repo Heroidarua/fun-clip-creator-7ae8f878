@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { Search, ShieldCheck, X, Swords, Trophy, RotateCcw, Download, Loader2 } from "lucide-react";
+import { Search, ShieldCheck, X, Swords, Trophy, RotateCcw, Download, Loader2, Share2 } from "lucide-react";
 import ScrollReveal from "./ScrollReveal";
-import { toPng } from 'html-to-image';
+import { toPng, toJpeg } from 'html-to-image';
 import download from 'downloadjs';
+import { toast } from "sonner";
 
 const API_URL = "https://cdn.jsdelivr.net/gh/akabab/superhero-api@0.3.0/api/all.json";
 const PAGE_SIZE = 24;
@@ -206,36 +207,84 @@ const ComicsSection = () => {
   const [duelFighters, setDuelFighters] = useState<[Hero | null, Hero | null]>([null, null]);
   const [showDuelResult, setShowDuelResult] = useState(false);
   const [isGeneratingClip, setIsGeneratingClip] = useState(false);
+  const [clipFormat, setClipFormat] = useState<"png" | "jpg">("png");
+  const [clipScale, setClipScale] = useState(2);
 
-  const handleDownloadClip = async () => {
+  const generateClipData = async () => {
     const element = document.getElementById('duel-combat-result');
-    if (!element) return;
+    if (!element) return null;
 
     try {
       setIsGeneratingClip(true);
+      
       // Ocultar os botões temporariamente para a captura
       const actionButtons = element.querySelector('.clip-action-buttons');
       const closeButton = element.querySelector('.clip-close-button');
+      const configSection = element.querySelector('.clip-config-section');
+      
       if (actionButtons) (actionButtons as HTMLElement).style.display = 'none';
       if (closeButton) (closeButton as HTMLElement).style.display = 'none';
+      if (configSection) (configSection as HTMLElement).style.display = 'none';
 
-      const dataUrl = await toPng(element, {
+      const options = {
         quality: 0.95,
         backgroundColor: '#000',
+        pixelRatio: clipScale,
         style: {
           borderRadius: '0px',
         },
-      });
+      };
 
-      // Restaurar os botões
+      const dataUrl = clipFormat === 'png' 
+        ? await toPng(element, options) 
+        : await toJpeg(element, options);
+
+      // Restaurar os elementos
       if (actionButtons) (actionButtons as HTMLElement).style.display = 'flex';
       if (closeButton) (closeButton as HTMLElement).style.display = 'flex';
+      if (configSection) (configSection as HTMLElement).style.display = 'block';
 
-      download(dataUrl, `fun-clip-duelo-${duelFighters[0]?.name}-vs-${duelFighters[1]?.name}.png`);
+      return dataUrl;
     } catch (err) {
       console.error('Erro ao gerar clip:', err);
+      toast.error("Erro ao gerar o fun-clip");
+      return null;
     } finally {
       setIsGeneratingClip(false);
+    }
+  };
+
+  const handleDownloadClip = async () => {
+    const dataUrl = await generateClipData();
+    if (dataUrl) {
+      download(dataUrl, `fun-clip-duelo-${duelFighters[0]?.name}-vs-${duelFighters[1]?.name}.${clipFormat}`);
+      toast.success("Fun-clip baixado com sucesso!");
+    }
+  };
+
+  const handleShareClip = async () => {
+    const dataUrl = await generateClipData();
+    if (!dataUrl) return;
+
+    try {
+      const response = await fetch(dataUrl);
+      const blob = await response.blob();
+      const file = new File([blob], `fun-clip.${clipFormat}`, { type: `image/${clipFormat === 'png' ? 'png' : 'jpeg'}` });
+
+      if (navigator.share && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: 'Fun-Clip Duelo SOS01',
+          text: `Confira o resultado desse duelo épico entre ${duelFighters[0]?.name} e ${duelFighters[1]?.name} no SOS01!`,
+        });
+      } else {
+        // Fallback para download se não suportar partilha de ficheiros
+        download(dataUrl, `fun-clip-duelo-${duelFighters[0]?.name}-vs-${duelFighters[1]?.name}.${clipFormat}`);
+        toast.info("Compartilhamento não disponível, download iniciado.");
+      }
+    } catch (err) {
+      console.error('Erro ao compartilhar:', err);
+      toast.error("Erro ao compartilhar o fun-clip");
     }
   };
 
@@ -708,6 +757,41 @@ const ComicsSection = () => {
                     : "EMPATE LENDÁRIO! Em um confronto onde cada grama de força foi igualada, nenhum dos combatentes cedeu. A batalha termina sem um vencedor definido, mas com o respeito mútuo garantido."
                   }
                 </p>
+                {/* Configuração do Clip */}
+                <div className="clip-config-section mt-6 p-4 bg-primary/10 border border-primary/20 rounded-2xl w-full max-w-lg mx-auto">
+                  <h4 className="font-pixel text-[10px] text-primary mb-3 text-center uppercase tracking-wider">CONFIGURAÇÕES DO FUN-CLIP</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2 text-center">
+                      <span className="font-pixel text-[8px] text-muted-foreground uppercase">Formato</span>
+                      <div className="flex justify-center gap-2">
+                        {['png', 'jpg'].map((fmt) => (
+                          <button
+                            key={fmt}
+                            onClick={() => setClipFormat(fmt as any)}
+                            className={`px-3 py-1 rounded-md font-pixel text-[9px] transition-all ${clipFormat === fmt ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
+                          >
+                            {fmt.toUpperCase()}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="space-y-2 text-center">
+                      <span className="font-pixel text-[8px] text-muted-foreground uppercase">Resolução</span>
+                      <div className="flex justify-center gap-2">
+                        {[1, 2, 3].map((s) => (
+                          <button
+                            key={s}
+                            onClick={() => setClipScale(s)}
+                            className={`px-3 py-1 rounded-md font-pixel text-[9px] transition-all ${clipScale === s ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
+                          >
+                            {s}X
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="clip-action-buttons mt-6 sm:mt-8 flex flex-wrap justify-center gap-3 sm:gap-4">
                   <button
                     onClick={handleDownloadClip}
@@ -715,7 +799,15 @@ const ComicsSection = () => {
                     className="px-6 sm:px-10 py-3 sm:py-4 bg-accent text-accent-foreground font-pixel text-[10px] sm:text-xs rounded-xl border-b-4 border-accent-foreground/20 hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(var(--accent),0.3)] flex items-center gap-2"
                   >
                     {isGeneratingClip ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                    GERAR FUN-CLIP
+                    BAIXAR CLIP
+                  </button>
+                  <button
+                    onClick={handleShareClip}
+                    disabled={isGeneratingClip}
+                    className="px-6 sm:px-10 py-3 sm:py-4 bg-retro-magenta text-white font-pixel text-[10px] sm:text-xs rounded-xl border-b-4 border-black/20 hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(var(--retro-magenta),0.3)] flex items-center gap-2"
+                  >
+                    {isGeneratingClip ? <Loader2 className="w-4 h-4 animate-spin" /> : <Share2 className="w-4 h-4" />}
+                    COMPARTILHAR
                   </button>
                   <button
                     onClick={resetDuel}
