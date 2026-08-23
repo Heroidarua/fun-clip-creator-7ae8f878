@@ -225,6 +225,7 @@ const ComicsSection = () => {
   const [watermarkPos, setWatermarkPos] = useState<{x: number, y: number}>({ x: 50, y: 90 });
   const [watermarkOpacity, setWatermarkOpacity] = useState(60);
   const [watermarkScale, setWatermarkScale] = useState(1);
+  const [watermarkRotation, setWatermarkRotation] = useState(0);
   const [fighterPositions, setFighterPositions] = useState<[{x: number, y: number}, {x: number, y: number}]>([{x: 0, y: 0}, {x: 0, y: 0}]);
   const [fighterScales, setFighterScales] = useState<[number, number]>([1, 1]);
   const [isDraggingWatermark, setIsDraggingWatermark] = useState(false);
@@ -396,6 +397,7 @@ const ComicsSection = () => {
     setFighterPositions([{x: 0, y: 0}, {x: 0, y: 0}]);
     setWatermarkPos({ x: 50, y: 90 });
     setWatermarkScale(1);
+    setWatermarkRotation(0);
     setFighterScales([1, 1]);
   };
 
@@ -405,6 +407,7 @@ const ComicsSection = () => {
     setFighterPositions([{x: 0, y: 0}, {x: 0, y: 0}]);
     setWatermarkPos({ x: 50, y: 90 });
     setWatermarkScale(1);
+    setWatermarkRotation(0);
     setFighterScales([1, 1]);
   };
 
@@ -973,7 +976,7 @@ const ComicsSection = () => {
                     opacity: watermarkOpacity / 100,
                     left: `${watermarkPos.x}%`,
                     top: `${watermarkPos.y}%`,
-                    transform: `translate(-50%, -50%) scale(${watermarkScale})`,
+                    transform: `translate(-50%, -50%) scale(${watermarkScale}) rotate(${watermarkRotation}deg)`,
                   }}
                 >
                   <span className={`font-pixel text-[14px] sm:text-[24px] font-bold uppercase tracking-[0.4em] drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`}>
@@ -1160,6 +1163,18 @@ const ComicsSection = () => {
                                   step="0.1"
                                   value={watermarkScale}
                                   onChange={(e) => setWatermarkScale(Number(e.target.value))}
+                                  className="w-full accent-primary h-1.5"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <span className="font-pixel text-[7px] text-muted-foreground uppercase">Rotação Marca: {watermarkRotation}°</span>
+                                <input 
+                                  type="range" 
+                                  min="-180" 
+                                  max="180" 
+                                  step="1"
+                                  value={watermarkRotation}
+                                  onChange={(e) => setWatermarkRotation(Number(e.target.value))}
                                   className="w-full accent-primary h-1.5"
                                 />
                               </div>
