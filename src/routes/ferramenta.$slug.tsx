@@ -93,11 +93,6 @@ function ToolPage() {
                 <h1 className="font-pixel text-base sm:text-lg" style={{ color: `hsl(${tool.color})` }}>
                   {(seo?.h1 ?? tool.name).toUpperCase()}
                 </h1>
-                {tool.premium && (
-                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-amber-400 to-pink-500 text-white">
-                    <Sparkles className="w-3 h-3" /> PREMIUM
-                  </span>
-                )}
               </div>
               <p className="text-xs text-muted-foreground mt-1">{seo?.description ?? tool.description}</p>
             </div>

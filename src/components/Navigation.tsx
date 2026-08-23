@@ -23,7 +23,7 @@ const ITEMS = [
   { to: "/ferramenta/ceu", label: "Céu", icon: Stars, desc: "Estelar" },
   { to: "/mais-sbt", label: "+SBT", icon: Tv, desc: "TV Ao Vivo" },
   { to: "/iptv", label: "PLUTO TV", icon: Radio, desc: "Canais" },
-  { to: "/player", label: "IPTV 1.0", icon: PlayCircle, desc: "Premium" },
+  { to: "/player", label: "IPTV 1.0", icon: PlayCircle, desc: "Grátis" },
   { to: "/blog", label: "Blog", icon: BookOpen, desc: "Notícias" },
   
 ] as const;

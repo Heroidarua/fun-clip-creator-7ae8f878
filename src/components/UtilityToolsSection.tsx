@@ -212,7 +212,7 @@ const UtilityToolsSection = () => {
     },
   ];
 
-  // Ferramentas premium exibidas na mesma grade/categorias das ferramentas úteis.
+  // Ferramentas exibidas na mesma grade/categorias.
   const PREMIUM_CATEGORY: Record<string, Tool["category"]> = {
     ocr: "ia",
     tts: "ia",
@@ -278,7 +278,7 @@ const UtilityToolsSection = () => {
                 <Wrench className="w-6 h-6 text-primary-foreground" />
               </div>
               <h2 className="font-pixel text-lg sm:text-xl text-primary neon-text">
-                FERRAMENTAS ÚTEIS
+                FERRAMENTAS
               </h2>
             </div>
             <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
@@ -345,7 +345,7 @@ const UtilityToolsSection = () => {
                   </div>
                   {tool.featured && (
                     <span className="font-pixel inline-flex items-center gap-1 rounded-sm border border-foreground/20 bg-gradient-to-r from-purple-500 to-pink-500 px-2 py-1 text-[9px] text-white shadow-cartridge">
-                      <Sparkles className="w-3 h-3" /> IA
+                      IA
                     </span>
                   )}
                 </div>

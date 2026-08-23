@@ -191,7 +191,7 @@ export const ALL_TOOLS: RegisteredTool[] = [
     icon: t.icon,
     color: t.color,
     component: t.component,
-    premium: true,
+    premium: false,
     status: t.status,
   })),
 ];
