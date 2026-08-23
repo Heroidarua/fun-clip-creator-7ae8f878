@@ -164,7 +164,6 @@ export default function Admin() {
       toast({ title: "Login realizado com sucesso!" });
     } catch {
       toast({ title: "Senha incorreta", variant: "destructive" });
-      generateCaptcha();
     }
     setLoading(false);
   };
