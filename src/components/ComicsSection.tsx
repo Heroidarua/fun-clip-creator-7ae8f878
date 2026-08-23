@@ -625,10 +625,23 @@ const ComicsSection = () => {
 
       {/* Duel Result Modal */}
       {showDuelResult && duelFighters[0] && duelFighters[1] && (
-        <div className="fixed inset-0 z-[1100] flex items-start sm:items-center justify-center p-0 sm:p-4 bg-black/95 backdrop-blur-md overflow-y-auto">
-          <div id="duel-combat-result" className="relative w-full max-w-5xl bg-background sm:border-4 border-primary/50 sm:rounded-3xl p-4 sm:p-12 shadow-[0_0_80px_rgba(var(--primary),0.2)] animate-in zoom-in-95 duration-300 m-0 sm:my-8">
+        <div 
+          className="fixed inset-0 z-[1100] flex items-start sm:items-center justify-center p-0 sm:p-4 bg-black/95 backdrop-blur-md overflow-y-auto"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="duel-modal-title"
+        >
+          <div 
+            id="duel-combat-result" 
+            ref={modalRef}
+            className={`relative w-full max-w-5xl bg-background sm:border-4 border-primary/50 sm:rounded-3xl p-4 sm:p-12 shadow-[0_0_80px_rgba(var(--primary),0.2)] animate-in zoom-in-95 duration-300 m-0 sm:my-8 transition-all duration-500 ${
+              clipFit === 'cover' ? 'aspect-video flex flex-col justify-center' : 
+              clipFit === 'zoom' ? 'scale-110' : ''
+            }`}
+          >
             <button
               onClick={() => setShowDuelResult(false)}
+              aria-label="Fechar resultado do duelo"
               className="clip-close-button absolute top-4 right-4 sm:top-6 sm:right-6 text-muted-foreground hover:text-destructive z-50 bg-background/80 p-2 rounded-full border border-primary/20 transition-all hover:rotate-90 shadow-lg"
             >
               <X className="w-6 h-6" />
