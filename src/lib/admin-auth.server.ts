@@ -6,8 +6,8 @@
  */
 
 const attempts = new Map<string, { count: number; resetAt: number }>();
-const WINDOW_MS = 60_000;
-const MAX_ATTEMPTS = 10;
+const WINDOW_MS = 60_000 * 5; // 5 minutos de janela
+const MAX_ATTEMPTS = 5; // Máximo de 5 tentativas por janela
 
 export function clientIp(request: Request): string {
   return (
@@ -17,16 +17,25 @@ export function clientIp(request: Request): string {
   );
 }
 
-export function isRateLimited(request: Request): boolean {
-  const ip = clientIp(request);
+export function isRateLimited(request: Request | { headers: Headers }): boolean {
+  const ip = clientIp(request instanceof Request ? request : (request as any));
   const now = Date.now();
   const entry = attempts.get(ip);
+  
   if (!entry || now > entry.resetAt) {
     attempts.set(ip, { count: 1, resetAt: now + WINDOW_MS });
     return false;
   }
+  
   entry.count += 1;
-  return entry.count > MAX_ATTEMPTS;
+  const limited = entry.count > MAX_ATTEMPTS;
+  
+  // Se já atingiu o limite, estende o bloqueio
+  if (limited) {
+    entry.resetAt = now + WINDOW_MS;
+  }
+  
+  return limited;
 }
 
 export function timingSafeEqual(a: string, b: string): boolean {
