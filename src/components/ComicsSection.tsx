@@ -445,46 +445,58 @@ const ComicsSection = () => {
 
       {/* Duel Selection Bar */}
       {duelMode && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[500] w-[95%] max-w-lg bg-background/95 backdrop-blur-md border-2 border-primary/40 rounded-xl shadow-2xl p-4 animate-in fade-in slide-in-from-bottom-10">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex gap-2 flex-1">
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[500] w-[95%] max-w-xl bg-background/95 backdrop-blur-md border-2 border-primary/40 rounded-2xl shadow-2xl p-4 animate-in fade-in slide-in-from-bottom-10 ring-1 ring-primary/20">
+          <div className="flex items-center gap-4 sm:gap-6">
+            <div className="flex gap-3 flex-1 items-center justify-center">
               {[0, 1].map((idx) => (
-                <div key={idx} className="flex-1 aspect-[3/4] max-h-24 bg-muted border-2 border-dashed border-primary/20 rounded-lg overflow-hidden flex items-center justify-center relative">
-                  {duelFighters[idx] ? (
-                    <>
-                      <img 
-                        src={duelFighters[idx]?.images?.sm} 
-                        alt={duelFighters[idx]?.name}
-                        className="w-full h-full object-cover"
-                      />
-                      <button 
-                        onClick={() => handleSelectForDuel(duelFighters[idx]!)}
-                        className="absolute top-0 right-0 p-1 bg-black/60 text-white hover:text-destructive"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </>
-                  ) : (
-                    <span className="font-pixel text-[8px] text-muted-foreground">?</span>
+                <div key={idx} className="flex-1 flex flex-col items-center gap-2">
+                  <div className="w-full aspect-[3/4] max-h-24 sm:max-h-32 bg-muted border-2 border-dashed border-primary/30 rounded-xl overflow-hidden flex items-center justify-center relative group shadow-inner">
+                    {duelFighters[idx] ? (
+                      <>
+                        <img 
+                          src={duelFighters[idx]?.images?.sm} 
+                          alt={duelFighters[idx]?.name}
+                          className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                        />
+                        <button 
+                          onClick={() => handleSelectForDuel(duelFighters[idx]!)}
+                          className="absolute top-1 right-1 p-1.5 bg-destructive/80 text-white rounded-full hover:bg-destructive transition-colors shadow-lg"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </>
+                    ) : (
+                      <div className="flex flex-col items-center gap-1 opacity-40">
+                        <Swords className="w-6 h-6 text-primary" />
+                        <span className="font-pixel text-[6px] sm:text-[8px] text-muted-foreground uppercase">Herói {idx + 1}</span>
+                      </div>
+                    )}
+                  </div>
+                  {duelFighters[idx] && (
+                    <span className="font-pixel text-[7px] sm:text-[9px] text-primary truncate w-full text-center">
+                      {duelFighters[idx]?.name}
+                    </span>
                   )}
                 </div>
               ))}
+              <div className="font-pixel text-xs text-primary/40 pb-4 shrink-0">VS</div>
             </div>
             
             <div className="flex flex-col gap-2 shrink-0">
               <button
                 disabled={!duelFighters[0] || !duelFighters[1]}
                 onClick={() => setShowDuelResult(true)}
-                className="px-4 py-3 bg-primary text-primary-foreground font-pixel text-[10px] rounded border-2 border-primary hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="px-6 py-4 bg-primary text-primary-foreground font-pixel text-[10px] sm:text-xs rounded-xl border-b-4 border-primary-foreground/20 hover:translate-y-[2px] hover:border-b-2 active:translate-y-[4px] active:border-b-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:translate-y-0 disabled:border-b-4 transition-all shadow-lg flex items-center justify-center gap-2"
               >
-                DUELAR!
+                <Trophy className="w-4 h-4" />
+                LUTAR!
               </button>
               <button
                 onClick={resetDuel}
-                className="px-4 py-1.5 bg-background text-muted-foreground font-pixel text-[8px] rounded border border-muted-foreground/30 hover:border-destructive hover:text-destructive transition-all flex items-center justify-center gap-1"
+                className="px-4 py-1.5 bg-background text-muted-foreground font-pixel text-[8px] rounded-lg border border-muted-foreground/30 hover:border-destructive hover:text-destructive transition-all flex items-center justify-center gap-1 opacity-70 hover:opacity-100"
               >
                 <RotateCcw className="w-3 h-3" />
-                LIMPAR
+                RESETAR
               </button>
             </div>
           </div>
