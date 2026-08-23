@@ -207,6 +207,8 @@ const ComicsSection = () => {
   const [duelFighters, setDuelFighters] = useState<[Hero | null, Hero | null]>([null, null]);
   const [showDuelResult, setShowDuelResult] = useState(false);
   const [isGeneratingClip, setIsGeneratingClip] = useState(false);
+  const [clipFormat, setClipFormat] = useState<"png" | "jpg">("png");
+  const [clipScale, setClipScale] = useState(2);
 
   const handleDownloadClip = async () => {
     const element = document.getElementById('duel-combat-result');
