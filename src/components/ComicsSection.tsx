@@ -1205,9 +1205,9 @@ const ComicsSection = () => {
                   <button
                     onClick={() => {
                       setDuelMode(true);
-                      handleSelectForDuel(selected);
+                      handleSelectForDuel(selected!);
                       setSelected(null);
-                      toast.success(`${selected.name} selecionado para o duelo!`);
+                      toast.success(`${selected?.name} selecionado para o duelo!`);
                     }}
                     className="px-4 py-2 bg-primary text-primary-foreground font-pixel text-[8px] sm:text-[10px] rounded border-b-2 border-primary-foreground/20 hover:translate-y-[1px] hover:border-b-0 transition-all flex items-center gap-2"
                   >
