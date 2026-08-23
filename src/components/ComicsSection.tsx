@@ -221,6 +221,9 @@ const ComicsSection = () => {
   const [showGuides, setShowGuides] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [showWatermark, setShowWatermark] = useState(true);
+  const [watermarkText, setWatermarkText] = useState("sos01.com.br");
+  const [watermarkPos, setWatermarkPos] = useState<"bottom" | "top" | "center">("bottom");
+  const [watermarkOpacity, setWatermarkOpacity] = useState(60);
   const [fighterPositions, setFighterPositions] = useState<[{x: number, y: number}, {x: number, y: number}]>([{x: 0, y: 0}, {x: 0, y: 0}]);
   const modalRef = useRef<HTMLDivElement>(null);
 
