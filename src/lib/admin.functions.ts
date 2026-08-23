@@ -43,15 +43,7 @@ export const deleteEnhancementJob = createServerFn({ method: "POST" })
     const adminPassword = process.env['ADMIN_PASSWORD'];
 
     // Rate limiting check
-    let request: any = null;
-    try {
-      const { getWebRequest } = await import("@tanstack/react-start/server");
-      request = getWebRequest();
-    } catch (e) {
-      console.warn("Could not get request in server function");
-    }
-
-    if (request && isRateLimited(request)) {
+    if (isRateLimited({ headers: new Headers() })) {
       throw new Error("Muitas tentativas. Aguarde alguns minutos.");
     }
 
