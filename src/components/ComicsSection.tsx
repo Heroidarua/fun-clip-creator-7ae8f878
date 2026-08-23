@@ -966,6 +966,7 @@ const ComicsSection = () => {
                   }
                 </p>
 
+
                 {/* Watermark inside combat area */}
                 <div 
                   onMouseDown={handleWatermarkMouseDown}
