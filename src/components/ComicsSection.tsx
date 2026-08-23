@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Search, ShieldCheck, X } from "lucide-react";
+import { Search, ShieldCheck, X, Swords, Trophy, RotateCcw } from "lucide-react";
 import ScrollReveal from "./ScrollReveal";
 
 const API_URL = "https://cdn.jsdelivr.net/gh/akabab/superhero-api@0.3.0/api/all.json";
@@ -200,6 +200,33 @@ const ComicsSection = () => {
   const [alignment, setAlignment] = useState("all");
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [selected, setSelected] = useState<Hero | null>(null);
+  const [duelMode, setDuelMode] = useState(false);
+  const [duelFighters, setDuelFighters] = useState<[Hero | null, Hero | null]>([null, null]);
+  const [showDuelResult, setShowDuelResult] = useState(false);
+
+  const calculateTotalStats = (hero: Hero) => {
+    return Object.values(hero.powerstats || {}).reduce((acc, curr) => acc + (Number(curr) || 0), 0);
+  };
+
+  const handleSelectForDuel = (hero: Hero) => {
+    setDuelFighters(prev => {
+      // Se o herói já está selecionado, remove ele
+      if (prev[0]?.id === hero.id) return [null, prev[1]];
+      if (prev[1]?.id === hero.id) return [prev[0], null];
+      
+      // Caso contrário, adiciona no primeiro espaço vazio
+      if (!prev[0]) return [hero, prev[1]];
+      if (!prev[1]) return [prev[0], hero];
+      
+      // Se ambos estão ocupados, substitui o segundo
+      return [prev[0], hero];
+    });
+  };
+
+  const resetDuel = () => {
+    setDuelFighters([null, null]);
+    setShowDuelResult(false);
+  };
 
   useEffect(() => {
     let active = true;
@@ -309,6 +336,21 @@ const ComicsSection = () => {
                 </button>
               ))}
             </div>
+
+            <button
+              onClick={() => {
+                setDuelMode(!duelMode);
+                if (!duelMode) resetDuel();
+              }}
+              className={`flex items-center gap-2 px-4 py-2 font-pixel text-[8px] sm:text-[10px] border-2 rounded transition-all ${
+                duelMode
+                  ? "bg-primary text-primary-foreground border-primary animate-pulse"
+                  : "bg-background text-primary border-primary/30 hover:border-primary"
+              }`}
+            >
+              <Swords className="w-4 h-4" />
+              {duelMode ? "MODO DUELO ATIVO" : "MODO DUELO"}
+            </button>
           </div>
         </ScrollReveal>
 
@@ -338,8 +380,18 @@ const ComicsSection = () => {
                 {filtered.slice(0, visible).map((hero) => (
                   <button
                     key={hero.id}
-                    onClick={() => setSelected(hero)}
-                    className="group text-left bg-background border-2 border-primary/30 hover:border-primary rounded-lg overflow-hidden transition-all duration-300 hover:-translate-y-1"
+                    onClick={() => {
+                      if (duelMode) {
+                        handleSelectForDuel(hero);
+                      } else {
+                        setSelected(hero);
+                      }
+                    }}
+                    className={`group text-left bg-background border-2 rounded-lg overflow-hidden transition-all duration-300 hover:-translate-y-1 ${
+                      duelMode 
+                        ? (duelFighters.some(f => f?.id === hero.id) ? "border-primary scale-[0.98] ring-2 ring-primary/50 ring-offset-2 ring-offset-background" : "border-primary/20 grayscale-[0.5] hover:grayscale-0")
+                        : "border-primary/30 hover:border-primary"
+                    }`}
                   >
                     <img
                       src={hero.images?.sm ?? FALLBACK_IMG}
@@ -390,6 +442,172 @@ const ComicsSection = () => {
           </>
         )}
       </div>
+
+      {/* Duel Selection Bar */}
+      {duelMode && (
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[500] w-[95%] max-w-lg bg-background/95 backdrop-blur-md border-2 border-primary/40 rounded-xl shadow-2xl p-4 animate-in fade-in slide-in-from-bottom-10">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex gap-2 flex-1">
+              {[0, 1].map((idx) => (
+                <div key={idx} className="flex-1 aspect-[3/4] max-h-24 bg-muted border-2 border-dashed border-primary/20 rounded-lg overflow-hidden flex items-center justify-center relative">
+                  {duelFighters[idx] ? (
+                    <>
+                      <img 
+                        src={duelFighters[idx]?.images?.sm} 
+                        alt={duelFighters[idx]?.name}
+                        className="w-full h-full object-cover"
+                      />
+                      <button 
+                        onClick={() => handleSelectForDuel(duelFighters[idx]!)}
+                        className="absolute top-0 right-0 p-1 bg-black/60 text-white hover:text-destructive"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </>
+                  ) : (
+                    <span className="font-pixel text-[8px] text-muted-foreground">?</span>
+                  )}
+                </div>
+              ))}
+            </div>
+            
+            <div className="flex flex-col gap-2 shrink-0">
+              <button
+                disabled={!duelFighters[0] || !duelFighters[1]}
+                onClick={() => setShowDuelResult(true)}
+                className="px-4 py-3 bg-primary text-primary-foreground font-pixel text-[10px] rounded border-2 border-primary hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              >
+                DUELAR!
+              </button>
+              <button
+                onClick={resetDuel}
+                className="px-4 py-1.5 bg-background text-muted-foreground font-pixel text-[8px] rounded border border-muted-foreground/30 hover:border-destructive hover:text-destructive transition-all flex items-center justify-center gap-1"
+              >
+                <RotateCcw className="w-3 h-3" />
+                LIMPAR
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Duel Result Modal */}
+      {showDuelResult && duelFighters[0] && duelFighters[1] && (
+        <div className="fixed inset-0 z-[1100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+          <div className="relative w-full max-w-4xl max-h-[95vh] overflow-y-auto bg-background border-4 border-primary/50 rounded-2xl p-6 sm:p-10 shadow-[0_0_50px_rgba(var(--primary),0.3)]">
+            <button
+              onClick={() => setShowDuelResult(false)}
+              className="absolute top-4 right-4 text-muted-foreground hover:text-destructive z-10 bg-background/50 p-2 rounded-full"
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            <div className="flex flex-col items-center gap-8">
+              <div className="flex items-center gap-2 px-6 py-2 bg-primary/20 border-2 border-primary rounded-full animate-bounce">
+                <Trophy className="w-6 h-6 text-primary" />
+                <h2 className="font-pixel text-lg sm:text-2xl text-primary neon-text">
+                  DUELO ÉPICO!
+                </h2>
+                <Trophy className="w-6 h-6 text-primary" />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-8 w-full items-start">
+                {/* Fighter 1 */}
+                <div className={`flex flex-col items-center gap-4 transition-all duration-700 ${
+                  calculateTotalStats(duelFighters[0]) > calculateTotalStats(duelFighters[1]) 
+                    ? "scale-105" 
+                    : "opacity-70 grayscale-[0.5]"
+                }`}>
+                  <div className={`relative rounded-xl overflow-hidden border-4 ${
+                    calculateTotalStats(duelFighters[0]) > calculateTotalStats(duelFighters[1]) ? "border-primary shadow-[0_0_30px_rgba(var(--primary),0.5)]" : "border-muted-foreground/30"
+                  }`}>
+                    <img src={duelFighters[0].images?.lg} alt={duelFighters[0].name} className="w-48 h-64 sm:w-64 sm:h-80 object-cover" />
+                    {calculateTotalStats(duelFighters[0]) > calculateTotalStats(duelFighters[1]) && (
+                      <div className="absolute top-0 inset-x-0 bg-primary py-1 text-center font-pixel text-[10px] text-primary-foreground">VENCEDOR</div>
+                    )}
+                  </div>
+                  <h3 className="font-pixel text-sm sm:text-lg text-primary text-center">{duelFighters[0].name}</h3>
+                  <div className="w-full space-y-2">
+                    {Object.entries(duelFighters[0].powerstats).map(([key, val]) => (
+                      <div key={key} className="flex items-center justify-between text-[10px] font-inter">
+                        <span className="text-muted-foreground">{STAT_LABELS[key]}</span>
+                        <div className="flex-1 mx-2 h-1.5 bg-muted rounded-full overflow-hidden">
+                          <div className="h-full bg-primary" style={{ width: `${val}%` }} />
+                        </div>
+                        <span className={Number(val) > Number(duelFighters[1]!.powerstats[key]) ? "text-primary font-bold" : "text-foreground"}>
+                          {val}
+                        </span>
+                      </div>
+                    ))}
+                    <div className="pt-2 border-t border-primary/20 flex justify-between items-center">
+                      <span className="font-pixel text-[8px] text-muted-foreground">TOTAL</span>
+                      <span className="font-pixel text-lg text-primary">{calculateTotalStats(duelFighters[0])}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* VS */}
+                <div className="flex flex-col items-center justify-center py-8">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 bg-primary/10 border-4 border-primary/40 rounded-full flex items-center justify-center rotate-12">
+                    <span className="font-pixel text-2xl sm:text-4xl text-primary animate-pulse">VS</span>
+                  </div>
+                </div>
+
+                {/* Fighter 2 */}
+                <div className={`flex flex-col items-center gap-4 transition-all duration-700 ${
+                  calculateTotalStats(duelFighters[1]) > calculateTotalStats(duelFighters[0]) 
+                    ? "scale-105" 
+                    : "opacity-70 grayscale-[0.5]"
+                }`}>
+                  <div className={`relative rounded-xl overflow-hidden border-4 ${
+                    calculateTotalStats(duelFighters[1]) > calculateTotalStats(duelFighters[0]) ? "border-primary shadow-[0_0_30px_rgba(var(--primary),0.5)]" : "border-muted-foreground/30"
+                  }`}>
+                    <img src={duelFighters[1].images?.lg} alt={duelFighters[1].name} className="w-48 h-64 sm:w-64 sm:h-80 object-cover" />
+                    {calculateTotalStats(duelFighters[1]) > calculateTotalStats(duelFighters[0]) && (
+                      <div className="absolute top-0 inset-x-0 bg-primary py-1 text-center font-pixel text-[10px] text-primary-foreground">VENCEDOR</div>
+                    )}
+                  </div>
+                  <h3 className="font-pixel text-sm sm:text-lg text-primary text-center">{duelFighters[1].name}</h3>
+                  <div className="w-full space-y-2">
+                    {Object.entries(duelFighters[1].powerstats).map(([key, val]) => (
+                      <div key={key} className="flex items-center justify-between text-[10px] font-inter">
+                        <span className={Number(val) > Number(duelFighters[0]!.powerstats[key]) ? "text-primary font-bold" : "text-foreground"}>
+                          {val}
+                        </span>
+                        <div className="flex-1 mx-2 h-1.5 bg-muted rounded-full overflow-hidden">
+                          <div className="h-full bg-primary" style={{ width: `${val}%` }} />
+                        </div>
+                        <span className="text-muted-foreground text-right">{STAT_LABELS[key]}</span>
+                      </div>
+                    ))}
+                    <div className="pt-2 border-t border-primary/20 flex justify-between items-center">
+                      <span className="font-pixel text-lg text-primary">{calculateTotalStats(duelFighters[1])}</span>
+                      <span className="font-pixel text-[8px] text-muted-foreground">TOTAL</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 text-center bg-primary/10 border-2 border-primary/30 p-4 rounded-xl max-w-lg w-full">
+                <p className="font-inter text-sm text-foreground/90 italic">
+                  {calculateTotalStats(duelFighters[0]) > calculateTotalStats(duelFighters[1]) 
+                    ? `Com uma pontuação total de ${calculateTotalStats(duelFighters[0])}, ${duelFighters[0].name} derrota ${duelFighters[1].name} em um combate lendário!`
+                    : calculateTotalStats(duelFighters[1]) > calculateTotalStats(duelFighters[0])
+                    ? `Em uma reviravolta impressionante, ${duelFighters[1].name} supera ${duelFighters[0].name} com ${calculateTotalStats(duelFighters[1])} pontos!`
+                    : "Um empate técnico! Ambos os guerreiros demonstraram um poder equivalente e a batalha termina sem um vencedor claro."
+                  }
+                </p>
+                <button
+                  onClick={resetDuel}
+                  className="mt-6 px-8 py-3 bg-primary text-primary-foreground font-pixel text-xs rounded-lg border-2 border-primary hover:scale-105 transition-transform"
+                >
+                  NOVO DUELO
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal */}
       {selected && (
