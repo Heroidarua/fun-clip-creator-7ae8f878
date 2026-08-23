@@ -45,17 +45,18 @@ export async function isRateLimited(request: Request | { headers: Headers }): Pr
   }
 
   // Se não existe ou janela expirou, criar/resetar
-  const resetAt = entry ? new Date(new Date(entry.last_attempt).getTime() + WINDOW_MS) : null;
+  const lastAttempt = entry?.last_attempt ? new Date(entry.last_attempt) : null;
+  const resetAt = lastAttempt ? new Date(lastAttempt.getTime() + WINDOW_MS) : null;
   
   if (!entry || (resetAt && now > resetAt)) {
-    const { error: upsertError } = await supabaseAdmin
+    const { error: upsertError } = await (supabaseAdmin
       .from("admin_rate_limit")
       .upsert({ 
         ip, 
         attempts: 1, 
         last_attempt: now.toISOString(),
         blocked_until: null 
-      });
+      } as any) as any);
     
     if (upsertError) console.error("Rate limit upsert error:", upsertError);
     return false;
@@ -66,14 +67,14 @@ export async function isRateLimited(request: Request | { headers: Headers }): Pr
   const isLimited = newAttempts > MAX_ATTEMPTS;
   const blockedUntil = isLimited ? new Date(now.getTime() + WINDOW_MS).toISOString() : null;
 
-  const { error: updateError } = await supabaseAdmin
+  const { error: updateError } = await (supabaseAdmin
     .from("admin_rate_limit")
     .update({ 
       attempts: newAttempts, 
       last_attempt: now.toISOString(),
       blocked_until: blockedUntil 
-    })
-    .eq("ip", ip);
+    } as any)
+    .eq("ip", ip) as any);
 
   if (updateError) console.error("Rate limit update error:", updateError);
   return isLimited;
