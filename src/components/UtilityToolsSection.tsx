@@ -345,7 +345,7 @@ const UtilityToolsSection = () => {
                   </div>
                   {tool.featured && (
                     <span className="font-pixel inline-flex items-center gap-1 rounded-sm border border-foreground/20 bg-gradient-to-r from-purple-500 to-pink-500 px-2 py-1 text-[9px] text-white shadow-cartridge">
-                      <Sparkles className="w-3 h-3" /> IA
+                      IA
                     </span>
                   )}
                 </div>
