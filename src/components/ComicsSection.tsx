@@ -892,8 +892,8 @@ const ComicsSection = () => {
                 </div>
               </div>
 
-              <div className="mt-2 sm:mt-4 text-center bg-primary/5 border-2 border-primary/20 p-4 sm:p-6 rounded-2xl sm:rounded-3xl max-w-2xl w-full shadow-inner">
-                <p className="font-inter text-sm sm:text-lg text-foreground/90 leading-relaxed">
+              <div className="mt-2 sm:mt-4 text-center bg-primary/5 border-2 border-primary/20 p-4 sm:p-6 rounded-2xl sm:rounded-3xl max-w-2xl w-full shadow-inner relative overflow-hidden">
+                <p className="font-inter text-sm sm:text-lg text-foreground/90 leading-relaxed z-10 relative">
                   {calculateTotalStats(duelFighters[0]) > calculateTotalStats(duelFighters[1]) 
                     ? `DOMINÂNCIA TOTAL! Com um arsenal de ${calculateTotalStats(duelFighters[0])} pontos, ${duelFighters[0].name} não deu chances para ${duelFighters[1].name} e triunfa como o supremo guerreiro!`
                     : calculateTotalStats(duelFighters[1]) > calculateTotalStats(duelFighters[0])
@@ -901,6 +901,13 @@ const ComicsSection = () => {
                     : "EMPATE LENDÁRIO! Em um confronto onde cada grama de força foi igualada, nenhum dos combatentes cedeu. A batalha termina sem um vencedor definido, mas com o respeito mútuo garantido."
                   }
                 </p>
+
+                {/* Watermark */}
+                <div className="clip-watermark absolute bottom-2 left-1/2 -translate-x-1/2 opacity-60 z-0 pointer-events-none">
+                  <span className="font-pixel text-[12px] sm:text-[18px] text-primary/40 font-bold uppercase tracking-[0.3em]">
+                    sos01.com.br
+                  </span>
+                </div>
                 <div className="clip-config-section mt-6 p-4 bg-primary/10 border border-primary/20 rounded-2xl w-full max-w-lg mx-auto">
                   <h4 className="font-pixel text-[10px] text-primary mb-3 text-center uppercase tracking-wider">CONFIGURAÇÕES DO FUN-CLIP</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -973,13 +980,22 @@ const ComicsSection = () => {
                             <ZoomIn className="w-3 h-3" />
                           </button>
                         </div>
-                        <button
-                          onClick={() => setShowGuides(!showGuides)}
-                          className={`flex items-center gap-1.5 px-2 py-1 rounded text-[8px] font-pixel transition-colors ${showGuides ? 'bg-primary/20 text-primary border border-primary/40' : 'text-muted-foreground border border-transparent'}`}
-                        >
-                          {showGuides ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
-                          {showGuides ? 'GUIAS ON' : 'GUIAS OFF'}
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => setShowGuides(!showGuides)}
+                            className={`flex items-center gap-1.5 px-2 py-1 rounded text-[8px] font-pixel transition-colors ${showGuides ? 'bg-primary/20 text-primary border border-primary/40' : 'text-muted-foreground border border-transparent'}`}
+                          >
+                            {showGuides ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+                            {showGuides ? 'GUIAS ON' : 'GUIAS OFF'}
+                          </button>
+                          <button
+                            onClick={() => setShowWatermark(!showWatermark)}
+                            className={`flex items-center gap-1.5 px-2 py-1 rounded text-[8px] font-pixel transition-colors ${showWatermark ? 'bg-primary/20 text-primary border border-primary/40' : 'text-muted-foreground border border-transparent'}`}
+                          >
+                            {showWatermark ? <ShieldCheck className="w-3 h-3" /> : <X className="w-3 h-3" />}
+                            MARCA D'ÁGUA
+                          </button>
+                        </div>
                       </div>
                     </div>
                     <div className="sm:col-span-3 space-y-2 text-center border-t border-primary/10 pt-3">
