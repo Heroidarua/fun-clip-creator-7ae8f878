@@ -881,50 +881,86 @@ const ComicsSection = () => {
                     </div>
                     <div className="space-y-2 text-center">
                       <span id="label-resolucao" className="font-pixel text-[8px] text-muted-foreground uppercase">Resolução</span>
-                      <div className="flex justify-center gap-2" role="group" aria-labelledby="label-resolucao">
-                        {[1, 2, 3].map((s) => (
-                          <button
-                            key={s}
-                            onClick={() => setClipScale(s)}
-                            aria-pressed={clipScale === s}
-                            aria-label={`Selecionar resolução ${s}x`}
-                            className={`px-3 py-1 rounded-md font-pixel text-[9px] transition-all ${clipScale === s ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
-                          >
-                            {s}X
-                          </button>
-                        ))}
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="flex justify-center gap-2" role="group" aria-labelledby="label-resolucao">
+                          {[1, 2, 3].map((s) => (
+                            <button
+                              key={s}
+                              onClick={() => setClipScale(s)}
+                              aria-pressed={clipScale === s}
+                              aria-label={`Selecionar resolução ${s}x`}
+                              className={`px-3 py-1 rounded-md font-pixel text-[9px] transition-all ${clipScale === s ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
+                            >
+                              {s}X
+                            </button>
+                          ))}
+                        </div>
+                        <span className="font-pixel text-[7px] text-primary/60 italic">
+                          {dimensions.width} x {dimensions.height} PX
+                        </span>
                       </div>
                     </div>
                     <div className="space-y-2 text-center">
                       <span id="label-enquadramento" className="font-pixel text-[8px] text-muted-foreground uppercase">Enquadramento</span>
-                      <div className="flex justify-center gap-2" role="group" aria-labelledby="label-enquadramento">
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="flex justify-center gap-2" role="group" aria-labelledby="label-enquadramento">
+                          <button
+                            onClick={() => setClipFit('contain')}
+                            aria-pressed={clipFit === 'contain'}
+                            aria-label="Enquadramento: Centralizado"
+                            title="Centralizado"
+                            className={`p-2 rounded-md transition-all ${clipFit === 'contain' ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
+                          >
+                            <Minimize className="w-3 h-3" />
+                          </button>
+                          <button
+                            onClick={() => setClipFit('cover')}
+                            aria-pressed={clipFit === 'cover'}
+                            aria-label="Enquadramento: Manter Proporção"
+                            title="Manter Proporção"
+                            className={`p-2 rounded-md transition-all ${clipFit === 'cover' ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
+                          >
+                            <Maximize className="w-3 h-3" />
+                          </button>
+                          <button
+                            onClick={() => setClipFit('zoom')}
+                            aria-pressed={clipFit === 'zoom'}
+                            aria-label="Enquadramento: Zoom"
+                            title="Zoom"
+                            className={`p-2 rounded-md transition-all ${clipFit === 'zoom' ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
+                          >
+                            <ZoomIn className="w-3 h-3" />
+                          </button>
+                        </div>
                         <button
-                          onClick={() => setClipFit('contain')}
-                          aria-pressed={clipFit === 'contain'}
-                          aria-label="Enquadramento: Centralizado"
-                          title="Centralizado"
-                          className={`p-2 rounded-md transition-all ${clipFit === 'contain' ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
+                          onClick={() => setShowGuides(!showGuides)}
+                          className={`flex items-center gap-1.5 px-2 py-1 rounded text-[8px] font-pixel transition-colors ${showGuides ? 'bg-primary/20 text-primary border border-primary/40' : 'text-muted-foreground border border-transparent'}`}
                         >
-                          <Minimize className="w-3 h-3" />
+                          {showGuides ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+                          {showGuides ? 'GUIAS ON' : 'GUIAS OFF'}
                         </button>
-                        <button
-                          onClick={() => setClipFit('cover')}
-                          aria-pressed={clipFit === 'cover'}
-                          aria-label="Enquadramento: Manter Proporção"
-                          title="Manter Proporção"
-                          className={`p-2 rounded-md transition-all ${clipFit === 'cover' ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
-                        >
-                          <Maximize className="w-3 h-3" />
-                        </button>
-                        <button
-                          onClick={() => setClipFit('zoom')}
-                          aria-pressed={clipFit === 'zoom'}
-                          aria-label="Enquadramento: Zoom"
-                          title="Zoom"
-                          className={`p-2 rounded-md transition-all ${clipFit === 'zoom' ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
-                        >
-                          <ZoomIn className="w-3 h-3" />
-                        </button>
+                      </div>
+                    </div>
+                    <div className="sm:col-span-3 space-y-2 text-center border-t border-primary/10 pt-3">
+                      <span id="label-tema" className="font-pixel text-[8px] text-muted-foreground uppercase flex items-center justify-center gap-2">
+                        <Palette className="w-3 h-3" />
+                        Temas Visuais
+                      </span>
+                      <div className="flex justify-center flex-wrap gap-2" role="group" aria-labelledby="label-tema">
+                        {DUEL_THEMES.map((theme) => (
+                          <button
+                            key={theme.id}
+                            onClick={() => setClipTheme(theme.id as any)}
+                            aria-pressed={clipTheme === theme.id}
+                            className={`px-4 py-1.5 rounded-lg font-pixel text-[9px] transition-all border-2 ${
+                              clipTheme === theme.id 
+                                ? 'bg-primary border-primary text-primary-foreground shadow-lg' 
+                                : 'bg-background border-primary/20 text-muted-foreground hover:border-primary/40'
+                            }`}
+                          >
+                            {theme.label}
+                          </button>
+                        ))}
                       </div>
                     </div>
                   </div>
