@@ -505,37 +505,42 @@ const ComicsSection = () => {
 
       {/* Duel Result Modal */}
       {showDuelResult && duelFighters[0] && duelFighters[1] && (
-        <div className="fixed inset-0 z-[1100] flex items-center justify-center sm:p-4 bg-black/95 backdrop-blur-md overflow-y-auto">
-          <div className="relative w-full max-w-5xl min-h-full sm:min-h-0 sm:my-auto bg-background sm:border-4 border-primary/50 sm:rounded-3xl p-4 sm:p-12 shadow-[0_0_80px_rgba(var(--primary),0.2)] animate-in zoom-in-95 duration-300">
+        <div className="fixed inset-0 z-[1100] flex items-start sm:items-center justify-center p-0 sm:p-4 bg-black/95 backdrop-blur-md overflow-y-auto">
+          <div className="relative w-full max-w-5xl bg-background sm:border-4 border-primary/50 sm:rounded-3xl p-4 sm:p-12 shadow-[0_0_80px_rgba(var(--primary),0.2)] animate-in zoom-in-95 duration-300 m-0 sm:my-8">
             <button
               onClick={() => setShowDuelResult(false)}
-              className="absolute top-4 right-4 sm:top-6 sm:right-6 text-muted-foreground hover:text-destructive z-30 bg-background/50 p-2 rounded-full border border-primary/20 transition-all hover:rotate-90"
+              className="absolute top-4 right-4 sm:top-6 sm:right-6 text-muted-foreground hover:text-destructive z-50 bg-background/80 p-2 rounded-full border border-primary/20 transition-all hover:rotate-90 shadow-lg"
             >
               <X className="w-6 h-6" />
             </button>
 
-            <div className="flex flex-col items-center gap-6 sm:gap-12 pt-8 sm:pt-0">
-              <div className="flex items-center gap-3 sm:gap-4 px-6 sm:px-8 py-2 sm:py-3 bg-primary/20 border-2 border-primary rounded-full animate-bounce shadow-[0_0_20px_rgba(var(--primary),0.3)]">
-                <Swords className="w-5 h-5 sm:w-8 sm:h-8 text-primary" />
-                <h2 className="font-pixel text-base sm:text-4xl text-primary neon-text tracking-tighter">
+            <div className="flex flex-col items-center gap-6 sm:gap-12 pt-12 sm:pt-0">
+              <div className="flex items-center justify-center gap-3 sm:gap-4 px-6 sm:px-8 py-2 sm:py-3 bg-primary/20 border-2 border-primary rounded-full animate-bounce shadow-[0_0_20px_rgba(var(--primary),0.3)] w-fit mx-auto">
+                <Swords className="w-5 h-5 sm:w-8 sm:h-8 text-primary shrink-0" />
+                <h2 className="font-pixel text-base sm:text-4xl text-primary neon-text tracking-tighter text-center">
                   COMBATE FINAL
                 </h2>
-                <Swords className="w-5 h-5 sm:w-8 sm:h-8 text-primary" />
+                <Swords className="w-5 h-5 sm:w-8 sm:h-8 text-primary shrink-0" />
               </div>
 
-              <div className="w-full grid grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-12 items-start">
+              <div className="w-full grid grid-cols-2 gap-3 sm:gap-12 items-start relative">
+                {/* Center VS Indicator for Desktop */}
+                <div className="hidden lg:flex absolute left-1/2 top-40 -translate-x-1/2 z-20 w-16 h-16 bg-primary/10 border-4 border-primary/50 rounded-full items-center justify-center -rotate-12 shadow-[0_0_30px_rgba(var(--primary),0.3)] pointer-events-none">
+                  <span className="font-pixel text-2xl text-primary italic">VS</span>
+                </div>
+
                 {/* Fighter 1 Column */}
-                <div className="flex flex-col gap-4 sm:gap-8">
-                  <div className={`flex flex-col items-center gap-3 sm:gap-6 p-3 sm:p-6 rounded-2xl sm:rounded-3xl transition-all duration-1000 ease-out ${
-                    calculateTotalStats(duelFighters[0]) > calculateTotalStats(duelFighters[1]) 
-                      ? "bg-primary/10 ring-2 sm:ring-4 ring-primary ring-offset-4 sm:ring-offset-8 ring-offset-background scale-105 shadow-[0_0_50px_rgba(var(--primary),0.3)] z-10" 
+                <div className="flex flex-col gap-4 sm:gap-8 items-center">
+                  <div className={`w-full flex flex-col items-center gap-3 sm:gap-6 p-2 sm:p-6 rounded-2xl sm:rounded-3xl transition-all duration-1000 ease-out ${
+                    calculateTotalStats(duelFighters[0]) >= calculateTotalStats(duelFighters[1]) 
+                      ? "bg-primary/10 ring-2 sm:ring-4 ring-primary ring-offset-2 sm:ring-offset-8 ring-offset-background scale-[1.02] sm:scale-105 shadow-[0_0_50px_rgba(var(--primary),0.3)] z-10" 
                       : "opacity-40 grayscale translate-y-4 scale-95"
                   } animate-in fade-in slide-in-from-left duration-700`}>
-                    <div className="relative group overflow-hidden rounded-xl sm:rounded-2xl shadow-2xl border-2 sm:border-4 border-primary/20 w-full">
+                    <div className="relative group overflow-hidden rounded-xl sm:rounded-2xl shadow-2xl border-2 sm:border-4 border-primary/20 w-full aspect-[3/4] max-h-48 sm:max-h-80">
                       <img 
                         src={duelFighters[0].images?.lg} 
                         alt={duelFighters[0].name} 
-                        className="w-full h-40 sm:h-80 object-cover transition-transform duration-1000 group-hover:scale-110" 
+                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
                       />
                       {calculateTotalStats(duelFighters[0]) > calculateTotalStats(duelFighters[1]) && (
                         <div className="absolute top-0 inset-x-0 bg-primary py-1.5 sm:py-3 text-center font-pixel text-[8px] sm:text-xs text-primary-foreground shadow-lg uppercase tracking-[0.2em] animate-pulse z-20">
@@ -558,17 +563,17 @@ const ComicsSection = () => {
                 </div>
 
                 {/* Fighter 2 Column */}
-                <div className="flex flex-col gap-4 sm:gap-8">
-                  <div className={`flex flex-col items-center gap-3 sm:gap-6 p-3 sm:p-6 rounded-2xl sm:rounded-3xl transition-all duration-1000 ease-out ${
+                <div className="flex flex-col gap-4 sm:gap-8 items-center">
+                  <div className={`w-full flex flex-col items-center gap-3 sm:gap-6 p-2 sm:p-6 rounded-2xl sm:rounded-3xl transition-all duration-1000 ease-out ${
                     calculateTotalStats(duelFighters[1]) > calculateTotalStats(duelFighters[0]) 
-                      ? "bg-primary/10 ring-2 sm:ring-4 ring-primary ring-offset-4 sm:ring-offset-8 ring-offset-background scale-105 shadow-[0_0_50px_rgba(var(--primary),0.3)] z-10" 
+                      ? "bg-primary/10 ring-2 sm:ring-4 ring-primary ring-offset-2 sm:ring-offset-8 ring-offset-background scale-[1.02] sm:scale-105 shadow-[0_0_50px_rgba(var(--primary),0.3)] z-10" 
                       : "opacity-40 grayscale translate-y-4 scale-95"
                   } animate-in fade-in slide-in-from-right duration-700`}>
-                    <div className="relative group overflow-hidden rounded-xl sm:rounded-2xl shadow-2xl border-2 sm:border-4 border-primary/20 w-full">
+                    <div className="relative group overflow-hidden rounded-xl sm:rounded-2xl shadow-2xl border-2 sm:border-4 border-primary/20 w-full aspect-[3/4] max-h-48 sm:max-h-80">
                       <img 
                         src={duelFighters[1].images?.lg} 
                         alt={duelFighters[1].name} 
-                        className="w-full h-40 sm:h-80 object-cover transition-transform duration-1000 group-hover:scale-110" 
+                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
                       />
                       {calculateTotalStats(duelFighters[1]) > calculateTotalStats(duelFighters[0]) && (
                         <div className="absolute top-0 inset-x-0 bg-primary py-1.5 sm:py-3 text-center font-pixel text-[8px] sm:text-xs text-primary-foreground shadow-lg uppercase tracking-[0.2em] animate-pulse z-20">
@@ -591,9 +596,9 @@ const ComicsSection = () => {
                 </div>
 
                 {/* Comparison Row (Span both columns) */}
-                <div className="lg:col-span-2 flex flex-col items-center w-full max-w-4xl mx-auto mt-2 sm:mt-4">
-                  <div className="mb-4 sm:mb-12 w-10 h-10 sm:w-20 sm:h-20 bg-primary/10 border-2 sm:border-4 border-primary/50 rounded-full flex items-center justify-center -rotate-12 shadow-[0_0_30px_rgba(var(--primary),0.3)] shrink-0">
-                    <span className="font-pixel text-lg sm:text-4xl text-primary italic">VS</span>
+                <div className="col-span-2 flex flex-col items-center w-full max-w-4xl mx-auto mt-2 sm:mt-4">
+                  <div className="lg:hidden mb-4 w-10 h-10 bg-primary/10 border-2 border-primary/50 rounded-full flex items-center justify-center -rotate-12 shadow-[0_0_30px_rgba(var(--primary),0.3)] shrink-0">
+                    <span className="font-pixel text-lg text-primary italic">VS</span>
                   </div>
 
                   <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-6 sm:gap-x-12 gap-y-6 sm:gap-y-8">
