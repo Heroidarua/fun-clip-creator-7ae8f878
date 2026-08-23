@@ -336,6 +336,21 @@ const ComicsSection = () => {
                 </button>
               ))}
             </div>
+
+            <button
+              onClick={() => {
+                setDuelMode(!duelMode);
+                if (!duelMode) resetDuel();
+              }}
+              className={`flex items-center gap-2 px-4 py-2 font-pixel text-[8px] sm:text-[10px] border-2 rounded transition-all ${
+                duelMode
+                  ? "bg-primary text-primary-foreground border-primary animate-pulse"
+                  : "bg-background text-primary border-primary/30 hover:border-primary"
+              }`}
+            >
+              <Swords className="w-4 h-4" />
+              {duelMode ? "MODO DUELO ATIVO" : "MODO DUELO"}
+            </button>
           </div>
         </ScrollReveal>
 
