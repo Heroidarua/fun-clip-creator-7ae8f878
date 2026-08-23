@@ -698,10 +698,11 @@ const ComicsSection = () => {
             
             {/* Watermark */}
             {showWatermark && (
-              <div className="clip-watermark absolute bottom-2 right-4 z-50 pointer-events-none opacity-40 select-none">
-                <span className={`font-pixel text-[8px] sm:text-[10px] ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`}>sos01.com.br</span>
+              <div className="clip-watermark absolute bottom-4 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-60 select-none text-center w-full">
+                <span className={`font-pixel text-[12px] sm:text-[18px] font-bold ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`}>sos01.com.br</span>
               </div>
             )}
+
             
             {/* Capture Guides */}
             {showGuides && (
