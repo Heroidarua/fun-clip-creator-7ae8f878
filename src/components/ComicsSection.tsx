@@ -563,17 +563,17 @@ const ComicsSection = () => {
                 </div>
 
                 {/* Fighter 2 Column */}
-                <div className="flex flex-col gap-4 sm:gap-8">
-                  <div className={`flex flex-col items-center gap-3 sm:gap-6 p-3 sm:p-6 rounded-2xl sm:rounded-3xl transition-all duration-1000 ease-out ${
+                <div className="flex flex-col gap-4 sm:gap-8 items-center">
+                  <div className={`w-full flex flex-col items-center gap-3 sm:gap-6 p-2 sm:p-6 rounded-2xl sm:rounded-3xl transition-all duration-1000 ease-out ${
                     calculateTotalStats(duelFighters[1]) > calculateTotalStats(duelFighters[0]) 
-                      ? "bg-primary/10 ring-2 sm:ring-4 ring-primary ring-offset-4 sm:ring-offset-8 ring-offset-background scale-105 shadow-[0_0_50px_rgba(var(--primary),0.3)] z-10" 
+                      ? "bg-primary/10 ring-2 sm:ring-4 ring-primary ring-offset-2 sm:ring-offset-8 ring-offset-background scale-[1.02] sm:scale-105 shadow-[0_0_50px_rgba(var(--primary),0.3)] z-10" 
                       : "opacity-40 grayscale translate-y-4 scale-95"
                   } animate-in fade-in slide-in-from-right duration-700`}>
-                    <div className="relative group overflow-hidden rounded-xl sm:rounded-2xl shadow-2xl border-2 sm:border-4 border-primary/20 w-full">
+                    <div className="relative group overflow-hidden rounded-xl sm:rounded-2xl shadow-2xl border-2 sm:border-4 border-primary/20 w-full aspect-[3/4] max-h-48 sm:max-h-80">
                       <img 
                         src={duelFighters[1].images?.lg} 
                         alt={duelFighters[1].name} 
-                        className="w-full h-40 sm:h-80 object-cover transition-transform duration-1000 group-hover:scale-110" 
+                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
                       />
                       {calculateTotalStats(duelFighters[1]) > calculateTotalStats(duelFighters[0]) && (
                         <div className="absolute top-0 inset-x-0 bg-primary py-1.5 sm:py-3 text-center font-pixel text-[8px] sm:text-xs text-primary-foreground shadow-lg uppercase tracking-[0.2em] animate-pulse z-20">
