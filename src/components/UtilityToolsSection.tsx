@@ -212,7 +212,7 @@ const UtilityToolsSection = () => {
     },
   ];
 
-  // Ferramentas premium exibidas na mesma grade/categorias das ferramentas úteis.
+  // Ferramentas exibidas na mesma grade/categorias.
   const PREMIUM_CATEGORY: Record<string, Tool["category"]> = {
     ocr: "ia",
     tts: "ia",
