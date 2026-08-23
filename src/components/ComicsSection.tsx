@@ -388,6 +388,13 @@ const ComicsSection = () => {
     setFighterPositions([{x: 0, y: 0}, {x: 0, y: 0}]);
   };
 
+  const autoFrameFighters = () => {
+    // Basic auto-framing: reset to 0,0
+    setFighterPositions([{x: 0, y: 0}, {x: 0, y: 0}]);
+    toast.success("Enquadramento resetado!");
+  };
+
+
   useEffect(() => {
     let active = true;
     fetch(API_URL)
