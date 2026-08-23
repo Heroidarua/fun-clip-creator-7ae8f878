@@ -702,13 +702,22 @@ const ComicsSection = () => {
             </button>
 
             <div className="flex flex-col items-center gap-6 sm:gap-12 pt-12 sm:pt-0">
-              <div className="flex items-center justify-center gap-3 sm:gap-4 px-6 sm:px-8 py-2 sm:py-3 bg-primary/20 border-2 border-primary rounded-full animate-bounce shadow-[0_0_20px_rgba(var(--primary),0.3)] w-fit mx-auto">
-                <Swords className="w-5 h-5 sm:w-8 sm:h-8 text-primary shrink-0" />
-                <h2 id="duel-modal-title" className="font-pixel text-base sm:text-4xl text-primary neon-text tracking-tighter text-center">
-                  COMBATE FINAL
-                </h2>
-                <Swords className="w-5 h-5 sm:w-8 sm:h-8 text-primary shrink-0" />
-              </div>
+            <div className={`flex items-center justify-center gap-3 sm:gap-4 px-6 sm:px-8 py-2 sm:py-3 border-2 rounded-full animate-bounce shadow-lg w-fit mx-auto ${
+              clipTheme === 'comic' ? 'bg-white border-black shadow-[4px_4px_0_0_#000]' :
+              clipTheme === 'modern' ? 'bg-white/5 border-white/20' :
+              clipTheme === 'cyberpunk' ? 'bg-black border-retro-magenta shadow-[0_0_15px_rgba(255,0,255,0.5)]' :
+              'bg-primary/20 border-primary shadow-[0_0_20px_rgba(var(--primary),0.3)]'
+            }`}>
+              <Swords className={`w-5 h-5 sm:w-8 sm:h-8 shrink-0 ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`} />
+              <h2 id="duel-modal-title" className={`font-pixel text-base sm:text-4xl tracking-tighter text-center ${
+                clipTheme === 'comic' ? 'text-black' : 
+                clipTheme === 'modern' ? 'text-white' :
+                'text-primary neon-text'
+              }`}>
+                COMBATE FINAL
+              </h2>
+              <Swords className={`w-5 h-5 sm:w-8 sm:h-8 shrink-0 ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`} />
+            </div>
 
               <div className="w-full grid grid-cols-2 gap-3 sm:gap-12 items-start relative">
                 {/* Center VS Indicator for Desktop */}
