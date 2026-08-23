@@ -289,11 +289,13 @@ const ComicsSection = () => {
       const closeButton = element.querySelector('.clip-close-button');
       const configSection = element.querySelector('.clip-config-section');
       const guides = element.querySelector('.clip-guides');
+      const watermark = element.querySelector('.clip-watermark');
       
       if (actionButtons) (actionButtons as HTMLElement).style.display = 'none';
       if (closeButton) (closeButton as HTMLElement).style.display = 'none';
       if (configSection) (configSection as HTMLElement).style.display = 'none';
       if (guides) (guides as HTMLElement).style.display = 'none';
+      if (watermark && !showWatermark) (watermark as HTMLElement).style.display = 'none';
 
       const options = {
         quality: 0.95,
