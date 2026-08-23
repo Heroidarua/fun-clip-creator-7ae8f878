@@ -205,6 +205,39 @@ const ComicsSection = () => {
   const [duelMode, setDuelMode] = useState(false);
   const [duelFighters, setDuelFighters] = useState<[Hero | null, Hero | null]>([null, null]);
   const [showDuelResult, setShowDuelResult] = useState(false);
+  const [isGeneratingClip, setIsGeneratingClip] = useState(false);
+
+  const handleDownloadClip = async () => {
+    const element = document.getElementById('duel-combat-result');
+    if (!element) return;
+
+    try {
+      setIsGeneratingClip(true);
+      // Ocultar os botões temporariamente para a captura
+      const actionButtons = element.querySelector('.clip-action-buttons');
+      const closeButton = element.querySelector('.clip-close-button');
+      if (actionButtons) (actionButtons as HTMLElement).style.display = 'none';
+      if (closeButton) (closeButton as HTMLElement).style.display = 'none';
+
+      const dataUrl = await toPng(element, {
+        quality: 0.95,
+        backgroundColor: '#000',
+        style: {
+          borderRadius: '0px',
+        },
+      });
+
+      // Restaurar os botões
+      if (actionButtons) (actionButtons as HTMLElement).style.display = 'flex';
+      if (closeButton) (closeButton as HTMLElement).style.display = 'flex';
+
+      download(dataUrl, `fun-clip-duelo-${duelFighters[0]?.name}-vs-${duelFighters[1]?.name}.png`);
+    } catch (err) {
+      console.error('Erro ao gerar clip:', err);
+    } finally {
+      setIsGeneratingClip(false);
+    }
+  };
 
   const calculateTotalStats = (hero: Hero) => {
     return Object.values(hero.powerstats || {}).reduce((acc, curr) => acc + (Number(curr) || 0), 0);
