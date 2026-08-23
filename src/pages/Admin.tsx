@@ -55,8 +55,6 @@ export default function Admin() {
   const [buttonSettings, setButtonSettings] = useState<ButtonSettings>(DEFAULT_BUTTON_SETTINGS);
   const [buttonSaving, setButtonSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<"general" | "video" | "appearance">("general");
-  const [captchaAnswer, setCaptchaAnswer] = useState("");
-  const [captchaQuestion, setCaptchaQuestion] = useState({ a: 0, b: 0 });
 
   useEffect(() => {
     generateCaptcha();
