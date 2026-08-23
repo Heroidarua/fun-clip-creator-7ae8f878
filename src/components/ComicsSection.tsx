@@ -742,11 +742,35 @@ const ComicsSection = () => {
 
                 {/* Fighter 1 Column */}
                 <div className="flex flex-col gap-4 sm:gap-8 items-center">
-                  <div className={`w-full flex flex-col items-center gap-3 sm:gap-6 p-2 sm:p-6 rounded-2xl sm:rounded-3xl transition-all duration-1000 ease-out ${
-                    calculateTotalStats(duelFighters[0]) >= calculateTotalStats(duelFighters[1]) 
-                      ? "bg-primary/10 ring-2 sm:ring-4 ring-primary ring-offset-2 sm:ring-offset-8 ring-offset-background scale-[1.02] sm:scale-105 shadow-[0_0_50px_rgba(var(--primary),0.3)] z-10" 
-                      : "opacity-40 grayscale translate-y-4 scale-95"
-                  } animate-in fade-in slide-in-from-left duration-700`}>
+                    <div 
+                      className={`w-full flex flex-col items-center gap-3 sm:gap-6 p-2 sm:p-6 rounded-2xl sm:rounded-3xl transition-all duration-1000 ease-out cursor-move active:cursor-grabbing touch-none ${
+                        calculateTotalStats(duelFighters[0]) >= calculateTotalStats(duelFighters[1]) 
+                          ? "bg-primary/10 ring-2 sm:ring-4 ring-primary ring-offset-2 sm:ring-offset-8 ring-offset-background scale-[1.02] sm:scale-105 shadow-[0_0_50px_rgba(var(--primary),0.3)] z-10" 
+                          : "opacity-40 grayscale translate-y-4 scale-95"
+                      } animate-in fade-in slide-in-from-left duration-700`}
+                      style={{ transform: `translate(${fighterPositions[0].x}px, ${fighterPositions[0].y}px)` }}
+                      onPointerDown={(e) => {
+                        const el = e.currentTarget;
+                        const startX = e.clientX - fighterPositions[0].x;
+                        const startY = e.clientY - fighterPositions[0].y;
+                        
+                        const handlePointerMove = (moveEvent: PointerEvent) => {
+                          setFighterPositions(prev => [{
+                            x: moveEvent.clientX - startX,
+                            y: moveEvent.clientY - startY
+                          }, prev[1]]);
+                        };
+                        
+                        const handlePointerUp = () => {
+                          window.removeEventListener('pointermove', handlePointerMove);
+                          window.removeEventListener('pointerup', handlePointerUp);
+                        };
+                        
+                        window.addEventListener('pointermove', handlePointerMove);
+                        window.addEventListener('pointerup', handlePointerUp);
+                        el.setPointerCapture(e.pointerId);
+                      }}
+                    >
                     <div className="relative group overflow-hidden rounded-xl sm:rounded-2xl shadow-2xl border-2 sm:border-4 border-primary/20 w-full aspect-[3/4] max-h-48 sm:max-h-80">
                       <img 
                         src={duelFighters[0].images?.lg} 
