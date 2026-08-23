@@ -1014,8 +1014,57 @@ const ComicsSection = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="sm:col-span-3 space-y-2 text-center border-t border-primary/10 pt-3">
-                      <span id="label-tema" className="font-pixel text-[8px] text-muted-foreground uppercase flex items-center justify-center gap-2">
+
+                    <div className="sm:col-span-3 space-y-4 text-center border-t border-primary/10 pt-3">
+                      {showWatermark && (
+                        <div className="space-y-3 animate-in fade-in slide-in-from-top-2">
+                          <span className="font-pixel text-[8px] text-muted-foreground uppercase flex items-center justify-center gap-2">
+                            <ShieldCheck className="w-3 h-3" />
+                            Personalizar Marca D'Água
+                          </span>
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center px-2">
+                            <div className="space-y-2">
+                              <span className="font-pixel text-[7px] text-muted-foreground uppercase">Texto</span>
+                              <input 
+                                type="text" 
+                                value={watermarkText}
+                                onChange={(e) => setWatermarkText(e.target.value)}
+                                className="w-full px-2 py-1 bg-background border border-primary/20 rounded font-pixel text-[9px] text-foreground outline-none focus:border-primary"
+                                placeholder="Texto da marca..."
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <span className="font-pixel text-[7px] text-muted-foreground uppercase">Posição</span>
+                              <div className="flex justify-center gap-2">
+                                {['top', 'center', 'bottom'].map((pos) => (
+                                  <button
+                                    key={pos}
+                                    onClick={() => setWatermarkPos(pos as any)}
+                                    className={`px-2 py-1 rounded font-pixel text-[8px] transition-all border ${watermarkPos === pos ? 'bg-primary text-primary-foreground border-primary' : 'bg-background border-primary/20 text-muted-foreground'}`}
+                                  >
+                                    {pos === 'top' ? 'TOPO' : pos === 'center' ? 'MEIO' : 'BASE'}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                            <div className="space-y-2">
+                              <span className="font-pixel text-[7px] text-muted-foreground uppercase">Opacidade: {watermarkOpacity}%</span>
+                              <input 
+                                type="range" 
+                                min="10" 
+                                max="100" 
+                                step="10"
+                                value={watermarkOpacity}
+                                onChange={(e) => setWatermarkOpacity(Number(e.target.value))}
+                                className="w-full accent-primary"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="space-y-2 border-t border-primary/10 pt-3">
+                        <span id="label-tema" className="font-pixel text-[8px] text-muted-foreground uppercase flex items-center justify-center gap-2">
                         <Palette className="w-3 h-3" />
                         Temas Visuais
                       </span>
