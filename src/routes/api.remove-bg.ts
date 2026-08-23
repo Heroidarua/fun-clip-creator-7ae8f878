@@ -14,7 +14,7 @@ export const Route = createFileRoute("/api/remove-bg")({
           if (isCrossOrigin(request)) {
             return Response.json({ error: "Origem não permitida" }, { status: 403, headers });
           }
-          if (isRateLimited(request)) {
+          if (await isRateLimited(request)) {
             return Response.json(
               { error: "Muitas tentativas. Aguarde um minuto." },
               { status: 429, headers }
