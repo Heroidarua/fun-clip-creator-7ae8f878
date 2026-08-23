@@ -1166,6 +1166,18 @@ const ComicsSection = () => {
                                   className="w-full accent-primary h-1.5"
                                 />
                               </div>
+                              <div className="space-y-2">
+                                <span className="font-pixel text-[7px] text-muted-foreground uppercase">Rotação Marca: {watermarkRotation}°</span>
+                                <input 
+                                  type="range" 
+                                  min="-180" 
+                                  max="180" 
+                                  step="1"
+                                  value={watermarkRotation}
+                                  onChange={(e) => setWatermarkRotation(Number(e.target.value))}
+                                  className="w-full accent-primary h-1.5"
+                                />
+                              </div>
                             </div>
                           </div>
                         </div>
