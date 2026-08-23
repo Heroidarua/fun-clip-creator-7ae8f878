@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, useRef } from "react";
-import { Search, ShieldCheck, X, Swords, Trophy, RotateCcw, Download, Loader2, Share2, Maximize, Minimize, ZoomIn } from "lucide-react";
+import { Search, ShieldCheck, X, Swords, Trophy, RotateCcw, Download, Loader2, Share2, Maximize, Minimize, ZoomIn, Eye, EyeOff, Palette } from "lucide-react";
 import ScrollReveal from "./ScrollReveal";
 import { toPng, toJpeg } from 'html-to-image';
 import download from 'downloadjs';
@@ -79,6 +79,13 @@ const TRANSLATIONS: Record<string, string> = {
   bad: "Vilão",
   neutral: "Neutro",
 };
+
+const DUEL_THEMES = [
+  { id: 'retro', label: 'RETRO', class: 'theme-retro' },
+  { id: 'modern', label: 'MODERN', class: 'theme-modern' },
+  { id: 'comic', label: 'COMIC', class: 'theme-comic' },
+  { id: 'cyberpunk', label: 'CYBER', class: 'theme-cyberpunk' },
+];
 
 const t = (text?: string | null) => {
   if (!text) return "—";
@@ -210,6 +217,9 @@ const ComicsSection = () => {
   const [clipFormat, setClipFormat] = useState<"png" | "jpg">("png");
   const [clipScale, setClipScale] = useState(2);
   const [clipFit, setClipFit] = useState<"contain" | "cover" | "zoom">("contain");
+  const [clipTheme, setClipTheme] = useState<"retro" | "modern" | "comic" | "cyberpunk">("retro");
+  const [showGuides, setShowGuides] = useState(false);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const modalRef = useRef<HTMLDivElement>(null);
 
   // Focus trap implementation
@@ -246,6 +256,25 @@ const ComicsSection = () => {
     }
   }, [showDuelResult]);
 
+  useEffect(() => {
+    if (showDuelResult) {
+      const updateSize = () => {
+        const el = document.getElementById('duel-combat-result');
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          setDimensions({
+            width: Math.round(rect.width * clipScale),
+            height: Math.round(rect.height * clipScale)
+          });
+        }
+      };
+      
+      updateSize();
+      window.addEventListener('resize', updateSize);
+      return () => window.removeEventListener('resize', updateSize);
+    }
+  }, [showDuelResult, clipScale, clipFit, clipTheme]);
+
   const generateClipData = async () => {
     const element = document.getElementById('duel-combat-result');
     if (!element) return null;
@@ -257,10 +286,12 @@ const ComicsSection = () => {
       const actionButtons = element.querySelector('.clip-action-buttons');
       const closeButton = element.querySelector('.clip-close-button');
       const configSection = element.querySelector('.clip-config-section');
+      const guides = element.querySelector('.clip-guides');
       
       if (actionButtons) (actionButtons as HTMLElement).style.display = 'none';
       if (closeButton) (closeButton as HTMLElement).style.display = 'none';
       if (configSection) (configSection as HTMLElement).style.display = 'none';
+      if (guides) (guides as HTMLElement).style.display = 'none';
 
       const options = {
         quality: 0.95,
@@ -279,6 +310,7 @@ const ComicsSection = () => {
       if (actionButtons) (actionButtons as HTMLElement).style.display = 'flex';
       if (closeButton) (closeButton as HTMLElement).style.display = 'flex';
       if (configSection) (configSection as HTMLElement).style.display = 'block';
+      if (guides) (guides as HTMLElement).style.display = 'block';
 
       return dataUrl;
     } catch (err) {
@@ -634,11 +666,33 @@ const ComicsSection = () => {
           <div 
             id="duel-combat-result" 
             ref={modalRef}
-            className={`relative w-full max-w-5xl bg-background sm:border-4 border-primary/50 sm:rounded-3xl p-4 sm:p-12 shadow-[0_0_80px_rgba(var(--primary),0.2)] animate-in zoom-in-95 duration-300 m-0 sm:my-8 transition-all duration-500 ${
+            className={`relative w-full max-w-5xl transition-all duration-500 m-0 sm:my-8 overflow-hidden p-4 sm:p-12 sm:border-4 sm:rounded-3xl ${
+              clipTheme === 'modern' ? 'bg-[#0a0a0a] border-white/10 rounded-[40px] shadow-2xl' :
+              clipTheme === 'comic' ? 'bg-yellow-50 border-black border-[6px] shadow-[12px_12px_0_0_#000]' :
+              clipTheme === 'cyberpunk' ? 'bg-black border-retro-magenta border-b-[10px] border-r-[10px] shadow-[0_0_40px_rgba(255,0,255,0.2)]' :
+              'bg-background border-primary/50 shadow-[0_0_80px_rgba(var(--primary),0.2)]'
+            } ${
               clipFit === 'cover' ? 'aspect-video flex flex-col justify-center' : 
               clipFit === 'zoom' ? 'scale-110' : ''
             }`}
           >
+            {/* Comic theme texture */}
+            {clipTheme === 'comic' && (
+              <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[radial-gradient(#000_1.5px,transparent_1.5px)] bg-[size:15px_15px] z-0" />
+            )}
+            
+            {/* Capture Guides */}
+            {showGuides && (
+              <div className="clip-guides absolute inset-0 pointer-events-none z-50 overflow-hidden">
+                <div className="absolute top-1/3 w-full h-px bg-primary/20" />
+                <div className="absolute top-2/3 w-full h-px bg-primary/20" />
+                <div className="absolute left-1/3 h-full w-px bg-primary/20" />
+                <div className="absolute left-2/3 h-full w-px bg-primary/20" />
+                {/* Rule of thirds labels */}
+                <div className="absolute top-2 right-2 font-pixel text-[6px] text-primary/40 uppercase">Guides Active</div>
+              </div>
+            )}
+
             <button
               onClick={() => setShowDuelResult(false)}
               aria-label="Fechar resultado do duelo"
@@ -648,13 +702,22 @@ const ComicsSection = () => {
             </button>
 
             <div className="flex flex-col items-center gap-6 sm:gap-12 pt-12 sm:pt-0">
-              <div className="flex items-center justify-center gap-3 sm:gap-4 px-6 sm:px-8 py-2 sm:py-3 bg-primary/20 border-2 border-primary rounded-full animate-bounce shadow-[0_0_20px_rgba(var(--primary),0.3)] w-fit mx-auto">
-                <Swords className="w-5 h-5 sm:w-8 sm:h-8 text-primary shrink-0" />
-                <h2 id="duel-modal-title" className="font-pixel text-base sm:text-4xl text-primary neon-text tracking-tighter text-center">
-                  COMBATE FINAL
-                </h2>
-                <Swords className="w-5 h-5 sm:w-8 sm:h-8 text-primary shrink-0" />
-              </div>
+            <div className={`flex items-center justify-center gap-3 sm:gap-4 px-6 sm:px-8 py-2 sm:py-3 border-2 rounded-full animate-bounce shadow-lg w-fit mx-auto ${
+              clipTheme === 'comic' ? 'bg-white border-black shadow-[4px_4px_0_0_#000]' :
+              clipTheme === 'modern' ? 'bg-white/5 border-white/20' :
+              clipTheme === 'cyberpunk' ? 'bg-black border-retro-magenta shadow-[0_0_15px_rgba(255,0,255,0.5)]' :
+              'bg-primary/20 border-primary shadow-[0_0_20px_rgba(var(--primary),0.3)]'
+            }`}>
+              <Swords className={`w-5 h-5 sm:w-8 sm:h-8 shrink-0 ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`} />
+              <h2 id="duel-modal-title" className={`font-pixel text-base sm:text-4xl tracking-tighter text-center ${
+                clipTheme === 'comic' ? 'text-black' : 
+                clipTheme === 'modern' ? 'text-white' :
+                'text-primary neon-text'
+              }`}>
+                COMBATE FINAL
+              </h2>
+              <Swords className={`w-5 h-5 sm:w-8 sm:h-8 shrink-0 ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`} />
+            </div>
 
               <div className="w-full grid grid-cols-2 gap-3 sm:gap-12 items-start relative">
                 {/* Center VS Indicator for Desktop */}
@@ -686,9 +749,15 @@ const ComicsSection = () => {
                       <p className="font-inter text-[8px] sm:text-xs text-muted-foreground uppercase tracking-[0.2em] mt-1 sm:mt-2 font-bold opacity-70 truncate">{duelFighters[0].biography?.publisher}</p>
                     </div>
 
-                    <div className="w-full flex flex-col items-center bg-primary/5 py-2 sm:py-4 rounded-lg sm:rounded-xl border border-primary/10">
-                      <span className="font-pixel text-[6px] sm:text-[10px] text-muted-foreground mb-0.5">TOTAL POWER</span>
-                      <span className="font-pixel text-lg sm:text-4xl text-primary animate-in fade-in slide-in-from-left duration-1000 delay-1000">
+                    <div className={`w-full flex flex-col items-center py-2 sm:py-4 rounded-lg sm:rounded-xl border ${
+                      clipTheme === 'comic' ? 'bg-black/5 border-black/20' :
+                      clipTheme === 'modern' ? 'bg-white/5 border-white/10' :
+                      'bg-primary/5 border-primary/10'
+                    }`}>
+                      <span className="font-pixel text-[6px] sm:text-[10px] text-muted-foreground mb-0.5 uppercase">Power Rank</span>
+                      <span className={`font-pixel text-lg sm:text-4xl animate-in fade-in slide-in-from-left duration-1000 delay-1000 ${
+                        clipTheme === 'comic' ? 'text-black' : 'text-primary'
+                      }`}>
                         {calculateTotalStats(duelFighters[0])}
                       </span>
                     </div>
@@ -719,9 +788,15 @@ const ComicsSection = () => {
                       <p className="font-inter text-[8px] sm:text-xs text-muted-foreground uppercase tracking-[0.2em] mt-1 sm:mt-2 font-bold opacity-70 truncate">{duelFighters[1].biography?.publisher}</p>
                     </div>
 
-                    <div className="w-full flex flex-col items-center bg-primary/5 py-2 sm:py-4 rounded-lg sm:rounded-xl border border-primary/10">
-                      <span className="font-pixel text-[6px] sm:text-[10px] text-muted-foreground mb-0.5">TOTAL POWER</span>
-                      <span className="font-pixel text-lg sm:text-4xl text-primary animate-in fade-in slide-in-from-right duration-1000 delay-1000">
+                    <div className={`w-full flex flex-col items-center py-2 sm:py-4 rounded-lg sm:rounded-xl border ${
+                      clipTheme === 'comic' ? 'bg-black/5 border-black/20' :
+                      clipTheme === 'modern' ? 'bg-white/5 border-white/10' :
+                      'bg-primary/5 border-primary/10'
+                    }`}>
+                      <span className="font-pixel text-[6px] sm:text-[10px] text-muted-foreground mb-0.5 uppercase">Power Rank</span>
+                      <span className={`font-pixel text-lg sm:text-4xl animate-in fade-in slide-in-from-right duration-1000 delay-1000 ${
+                        clipTheme === 'comic' ? 'text-black' : 'text-primary'
+                      }`}>
                         {calculateTotalStats(duelFighters[1])}
                       </span>
                     </div>
@@ -752,11 +827,19 @@ const ComicsSection = () => {
                             </span>
                           </div>
                           
-                          <div className="h-4 sm:h-6 bg-muted/20 rounded-full flex overflow-hidden border-2 border-primary/10 p-[2px] sm:p-[3px] shadow-inner relative group">
+                          <div className={`h-4 sm:h-6 rounded-full flex overflow-hidden border-2 p-[2px] sm:p-[3px] shadow-inner relative group ${
+                            clipTheme === 'comic' ? 'bg-black/10 border-black' :
+                            clipTheme === 'modern' ? 'bg-white/5 border-white/10' :
+                            'bg-muted/20 border-primary/10'
+                          }`}>
                             {/* Bar Hero 1 */}
                             <div className="flex-1 h-full flex justify-end overflow-hidden">
                               <div 
-                                className={`h-full rounded-l-full transition-all duration-1000 ease-out shadow-[inset_0_2px_4px_rgba(255,255,255,0.1)] ${winner === 1 ? 'bg-primary neon-shadow animate-pulse-subtle' : 'bg-primary/20'}`}
+                                className={`h-full rounded-l-full transition-all duration-1000 ease-out shadow-[inset_0_2px_4px_rgba(255,255,255,0.1)] ${
+                                  winner === 1 
+                                    ? (clipTheme === 'comic' ? 'bg-black' : clipTheme === 'cyberpunk' ? 'bg-retro-magenta' : 'bg-primary neon-shadow animate-pulse-subtle') 
+                                    : 'opacity-20 bg-current'
+                                }`}
                                 style={{ 
                                   width: showDuelResult ? `${(stat1 / (stat1 + stat2 || 1)) * 100}%` : '0%',
                                   transitionDelay: `${index * 150}ms`
@@ -765,12 +848,16 @@ const ComicsSection = () => {
                             </div>
                             
                             {/* Separator / Center Point */}
-                            <div className="w-[2px] bg-background/50 z-10" />
+                            <div className={`w-[2px] z-10 ${clipTheme === 'comic' ? 'bg-black' : 'bg-background/50'}`} />
                             
                             {/* Bar Hero 2 */}
                             <div className="flex-1 h-full flex justify-start overflow-hidden">
                               <div 
-                                className={`h-full rounded-r-full transition-all duration-1000 ease-out shadow-[inset_0_2px_4px_rgba(255,255,255,0.1)] ${winner === 2 ? 'bg-primary neon-shadow animate-pulse-subtle' : 'bg-primary/20'}`}
+                                className={`h-full rounded-r-full transition-all duration-1000 ease-out shadow-[inset_0_2px_4px_rgba(255,255,255,0.1)] ${
+                                  winner === 2 
+                                    ? (clipTheme === 'comic' ? 'bg-black' : clipTheme === 'cyberpunk' ? 'bg-retro-magenta' : 'bg-primary neon-shadow animate-pulse-subtle') 
+                                    : 'opacity-20 bg-current'
+                                }`}
                                 style={{ 
                                   width: showDuelResult ? `${(stat2 / (stat1 + stat2 || 1)) * 100}%` : '0%',
                                   transitionDelay: `${index * 150}ms`
@@ -827,50 +914,86 @@ const ComicsSection = () => {
                     </div>
                     <div className="space-y-2 text-center">
                       <span id="label-resolucao" className="font-pixel text-[8px] text-muted-foreground uppercase">Resolução</span>
-                      <div className="flex justify-center gap-2" role="group" aria-labelledby="label-resolucao">
-                        {[1, 2, 3].map((s) => (
-                          <button
-                            key={s}
-                            onClick={() => setClipScale(s)}
-                            aria-pressed={clipScale === s}
-                            aria-label={`Selecionar resolução ${s}x`}
-                            className={`px-3 py-1 rounded-md font-pixel text-[9px] transition-all ${clipScale === s ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
-                          >
-                            {s}X
-                          </button>
-                        ))}
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="flex justify-center gap-2" role="group" aria-labelledby="label-resolucao">
+                          {[1, 2, 3].map((s) => (
+                            <button
+                              key={s}
+                              onClick={() => setClipScale(s)}
+                              aria-pressed={clipScale === s}
+                              aria-label={`Selecionar resolução ${s}x`}
+                              className={`px-3 py-1 rounded-md font-pixel text-[9px] transition-all ${clipScale === s ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
+                            >
+                              {s}X
+                            </button>
+                          ))}
+                        </div>
+                        <span className="font-pixel text-[7px] text-primary/60 italic">
+                          {dimensions.width} x {dimensions.height} PX
+                        </span>
                       </div>
                     </div>
                     <div className="space-y-2 text-center">
                       <span id="label-enquadramento" className="font-pixel text-[8px] text-muted-foreground uppercase">Enquadramento</span>
-                      <div className="flex justify-center gap-2" role="group" aria-labelledby="label-enquadramento">
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="flex justify-center gap-2" role="group" aria-labelledby="label-enquadramento">
+                          <button
+                            onClick={() => setClipFit('contain')}
+                            aria-pressed={clipFit === 'contain'}
+                            aria-label="Enquadramento: Centralizado"
+                            title="Centralizado"
+                            className={`p-2 rounded-md transition-all ${clipFit === 'contain' ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
+                          >
+                            <Minimize className="w-3 h-3" />
+                          </button>
+                          <button
+                            onClick={() => setClipFit('cover')}
+                            aria-pressed={clipFit === 'cover'}
+                            aria-label="Enquadramento: Manter Proporção"
+                            title="Manter Proporção"
+                            className={`p-2 rounded-md transition-all ${clipFit === 'cover' ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
+                          >
+                            <Maximize className="w-3 h-3" />
+                          </button>
+                          <button
+                            onClick={() => setClipFit('zoom')}
+                            aria-pressed={clipFit === 'zoom'}
+                            aria-label="Enquadramento: Zoom"
+                            title="Zoom"
+                            className={`p-2 rounded-md transition-all ${clipFit === 'zoom' ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
+                          >
+                            <ZoomIn className="w-3 h-3" />
+                          </button>
+                        </div>
                         <button
-                          onClick={() => setClipFit('contain')}
-                          aria-pressed={clipFit === 'contain'}
-                          aria-label="Enquadramento: Centralizado"
-                          title="Centralizado"
-                          className={`p-2 rounded-md transition-all ${clipFit === 'contain' ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
+                          onClick={() => setShowGuides(!showGuides)}
+                          className={`flex items-center gap-1.5 px-2 py-1 rounded text-[8px] font-pixel transition-colors ${showGuides ? 'bg-primary/20 text-primary border border-primary/40' : 'text-muted-foreground border border-transparent'}`}
                         >
-                          <Minimize className="w-3 h-3" />
+                          {showGuides ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+                          {showGuides ? 'GUIAS ON' : 'GUIAS OFF'}
                         </button>
-                        <button
-                          onClick={() => setClipFit('cover')}
-                          aria-pressed={clipFit === 'cover'}
-                          aria-label="Enquadramento: Manter Proporção"
-                          title="Manter Proporção"
-                          className={`p-2 rounded-md transition-all ${clipFit === 'cover' ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
-                        >
-                          <Maximize className="w-3 h-3" />
-                        </button>
-                        <button
-                          onClick={() => setClipFit('zoom')}
-                          aria-pressed={clipFit === 'zoom'}
-                          aria-label="Enquadramento: Zoom"
-                          title="Zoom"
-                          className={`p-2 rounded-md transition-all ${clipFit === 'zoom' ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
-                        >
-                          <ZoomIn className="w-3 h-3" />
-                        </button>
+                      </div>
+                    </div>
+                    <div className="sm:col-span-3 space-y-2 text-center border-t border-primary/10 pt-3">
+                      <span id="label-tema" className="font-pixel text-[8px] text-muted-foreground uppercase flex items-center justify-center gap-2">
+                        <Palette className="w-3 h-3" />
+                        Temas Visuais
+                      </span>
+                      <div className="flex justify-center flex-wrap gap-2" role="group" aria-labelledby="label-tema">
+                        {DUEL_THEMES.map((theme) => (
+                          <button
+                            key={theme.id}
+                            onClick={() => setClipTheme(theme.id as any)}
+                            aria-pressed={clipTheme === theme.id}
+                            className={`px-4 py-1.5 rounded-lg font-pixel text-[9px] transition-all border-2 ${
+                              clipTheme === theme.id 
+                                ? 'bg-primary border-primary text-primary-foreground shadow-lg' 
+                                : 'bg-background border-primary/20 text-muted-foreground hover:border-primary/40'
+                            }`}
+                          >
+                            {theme.label}
+                          </button>
+                        ))}
                       </div>
                     </div>
                   </div>
