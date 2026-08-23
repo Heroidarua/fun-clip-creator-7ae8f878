@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Search, ShieldCheck, X, Swords, Trophy, RotateCcw, Download, Loader2 } from "lucide-react";
+import { Search, ShieldCheck, X, Swords, Trophy, RotateCcw, Download, Loader2, Share2 } from "lucide-react";
 import ScrollReveal from "./ScrollReveal";
 import { toPng } from 'html-to-image';
 import download from 'downloadjs';
