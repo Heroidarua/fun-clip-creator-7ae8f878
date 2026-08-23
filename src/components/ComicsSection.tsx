@@ -378,6 +378,8 @@ const ComicsSection = () => {
       // Se ambos estão ocupados, substitui o segundo
       return [prev[0], hero];
     });
+    // Reset positions when fighters change
+    setFighterPositions([{x: 0, y: 0}, {x: 0, y: 0}]);
   };
 
   const resetDuel = () => {
