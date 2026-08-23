@@ -308,6 +308,7 @@ const ComicsSection = () => {
           backgroundColor: clipTheme === 'comic' ? '#fefce8' : 
                          clipTheme === 'modern' ? '#0a0a0a' : 
                          clipTheme === 'cyberpunk' ? '#000000' : '#ffffff',
+          color: clipTheme === 'comic' ? '#000000' : '',
         },
       };
 
@@ -913,7 +914,7 @@ const ComicsSection = () => {
                     sos01.com.br
                   </span>
                 </div>
-                <div className="clip-config-section mt-6 p-4 bg-primary/10 border border-primary/20 rounded-2xl w-full max-w-lg mx-auto">
+                <div className={`clip-config-section mt-6 p-4 border rounded-2xl w-full max-w-lg mx-auto ${clipTheme === 'comic' ? 'bg-black/5 border-black/20' : 'bg-primary/10 border-primary/20'}`}>
                   <h4 className="font-pixel text-[10px] text-primary mb-3 text-center uppercase tracking-wider">CONFIGURAÇÕES DO FUN-CLIP</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="space-y-2 text-center">
