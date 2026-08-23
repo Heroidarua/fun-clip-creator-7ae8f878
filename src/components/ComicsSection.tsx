@@ -256,6 +256,25 @@ const ComicsSection = () => {
     }
   }, [showDuelResult]);
 
+  useEffect(() => {
+    if (showDuelResult) {
+      const updateSize = () => {
+        const el = document.getElementById('duel-combat-result');
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          setDimensions({
+            width: Math.round(rect.width * clipScale),
+            height: Math.round(rect.height * clipScale)
+          });
+        }
+      };
+      
+      updateSize();
+      window.addEventListener('resize', updateSize);
+      return () => window.removeEventListener('resize', updateSize);
+    }
+  }, [showDuelResult, clipScale, clipFit, clipTheme]);
+
   const generateClipData = async () => {
     const element = document.getElementById('duel-combat-result');
     if (!element) return null;
