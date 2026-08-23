@@ -220,6 +220,8 @@ const ComicsSection = () => {
   const [clipTheme, setClipTheme] = useState<"retro" | "modern" | "comic" | "cyberpunk">("retro");
   const [showGuides, setShowGuides] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [showWatermark, setShowWatermark] = useState(true);
+  const [fighterPositions, setFighterPositions] = useState<[{x: number, y: number}, {x: number, y: number}]>([{x: 0, y: 0}, {x: 0, y: 0}]);
   const modalRef = useRef<HTMLDivElement>(null);
 
   // Focus trap implementation
@@ -287,11 +289,13 @@ const ComicsSection = () => {
       const closeButton = element.querySelector('.clip-close-button');
       const configSection = element.querySelector('.clip-config-section');
       const guides = element.querySelector('.clip-guides');
+      const watermark = element.querySelector('.clip-watermark');
       
       if (actionButtons) (actionButtons as HTMLElement).style.display = 'none';
       if (closeButton) (closeButton as HTMLElement).style.display = 'none';
       if (configSection) (configSection as HTMLElement).style.display = 'none';
       if (guides) (guides as HTMLElement).style.display = 'none';
+      if (watermark && !showWatermark) (watermark as HTMLElement).style.display = 'none';
 
       const options = {
         quality: 0.95,
@@ -311,6 +315,7 @@ const ComicsSection = () => {
       if (closeButton) (closeButton as HTMLElement).style.display = 'flex';
       if (configSection) (configSection as HTMLElement).style.display = 'block';
       if (guides) (guides as HTMLElement).style.display = 'block';
+      if (watermark) (watermark as HTMLElement).style.display = 'block';
 
       return dataUrl;
     } catch (err) {
@@ -373,11 +378,14 @@ const ComicsSection = () => {
       // Se ambos estão ocupados, substitui o segundo
       return [prev[0], hero];
     });
+    // Reset positions when fighters change
+    setFighterPositions([{x: 0, y: 0}, {x: 0, y: 0}]);
   };
 
   const resetDuel = () => {
     setDuelFighters([null, null]);
     setShowDuelResult(false);
+    setFighterPositions([{x: 0, y: 0}, {x: 0, y: 0}]);
   };
 
   useEffect(() => {
@@ -681,6 +689,13 @@ const ComicsSection = () => {
               <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[radial-gradient(#000_1.5px,transparent_1.5px)] bg-[size:15px_15px] z-0" />
             )}
             
+            {/* Watermark */}
+            {showWatermark && (
+              <div className="clip-watermark absolute bottom-2 right-4 z-50 pointer-events-none opacity-40 select-none">
+                <span className={`font-pixel text-[8px] sm:text-[10px] ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`}>sos01.com.br</span>
+              </div>
+            )}
+            
             {/* Capture Guides */}
             {showGuides && (
               <div className="clip-guides absolute inset-0 pointer-events-none z-50 overflow-hidden">
@@ -727,11 +742,35 @@ const ComicsSection = () => {
 
                 {/* Fighter 1 Column */}
                 <div className="flex flex-col gap-4 sm:gap-8 items-center">
-                  <div className={`w-full flex flex-col items-center gap-3 sm:gap-6 p-2 sm:p-6 rounded-2xl sm:rounded-3xl transition-all duration-1000 ease-out ${
-                    calculateTotalStats(duelFighters[0]) >= calculateTotalStats(duelFighters[1]) 
-                      ? "bg-primary/10 ring-2 sm:ring-4 ring-primary ring-offset-2 sm:ring-offset-8 ring-offset-background scale-[1.02] sm:scale-105 shadow-[0_0_50px_rgba(var(--primary),0.3)] z-10" 
-                      : "opacity-40 grayscale translate-y-4 scale-95"
-                  } animate-in fade-in slide-in-from-left duration-700`}>
+                    <div 
+                      className={`w-full flex flex-col items-center gap-3 sm:gap-6 p-2 sm:p-6 rounded-2xl sm:rounded-3xl transition-all duration-1000 ease-out cursor-move active:cursor-grabbing touch-none ${
+                        calculateTotalStats(duelFighters[0]) >= calculateTotalStats(duelFighters[1]) 
+                          ? "bg-primary/10 ring-2 sm:ring-4 ring-primary ring-offset-2 sm:ring-offset-8 ring-offset-background scale-[1.02] sm:scale-105 shadow-[0_0_50px_rgba(var(--primary),0.3)] z-10" 
+                          : "opacity-40 grayscale translate-y-4 scale-95"
+                      } animate-in fade-in slide-in-from-left duration-700`}
+                      style={{ transform: `translate(${fighterPositions[0].x}px, ${fighterPositions[0].y}px)` }}
+                      onPointerDown={(e) => {
+                        const el = e.currentTarget;
+                        const startX = e.clientX - fighterPositions[0].x;
+                        const startY = e.clientY - fighterPositions[0].y;
+                        
+                        const handlePointerMove = (moveEvent: PointerEvent) => {
+                          setFighterPositions(prev => [{
+                            x: moveEvent.clientX - startX,
+                            y: moveEvent.clientY - startY
+                          }, prev[1]]);
+                        };
+                        
+                        const handlePointerUp = () => {
+                          window.removeEventListener('pointermove', handlePointerMove);
+                          window.removeEventListener('pointerup', handlePointerUp);
+                        };
+                        
+                        window.addEventListener('pointermove', handlePointerMove);
+                        window.addEventListener('pointerup', handlePointerUp);
+                        el.setPointerCapture(e.pointerId);
+                      }}
+                    >
                     <div className="relative group overflow-hidden rounded-xl sm:rounded-2xl shadow-2xl border-2 sm:border-4 border-primary/20 w-full aspect-[3/4] max-h-48 sm:max-h-80">
                       <img 
                         src={duelFighters[0].images?.lg} 
@@ -766,11 +805,35 @@ const ComicsSection = () => {
 
                 {/* Fighter 2 Column */}
                 <div className="flex flex-col gap-4 sm:gap-8 items-center">
-                  <div className={`w-full flex flex-col items-center gap-3 sm:gap-6 p-2 sm:p-6 rounded-2xl sm:rounded-3xl transition-all duration-1000 ease-out ${
-                    calculateTotalStats(duelFighters[1]) > calculateTotalStats(duelFighters[0]) 
-                      ? "bg-primary/10 ring-2 sm:ring-4 ring-primary ring-offset-2 sm:ring-offset-8 ring-offset-background scale-[1.02] sm:scale-105 shadow-[0_0_50px_rgba(var(--primary),0.3)] z-10" 
-                      : "opacity-40 grayscale translate-y-4 scale-95"
-                  } animate-in fade-in slide-in-from-right duration-700`}>
+                    <div 
+                      className={`w-full flex flex-col items-center gap-3 sm:gap-6 p-2 sm:p-6 rounded-2xl sm:rounded-3xl transition-all duration-1000 ease-out cursor-move active:cursor-grabbing touch-none ${
+                        calculateTotalStats(duelFighters[1]) > calculateTotalStats(duelFighters[0]) 
+                          ? "bg-primary/10 ring-2 sm:ring-4 ring-primary ring-offset-2 sm:ring-offset-8 ring-offset-background scale-[1.02] sm:scale-105 shadow-[0_0_50px_rgba(var(--primary),0.3)] z-10" 
+                          : "opacity-40 grayscale translate-y-4 scale-95"
+                      } animate-in fade-in slide-in-from-right duration-700`}
+                      style={{ transform: `translate(${fighterPositions[1].x}px, ${fighterPositions[1].y}px)` }}
+                      onPointerDown={(e) => {
+                        const el = e.currentTarget;
+                        const startX = e.clientX - fighterPositions[1].x;
+                        const startY = e.clientY - fighterPositions[1].y;
+                        
+                        const handlePointerMove = (moveEvent: PointerEvent) => {
+                          setFighterPositions(prev => [prev[0], {
+                            x: moveEvent.clientX - startX,
+                            y: moveEvent.clientY - startY
+                          }]);
+                        };
+                        
+                        const handlePointerUp = () => {
+                          window.removeEventListener('pointermove', handlePointerMove);
+                          window.removeEventListener('pointerup', handlePointerUp);
+                        };
+                        
+                        window.addEventListener('pointermove', handlePointerMove);
+                        window.addEventListener('pointerup', handlePointerUp);
+                        el.setPointerCapture(e.pointerId);
+                      }}
+                    >
                     <div className="relative group overflow-hidden rounded-xl sm:rounded-2xl shadow-2xl border-2 sm:border-4 border-primary/20 w-full aspect-[3/4] max-h-48 sm:max-h-80">
                       <img 
                         src={duelFighters[1].images?.lg} 
@@ -994,6 +1057,33 @@ const ComicsSection = () => {
                             {theme.label}
                           </button>
                         ))}
+                      </div>
+                    </div>
+                    <div className="sm:col-span-3 space-y-2 text-center border-t border-primary/10 pt-3">
+                      <span id="label-watermark" className="font-pixel text-[8px] text-muted-foreground uppercase">Marca D'água</span>
+                      <div className="flex justify-center gap-2" role="group" aria-labelledby="label-watermark">
+                        <button
+                          onClick={() => setShowWatermark(true)}
+                          aria-pressed={showWatermark}
+                          className={`px-4 py-1.5 rounded-lg font-pixel text-[9px] transition-all border-2 ${
+                            showWatermark 
+                              ? 'bg-primary border-primary text-primary-foreground shadow-lg' 
+                              : 'bg-background border-primary/20 text-muted-foreground hover:border-primary/40'
+                          }`}
+                        >
+                          LIGADA
+                        </button>
+                        <button
+                          onClick={() => setShowWatermark(false)}
+                          aria-pressed={!showWatermark}
+                          className={`px-4 py-1.5 rounded-lg font-pixel text-[9px] transition-all border-2 ${
+                            !showWatermark 
+                              ? 'bg-destructive border-destructive text-white shadow-lg' 
+                              : 'bg-background border-primary/20 text-muted-foreground hover:border-primary/40'
+                          }`}
+                        >
+                          DESLIGADA
+                        </button>
                       </div>
                     </div>
                   </div>
