@@ -385,6 +385,7 @@ const ComicsSection = () => {
   const resetDuel = () => {
     setDuelFighters([null, null]);
     setShowDuelResult(false);
+    setFighterPositions([{x: 0, y: 0}, {x: 0, y: 0}]);
   };
 
   useEffect(() => {
