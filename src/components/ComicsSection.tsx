@@ -596,9 +596,9 @@ const ComicsSection = () => {
                 </div>
 
                 {/* Comparison Row (Span both columns) */}
-                <div className="lg:col-span-2 flex flex-col items-center w-full max-w-4xl mx-auto mt-2 sm:mt-4">
-                  <div className="mb-4 sm:mb-12 w-10 h-10 sm:w-20 sm:h-20 bg-primary/10 border-2 sm:border-4 border-primary/50 rounded-full flex items-center justify-center -rotate-12 shadow-[0_0_30px_rgba(var(--primary),0.3)] shrink-0">
-                    <span className="font-pixel text-lg sm:text-4xl text-primary italic">VS</span>
+                <div className="col-span-2 flex flex-col items-center w-full max-w-4xl mx-auto mt-2 sm:mt-4">
+                  <div className="lg:hidden mb-4 w-10 h-10 bg-primary/10 border-2 border-primary/50 rounded-full flex items-center justify-center -rotate-12 shadow-[0_0_30px_rgba(var(--primary),0.3)] shrink-0">
+                    <span className="font-pixel text-lg text-primary italic">VS</span>
                   </div>
 
                   <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-6 sm:gap-x-12 gap-y-6 sm:gap-y-8">
