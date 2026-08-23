@@ -151,11 +151,6 @@ export default function Admin() {
   };
 
   const authenticate = async () => {
-    if (parseInt(captchaAnswer) !== captchaQuestion.a + captchaQuestion.b) {
-      toast({ title: "CAPTCHA incorreto", description: "Por favor, resolva a soma corretamente.", variant: "destructive" });
-      generateCaptcha();
-      return;
-    }
 
     setLoading(true);
     try {
