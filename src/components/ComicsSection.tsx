@@ -757,6 +757,41 @@ const ComicsSection = () => {
                     : "EMPATE LENDÁRIO! Em um confronto onde cada grama de força foi igualada, nenhum dos combatentes cedeu. A batalha termina sem um vencedor definido, mas com o respeito mútuo garantido."
                   }
                 </p>
+                {/* Configuração do Clip */}
+                <div className="clip-config-section mt-6 p-4 bg-primary/10 border border-primary/20 rounded-2xl w-full max-w-lg mx-auto">
+                  <h4 className="font-pixel text-[10px] text-primary mb-3 text-center uppercase tracking-wider">CONFIGURAÇÕES DO FUN-CLIP</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2 text-center">
+                      <span className="font-pixel text-[8px] text-muted-foreground uppercase">Formato</span>
+                      <div className="flex justify-center gap-2">
+                        {['png', 'jpg'].map((fmt) => (
+                          <button
+                            key={fmt}
+                            onClick={() => setClipFormat(fmt as any)}
+                            className={`px-3 py-1 rounded-md font-pixel text-[9px] transition-all ${clipFormat === fmt ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
+                          >
+                            {fmt.toUpperCase()}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="space-y-2 text-center">
+                      <span className="font-pixel text-[8px] text-muted-foreground uppercase">Resolução</span>
+                      <div className="flex justify-center gap-2">
+                        {[1, 2, 3].map((s) => (
+                          <button
+                            key={s}
+                            onClick={() => setClipScale(s)}
+                            className={`px-3 py-1 rounded-md font-pixel text-[9px] transition-all ${clipScale === s ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
+                          >
+                            {s}X
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="clip-action-buttons mt-6 sm:mt-8 flex flex-wrap justify-center gap-3 sm:gap-4">
                   <button
                     onClick={handleDownloadClip}
@@ -764,7 +799,15 @@ const ComicsSection = () => {
                     className="px-6 sm:px-10 py-3 sm:py-4 bg-accent text-accent-foreground font-pixel text-[10px] sm:text-xs rounded-xl border-b-4 border-accent-foreground/20 hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(var(--accent),0.3)] flex items-center gap-2"
                   >
                     {isGeneratingClip ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                    GERAR FUN-CLIP
+                    BAIXAR CLIP
+                  </button>
+                  <button
+                    onClick={handleShareClip}
+                    disabled={isGeneratingClip}
+                    className="px-6 sm:px-10 py-3 sm:py-4 bg-retro-magenta text-white font-pixel text-[10px] sm:text-xs rounded-xl border-b-4 border-black/20 hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(var(--retro-magenta),0.3)] flex items-center gap-2"
+                  >
+                    {isGeneratingClip ? <Loader2 className="w-4 h-4 animate-spin" /> : <Share2 className="w-4 h-4" />}
+                    COMPARTILHAR
                   </button>
                   <button
                     onClick={resetDuel}
