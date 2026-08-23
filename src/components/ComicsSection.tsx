@@ -666,11 +666,33 @@ const ComicsSection = () => {
           <div 
             id="duel-combat-result" 
             ref={modalRef}
-            className={`relative w-full max-w-5xl bg-background sm:border-4 border-primary/50 sm:rounded-3xl p-4 sm:p-12 shadow-[0_0_80px_rgba(var(--primary),0.2)] animate-in zoom-in-95 duration-300 m-0 sm:my-8 transition-all duration-500 ${
+            className={`relative w-full max-w-5xl transition-all duration-500 m-0 sm:my-8 overflow-hidden p-4 sm:p-12 sm:border-4 sm:rounded-3xl ${
+              clipTheme === 'modern' ? 'bg-[#0a0a0a] border-white/10 rounded-[40px] shadow-2xl' :
+              clipTheme === 'comic' ? 'bg-yellow-50 border-black border-[6px] shadow-[12px_12px_0_0_#000]' :
+              clipTheme === 'cyberpunk' ? 'bg-black border-retro-magenta border-b-[10px] border-r-[10px] shadow-[0_0_40px_rgba(255,0,255,0.2)]' :
+              'bg-background border-primary/50 shadow-[0_0_80px_rgba(var(--primary),0.2)]'
+            } ${
               clipFit === 'cover' ? 'aspect-video flex flex-col justify-center' : 
               clipFit === 'zoom' ? 'scale-110' : ''
             }`}
           >
+            {/* Comic theme texture */}
+            {clipTheme === 'comic' && (
+              <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[radial-gradient(#000_1.5px,transparent_1.5px)] bg-[size:15px_15px] z-0" />
+            )}
+            
+            {/* Capture Guides */}
+            {showGuides && (
+              <div className="clip-guides absolute inset-0 pointer-events-none z-50 overflow-hidden">
+                <div className="absolute top-1/3 w-full h-px bg-primary/20" />
+                <div className="absolute top-2/3 w-full h-px bg-primary/20" />
+                <div className="absolute left-1/3 h-full w-px bg-primary/20" />
+                <div className="absolute left-2/3 h-full w-px bg-primary/20" />
+                {/* Rule of thirds labels */}
+                <div className="absolute top-2 right-2 font-pixel text-[6px] text-primary/40 uppercase">Guides Active</div>
+              </div>
+            )}
+
             <button
               onClick={() => setShowDuelResult(false)}
               aria-label="Fechar resultado do duelo"
