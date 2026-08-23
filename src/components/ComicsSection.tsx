@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, useRef } from "react";
-import { Search, ShieldCheck, X, Swords, Trophy, RotateCcw, Download, Loader2, Share2, Maximize, Minimize, ZoomIn, Eye, EyeOff, Palette } from "lucide-react";
+import { Search, ShieldCheck, X, Swords, Trophy, RotateCcw, Download, Loader2, Share2, Maximize, Minimize, ZoomIn, Eye, EyeOff, Palette, LayoutGrid } from "lucide-react";
 import ScrollReveal from "./ScrollReveal";
 import { toPng, toJpeg } from 'html-to-image';
 import download from 'downloadjs';
@@ -388,6 +388,13 @@ const ComicsSection = () => {
     setFighterPositions([{x: 0, y: 0}, {x: 0, y: 0}]);
   };
 
+  const autoFrameFighters = () => {
+    // Basic auto-framing: reset to 0,0
+    setFighterPositions([{x: 0, y: 0}, {x: 0, y: 0}]);
+    toast.success("Enquadramento resetado!");
+  };
+
+
   useEffect(() => {
     let active = true;
     fetch(API_URL)
@@ -691,10 +698,11 @@ const ComicsSection = () => {
             
             {/* Watermark */}
             {showWatermark && (
-              <div className="clip-watermark absolute bottom-2 right-4 z-50 pointer-events-none opacity-40 select-none">
-                <span className={`font-pixel text-[8px] sm:text-[10px] ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`}>sos01.com.br</span>
+              <div className="clip-watermark absolute bottom-4 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-60 select-none text-center w-full">
+                <span className={`font-pixel text-[12px] sm:text-[18px] font-bold ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`}>sos01.com.br</span>
               </div>
             )}
+
             
             {/* Capture Guides */}
             {showGuides && (
@@ -1037,7 +1045,22 @@ const ComicsSection = () => {
                         </button>
                       </div>
                     </div>
+                    <div className="space-y-2 text-center">
+                      <span id="label-auto-enquadramento" className="font-pixel text-[8px] text-muted-foreground uppercase">Ajustes</span>
+                      <div className="flex flex-col items-center gap-2">
+                        <button
+                          onClick={autoFrameFighters}
+                          aria-label="Auto-enquadramento"
+                          title="Auto-enquadramento"
+                          className="flex items-center gap-1.5 px-3 py-1.5 bg-background border border-primary/20 text-primary hover:bg-primary/5 rounded-md font-pixel text-[9px] transition-all"
+                        >
+                          <LayoutGrid className="w-3.5 h-3.5" />
+                          AUTO
+                        </button>
+                      </div>
+                    </div>
                     <div className="sm:col-span-3 space-y-2 text-center border-t border-primary/10 pt-3">
+
                       <span id="label-tema" className="font-pixel text-[8px] text-muted-foreground uppercase flex items-center justify-center gap-2">
                         <Palette className="w-3 h-3" />
                         Temas Visuais
