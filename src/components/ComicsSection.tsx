@@ -210,35 +210,81 @@ const ComicsSection = () => {
   const [clipFormat, setClipFormat] = useState<"png" | "jpg">("png");
   const [clipScale, setClipScale] = useState(2);
 
-  const handleDownloadClip = async () => {
+  const generateClipData = async () => {
     const element = document.getElementById('duel-combat-result');
-    if (!element) return;
+    if (!element) return null;
 
     try {
       setIsGeneratingClip(true);
+      
       // Ocultar os botões temporariamente para a captura
       const actionButtons = element.querySelector('.clip-action-buttons');
       const closeButton = element.querySelector('.clip-close-button');
+      const configSection = element.querySelector('.clip-config-section');
+      
       if (actionButtons) (actionButtons as HTMLElement).style.display = 'none';
       if (closeButton) (closeButton as HTMLElement).style.display = 'none';
+      if (configSection) (configSection as HTMLElement).style.display = 'none';
 
-      const dataUrl = await toPng(element, {
+      const options = {
         quality: 0.95,
         backgroundColor: '#000',
+        pixelRatio: clipScale,
         style: {
           borderRadius: '0px',
         },
-      });
+      };
 
-      // Restaurar os botões
+      const dataUrl = clipFormat === 'png' 
+        ? await toPng(element, options) 
+        : await toJpeg(element, options);
+
+      // Restaurar os elementos
       if (actionButtons) (actionButtons as HTMLElement).style.display = 'flex';
       if (closeButton) (closeButton as HTMLElement).style.display = 'flex';
+      if (configSection) (configSection as HTMLElement).style.display = 'block';
 
-      download(dataUrl, `fun-clip-duelo-${duelFighters[0]?.name}-vs-${duelFighters[1]?.name}.png`);
+      return dataUrl;
     } catch (err) {
       console.error('Erro ao gerar clip:', err);
+      toast.error("Erro ao gerar o fun-clip");
+      return null;
     } finally {
       setIsGeneratingClip(false);
+    }
+  };
+
+  const handleDownloadClip = async () => {
+    const dataUrl = await generateClipData();
+    if (dataUrl) {
+      download(dataUrl, `fun-clip-duelo-${duelFighters[0]?.name}-vs-${duelFighters[1]?.name}.${clipFormat}`);
+      toast.success("Fun-clip baixado com sucesso!");
+    }
+  };
+
+  const handleShareClip = async () => {
+    const dataUrl = await generateClipData();
+    if (!dataUrl) return;
+
+    try {
+      const response = await fetch(dataUrl);
+      const blob = await response.blob();
+      const file = new File([blob], `fun-clip.${clipFormat}`, { type: `image/${clipFormat === 'png' ? 'png' : 'jpeg'}` });
+
+      if (navigator.share && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: 'Fun-Clip Duelo SOS01',
+          text: `Confira o resultado desse duelo épico entre ${duelFighters[0]?.name} e ${duelFighters[1]?.name} no SOS01!`,
+        });
+      } else {
+        // Fallback para download se não suportar partilha de ficheiros
+        download(dataUrl, `fun-clip-duelo-${duelFighters[0]?.name}-vs-${duelFighters[1]?.name}.${clipFormat}`);
+        toast.info("Compartilhamento não disponível, download iniciado.");
+      }
+    } catch (err) {
+      console.error('Erro ao compartilhar:', err);
+      toast.error("Erro ao compartilhar o fun-clip");
     }
   };
 
