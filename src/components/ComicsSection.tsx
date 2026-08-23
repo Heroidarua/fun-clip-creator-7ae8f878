@@ -815,11 +815,19 @@ const ComicsSection = () => {
                             </span>
                           </div>
                           
-                          <div className="h-4 sm:h-6 bg-muted/20 rounded-full flex overflow-hidden border-2 border-primary/10 p-[2px] sm:p-[3px] shadow-inner relative group">
+                          <div className={`h-4 sm:h-6 rounded-full flex overflow-hidden border-2 p-[2px] sm:p-[3px] shadow-inner relative group ${
+                            clipTheme === 'comic' ? 'bg-black/10 border-black' :
+                            clipTheme === 'modern' ? 'bg-white/5 border-white/10' :
+                            'bg-muted/20 border-primary/10'
+                          }`}>
                             {/* Bar Hero 1 */}
                             <div className="flex-1 h-full flex justify-end overflow-hidden">
                               <div 
-                                className={`h-full rounded-l-full transition-all duration-1000 ease-out shadow-[inset_0_2px_4px_rgba(255,255,255,0.1)] ${winner === 1 ? 'bg-primary neon-shadow animate-pulse-subtle' : 'bg-primary/20'}`}
+                                className={`h-full rounded-l-full transition-all duration-1000 ease-out shadow-[inset_0_2px_4px_rgba(255,255,255,0.1)] ${
+                                  winner === 1 
+                                    ? (clipTheme === 'comic' ? 'bg-black' : clipTheme === 'cyberpunk' ? 'bg-retro-magenta' : 'bg-primary neon-shadow animate-pulse-subtle') 
+                                    : 'opacity-20 bg-current'
+                                }`}
                                 style={{ 
                                   width: showDuelResult ? `${(stat1 / (stat1 + stat2 || 1)) * 100}%` : '0%',
                                   transitionDelay: `${index * 150}ms`
@@ -828,12 +836,16 @@ const ComicsSection = () => {
                             </div>
                             
                             {/* Separator / Center Point */}
-                            <div className="w-[2px] bg-background/50 z-10" />
+                            <div className={`w-[2px] z-10 ${clipTheme === 'comic' ? 'bg-black' : 'bg-background/50'}`} />
                             
                             {/* Bar Hero 2 */}
                             <div className="flex-1 h-full flex justify-start overflow-hidden">
                               <div 
-                                className={`h-full rounded-r-full transition-all duration-1000 ease-out shadow-[inset_0_2px_4px_rgba(255,255,255,0.1)] ${winner === 2 ? 'bg-primary neon-shadow animate-pulse-subtle' : 'bg-primary/20'}`}
+                                className={`h-full rounded-r-full transition-all duration-1000 ease-out shadow-[inset_0_2px_4px_rgba(255,255,255,0.1)] ${
+                                  winner === 2 
+                                    ? (clipTheme === 'comic' ? 'bg-black' : clipTheme === 'cyberpunk' ? 'bg-retro-magenta' : 'bg-primary neon-shadow animate-pulse-subtle') 
+                                    : 'opacity-20 bg-current'
+                                }`}
                                 style={{ 
                                   width: showDuelResult ? `${(stat2 / (stat1 + stat2 || 1)) * 100}%` : '0%',
                                   transitionDelay: `${index * 150}ms`
