@@ -1201,20 +1201,6 @@ const ComicsSection = () => {
                     Alinhamento: {t(selected.biography?.alignment)}
                   </p>
                 </div>
-                <div className="flex flex-wrap justify-center sm:justify-start gap-3 mt-4">
-                  <button
-                    onClick={() => {
-                      setDuelMode(true);
-                      handleSelectForDuel(selected);
-                      setSelected(null);
-                      toast.success(`${selected.name} selecionado para o duelo!`);
-                    }}
-                    className="px-4 py-2 bg-primary text-primary-foreground font-pixel text-[8px] sm:text-[10px] rounded border-b-2 border-primary-foreground/20 hover:translate-y-[1px] hover:border-b-0 transition-all flex items-center gap-2"
-                  >
-                    <Swords className="w-3.5 h-3.5" />
-                    LUTAR
-                  </button>
-                </div>
               </div>
             </div>
 
