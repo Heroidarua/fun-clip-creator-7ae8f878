@@ -1111,13 +1111,32 @@ const ComicsSection = () => {
                               <p className="font-pixel text-[6px] text-primary/60 mt-1">Ou arraste a marca no clip!</p>
                             </div>
 
-                            <div className="space-y-2">
-                              <span className="font-pixel text-[7px] text-muted-foreground uppercase">Opacidade: {watermarkOpacity}%</span>
-                              <input 
-                                type="range" 
-                                min="10" 
-                                max="100" 
-                                step="10"
+                            <div className="space-y-4">
+                              <div className="space-y-2">
+                                <span className="font-pixel text-[7px] text-muted-foreground uppercase">Opacidade: {watermarkOpacity}%</span>
+                                <input 
+                                  type="range" 
+                                  min="10" 
+                                  max="100" 
+                                  step="10"
+                                  value={watermarkOpacity}
+                                  onChange={(e) => setWatermarkOpacity(Number(e.target.value))}
+                                  className="w-full accent-primary h-1.5"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <span className="font-pixel text-[7px] text-muted-foreground uppercase">Escala Marca: {watermarkScale.toFixed(1)}x</span>
+                                <input 
+                                  type="range" 
+                                  min="0.5" 
+                                  max="3" 
+                                  step="0.1"
+                                  value={watermarkScale}
+                                  onChange={(e) => setWatermarkScale(Number(e.target.value))}
+                                  className="w-full accent-primary h-1.5"
+                                />
+                              </div>
+                            </div>
                                 value={watermarkOpacity}
                                 onChange={(e) => setWatermarkOpacity(Number(e.target.value))}
                                 className="w-full accent-primary"
