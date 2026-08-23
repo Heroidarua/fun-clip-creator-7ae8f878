@@ -1048,15 +1048,6 @@ const ComicsSection = () => {
                           >
                             <Maximize className="w-3 h-3" />
                           </button>
-                          <button
-                            onClick={() => setClipFit('zoom')}
-                            aria-pressed={clipFit === 'zoom'}
-                            aria-label="Enquadramento: Zoom"
-                            title="Zoom"
-                            className={`p-2 rounded-md transition-all ${clipFit === 'zoom' ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
-                          >
-                            <ZoomIn className="w-3 h-3" />
-                          </button>
                         </div>
                         <div className="flex items-center gap-2">
                           <button
