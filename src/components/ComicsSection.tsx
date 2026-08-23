@@ -220,6 +220,8 @@ const ComicsSection = () => {
   const [clipTheme, setClipTheme] = useState<"retro" | "modern" | "comic" | "cyberpunk">("retro");
   const [showGuides, setShowGuides] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [showWatermark, setShowWatermark] = useState(true);
+  const [fighterPositions, setFighterPositions] = useState<[{x: number, y: number}, {x: number, y: number}]>([{x: 0, y: 0}, {x: 0, y: 0}]);
   const modalRef = useRef<HTMLDivElement>(null);
 
   // Focus trap implementation
