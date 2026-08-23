@@ -8,9 +8,16 @@ export const listEnhancementJobs = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const adminPassword = process.env['ADMIN_PASSWORD'];
 
-    // Rate limiting check
-    const { getWebRequest } = await import("@tanstack/react-start/server");
-    const request = getWebRequest();
+    // Para server functions em TanStack Start v1, usamos import dinâmico de getWebRequest
+    // que é injetado pelo runtime se disponível, ou passamos null para isRateLimited
+    let request: any = null;
+    try {
+      const { getWebRequest } = await import("@tanstack/react-start/server");
+      request = getWebRequest();
+    } catch (e) {
+      console.warn("Could not get request in server function");
+    }
+
     if (request && isRateLimited(request)) {
       throw new Error("Muitas tentativas. Aguarde alguns minutos.");
     }
@@ -36,8 +43,14 @@ export const deleteEnhancementJob = createServerFn({ method: "POST" })
     const adminPassword = process.env['ADMIN_PASSWORD'];
 
     // Rate limiting check
-    const { getWebRequest } = await import("@tanstack/react-start/server");
-    const request = getWebRequest();
+    let request: any = null;
+    try {
+      const { getWebRequest } = await import("@tanstack/react-start/server");
+      request = getWebRequest();
+    } catch (e) {
+      console.warn("Could not get request in server function");
+    }
+
     if (request && isRateLimited(request)) {
       throw new Error("Muitas tentativas. Aguarde alguns minutos.");
     }
