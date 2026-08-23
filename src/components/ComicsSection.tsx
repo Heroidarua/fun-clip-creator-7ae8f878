@@ -844,6 +844,7 @@ const ComicsSection = () => {
                         src={duelFighters[1].images?.lg} 
                         alt={duelFighters[1].name} 
                         className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+                        style={{ transform: `scale(${fighterScales[1]})` }}
                       />
                       {calculateTotalStats(duelFighters[1]) > calculateTotalStats(duelFighters[0]) && (
                         <div className="absolute top-0 inset-x-0 bg-primary py-1.5 sm:py-3 text-center font-pixel text-[8px] sm:text-xs text-primary-foreground shadow-lg uppercase tracking-[0.2em] animate-pulse z-20">
