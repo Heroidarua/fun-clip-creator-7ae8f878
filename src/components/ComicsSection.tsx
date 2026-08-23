@@ -392,13 +392,54 @@ const ComicsSection = () => {
     });
     // Reset positions when fighters change
     setFighterPositions([{x: 0, y: 0}, {x: 0, y: 0}]);
+    setWatermarkPos({ x: 50, y: 90 });
   };
 
   const resetDuel = () => {
     setDuelFighters([null, null]);
     setShowDuelResult(false);
     setFighterPositions([{x: 0, y: 0}, {x: 0, y: 0}]);
+    setWatermarkPos({ x: 50, y: 90 });
   };
+
+  const handleWatermarkMouseDown = (e: React.MouseEvent) => {
+    setIsDraggingWatermark(true);
+    dragRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      startPos: { ...watermarkPos }
+    };
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isDraggingWatermark && dragRef.current) {
+        const deltaX = ((e.clientX - dragRef.current.startX) / window.innerWidth) * 100;
+        const deltaY = ((e.clientY - dragRef.current.startY) / window.innerHeight) * 100;
+        
+        setWatermarkPos({
+          x: Math.max(0, Math.min(100, dragRef.current.startPos.x + deltaX)),
+          y: Math.max(0, Math.min(100, dragRef.current.startPos.y + deltaY))
+        });
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsDraggingWatermark(false);
+      dragRef.current = null;
+    };
+
+    if (isDraggingWatermark) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDraggingWatermark, watermarkPos]);
+
 
   useEffect(() => {
     let active = true;
