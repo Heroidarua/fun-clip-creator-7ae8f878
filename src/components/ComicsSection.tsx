@@ -603,18 +603,18 @@ const ComicsSection = () => {
                       const winner = stat1 > stat2 ? 1 : stat2 > stat1 ? 2 : 0;
                       
                       return (
-                        <div key={key} className="space-y-3">
-                          <div className="flex justify-between items-end px-1">
-                            <span className={`font-pixel text-[10px] sm:text-xs transition-colors duration-500 ${winner === 1 ? 'text-primary font-bold' : 'text-muted-foreground'}`}>
+                        <div key={key} className="space-y-2 sm:space-y-3">
+                          <div className="flex justify-between items-end px-1 gap-2">
+                            <span className={`font-pixel text-[8px] sm:text-xs transition-colors duration-500 shrink-0 ${winner === 1 ? 'text-primary font-bold' : 'text-muted-foreground'}`}>
                               {winner === 1 && "★ "}{stat1}
                             </span>
-                            <span className="font-pixel text-xs sm:text-sm text-foreground uppercase text-center flex-1">{label}</span>
-                            <span className={`font-pixel text-[10px] sm:text-xs transition-colors duration-500 ${winner === 2 ? 'text-primary font-bold' : 'text-muted-foreground'}`}>
+                            <span className="font-pixel text-[9px] sm:text-sm text-foreground uppercase text-center flex-1 truncate">{label}</span>
+                            <span className={`font-pixel text-[8px] sm:text-xs transition-colors duration-500 shrink-0 ${winner === 2 ? 'text-primary font-bold' : 'text-muted-foreground'}`}>
                               {stat2}{winner === 2 && " ★"}
                             </span>
                           </div>
                           
-                          <div className="h-6 bg-muted/20 rounded-full flex overflow-hidden border-2 border-primary/10 p-[3px] shadow-inner relative group">
+                          <div className="h-4 sm:h-6 bg-muted/20 rounded-full flex overflow-hidden border-2 border-primary/10 p-[2px] sm:p-[3px] shadow-inner relative group">
                             {/* Bar Hero 1 */}
                             <div className="flex-1 h-full flex justify-end overflow-hidden">
                               <div 
