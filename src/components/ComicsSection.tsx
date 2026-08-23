@@ -592,11 +592,11 @@ const ComicsSection = () => {
 
                 {/* Comparison Row (Span both columns) */}
                 <div className="lg:col-span-2 flex flex-col items-center w-full max-w-4xl mx-auto mt-4">
-                  <div className="mb-12 w-20 h-20 bg-primary/10 border-4 border-primary/50 rounded-full flex items-center justify-center -rotate-12 shadow-[0_0_30px_rgba(var(--primary),0.3)]">
-                    <span className="font-pixel text-4xl text-primary italic">VS</span>
+                  <div className="mb-6 sm:mb-12 w-12 h-12 sm:w-20 sm:h-20 bg-primary/10 border-2 sm:border-4 border-primary/50 rounded-full flex items-center justify-center -rotate-12 shadow-[0_0_30px_rgba(var(--primary),0.3)]">
+                    <span className="font-pixel text-xl sm:text-4xl text-primary italic">VS</span>
                   </div>
 
-                  <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+                  <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-x-6 sm:gap-x-12 gap-y-6 sm:gap-y-8">
                     {Object.entries(STAT_LABELS).map(([key, label], index) => {
                       const stat1 = Number(duelFighters[0]!.powerstats[key]) || 0;
                       const stat2 = Number(duelFighters[1]!.powerstats[key]) || 0;
