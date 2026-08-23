@@ -1249,7 +1249,6 @@ const ComicsSection = () => {
         </div>
       )}
 
-      )}
 
 
       {/* Modal */}
