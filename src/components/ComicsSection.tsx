@@ -782,13 +782,6 @@ const ComicsSection = () => {
               'bg-primary/20 border-primary shadow-[0_0_20px_rgba(var(--primary),0.3)]'
             }`}>
               <Swords className={`w-5 h-5 sm:w-8 sm:h-8 shrink-0 ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`} />
-              <h2 id="duel-modal-title" className={`font-pixel text-base sm:text-4xl tracking-tighter text-center ${
-                clipTheme === 'comic' ? 'text-black' : 
-                clipTheme === 'modern' ? 'text-white' :
-                'text-primary neon-text'
-              }`}>
-                COMBATE FINAL
-              </h2>
               <Swords className={`w-5 h-5 sm:w-8 sm:h-8 shrink-0 ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`} />
             </div>
 
