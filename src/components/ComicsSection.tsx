@@ -222,7 +222,8 @@ const ComicsSection = () => {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [showWatermark, setShowWatermark] = useState(true);
   const [watermarkText, setWatermarkText] = useState("sos01.com.br");
-  const [watermarkPos, setWatermarkPos] = useState<{x: number, y: number}>({ x: 50, y: 90 });
+  const [watermarkPos, setWatermarkPos] = useState<{x: number, y: number}>({ x: 50, y: 8 });
+
   const [watermarkOpacity, setWatermarkOpacity] = useState(60);
   const [watermarkScale, setWatermarkScale] = useState(1);
   const [watermarkRotation, setWatermarkRotation] = useState(0);
@@ -395,7 +396,8 @@ const ComicsSection = () => {
     });
     // Reset positions when fighters change
     setFighterPositions([{x: 0, y: 0}, {x: 0, y: 0}]);
-    setWatermarkPos({ x: 50, y: 90 });
+    setWatermarkPos({ x: 50, y: 8 });
+
     setWatermarkScale(1);
     setWatermarkRotation(0);
     setFighterScales([1, 1]);
@@ -405,7 +407,8 @@ const ComicsSection = () => {
     setDuelFighters([null, null]);
     setShowDuelResult(false);
     setFighterPositions([{x: 0, y: 0}, {x: 0, y: 0}]);
-    setWatermarkPos({ x: 50, y: 90 });
+    setWatermarkPos({ x: 50, y: 8 });
+
     setWatermarkScale(1);
     setWatermarkRotation(0);
     setFighterScales([1, 1]);
@@ -966,26 +969,6 @@ const ComicsSection = () => {
                   }
                 </p>
 
-
-                {/* Watermark inside combat area */}
-                <div 
-                  onMouseDown={handleWatermarkMouseDown}
-                  className={`clip-watermark absolute z-50 transition-shadow duration-300 cursor-move select-none group/watermark ${
-                    isDraggingWatermark ? 'ring-2 ring-primary ring-offset-2 ring-offset-transparent' : ''
-                  }`}
-                  style={{ 
-                    opacity: watermarkOpacity / 100,
-                    left: `${watermarkPos.x}%`,
-                    top: `${watermarkPos.y}%`,
-                    transform: `translate(-50%, -50%) scale(${watermarkScale}) rotate(${watermarkRotation}deg)`,
-                  }}
-                >
-                  <span className={`font-pixel text-[14px] sm:text-[24px] font-bold uppercase tracking-[0.4em] drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`}>
-                    {watermarkText}
-                  </span>
-                  <div className="absolute -inset-2 border-2 border-dashed border-primary/40 rounded opacity-0 group-hover/watermark:opacity-100 transition-opacity pointer-events-none" />
-                </div>
-
                 <div className={`clip-config-section mt-6 p-4 border rounded-2xl w-full max-w-lg mx-auto ${clipTheme === 'comic' ? 'bg-black/5 border-black/20' : 'bg-primary/10 border-primary/20'}`}>
                   <h4 className="font-pixel text-[10px] text-primary mb-3 text-center uppercase tracking-wider">CONFIGURAÇÕES DO FUN-CLIP</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -1224,10 +1207,29 @@ const ComicsSection = () => {
                     FECHAR
                   </button>
                 </div>
+                </div>
               </div>
             </div>
+
+            {/* Watermark over entire duel card */}
+            <div 
+              onMouseDown={handleWatermarkMouseDown}
+              className={`clip-watermark absolute z-50 transition-shadow duration-300 cursor-move select-none group/watermark ${
+                isDraggingWatermark ? 'ring-2 ring-primary ring-offset-2 ring-offset-transparent' : ''
+              }`}
+              style={{ 
+                opacity: watermarkOpacity / 100,
+                left: `${watermarkPos.x}%`,
+                top: `${watermarkPos.y}%`,
+                transform: `translate(-50%, -50%) scale(${watermarkScale}) rotate(${watermarkRotation}deg)`,
+              }}
+            >
+              <span className={`font-pixel text-[14px] sm:text-[24px] font-bold uppercase tracking-[0.4em] drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`}>
+                {watermarkText}
+              </span>
+              <div className="absolute -inset-2 border-2 border-dashed border-primary/40 rounded opacity-0 group-hover/watermark:opacity-100 transition-opacity pointer-events-none" />
+            </div>
           </div>
-        </div>
         </div>
       )}
 
