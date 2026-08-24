@@ -1207,10 +1207,29 @@ const ComicsSection = () => {
                     FECHAR
                   </button>
                 </div>
+                </div>
               </div>
             </div>
+
+            {/* Watermark over entire duel card */}
+            <div 
+              onMouseDown={handleWatermarkMouseDown}
+              className={`clip-watermark absolute z-50 transition-shadow duration-300 cursor-move select-none group/watermark ${
+                isDraggingWatermark ? 'ring-2 ring-primary ring-offset-2 ring-offset-transparent' : ''
+              }`}
+              style={{ 
+                opacity: watermarkOpacity / 100,
+                left: `${watermarkPos.x}%`,
+                top: `${watermarkPos.y}%`,
+                transform: `translate(-50%, -50%) scale(${watermarkScale}) rotate(${watermarkRotation}deg)`,
+              }}
+            >
+              <span className={`font-pixel text-[14px] sm:text-[24px] font-bold uppercase tracking-[0.4em] drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`}>
+                {watermarkText}
+              </span>
+              <div className="absolute -inset-2 border-2 border-dashed border-primary/40 rounded opacity-0 group-hover/watermark:opacity-100 transition-opacity pointer-events-none" />
+            </div>
           </div>
-        </div>
         </div>
       )}
 
