@@ -1209,7 +1209,7 @@ const ComicsSection = () => {
                 opacity: watermarkOpacity / 100,
                 left: `${watermarkPos.x}%`,
                 top: `${watermarkPos.y}%`,
-                transform: `translate(-50%, -50%) scale(${watermarkScale}) rotate(${watermarkRotation}deg)`,
+                transform: `translate(-50%, -50%) scale(${watermarkScale})`,
               }}
             >
               <span className={`font-pixel text-[14px] sm:text-[24px] font-bold uppercase tracking-[0.4em] drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`}>
