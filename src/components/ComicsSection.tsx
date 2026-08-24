@@ -1039,15 +1039,6 @@ const ComicsSection = () => {
                           >
                             <Minimize className="w-3 h-3" />
                           </button>
-                          <button
-                            onClick={() => setClipFit('cover')}
-                            aria-pressed={clipFit === 'cover'}
-                            aria-label="Enquadramento: Manter Proporção"
-                            title="Manter Proporção"
-                            className={`p-2 rounded-md transition-all ${clipFit === 'cover' ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
-                          >
-                            <Maximize className="w-3 h-3" />
-                          </button>
                         </div>
                         <div className="flex items-center gap-2">
                           <button
