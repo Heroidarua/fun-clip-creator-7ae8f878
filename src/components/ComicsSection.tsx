@@ -1031,13 +1031,6 @@ const ComicsSection = () => {
                             {showGuides ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
                             {showGuides ? 'GUIAS ON' : 'GUIAS OFF'}
                           </button>
-                          <button
-                            onClick={() => setShowWatermark(!showWatermark)}
-                            className={`flex items-center gap-1.5 px-2 py-1 rounded text-[8px] font-pixel transition-colors ${showWatermark ? 'bg-primary/20 text-primary border border-primary/40' : 'text-muted-foreground border border-transparent'}`}
-                          >
-                            {showWatermark ? <ShieldCheck className="w-3 h-3" /> : <X className="w-3 h-3" />}
-                            MARCA D'ÁGUA
-                          </button>
                         </div>
                       </div>
                     </div>
