@@ -787,7 +787,7 @@ const ComicsSection = () => {
                 clipTheme === 'modern' ? 'text-white' :
                 'text-primary neon-text'
               }`}>
-                COMBATE FINAL
+                sos01.com.br
               </h2>
               <Swords className={`w-5 h-5 sm:w-8 sm:h-8 shrink-0 ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`} />
             </div>
@@ -1031,13 +1031,6 @@ const ComicsSection = () => {
                             {showGuides ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
                             {showGuides ? 'GUIAS ON' : 'GUIAS OFF'}
                           </button>
-                          <button
-                            onClick={() => setShowWatermark(!showWatermark)}
-                            className={`flex items-center gap-1.5 px-2 py-1 rounded text-[8px] font-pixel transition-colors ${showWatermark ? 'bg-primary/20 text-primary border border-primary/40' : 'text-muted-foreground border border-transparent'}`}
-                          >
-                            {showWatermark ? <ShieldCheck className="w-3 h-3" /> : <X className="w-3 h-3" />}
-                            MARCA D'ÁGUA
-                          </button>
                         </div>
                       </div>
                     </div>
@@ -1070,71 +1063,6 @@ const ComicsSection = () => {
                         </div>
                       </div>
 
-                      {showWatermark && (
-                        <div className="space-y-3 animate-in fade-in slide-in-from-top-2">
-                          <span className="font-pixel text-[8px] text-muted-foreground uppercase flex items-center justify-center gap-2">
-                            <ShieldCheck className="w-3 h-3" />
-                            Personalizar Marca D'Água
-                          </span>
-                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center px-2">
-                            <div className="space-y-2">
-                              <span className="font-pixel text-[7px] text-muted-foreground uppercase">Texto</span>
-                              <input 
-                                type="text" 
-                                value={watermarkText}
-                                onChange={(e) => setWatermarkText(e.target.value)}
-                                className="w-full px-2 py-1 bg-background border border-primary/20 rounded font-pixel text-[9px] text-foreground outline-none focus:border-primary"
-                                placeholder="Texto da marca..."
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <span className="font-pixel text-[7px] text-muted-foreground uppercase">Posição Rápida</span>
-                              <div className="flex justify-center gap-2">
-                                {[
-                                  { label: 'TOPO', x: 50, y: 10 },
-                                  { label: 'BASE', x: 50, y: 90 }
-                                ].map((pos) => (
-                                  <button
-                                    key={pos.label}
-                                    onClick={() => setWatermarkPos({ x: pos.x, y: pos.y })}
-                                    className={`px-2 py-1 rounded font-pixel text-[8px] transition-all border ${watermarkPos.x === pos.x && watermarkPos.y === pos.y ? 'bg-primary text-primary-foreground border-primary' : 'bg-background border-primary/20 text-muted-foreground'}`}
-                                  >
-                                    {pos.label}
-                                  </button>
-                                ))}
-                              </div>
-                              <p className="font-pixel text-[6px] text-primary/60 mt-1">Ou arraste a marca no clip!</p>
-                            </div>
-
-                            <div className="space-y-4">
-                              <div className="space-y-2">
-                                <span className="font-pixel text-[7px] text-muted-foreground uppercase">Opacidade: {watermarkOpacity}%</span>
-                                <input 
-                                  type="range" 
-                                  min="10" 
-                                  max="100" 
-                                  step="10"
-                                  value={watermarkOpacity}
-                                  onChange={(e) => setWatermarkOpacity(Number(e.target.value))}
-                                  className="w-full accent-primary h-1.5"
-                                />
-                              </div>
-                              <div className="space-y-2">
-                                <span className="font-pixel text-[7px] text-muted-foreground uppercase">Escala Marca: {watermarkScale.toFixed(1)}x</span>
-                                <input 
-                                  type="range" 
-                                  min="0.5" 
-                                  max="3" 
-                                  step="0.1"
-                                  value={watermarkScale}
-                                  onChange={(e) => setWatermarkScale(Number(e.target.value))}
-                                  className="w-full accent-primary h-1.5"
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      )}
 
                       <div className="space-y-2 border-t border-primary/10 pt-3">
                         <span id="label-tema" className="font-pixel text-[8px] text-muted-foreground uppercase flex items-center justify-center gap-2">
