@@ -1131,18 +1131,6 @@ const ComicsSection = () => {
                                   className="w-full accent-primary h-1.5"
                                 />
                               </div>
-                              <div className="space-y-2">
-                                <span className="font-pixel text-[7px] text-muted-foreground uppercase">Rotação Marca: {watermarkRotation}°</span>
-                                <input 
-                                  type="range" 
-                                  min="-180" 
-                                  max="180" 
-                                  step="1"
-                                  value={watermarkRotation}
-                                  onChange={(e) => setWatermarkRotation(Number(e.target.value))}
-                                  className="w-full accent-primary h-1.5"
-                                />
-                              </div>
                             </div>
                           </div>
                         </div>
@@ -1221,7 +1209,7 @@ const ComicsSection = () => {
                 opacity: watermarkOpacity / 100,
                 left: `${watermarkPos.x}%`,
                 top: `${watermarkPos.y}%`,
-                transform: `translate(-50%, -50%) scale(${watermarkScale}) rotate(${watermarkRotation}deg)`,
+                transform: `translate(-50%, -50%) scale(${watermarkScale})`,
               }}
             >
               <span className={`font-pixel text-[14px] sm:text-[24px] font-bold uppercase tracking-[0.4em] drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`}>
