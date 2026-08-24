@@ -220,17 +220,8 @@ const ComicsSection = () => {
   const [clipTheme, setClipTheme] = useState<"retro" | "modern" | "comic" | "cyberpunk">("retro");
   const [showGuides, setShowGuides] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const [showWatermark, setShowWatermark] = useState(true);
-  const [watermarkText, setWatermarkText] = useState("sos01.com.br");
-  const [watermarkPos, setWatermarkPos] = useState<{x: number, y: number}>({ x: 50, y: 8 });
-
-  const [watermarkOpacity, setWatermarkOpacity] = useState(60);
-  const [watermarkScale, setWatermarkScale] = useState(1);
-  const [watermarkRotation, setWatermarkRotation] = useState(0);
   const [fighterPositions, setFighterPositions] = useState<[{x: number, y: number}, {x: number, y: number}]>([{x: 0, y: 0}, {x: 0, y: 0}]);
   const [fighterScales, setFighterScales] = useState<[number, number]>([1, 1]);
-  const [isDraggingWatermark, setIsDraggingWatermark] = useState(false);
-  const dragRef = useRef<{ startX: number, startY: number, startPos: {x: number, y: number} } | null>(null);
 
   const modalRef = useRef<HTMLDivElement>(null);
 
