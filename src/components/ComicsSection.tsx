@@ -787,7 +787,7 @@ const ComicsSection = () => {
                 clipTheme === 'modern' ? 'text-white' :
                 'text-primary neon-text'
               }`}>
-                COMBATE FINAL
+                sos01.com.br
               </h2>
               <Swords className={`w-5 h-5 sm:w-8 sm:h-8 shrink-0 ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`} />
             </div>
