@@ -396,7 +396,8 @@ const ComicsSection = () => {
     });
     // Reset positions when fighters change
     setFighterPositions([{x: 0, y: 0}, {x: 0, y: 0}]);
-    setWatermarkPos({ x: 50, y: 90 });
+    setWatermarkPos({ x: 50, y: 8 });
+
     setWatermarkScale(1);
     setWatermarkRotation(0);
     setFighterScales([1, 1]);
