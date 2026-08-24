@@ -222,7 +222,8 @@ const ComicsSection = () => {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [showWatermark, setShowWatermark] = useState(true);
   const [watermarkText, setWatermarkText] = useState("sos01.com.br");
-  const [watermarkPos, setWatermarkPos] = useState<{x: number, y: number}>({ x: 50, y: 90 });
+  const [watermarkPos, setWatermarkPos] = useState<{x: number, y: number}>({ x: 50, y: 8 });
+
   const [watermarkOpacity, setWatermarkOpacity] = useState(60);
   const [watermarkScale, setWatermarkScale] = useState(1);
   const [watermarkRotation, setWatermarkRotation] = useState(0);
