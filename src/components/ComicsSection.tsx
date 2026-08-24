@@ -220,17 +220,8 @@ const ComicsSection = () => {
   const [clipTheme, setClipTheme] = useState<"retro" | "modern" | "comic" | "cyberpunk">("retro");
   const [showGuides, setShowGuides] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const [showWatermark, setShowWatermark] = useState(true);
-  const [watermarkText, setWatermarkText] = useState("sos01.com.br");
-  const [watermarkPos, setWatermarkPos] = useState<{x: number, y: number}>({ x: 50, y: 8 });
-
-  const [watermarkOpacity, setWatermarkOpacity] = useState(60);
-  const [watermarkScale, setWatermarkScale] = useState(1);
-  const [watermarkRotation, setWatermarkRotation] = useState(0);
   const [fighterPositions, setFighterPositions] = useState<[{x: number, y: number}, {x: number, y: number}]>([{x: 0, y: 0}, {x: 0, y: 0}]);
   const [fighterScales, setFighterScales] = useState<[number, number]>([1, 1]);
-  const [isDraggingWatermark, setIsDraggingWatermark] = useState(false);
-  const dragRef = useRef<{ startX: number, startY: number, startPos: {x: number, y: number} } | null>(null);
 
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -299,13 +290,11 @@ const ComicsSection = () => {
       const closeButton = element.querySelector('.clip-close-button');
       const configSection = element.querySelector('.clip-config-section');
       const guides = element.querySelector('.clip-guides');
-      const watermark = element.querySelector('.clip-watermark');
       
       if (actionButtons) (actionButtons as HTMLElement).style.display = 'none';
       if (closeButton) (closeButton as HTMLElement).style.display = 'none';
       if (configSection) (configSection as HTMLElement).style.display = 'none';
       if (guides) (guides as HTMLElement).style.display = 'none';
-      if (watermark && !showWatermark) (watermark as HTMLElement).style.display = 'none';
 
       const options = {
         quality: 1,
@@ -331,7 +320,6 @@ const ComicsSection = () => {
       if (closeButton) (closeButton as HTMLElement).style.display = 'flex';
       if (configSection) (configSection as HTMLElement).style.display = 'block';
       if (guides) (guides as HTMLElement).style.display = 'block';
-      if (watermark) (watermark as HTMLElement).style.display = 'block';
 
       return dataUrl;
     } catch (err) {
@@ -396,10 +384,6 @@ const ComicsSection = () => {
     });
     // Reset positions when fighters change
     setFighterPositions([{x: 0, y: 0}, {x: 0, y: 0}]);
-    setWatermarkPos({ x: 50, y: 8 });
-
-    setWatermarkScale(1);
-    setWatermarkRotation(0);
     setFighterScales([1, 1]);
   };
 
@@ -407,50 +391,9 @@ const ComicsSection = () => {
     setDuelFighters([null, null]);
     setShowDuelResult(false);
     setFighterPositions([{x: 0, y: 0}, {x: 0, y: 0}]);
-    setWatermarkPos({ x: 50, y: 8 });
-
-    setWatermarkScale(1);
-    setWatermarkRotation(0);
     setFighterScales([1, 1]);
   };
 
-  const handleWatermarkMouseDown = (e: React.MouseEvent) => {
-    setIsDraggingWatermark(true);
-    dragRef.current = {
-      startX: e.clientX,
-      startY: e.clientY,
-      startPos: { ...watermarkPos }
-    };
-  };
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (isDraggingWatermark && dragRef.current) {
-        const deltaX = ((e.clientX - dragRef.current.startX) / window.innerWidth) * 100;
-        const deltaY = ((e.clientY - dragRef.current.startY) / window.innerHeight) * 100;
-        
-        setWatermarkPos({
-          x: Math.max(0, Math.min(100, dragRef.current.startPos.x + deltaX)),
-          y: Math.max(0, Math.min(100, dragRef.current.startPos.y + deltaY))
-        });
-      }
-    };
-
-    const handleMouseUp = () => {
-      setIsDraggingWatermark(false);
-      dragRef.current = null;
-    };
-
-    if (isDraggingWatermark) {
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
-    }
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [isDraggingWatermark, watermarkPos]);
 
 
   useEffect(() => {
@@ -1127,24 +1070,6 @@ const ComicsSection = () => {
               </div>
             </div>
 
-            {/* Watermark over entire duel card */}
-            <div 
-              onMouseDown={handleWatermarkMouseDown}
-              className={`clip-watermark absolute z-50 transition-shadow duration-300 cursor-move select-none group/watermark ${
-                isDraggingWatermark ? 'ring-2 ring-primary ring-offset-2 ring-offset-transparent' : ''
-              }`}
-              style={{ 
-                opacity: watermarkOpacity / 100,
-                left: `${watermarkPos.x}%`,
-                top: `${watermarkPos.y}%`,
-                transform: `translate(-50%, -50%) scale(${watermarkScale})`,
-              }}
-            >
-              <span className={`font-pixel text-[14px] sm:text-[24px] font-bold uppercase tracking-[0.4em] drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`}>
-                {watermarkText}
-              </span>
-              <div className="absolute -inset-2 border-2 border-dashed border-primary/40 rounded opacity-0 group-hover/watermark:opacity-100 transition-opacity pointer-events-none" />
-            </div>
           </div>
         </div>
       )}
