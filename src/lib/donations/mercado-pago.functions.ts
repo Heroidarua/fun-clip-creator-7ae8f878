@@ -42,6 +42,24 @@ export const createPixDonation = createServerFn({ method: "POST" })
       throw new Error(`Falha ao registrar a doação: ${dbError?.message ?? "sem retorno"}`);
     }
 
+    if (isSandboxToken) {
+      const staticCode = buildPixPayload(amount, donation.id.replace(/-/g, "").slice(0, 20));
+      await supabaseAdmin
+        .from("donations")
+        .update({ qr_code: staticCode, payment_method: "pix_estatico" })
+        .eq("id", donation.id);
+
+      return {
+        id: donation.id,
+        amount,
+        qrCode: staticCode,
+        qrCodeBase64: null,
+        expiresAt: null,
+        isStatic: true,
+        publicKey,
+      };
+    }
+
     try {
       // 2. Call Mercado Pago API
       const mpResponse = await fetch("https://api.mercadopago.com/v1/payments", {
