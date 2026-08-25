@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useState, useRef } from "react";
-import { Search, ShieldCheck, X, Swords, Trophy, RotateCcw, Download, Loader2, Share2, Maximize, Minimize, ZoomIn, Eye, EyeOff, Palette } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Search, ShieldCheck, X, Swords, Trophy, RotateCcw, Download, Loader2 } from "lucide-react";
 import ScrollReveal from "./ScrollReveal";
-import { toPng, toJpeg } from 'html-to-image';
+import { toPng } from 'html-to-image';
 import download from 'downloadjs';
-import { toast } from "sonner";
 
 const API_URL = "https://cdn.jsdelivr.net/gh/akabab/superhero-api@0.3.0/api/all.json";
 const PAGE_SIZE = 24;
@@ -79,13 +78,6 @@ const TRANSLATIONS: Record<string, string> = {
   bad: "Vilão",
   neutral: "Neutro",
 };
-
-const DUEL_THEMES = [
-  { id: 'retro', label: 'RETRO', class: 'theme-retro' },
-  { id: 'modern', label: 'MODERN', class: 'theme-modern' },
-  { id: 'comic', label: 'COMIC', class: 'theme-comic' },
-  { id: 'cyberpunk', label: 'CYBER', class: 'theme-cyberpunk' },
-];
 
 const t = (text?: string | null) => {
   if (!text) return "—";
@@ -214,154 +206,36 @@ const ComicsSection = () => {
   const [duelFighters, setDuelFighters] = useState<[Hero | null, Hero | null]>([null, null]);
   const [showDuelResult, setShowDuelResult] = useState(false);
   const [isGeneratingClip, setIsGeneratingClip] = useState(false);
-  const [clipFormat, setClipFormat] = useState<"png" | "jpg">("png");
-  const [clipScale, setClipScale] = useState(2);
-  const [clipFit, setClipFit] = useState<"contain" | "cover" | "zoom">("contain");
-  const [clipTheme, setClipTheme] = useState<"retro" | "modern" | "comic" | "cyberpunk">("retro");
-  const [showGuides, setShowGuides] = useState(false);
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const [fighterPositions, setFighterPositions] = useState<[{x: number, y: number}, {x: number, y: number}]>([{x: 0, y: 0}, {x: 0, y: 0}]);
-  const [fighterScales, setFighterScales] = useState<[number, number]>([1, 1]);
 
-  const modalRef = useRef<HTMLDivElement>(null);
-
-  // Focus trap implementation
-  useEffect(() => {
-    if (showDuelResult && modalRef.current) {
-      const focusableElements = modalRef.current.querySelectorAll(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      );
-      const firstElement = focusableElements[0] as HTMLElement;
-      const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
-
-      const handleTabKey = (e: KeyboardEvent) => {
-        if (e.key === 'Tab') {
-          if (e.shiftKey) {
-            if (document.activeElement === firstElement) {
-              e.preventDefault();
-              lastElement.focus();
-            }
-          } else {
-            if (document.activeElement === lastElement) {
-              e.preventDefault();
-              firstElement.focus();
-            }
-          }
-        }
-        if (e.key === 'Escape') {
-          setShowDuelResult(false);
-        }
-      };
-
-      document.addEventListener('keydown', handleTabKey);
-      firstElement?.focus();
-      return () => document.removeEventListener('keydown', handleTabKey);
-    }
-  }, [showDuelResult]);
-
-  useEffect(() => {
-    if (showDuelResult) {
-      const updateSize = () => {
-        const el = document.getElementById('duel-combat-result');
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          setDimensions({
-            width: Math.round(rect.width * clipScale),
-            height: Math.round(rect.height * clipScale)
-          });
-        }
-      };
-      
-      updateSize();
-      window.addEventListener('resize', updateSize);
-      return () => window.removeEventListener('resize', updateSize);
-    }
-  }, [showDuelResult, clipScale, clipFit, clipTheme]);
-
-  const generateClipData = async () => {
+  const handleDownloadClip = async () => {
     const element = document.getElementById('duel-combat-result');
-    if (!element) return null;
+    if (!element) return;
 
     try {
       setIsGeneratingClip(true);
-      
       // Ocultar os botões temporariamente para a captura
       const actionButtons = element.querySelector('.clip-action-buttons');
       const closeButton = element.querySelector('.clip-close-button');
-      const configSection = element.querySelector('.clip-config-section');
-      const guides = element.querySelector('.clip-guides');
-      
       if (actionButtons) (actionButtons as HTMLElement).style.display = 'none';
       if (closeButton) (closeButton as HTMLElement).style.display = 'none';
-      if (configSection) (configSection as HTMLElement).style.display = 'none';
-      if (guides) (guides as HTMLElement).style.display = 'none';
 
-      const options = {
-        quality: 1,
-        backgroundColor: clipTheme === 'comic' ? '#fefce8' : 
-                         clipTheme === 'modern' ? '#0a0a0a' : 
-                         clipTheme === 'cyberpunk' ? '#000000' : '#ffffff',
-        pixelRatio: clipScale,
+      const dataUrl = await toPng(element, {
+        quality: 0.95,
+        backgroundColor: '#000',
         style: {
           borderRadius: '0px',
-          backgroundColor: clipTheme === 'comic' ? '#fefce8' : 
-                         clipTheme === 'modern' ? '#0a0a0a' : 
-                         clipTheme === 'cyberpunk' ? '#000000' : '#ffffff',
-          color: clipTheme === 'comic' ? '#000000' : '',
         },
-      };
+      });
 
-      const dataUrl = clipFormat === 'png' 
-        ? await toPng(element, options) 
-        : await toJpeg(element, options);
-
-      // Restaurar os elementos
+      // Restaurar os botões
       if (actionButtons) (actionButtons as HTMLElement).style.display = 'flex';
       if (closeButton) (closeButton as HTMLElement).style.display = 'flex';
-      if (configSection) (configSection as HTMLElement).style.display = 'block';
-      if (guides) (guides as HTMLElement).style.display = 'block';
 
-      return dataUrl;
+      download(dataUrl, `fun-clip-duelo-${duelFighters[0]?.name}-vs-${duelFighters[1]?.name}.png`);
     } catch (err) {
       console.error('Erro ao gerar clip:', err);
-      toast.error("Erro ao gerar o fun-clip");
-      return null;
     } finally {
       setIsGeneratingClip(false);
-    }
-  };
-
-  const handleDownloadClip = async () => {
-    const dataUrl = await generateClipData();
-    if (dataUrl) {
-      download(dataUrl, `fun-clip-duelo-${duelFighters[0]?.name}-vs-${duelFighters[1]?.name}.${clipFormat}`);
-      toast.success("Fun-clip baixado com sucesso!");
-    }
-  };
-
-  const handleShareClip = async () => {
-    const dataUrl = await generateClipData();
-    if (!dataUrl) return;
-
-    try {
-      const response = await fetch(dataUrl);
-      const blob = await response.blob();
-      const file = new File([blob], `fun-clip.${clipFormat}`, { type: `image/${clipFormat === 'png' ? 'png' : 'jpeg'}` });
-
-      if (navigator.share && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          files: [file],
-          title: 'Fun-Clip Duelo SOS01',
-          text: `Confira o resultado desse duelo épico entre ${duelFighters[0]?.name} e ${duelFighters[1]?.name} no SOS01!`,
-        });
-      } else {
-        // Fallback para download se não suportar partilha de ficheiros
-        download(dataUrl, `fun-clip-duelo-${duelFighters[0]?.name}-vs-${duelFighters[1]?.name}.${clipFormat}`);
-        toast.info("Compartilhamento não disponível, download iniciado.");
-      }
-    } catch (err) {
-      console.error('Erro ao compartilhar:', err);
-      toast.error("Erro ao compartilhar o fun-clip");
     }
   };
 
@@ -382,19 +256,12 @@ const ComicsSection = () => {
       // Se ambos estão ocupados, substitui o segundo
       return [prev[0], hero];
     });
-    // Reset positions when fighters change
-    setFighterPositions([{x: 0, y: 0}, {x: 0, y: 0}]);
-    setFighterScales([1, 1]);
   };
 
   const resetDuel = () => {
     setDuelFighters([null, null]);
     setShowDuelResult(false);
-    setFighterPositions([{x: 0, y: 0}, {x: 0, y: 0}]);
-    setFighterScales([1, 1]);
   };
-
-
 
   useEffect(() => {
     let active = true;
@@ -673,67 +540,23 @@ const ComicsSection = () => {
 
       {/* Duel Result Modal */}
       {showDuelResult && duelFighters[0] && duelFighters[1] && (
-        <div 
-          className="fixed inset-0 z-[1100] flex items-start sm:items-center justify-center p-0 sm:p-4 bg-black/95 backdrop-blur-md overflow-y-auto"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="duel-modal-title"
-        >
-          <div 
-            id="duel-combat-result" 
-            ref={modalRef}
-            className={`relative w-full max-w-5xl transition-all duration-500 m-0 sm:my-8 overflow-hidden p-4 sm:p-12 sm:border-4 sm:rounded-3xl ${
-              clipTheme === 'modern' ? 'bg-[#0a0a0a] border-white/10 rounded-[40px] shadow-2xl' :
-              clipTheme === 'comic' ? 'bg-yellow-50 border-black border-[6px] shadow-[12px_12px_0_0_#000]' :
-              clipTheme === 'cyberpunk' ? 'bg-black border-retro-magenta border-b-[10px] border-r-[10px] shadow-[0_0_40px_rgba(255,0,255,0.2)]' :
-              'bg-background border-primary/50 shadow-[0_0_80px_rgba(var(--primary),0.2)]'
-            } ${
-              clipFit === 'cover' ? 'aspect-video flex flex-col justify-center' : 
-              clipFit === 'zoom' ? 'scale-110' : ''
-            }`}
-          >
-            {/* Comic theme texture */}
-            {clipTheme === 'comic' && (
-              <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[radial-gradient(#000_1.5px,transparent_1.5px)] bg-[size:15px_15px] z-0" />
-            )}
-            
-            {/* Capture Guides */}
-            {showGuides && (
-              <div className="clip-guides absolute inset-0 pointer-events-none z-50 overflow-hidden">
-                <div className="absolute top-1/3 w-full h-px bg-primary/20" />
-                <div className="absolute top-2/3 w-full h-px bg-primary/20" />
-                <div className="absolute left-1/3 h-full w-px bg-primary/20" />
-                <div className="absolute left-2/3 h-full w-px bg-primary/20" />
-                {/* Rule of thirds labels */}
-                <div className="absolute top-2 right-2 font-pixel text-[6px] text-primary/40 uppercase">Guides Active</div>
-              </div>
-            )}
-
+        <div className="fixed inset-0 z-[1100] flex items-start sm:items-center justify-center p-0 sm:p-4 bg-black/95 backdrop-blur-md overflow-y-auto">
+          <div id="duel-combat-result" className="relative w-full max-w-5xl bg-background sm:border-4 border-primary/50 sm:rounded-3xl p-4 sm:p-12 shadow-[0_0_80px_rgba(var(--primary),0.2)] animate-in zoom-in-95 duration-300 m-0 sm:my-8">
             <button
               onClick={() => setShowDuelResult(false)}
-              aria-label="Fechar resultado do duelo"
               className="clip-close-button absolute top-4 right-4 sm:top-6 sm:right-6 text-muted-foreground hover:text-destructive z-50 bg-background/80 p-2 rounded-full border border-primary/20 transition-all hover:rotate-90 shadow-lg"
             >
               <X className="w-6 h-6" />
             </button>
 
             <div className="flex flex-col items-center gap-6 sm:gap-12 pt-12 sm:pt-0">
-            <div className={`flex items-center justify-center gap-3 sm:gap-4 px-6 sm:px-8 py-2 sm:py-3 border-2 rounded-full animate-bounce shadow-lg w-fit mx-auto ${
-              clipTheme === 'comic' ? 'bg-white border-black shadow-[4px_4px_0_0_#000]' :
-              clipTheme === 'modern' ? 'bg-white/5 border-white/20' :
-              clipTheme === 'cyberpunk' ? 'bg-black border-retro-magenta shadow-[0_0_15px_rgba(255,0,255,0.5)]' :
-              'bg-primary/20 border-primary shadow-[0_0_20px_rgba(var(--primary),0.3)]'
-            }`}>
-              <Swords className={`w-5 h-5 sm:w-8 sm:h-8 shrink-0 ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`} />
-              <h2 id="duel-modal-title" className={`font-pixel text-base sm:text-4xl tracking-tighter text-center ${
-                clipTheme === 'comic' ? 'text-black' : 
-                clipTheme === 'modern' ? 'text-white' :
-                'text-primary neon-text'
-              }`}>
-                sos01.com.br
-              </h2>
-              <Swords className={`w-5 h-5 sm:w-8 sm:h-8 shrink-0 ${clipTheme === 'comic' ? 'text-black' : 'text-primary'}`} />
-            </div>
+              <div className="flex items-center justify-center gap-3 sm:gap-4 px-6 sm:px-8 py-2 sm:py-3 bg-primary/20 border-2 border-primary rounded-full animate-bounce shadow-[0_0_20px_rgba(var(--primary),0.3)] w-fit mx-auto">
+                <Swords className="w-5 h-5 sm:w-8 sm:h-8 text-primary shrink-0" />
+                <h2 className="font-pixel text-base sm:text-4xl text-primary neon-text tracking-tighter text-center">
+                  COMBATE FINAL
+                </h2>
+                <Swords className="w-5 h-5 sm:w-8 sm:h-8 text-primary shrink-0" />
+              </div>
 
               <div className="w-full grid grid-cols-2 gap-3 sm:gap-12 items-start relative">
                 {/* Center VS Indicator for Desktop */}
@@ -752,8 +575,7 @@ const ComicsSection = () => {
                       <img 
                         src={duelFighters[0].images?.lg} 
                         alt={duelFighters[0].name} 
-                        className="w-full h-full object-cover transition-transform duration-1000" 
-                        style={{ transform: `scale(${fighterScales[0]})` }}
+                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
                       />
                       {calculateTotalStats(duelFighters[0]) > calculateTotalStats(duelFighters[1]) && (
                         <div className="absolute top-0 inset-x-0 bg-primary py-1.5 sm:py-3 text-center font-pixel text-[8px] sm:text-xs text-primary-foreground shadow-lg uppercase tracking-[0.2em] animate-pulse z-20">
@@ -766,15 +588,9 @@ const ComicsSection = () => {
                       <p className="font-inter text-[8px] sm:text-xs text-muted-foreground uppercase tracking-[0.2em] mt-1 sm:mt-2 font-bold opacity-70 truncate">{duelFighters[0].biography?.publisher}</p>
                     </div>
 
-                    <div className={`w-full flex flex-col items-center py-2 sm:py-4 rounded-lg sm:rounded-xl border ${
-                      clipTheme === 'comic' ? 'bg-black/5 border-black/20' :
-                      clipTheme === 'modern' ? 'bg-white/5 border-white/10' :
-                      'bg-primary/5 border-primary/10'
-                    }`}>
-                      <span className="font-pixel text-[6px] sm:text-[10px] text-muted-foreground mb-0.5 uppercase">Power Rank</span>
-                      <span className={`font-pixel text-lg sm:text-4xl animate-in fade-in slide-in-from-left duration-1000 delay-1000 ${
-                        clipTheme === 'comic' ? 'text-black' : 'text-primary'
-                      }`}>
+                    <div className="w-full flex flex-col items-center bg-primary/5 py-2 sm:py-4 rounded-lg sm:rounded-xl border border-primary/10">
+                      <span className="font-pixel text-[6px] sm:text-[10px] text-muted-foreground mb-0.5">TOTAL POWER</span>
+                      <span className="font-pixel text-lg sm:text-4xl text-primary animate-in fade-in slide-in-from-left duration-1000 delay-1000">
                         {calculateTotalStats(duelFighters[0])}
                       </span>
                     </div>
@@ -792,8 +608,7 @@ const ComicsSection = () => {
                       <img 
                         src={duelFighters[1].images?.lg} 
                         alt={duelFighters[1].name} 
-                        className="w-full h-full object-cover transition-transform duration-1000" 
-                        style={{ transform: `scale(${fighterScales[1]})` }}
+                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
                       />
                       {calculateTotalStats(duelFighters[1]) > calculateTotalStats(duelFighters[0]) && (
                         <div className="absolute top-0 inset-x-0 bg-primary py-1.5 sm:py-3 text-center font-pixel text-[8px] sm:text-xs text-primary-foreground shadow-lg uppercase tracking-[0.2em] animate-pulse z-20">
@@ -806,15 +621,9 @@ const ComicsSection = () => {
                       <p className="font-inter text-[8px] sm:text-xs text-muted-foreground uppercase tracking-[0.2em] mt-1 sm:mt-2 font-bold opacity-70 truncate">{duelFighters[1].biography?.publisher}</p>
                     </div>
 
-                    <div className={`w-full flex flex-col items-center py-2 sm:py-4 rounded-lg sm:rounded-xl border ${
-                      clipTheme === 'comic' ? 'bg-black/5 border-black/20' :
-                      clipTheme === 'modern' ? 'bg-white/5 border-white/10' :
-                      'bg-primary/5 border-primary/10'
-                    }`}>
-                      <span className="font-pixel text-[6px] sm:text-[10px] text-muted-foreground mb-0.5 uppercase">Power Rank</span>
-                      <span className={`font-pixel text-lg sm:text-4xl animate-in fade-in slide-in-from-right duration-1000 delay-1000 ${
-                        clipTheme === 'comic' ? 'text-black' : 'text-primary'
-                      }`}>
+                    <div className="w-full flex flex-col items-center bg-primary/5 py-2 sm:py-4 rounded-lg sm:rounded-xl border border-primary/10">
+                      <span className="font-pixel text-[6px] sm:text-[10px] text-muted-foreground mb-0.5">TOTAL POWER</span>
+                      <span className="font-pixel text-lg sm:text-4xl text-primary animate-in fade-in slide-in-from-right duration-1000 delay-1000">
                         {calculateTotalStats(duelFighters[1])}
                       </span>
                     </div>
@@ -845,19 +654,11 @@ const ComicsSection = () => {
                             </span>
                           </div>
                           
-                          <div className={`h-4 sm:h-6 rounded-full flex overflow-hidden border-2 p-[2px] sm:p-[3px] shadow-inner relative group ${
-                            clipTheme === 'comic' ? 'bg-black/10 border-black' :
-                            clipTheme === 'modern' ? 'bg-white/5 border-white/10' :
-                            'bg-muted/20 border-primary/10'
-                          }`}>
+                          <div className="h-4 sm:h-6 bg-muted/20 rounded-full flex overflow-hidden border-2 border-primary/10 p-[2px] sm:p-[3px] shadow-inner relative group">
                             {/* Bar Hero 1 */}
                             <div className="flex-1 h-full flex justify-end overflow-hidden">
                               <div 
-                                className={`h-full rounded-l-full transition-all duration-1000 ease-out shadow-[inset_0_2px_4px_rgba(255,255,255,0.1)] ${
-                                  winner === 1 
-                                    ? (clipTheme === 'comic' ? 'bg-black' : clipTheme === 'cyberpunk' ? 'bg-retro-magenta' : 'bg-primary neon-shadow animate-pulse-subtle') 
-                                    : 'opacity-20 bg-current'
-                                }`}
+                                className={`h-full rounded-l-full transition-all duration-1000 ease-out shadow-[inset_0_2px_4px_rgba(255,255,255,0.1)] ${winner === 1 ? 'bg-primary neon-shadow animate-pulse-subtle' : 'bg-primary/20'}`}
                                 style={{ 
                                   width: showDuelResult ? `${(stat1 / (stat1 + stat2 || 1)) * 100}%` : '0%',
                                   transitionDelay: `${index * 150}ms`
@@ -866,16 +667,12 @@ const ComicsSection = () => {
                             </div>
                             
                             {/* Separator / Center Point */}
-                            <div className={`w-[2px] z-10 ${clipTheme === 'comic' ? 'bg-black' : 'bg-background/50'}`} />
+                            <div className="w-[2px] bg-background/50 z-10" />
                             
                             {/* Bar Hero 2 */}
                             <div className="flex-1 h-full flex justify-start overflow-hidden">
                               <div 
-                                className={`h-full rounded-r-full transition-all duration-1000 ease-out shadow-[inset_0_2px_4px_rgba(255,255,255,0.1)] ${
-                                  winner === 2 
-                                    ? (clipTheme === 'comic' ? 'bg-black' : clipTheme === 'cyberpunk' ? 'bg-retro-magenta' : 'bg-primary neon-shadow animate-pulse-subtle') 
-                                    : 'opacity-20 bg-current'
-                                }`}
+                                className={`h-full rounded-r-full transition-all duration-1000 ease-out shadow-[inset_0_2px_4px_rgba(255,255,255,0.1)] ${winner === 2 ? 'bg-primary neon-shadow animate-pulse-subtle' : 'bg-primary/20'}`}
                                 style={{ 
                                   width: showDuelResult ? `${(stat2 / (stat1 + stat2 || 1)) * 100}%` : '0%',
                                   transitionDelay: `${index * 150}ms`
@@ -902,8 +699,8 @@ const ComicsSection = () => {
                 </div>
               </div>
 
-              <div className="mt-2 sm:mt-4 text-center bg-primary/5 border-2 border-primary/20 p-4 sm:p-6 rounded-2xl sm:rounded-3xl max-w-2xl w-full shadow-inner relative overflow-hidden">
-                <p className="font-inter text-sm sm:text-lg text-foreground/90 leading-relaxed z-10 relative">
+              <div className="mt-2 sm:mt-4 text-center bg-primary/5 border-2 border-primary/20 p-4 sm:p-6 rounded-2xl sm:rounded-3xl max-w-2xl w-full shadow-inner">
+                <p className="font-inter text-sm sm:text-lg text-foreground/90 leading-relaxed">
                   {calculateTotalStats(duelFighters[0]) > calculateTotalStats(duelFighters[1]) 
                     ? `DOMINÂNCIA TOTAL! Com um arsenal de ${calculateTotalStats(duelFighters[0])} pontos, ${duelFighters[0].name} não deu chances para ${duelFighters[1].name} e triunfa como o supremo guerreiro!`
                     : calculateTotalStats(duelFighters[1]) > calculateTotalStats(duelFighters[0])
@@ -911,170 +708,33 @@ const ComicsSection = () => {
                     : "EMPATE LENDÁRIO! Em um confronto onde cada grama de força foi igualada, nenhum dos combatentes cedeu. A batalha termina sem um vencedor definido, mas com o respeito mútuo garantido."
                   }
                 </p>
-
-                <div className={`clip-config-section mt-6 p-4 border rounded-2xl w-full max-w-lg mx-auto ${clipTheme === 'comic' ? 'bg-black/5 border-black/20' : 'bg-primary/10 border-primary/20'}`}>
-                  <h4 className="font-pixel text-[10px] text-primary mb-3 text-center uppercase tracking-wider">CONFIGURAÇÕES DO FUN-CLIP</h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div className="space-y-2 text-center">
-                      <span id="label-formato" className="font-pixel text-[8px] text-muted-foreground uppercase">Formato</span>
-                      <div className="flex justify-center gap-2" role="group" aria-labelledby="label-formato">
-                        {['png', 'jpg'].map((fmt) => (
-                          <button
-                            key={fmt}
-                            onClick={() => setClipFormat(fmt as any)}
-                            aria-pressed={clipFormat === fmt}
-                            aria-label={`Selecionar formato ${fmt.toUpperCase()}`}
-                            className={`px-3 py-1 rounded-md font-pixel text-[9px] transition-all ${clipFormat === fmt ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
-                          >
-                            {fmt.toUpperCase()}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="space-y-2 text-center">
-                      <span id="label-resolucao" className="font-pixel text-[8px] text-muted-foreground uppercase">Resolução</span>
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="flex justify-center gap-2" role="group" aria-labelledby="label-resolucao">
-                          {[1, 2, 3].map((s) => (
-                            <button
-                              key={s}
-                              onClick={() => setClipScale(s)}
-                              aria-pressed={clipScale === s}
-                              aria-label={`Selecionar resolução ${s}x`}
-                              className={`px-3 py-1 rounded-md font-pixel text-[9px] transition-all ${clipScale === s ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
-                            >
-                              {s}X
-                            </button>
-                          ))}
-                        </div>
-                        <span className="font-pixel text-[7px] text-primary/60 italic">
-                          {dimensions.width} x {dimensions.height} PX
-                        </span>
-                      </div>
-                    </div>
-                    <div className="space-y-2 text-center">
-                      <span id="label-enquadramento" className="font-pixel text-[8px] text-muted-foreground uppercase">Enquadramento</span>
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="flex justify-center gap-2" role="group" aria-labelledby="label-enquadramento">
-                          <button
-                            onClick={() => setClipFit('contain')}
-                            aria-pressed={clipFit === 'contain'}
-                            aria-label="Enquadramento: Centralizado"
-                            title="Centralizado"
-                            className={`p-2 rounded-md transition-all ${clipFit === 'contain' ? 'bg-primary text-primary-foreground' : 'bg-background border border-primary/20 text-muted-foreground'}`}
-                          >
-                            <Minimize className="w-3 h-3" />
-                          </button>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => setShowGuides(!showGuides)}
-                            className={`flex items-center gap-1.5 px-2 py-1 rounded text-[8px] font-pixel transition-colors ${showGuides ? 'bg-primary/20 text-primary border border-primary/40' : 'text-muted-foreground border border-transparent'}`}
-                          >
-                            {showGuides ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
-                            {showGuides ? 'GUIAS ON' : 'GUIAS OFF'}
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="sm:col-span-3 space-y-4 text-center border-t border-primary/10 pt-3">
-                      <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto">
-                        <div className="space-y-2">
-                          <span className="font-pixel text-[7px] text-muted-foreground uppercase">Escala Herói 1: {fighterScales[0].toFixed(1)}x</span>
-                          <input 
-                            type="range" 
-                            min="0.5" 
-                            max="2" 
-                            step="0.1"
-                            value={fighterScales[0]}
-                            onChange={(e) => setFighterScales([Number(e.target.value), fighterScales[1]])}
-                            className="w-full accent-primary h-1.5"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <span className="font-pixel text-[7px] text-muted-foreground uppercase">Escala Herói 2: {fighterScales[1].toFixed(1)}x</span>
-                          <input 
-                            type="range" 
-                            min="0.5" 
-                            max="2" 
-                            step="0.1"
-                            value={fighterScales[1]}
-                            onChange={(e) => setFighterScales([fighterScales[0], Number(e.target.value)])}
-                            className="w-full accent-primary h-1.5"
-                          />
-                        </div>
-                      </div>
-
-
-                      <div className="space-y-2 border-t border-primary/10 pt-3">
-                        <span id="label-tema" className="font-pixel text-[8px] text-muted-foreground uppercase flex items-center justify-center gap-2">
-                        <Palette className="w-3 h-3" />
-                        Temas Visuais
-                      </span>
-                      <div className="flex justify-center flex-wrap gap-2" role="group" aria-labelledby="label-tema">
-                        {DUEL_THEMES.map((theme) => (
-                          <button
-                            key={theme.id}
-                            onClick={() => setClipTheme(theme.id as any)}
-                            aria-pressed={clipTheme === theme.id}
-                            className={`px-4 py-1.5 rounded-lg font-pixel text-[9px] transition-all border-2 ${
-                              clipTheme === theme.id 
-                                ? 'bg-primary border-primary text-primary-foreground shadow-lg' 
-                                : 'bg-background border-primary/20 text-muted-foreground hover:border-primary/40'
-                            }`}
-                          >
-                            {theme.label}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
                 <div className="clip-action-buttons mt-6 sm:mt-8 flex flex-wrap justify-center gap-3 sm:gap-4">
                   <button
                     onClick={handleDownloadClip}
                     disabled={isGeneratingClip}
-                    aria-label="Baixar Fun-Clip"
                     className="px-6 sm:px-10 py-3 sm:py-4 bg-accent text-accent-foreground font-pixel text-[10px] sm:text-xs rounded-xl border-b-4 border-accent-foreground/20 hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(var(--accent),0.3)] flex items-center gap-2"
                   >
                     {isGeneratingClip ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                    BAIXAR CLIP
-                  </button>
-                  <button
-                    onClick={handleShareClip}
-                    disabled={isGeneratingClip}
-                    aria-label="Compartilhar Fun-Clip"
-                    className="px-6 sm:px-10 py-3 sm:py-4 bg-retro-magenta text-white font-pixel text-[10px] sm:text-xs rounded-xl border-b-4 border-black/20 hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(var(--retro-magenta),0.3)] flex items-center gap-2"
-                  >
-                    {isGeneratingClip ? <Loader2 className="w-4 h-4 animate-spin" /> : <Share2 className="w-4 h-4" />}
-                    COMPARTILHAR
+                    GERAR FUN-CLIP
                   </button>
                   <button
                     onClick={resetDuel}
-                    aria-label="Iniciar nova batalha"
                     className="px-6 sm:px-10 py-3 sm:py-4 bg-primary text-primary-foreground font-pixel text-[10px] sm:text-xs rounded-xl border-b-4 border-primary-foreground/20 hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(var(--primary),0.3)]"
                   >
                     NOVA BATALHA
                   </button>
                   <button
                     onClick={() => setShowDuelResult(false)}
-                    aria-label="Fechar e voltar à lista de heróis"
                     className="px-6 sm:px-8 py-3 sm:py-4 bg-background text-muted-foreground font-pixel text-[10px] sm:text-xs rounded-xl border-2 border-muted-foreground/20 hover:text-foreground transition-all"
                   >
                     FECHAR
                   </button>
                 </div>
-                </div>
               </div>
             </div>
-
           </div>
         </div>
       )}
-
-
 
       {/* Modal */}
       {selected && (
@@ -1179,4 +839,3 @@ const ComicsSection = () => {
 };
 
 export default ComicsSection;
-
