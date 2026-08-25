@@ -1895,30 +1895,7 @@ const HeroSection = () => {
                         duration={youtubeData.duration}
                       />
                     )}
-
-                    {/* Botão flutuante de download sobre o preview */}
-                    <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 flex items-end justify-center gap-2 p-3">
-                      <button
-                        type="button"
-                        onClick={() => handleYoutubeDownload("video")}
-                        disabled={youtubeLoading}
-                        className="pointer-events-auto flex items-center gap-2 rounded-full border-2 border-white/80 bg-[hsl(0,100%,50%)] px-4 py-2 font-pixel text-[10px] text-white shadow-[0_6px_20px_rgba(0,0,0,0.45)] backdrop-blur-sm transition-transform hover:scale-105 active:scale-95 disabled:opacity-60"
-                      >
-                        <Download className="h-4 w-4" />
-                        MP4
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleYoutubeDownload("audio")}
-                        disabled={youtubeLoading}
-                        className="pointer-events-auto flex items-center gap-2 rounded-full border-2 border-white/80 bg-background/85 px-4 py-2 font-pixel text-[10px] text-foreground shadow-[0_6px_20px_rgba(0,0,0,0.45)] backdrop-blur-sm transition-transform hover:scale-105 active:scale-95 disabled:opacity-60"
-                      >
-                        <Download className="h-4 w-4" />
-                        MP3
-                      </button>
-                    </div>
                   </div>
-
 
 
                   {/* As funções de download continuam funcionando via youtubeDownloadType e handleYoutubeDownload */}
