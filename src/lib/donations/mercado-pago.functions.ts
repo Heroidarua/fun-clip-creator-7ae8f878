@@ -18,6 +18,10 @@ export const createPixDonation = createServerFn({ method: "POST" })
       throw new Error("MERCADOPAGO_ACCESS_TOKEN not configured");
     }
 
+    // Tokens de teste (TEST-...) geram QR Codes de sandbox que os bancos reais
+    // recusam com "Pix inexistente". Nesse caso usamos o Pix estático real.
+    const isSandboxToken = token.startsWith("TEST-");
+
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     // 1. Create donation record in Supabase first (status: pending)
