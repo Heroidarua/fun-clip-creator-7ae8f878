@@ -18,6 +18,10 @@ export const createPixDonation = createServerFn({ method: "POST" })
       throw new Error("MERCADOPAGO_ACCESS_TOKEN not configured");
     }
 
+    // Tokens de teste (TEST-...) geram QR Codes de sandbox que os bancos reais
+    // recusam com "Pix inexistente". Nesse caso usamos o Pix estático real.
+    const isSandboxToken = token.startsWith("TEST-");
+
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     // 1. Create donation record in Supabase first (status: pending)
@@ -36,6 +40,24 @@ export const createPixDonation = createServerFn({ method: "POST" })
     if (dbError || !donation) {
       console.error("Donation insert error:", dbError);
       throw new Error(`Falha ao registrar a doação: ${dbError?.message ?? "sem retorno"}`);
+    }
+
+    if (isSandboxToken) {
+      const staticCode = buildPixPayload(amount, donation.id.replace(/-/g, "").slice(0, 20));
+      await supabaseAdmin
+        .from("donations")
+        .update({ qr_code: staticCode, payment_method: "pix_estatico" })
+        .eq("id", donation.id);
+
+      return {
+        id: donation.id,
+        amount,
+        qrCode: staticCode,
+        qrCodeBase64: null,
+        expiresAt: null,
+        isStatic: true,
+        publicKey,
+      };
     }
 
     try {
