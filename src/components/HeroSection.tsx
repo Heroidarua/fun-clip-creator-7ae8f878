@@ -210,19 +210,32 @@ const MediaPreviewOverlay = ({
 const YouTubePreview = ({
   videoId,
   title,
+  onDownload,
 }: {
   videoId: string;
   title: string;
-}) => (
-  <iframe
-    src={`https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?rel=0&playsinline=1`}
-    title={`Prévia de ${title}`}
-    className="absolute inset-0 h-full w-full"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-    allowFullScreen
-    loading="lazy"
-  />
-);
+  onDownload?: () => void;
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  return (
+    <div ref={containerRef} className="absolute inset-0 bg-black">
+      <iframe
+        src={`https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?rel=0&playsinline=1`}
+        title={`Prévia de ${title}`}
+        className="absolute inset-0 h-full w-full"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowFullScreen
+        loading="lazy"
+      />
+      <PlayerControlsBar
+        containerRef={containerRef}
+        onDownload={onDownload}
+        externalUrl={`https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`}
+      />
+    </div>
+  );
+};
+
 
 
 interface VideoData {
