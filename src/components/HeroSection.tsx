@@ -1900,7 +1900,9 @@ const HeroSection = () => {
                       <YouTubePreview
                         videoId={youtubeData.videoId}
                         title={youtubeData.title}
+                        onDownload={() => handleYoutubeDownload()}
                       />
+
                     ) : (
                       <MediaPreviewOverlay
                         title={youtubeData.title}
