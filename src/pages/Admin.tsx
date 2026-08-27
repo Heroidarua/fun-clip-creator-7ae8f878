@@ -341,16 +341,20 @@ export default function Admin() {
         {activeTab === "appearance" ? (
           <div className="space-y-6">
             <div className="bg-card border border-border rounded-xl p-6">
-              <h2 className="font-semibold flex items-center gap-2 mb-4">
+              <h2 className="font-semibold flex items-center gap-2 mb-1">
                 <Palette size={18} />
-                Estilo do Botão "APOIE O SOS01"
+                Botão de Doação (Interruptor)
               </h2>
-              
+              <p className="text-sm text-muted-foreground mb-5">
+                O botão "Donate" agora é um interruptor físico com o ícone do site. Ajuste a cor de ligado,
+                o formato e a animação — a pré-visualização mostra exatamente o resultado no cabeçalho.
+              </p>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div>
                     <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground block mb-2">
-                      Cor Principal
+                      Cor quando ligado
                     </label>
                     <div className="grid grid-cols-2 gap-2">
                       {BUTTON_COLOR_OPTIONS.map((opt) => (
@@ -364,14 +368,7 @@ export default function Admin() {
                               : "border-border hover:bg-muted/50"
                           }`}
                         >
-                          <div className={`w-3 h-3 rounded-full ${
-                            opt.value === 'primary' ? 'bg-primary' :
-                            opt.value === 'success' ? 'bg-green-500' :
-                            opt.value === 'accent' ? 'bg-accent' :
-                            opt.value === 'warning' ? 'bg-yellow-500' :
-                            opt.value === 'danger' ? 'bg-destructive' :
-                            'bg-foreground'
-                          }`} />
+                          <div className={`w-3 h-3 rounded-full ${SWITCH_DOT_CLASS[opt.value] ?? "bg-foreground"}`} />
                           <span className="text-xs">{opt.label}</span>
                         </button>
                       ))}
@@ -380,7 +377,7 @@ export default function Admin() {
 
                   <div>
                     <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground block mb-2">
-                      Forma do Botão
+                      Formato do interruptor
                     </label>
                     <div className="grid grid-cols-1 gap-2">
                       {BUTTON_SHAPE_OPTIONS.map((opt) => (
@@ -412,10 +409,10 @@ export default function Admin() {
                     />
                   </div>
 
-                  <Button 
+                  <Button
                     type="button"
-                    onClick={saveButtonSettings} 
-                    className="w-full" 
+                    onClick={saveButtonSettings}
+                    className="w-full"
                     disabled={buttonSaving}
                   >
                     {buttonSaving ? "Salvando..." : "Salvar Configurações"}
@@ -426,33 +423,99 @@ export default function Admin() {
                   <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-4">
                     Pré-visualização
                   </span>
-                  
-                  <button
-                    type="button"
-                    className={`
-                      relative group overflow-hidden border transition-all duration-300 gap-2 px-6 h-11 flex items-center justify-center
-                      ${buttonSettings.shape}
-                      ${buttonSettings.animate ? 'animate-pulse-slow' : ''}
-                      ${buttonSettings.color === 'primary' ? 'border-primary/30 bg-primary/10 text-primary shadow-primary/20' : ''}
-                      ${buttonSettings.color === 'success' ? 'border-green-500/30 bg-green-500/10 text-green-500 shadow-green-500/20' : ''}
-                      ${buttonSettings.color === 'accent' ? 'border-accent/30 bg-accent/10 text-accent shadow-accent/20' : ''}
-                      ${buttonSettings.color === 'warning' ? 'border-yellow-500/30 bg-yellow-500/10 text-yellow-500 shadow-yellow-500/20' : ''}
-                      ${buttonSettings.color === 'danger' ? 'border-destructive/30 bg-destructive/10 text-destructive shadow-destructive/20' : ''}
-                      ${buttonSettings.color === 'foreground' ? 'border-foreground/30 bg-foreground/10 text-foreground shadow-foreground/20' : ''}
-                      shadow-lg
-                    `}
-                  >
-                    <Heart className={`w-4 h-4 fill-current/20`} />
-                    <span className="font-display font-bold text-sm tracking-wide whitespace-nowrap">
-                      APOIE O SOS01
-                    </span>
-                  </button>
-                  
+
+                  <div className="flex flex-col items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setPreviewOn((v) => !v)}
+                      className={`relative w-24 h-12 p-1 transition-all duration-500 border-b-2 border-t border-black/20 shadow-[inset_0_2px_10px_rgba(0,0,0,0.5)] active:scale-95 ${
+                        buttonSettings.shape
+                      } ${buttonSettings.animate ? "animate-pulse-slow" : ""} ${
+                        previewOn ? SWITCH_ON_CLASS[buttonSettings.color] ?? "bg-foreground" : "bg-[#C41230]"
+                      }`}
+                      aria-label="Pré-visualização do interruptor de doação"
+                    >
+                      <div className={`absolute inset-0 opacity-50 bg-gradient-to-b from-black/20 to-transparent ${buttonSettings.shape}`} />
+                      <div
+                        className={`absolute top-0.5 bottom-0.5 w-10 h-10 bg-white flex items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.4)] border border-gray-200 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+                          buttonSettings.shape === "rounded-full" ? "rounded-full" : buttonSettings.shape
+                        } ${previewOn ? "left-[calc(100%-2.75rem)] rotate-[360deg]" : "left-1 rotate-0"}`}
+                      >
+                        <img src="/favicon.png" alt="" className="w-6 h-6 object-contain" />
+                      </div>
+                      <div
+                        className={`absolute top-1/2 -translate-y-1/2 text-[10px] font-black tracking-tighter transition-all duration-500 ${
+                          previewOn ? "left-3 text-black/40" : "right-3 text-red-900/40"
+                        }`}
+                      >
+                        {previewOn ? "ON" : "OFF"}
+                      </div>
+                    </button>
+                    <span className="text-[10px] font-black tracking-[0.2em] text-foreground/50 uppercase">Donate</span>
+                  </div>
+
                   <p className="text-[10px] text-muted-foreground mt-4 text-center">
-                    A cor de fundo terá transparência e efeito glassmorphism no cabeçalho.
+                    Clique no interruptor para ver os estados ligado/desligado. Ligado abre o modal de doação no site.
                   </p>
                 </div>
               </div>
+            </div>
+
+            <div className="bg-card border border-border rounded-xl p-6">
+              <h2 className="font-semibold flex items-center gap-2 mb-1">
+                <Megaphone size={18} />
+                Letreiro do Menu Lateral
+              </h2>
+              <p className="text-sm text-muted-foreground mb-5">
+                O topo do menu lateral (desktop e mobile) exibe um letreiro rolante de doação no lugar do antigo logo.
+                A velocidade, cor, direção e pausa são as mesmas configuradas em <strong>Geral → Letreiro de Avisos</strong>.
+              </p>
+
+              <div
+                className="rounded-lg border overflow-hidden px-3 py-2.5"
+                style={{
+                  borderColor: MARQUEE_COLOR_STYLES[marquee.color]?.border,
+                  background: `linear-gradient(90deg, ${MARQUEE_COLOR_STYLES[marquee.color]?.bg}, transparent, ${MARQUEE_COLOR_STYLES[marquee.color]?.bg})`,
+                }}
+              >
+                <div className="flex items-center gap-2">
+                  <div
+                    className="flex items-center gap-1.5 shrink-0 border-r pr-2"
+                    style={{ borderColor: MARQUEE_COLOR_STYLES[marquee.color]?.border }}
+                  >
+                    <Megaphone className="w-4 h-4" style={{ color: MARQUEE_COLOR_STYLES[marquee.color]?.solid }} />
+                    <span
+                      className="text-[10px] uppercase tracking-wider font-bold"
+                      style={{ color: MARQUEE_COLOR_STYLES[marquee.color]?.solid }}
+                    >
+                      Doar
+                    </span>
+                  </div>
+                  <div className="flex-1 overflow-hidden">
+                    <div
+                      className={`flex w-max animate-marquee whitespace-nowrap ${marquee.pause_on_hover ? "marquee-pausable" : ""}`}
+                      style={{
+                        animationDuration: `${marquee.speed}s`,
+                        animationDirection: marquee.direction === "ltr" ? "reverse" : "normal",
+                      }}
+                    >
+                      {[0, 1].map((i) => (
+                        <span
+                          key={i}
+                          className="text-xs font-bold uppercase tracking-wider px-2"
+                          style={{ color: MARQUEE_COLOR_STYLES[marquee.color]?.solid }}
+                        >
+                          FAÇA UMA DOAÇÃO DE DONATE •
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-[10px] text-muted-foreground mt-3">
+                Para alterar velocidade, cor ou direção, use a aba Geral e salve — o menu lateral acompanha o mesmo estilo.
+              </p>
             </div>
           </div>
         ) : activeTab === "video" ? (
