@@ -73,6 +73,7 @@ export default function Admin() {
   const [buttonSettings, setButtonSettings] = useState<ButtonSettings>(DEFAULT_BUTTON_SETTINGS);
   const [buttonSaving, setButtonSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<"general" | "video" | "appearance">("general");
+  const [previewOn, setPreviewOn] = useState(true);
 
 
   const invokeManageAnnouncements = async (body: any) => {
