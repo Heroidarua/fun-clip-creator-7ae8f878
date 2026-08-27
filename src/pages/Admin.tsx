@@ -904,7 +904,6 @@ export default function Admin() {
             ))
           )}
         </div>
-        <DonationStatsSection password={password} />
       </>
     )}
   </div>
