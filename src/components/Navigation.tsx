@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, Search, Wrench, Gamepad2, Globe2, Tv, Radio, PlayCircle, BookOpen, Share2, PanelLeftClose, PanelLeftOpen, Menu, X, Plane, Ship, CloudLightning, Activity, Stars, Lock } from "lucide-react";
+import { Home, Search, Wrench, Gamepad2, Globe2, Tv, Radio, PlayCircle, BookOpen, Share2, PanelLeftClose, PanelLeftOpen, Menu, X, Plane, Ship, CloudLightning, Activity, Stars, Lock, Megaphone } from "lucide-react";
 import { useState, useEffect } from "react";
 import IPTVModal from "./IPTVModal";
 import ThemeToggle from "./ThemeToggle";
@@ -49,11 +49,21 @@ export default function SidebarNav() {
         {/* Header / Logo */}
         <div className="p-6 flex items-center justify-between border-b border-border/50">
           {!isCollapsed && (
-            <Link to="/" className="flex items-center gap-2 group">
-              <span className="font-display text-xl tracking-tight text-foreground">
-                sos<span className="italic text-accent">01</span>
-              </span>
-            </Link>
+            <div className="flex-1 min-w-0 overflow-hidden rounded-lg border border-primary/30 bg-gradient-to-r from-primary/10 via-transparent to-primary/10 px-2 py-2">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 shrink-0 border-r border-primary/30 pr-2">
+                  <Megaphone className="w-4 h-4 text-primary" />
+                  <span className="text-[10px] uppercase tracking-wider font-bold text-primary hidden xl:inline">Doar</span>
+                </div>
+                <div className="flex-1 overflow-hidden">
+                  <div className="animate-marquee flex w-max whitespace-nowrap">
+                    <span className="text-xs font-bold uppercase tracking-wider text-primary px-2">FAÇA UMA DOAÇÃO DE DONATE</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-primary px-2">•</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-primary px-2">FAÇA UMA DOAÇÃO DE DONATE</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
@@ -124,11 +134,21 @@ export default function SidebarNav() {
       >
         <div className="flex flex-col h-full">
           <div className="p-6 flex items-center justify-between border-b border-border/50">
-            <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 group">
-              <span className="font-display text-xl tracking-tight text-foreground">
-                sos<span className="italic text-accent">01</span>
-              </span>
-            </Link>
+            <div className="flex-1 min-w-0 overflow-hidden rounded-lg border border-primary/30 bg-gradient-to-r from-primary/10 via-transparent to-primary/10 px-3 py-2.5">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 shrink-0 border-r border-primary/30 pr-2">
+                  <Megaphone className="w-4 h-4 text-primary" />
+                  <span className="text-[10px] uppercase tracking-wider font-bold text-primary">Doar</span>
+                </div>
+                <div className="flex-1 overflow-hidden">
+                  <div className="animate-marquee flex w-max whitespace-nowrap">
+                    <span className="text-sm font-bold uppercase tracking-wider text-primary px-2">FAÇA UMA DOAÇÃO DE DONATE</span>
+                    <span className="text-sm font-bold uppercase tracking-wider text-primary px-2">•</span>
+                    <span className="text-sm font-bold uppercase tracking-wider text-primary px-2">FAÇA UMA DOAÇÃO DE DONATE</span>
+                  </div>
+                </div>
+              </div>
+            </div>
             <button
               onClick={() => setIsMobileMenuOpen(false)}
               className="p-2 hover:bg-muted rounded-lg transition-colors text-muted-foreground"
