@@ -39,6 +39,24 @@ type DownloaderStatus = {
   label?: string | null;
 };
 
+const SWITCH_DOT_CLASS: Record<string, string> = {
+  primary: "bg-primary",
+  success: "bg-green-500",
+  accent: "bg-accent",
+  warning: "bg-yellow-500",
+  danger: "bg-destructive",
+  foreground: "bg-foreground",
+};
+
+const SWITCH_ON_CLASS: Record<string, string> = {
+  primary: "bg-primary",
+  success: "bg-green-600",
+  accent: "bg-accent",
+  warning: "bg-yellow-500",
+  danger: "bg-destructive",
+  foreground: "bg-foreground",
+};
+
 export default function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
