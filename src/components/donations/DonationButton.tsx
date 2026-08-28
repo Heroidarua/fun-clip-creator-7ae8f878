@@ -1,9 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Heart } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { DonationModal } from "./DonationModal";
+import { useButtonSettings } from "@/hooks/useAppearanceSettings";
+
+const SWITCH_ON_CLASS: Record<string, string> = {
+  primary: "bg-primary",
+  success: "bg-green-600",
+  accent: "bg-accent",
+  warning: "bg-yellow-500",
+  danger: "bg-destructive",
+  foreground: "bg-foreground",
+};
 
 export const DonationButton = () => {
+  const buttonSettings = useButtonSettings();
   const [isOpen, setIsOpen] = useState(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("sos01_donation_open") === "true";
