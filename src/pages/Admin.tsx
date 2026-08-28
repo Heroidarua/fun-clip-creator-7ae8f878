@@ -11,9 +11,11 @@ import { Switch } from "@/components/ui/switch";
 import AdminPwa from "@/components/AdminPwa";
 import {
   DEFAULT_MARQUEE_SETTINGS,
+  DEFAULT_SIDEBAR_MARQUEE_SETTINGS,
   MARQUEE_COLOR_OPTIONS,
   MARQUEE_COLOR_STYLES,
   type MarqueeSettings,
+  type SidebarMarqueeSettings,
 } from "@/lib/marquee-settings";
 import {
   DEFAULT_BUTTON_SETTINGS,
@@ -74,6 +76,8 @@ export default function Admin() {
   const [buttonSaving, setButtonSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<"general" | "video" | "appearance">("general");
   const [previewOn, setPreviewOn] = useState(true);
+  const [sidebarMarquee, setSidebarMarquee] = useState<SidebarMarqueeSettings>(DEFAULT_SIDEBAR_MARQUEE_SETTINGS);
+  const [sidebarSaving, setSidebarSaving] = useState(false);
 
 
   const invokeManageAnnouncements = async (body: any) => {
@@ -149,6 +153,26 @@ export default function Admin() {
     setMarqueeSaving(false);
   };
 
+  const fetchSidebarMarquee = async (pwd: string) => {
+    try {
+      const { data } = await invokeManageAnnouncements({ action: "get-sidebar-marquee", password: pwd });
+      if (data?.data) setSidebarMarquee({ ...DEFAULT_SIDEBAR_MARQUEE_SETTINGS, ...data.data });
+    } catch {
+      /* mantém padrões */
+    }
+  };
+
+  const saveSidebarMarquee = async () => {
+    setSidebarSaving(true);
+    try {
+      await invokeManageAnnouncements({ action: "save-sidebar-marquee", password, data: sidebarMarquee });
+      toast({ title: "Letreiro lateral atualizado!", description: "As configurações foram salvas." });
+    } catch (e: any) {
+      toast({ title: "Erro ao salvar", description: e?.message, variant: "destructive" });
+    }
+    setSidebarSaving(false);
+  };
+
   const fetchButtonSettings = async (pwd: string) => {
     try {
       const { data } = await invokeManageAnnouncements({ action: "get-button-settings", password: pwd });
@@ -179,6 +203,7 @@ export default function Admin() {
       fetchDownloaderStatuses();
       fetchMarquee(password);
       fetchButtonSettings(password);
+      fetchSidebarMarquee(password);
       fetchVideoJobs();
       toast({ title: "Login realizado com sucesso!" });
     } catch {
