@@ -268,6 +268,62 @@ export const Route = createFileRoute("/api/manage-announcements")({
               );
             }
 
+            case "get-sidebar-marquee": {
+              const { data, error } = await (supabaseAdmin as any)
+                .from("sidebar_marquee_settings")
+                .select("*")
+                .limit(1)
+                .maybeSingle();
+
+              if (error) throw error;
+              return Response.json({ data }, { headers: corsHeaders(request) });
+            }
+
+            case "save-sidebar-marquee": {
+              const speed = Number(payload?.speed);
+              const color = String(payload?.color ?? "");
+              const direction = String(payload?.direction ?? "");
+              const pauseOnHover = payload?.pause_on_hover;
+              const text = cleanText(payload?.text, 200);
+
+              if (
+                !Number.isFinite(speed) ||
+                speed < 5 ||
+                speed > 120 ||
+                !MARQUEE_COLORS.includes(color as (typeof MARQUEE_COLORS)[number]) ||
+                !MARQUEE_DIRECTIONS.includes(direction as (typeof MARQUEE_DIRECTIONS)[number]) ||
+                typeof pauseOnHover !== "boolean" ||
+                !text
+              ) {
+                return Response.json(
+                  { error: "Parâmetros inválidos" },
+                  { status: 400, headers: corsHeaders(request) }
+                );
+              }
+
+              const { data: existing } = await (supabaseAdmin as any)
+                .from("sidebar_marquee_settings")
+                .select("id")
+                .limit(1)
+                .maybeSingle();
+
+              const values = {
+                speed: Math.round(speed),
+                color,
+                direction,
+                pause_on_hover: pauseOnHover,
+                text,
+                updated_at: new Date().toISOString(),
+              };
+
+              const { error } = existing?.id
+                ? await (supabaseAdmin as any).from("sidebar_marquee_settings").update(values).eq("id", existing.id)
+                : await (supabaseAdmin as any).from("sidebar_marquee_settings").insert({ ...values, singleton: true });
+
+              if (error) throw error;
+              return Response.json({ success: true }, { headers: corsHeaders(request) });
+            }
+
             default:
               return Response.json(
                 { error: "Ação inválida" },

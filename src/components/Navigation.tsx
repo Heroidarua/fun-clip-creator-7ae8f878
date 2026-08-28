@@ -3,6 +3,8 @@ import { Home, Search, Wrench, Gamepad2, Globe2, Tv, Radio, PlayCircle, BookOpen
 import { useState, useEffect } from "react";
 import IPTVModal from "./IPTVModal";
 import ThemeToggle from "./ThemeToggle";
+import { useSidebarMarqueeSettings } from "@/hooks/useAppearanceSettings";
+import { MARQUEE_COLOR_STYLES } from "@/lib/marquee-settings";
 import {
   Tooltip,
   TooltipContent,
@@ -33,6 +35,12 @@ export default function SidebarNav() {
   const [iptvModalOpen, setIptvModalOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const sidebarMarquee = useSidebarMarqueeSettings();
+  const palette = MARQUEE_COLOR_STYLES[sidebarMarquee.color] ?? MARQUEE_COLOR_STYLES.primary;
+  const marqueeStyle = {
+    animationDuration: `${sidebarMarquee.speed}s`,
+    animationDirection: sidebarMarquee.direction === "ltr" ? "reverse" : "normal",
+  } as const;
 
   
   const isActive = (to: string) =>
@@ -49,17 +57,28 @@ export default function SidebarNav() {
         {/* Header / Logo */}
         <div className="p-6 flex items-center justify-between border-b border-border/50">
           {!isCollapsed && (
-            <div className="flex-1 min-w-0 overflow-hidden rounded-lg border border-primary/30 bg-gradient-to-r from-primary/10 via-transparent to-primary/10 px-2 py-2">
+            <div
+              className="flex-1 min-w-0 overflow-hidden rounded-lg border px-2 py-2"
+              style={{
+                borderColor: palette.border,
+                background: `linear-gradient(90deg, ${palette.bg}, transparent, ${palette.bg})`,
+              }}
+            >
               <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1.5 shrink-0 border-r border-primary/30 pr-2">
-                  <Megaphone className="w-4 h-4 text-primary" />
-                  <span className="text-[10px] uppercase tracking-wider font-bold text-primary hidden xl:inline">Doar</span>
+                <div className="flex items-center gap-1.5 shrink-0 border-r pr-2" style={{ borderColor: palette.border }}>
+                  <Megaphone className="w-4 h-4" style={{ color: palette.solid }} />
+                  <span className="text-[10px] uppercase tracking-wider font-bold hidden xl:inline" style={{ color: palette.solid }}>Doar</span>
                 </div>
                 <div className="flex-1 overflow-hidden">
-                  <div className="animate-marquee flex w-max whitespace-nowrap">
-                    <span className="text-xs font-bold uppercase tracking-wider text-primary px-2">FAÇA UMA DOAÇÃO DE DONATE</span>
-                    <span className="text-xs font-bold uppercase tracking-wider text-primary px-2">•</span>
-                    <span className="text-xs font-bold uppercase tracking-wider text-primary px-2">FAÇA UMA DOAÇÃO DE DONATE</span>
+                  <div
+                    className={`animate-marquee flex w-max whitespace-nowrap ${sidebarMarquee.pause_on_hover ? "marquee-pausable" : ""}`}
+                    style={marqueeStyle}
+                  >
+                    {[0, 1].map((i) => (
+                      <span key={i} className="text-xs font-bold uppercase tracking-wider px-2" style={{ color: palette.solid }}>
+                        {sidebarMarquee.text} •
+                      </span>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -134,17 +153,28 @@ export default function SidebarNav() {
       >
         <div className="flex flex-col h-full">
           <div className="p-6 flex items-center justify-between border-b border-border/50">
-            <div className="flex-1 min-w-0 overflow-hidden rounded-lg border border-primary/30 bg-gradient-to-r from-primary/10 via-transparent to-primary/10 px-3 py-2.5">
+            <div
+              className="flex-1 min-w-0 overflow-hidden rounded-lg border px-3 py-2.5"
+              style={{
+                borderColor: palette.border,
+                background: `linear-gradient(90deg, ${palette.bg}, transparent, ${palette.bg})`,
+              }}
+            >
               <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1.5 shrink-0 border-r border-primary/30 pr-2">
-                  <Megaphone className="w-4 h-4 text-primary" />
-                  <span className="text-[10px] uppercase tracking-wider font-bold text-primary">Doar</span>
+                <div className="flex items-center gap-1.5 shrink-0 border-r pr-2" style={{ borderColor: palette.border }}>
+                  <Megaphone className="w-4 h-4" style={{ color: palette.solid }} />
+                  <span className="text-[10px] uppercase tracking-wider font-bold" style={{ color: palette.solid }}>Doar</span>
                 </div>
                 <div className="flex-1 overflow-hidden">
-                  <div className="animate-marquee flex w-max whitespace-nowrap">
-                    <span className="text-sm font-bold uppercase tracking-wider text-primary px-2">FAÇA UMA DOAÇÃO DE DONATE</span>
-                    <span className="text-sm font-bold uppercase tracking-wider text-primary px-2">•</span>
-                    <span className="text-sm font-bold uppercase tracking-wider text-primary px-2">FAÇA UMA DOAÇÃO DE DONATE</span>
+                  <div
+                    className={`animate-marquee flex w-max whitespace-nowrap ${sidebarMarquee.pause_on_hover ? "marquee-pausable" : ""}`}
+                    style={marqueeStyle}
+                  >
+                    {[0, 1].map((i) => (
+                      <span key={i} className="text-sm font-bold uppercase tracking-wider px-2" style={{ color: palette.solid }}>
+                        {sidebarMarquee.text} •
+                      </span>
+                    ))}
                   </div>
                 </div>
               </div>

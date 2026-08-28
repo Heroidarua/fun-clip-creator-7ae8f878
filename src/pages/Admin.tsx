@@ -11,9 +11,11 @@ import { Switch } from "@/components/ui/switch";
 import AdminPwa from "@/components/AdminPwa";
 import {
   DEFAULT_MARQUEE_SETTINGS,
+  DEFAULT_SIDEBAR_MARQUEE_SETTINGS,
   MARQUEE_COLOR_OPTIONS,
   MARQUEE_COLOR_STYLES,
   type MarqueeSettings,
+  type SidebarMarqueeSettings,
 } from "@/lib/marquee-settings";
 import {
   DEFAULT_BUTTON_SETTINGS,
@@ -74,6 +76,8 @@ export default function Admin() {
   const [buttonSaving, setButtonSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<"general" | "video" | "appearance">("general");
   const [previewOn, setPreviewOn] = useState(true);
+  const [sidebarMarquee, setSidebarMarquee] = useState<SidebarMarqueeSettings>(DEFAULT_SIDEBAR_MARQUEE_SETTINGS);
+  const [sidebarSaving, setSidebarSaving] = useState(false);
 
 
   const invokeManageAnnouncements = async (body: any) => {
@@ -149,6 +153,26 @@ export default function Admin() {
     setMarqueeSaving(false);
   };
 
+  const fetchSidebarMarquee = async (pwd: string) => {
+    try {
+      const { data } = await invokeManageAnnouncements({ action: "get-sidebar-marquee", password: pwd });
+      if (data?.data) setSidebarMarquee({ ...DEFAULT_SIDEBAR_MARQUEE_SETTINGS, ...data.data });
+    } catch {
+      /* mantém padrões */
+    }
+  };
+
+  const saveSidebarMarquee = async () => {
+    setSidebarSaving(true);
+    try {
+      await invokeManageAnnouncements({ action: "save-sidebar-marquee", password, data: sidebarMarquee });
+      toast({ title: "Letreiro lateral atualizado!", description: "As configurações foram salvas." });
+    } catch (e: any) {
+      toast({ title: "Erro ao salvar", description: e?.message, variant: "destructive" });
+    }
+    setSidebarSaving(false);
+  };
+
   const fetchButtonSettings = async (pwd: string) => {
     try {
       const { data } = await invokeManageAnnouncements({ action: "get-button-settings", password: pwd });
@@ -179,6 +203,7 @@ export default function Admin() {
       fetchDownloaderStatuses();
       fetchMarquee(password);
       fetchButtonSettings(password);
+      fetchSidebarMarquee(password);
       fetchVideoJobs();
       toast({ title: "Login realizado com sucesso!" });
     } catch {
@@ -486,45 +511,144 @@ export default function Admin() {
                 Letreiro do Menu Lateral
               </h2>
               <p className="text-sm text-muted-foreground mb-5">
-                O topo do menu lateral (desktop e mobile) exibe um letreiro rolante de doação no lugar do antigo logo.
-                A velocidade, cor, direção e pausa são as mesmas configuradas em <strong>Geral → Letreiro de Avisos</strong>.
+                O topo do menu lateral (desktop e mobile) exibe um letreiro rolante de doação. Ele tem
+                configuração própria: texto, velocidade, cor, direção e pausa ao passar o mouse.
               </p>
 
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div className="sm:col-span-2">
+                  <label className="text-sm font-medium block mb-2">Texto do letreiro</label>
+                  <Input
+                    value={sidebarMarquee.text}
+                    maxLength={200}
+                    onChange={(e) => setSidebarMarquee({ ...sidebarMarquee, text: e.target.value })}
+                    className="bg-background"
+                    placeholder="FAÇA UMA DOAÇÃO DE DONATE"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium block mb-2">
+                    Velocidade — {sidebarMarquee.speed}s por ciclo{" "}
+                    <span className="text-muted-foreground font-normal">
+                      ({sidebarMarquee.speed <= 15 ? "rápido" : sidebarMarquee.speed >= 45 ? "lento" : "médio"})
+                    </span>
+                  </label>
+                  <input
+                    type="range"
+                    min={5}
+                    max={120}
+                    step={1}
+                    value={sidebarMarquee.speed}
+                    onChange={(e) => setSidebarMarquee({ ...sidebarMarquee, speed: Number(e.target.value) })}
+                    className="w-full accent-primary"
+                  />
+                  <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
+                    <span>Mais rápido</span>
+                    <span>Mais lento</span>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium block mb-2">Cor</label>
+                  <div className="flex flex-wrap gap-2">
+                    {MARQUEE_COLOR_OPTIONS.map((option) => {
+                      const optPalette = MARQUEE_COLOR_STYLES[option.value];
+                      const selected = sidebarMarquee.color === option.value;
+                      return (
+                        <button
+                          key={option.value}
+                          type="button"
+                          title={option.label}
+                          onClick={() => setSidebarMarquee({ ...sidebarMarquee, color: option.value })}
+                          className={`w-9 h-9 rounded-lg border-2 transition-transform ${
+                            selected ? "scale-110 border-foreground" : "border-border hover:scale-105"
+                          }`}
+                          style={{ background: optPalette.solid }}
+                          aria-label={option.label}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium block mb-2">Direção</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { value: "rtl", label: "Direita → Esquerda" },
+                      { value: "ltr", label: "Esquerda → Direita" },
+                    ].map((option) => (
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() =>
+                          setSidebarMarquee({
+                            ...sidebarMarquee,
+                            direction: option.value as MarqueeSettings["direction"],
+                          })
+                        }
+                        className={`px-3 py-2 rounded-lg border text-sm transition-colors ${
+                          sidebarMarquee.direction === option.value
+                            ? "border-primary bg-primary/10 text-primary font-semibold"
+                            : "border-border hover:bg-muted"
+                        }`}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between rounded-lg border border-border p-3">
+                  <div className="pr-3">
+                    <div className="text-sm font-medium">Pausar ao passar o mouse</div>
+                    <div className="text-xs text-muted-foreground">
+                      Quando ativo, o letreiro para enquanto o cursor estiver sobre ele.
+                    </div>
+                  </div>
+                  <Switch
+                    checked={sidebarMarquee.pause_on_hover}
+                    onCheckedChange={(checked) => setSidebarMarquee({ ...sidebarMarquee, pause_on_hover: checked })}
+                  />
+                </div>
+              </div>
+
               <div
-                className="rounded-lg border overflow-hidden px-3 py-2.5"
+                className="rounded-lg border overflow-hidden px-3 py-2.5 mt-5"
                 style={{
-                  borderColor: MARQUEE_COLOR_STYLES[marquee.color]?.border,
-                  background: `linear-gradient(90deg, ${MARQUEE_COLOR_STYLES[marquee.color]?.bg}, transparent, ${MARQUEE_COLOR_STYLES[marquee.color]?.bg})`,
+                  borderColor: MARQUEE_COLOR_STYLES[sidebarMarquee.color]?.border,
+                  background: `linear-gradient(90deg, ${MARQUEE_COLOR_STYLES[sidebarMarquee.color]?.bg}, transparent, ${MARQUEE_COLOR_STYLES[sidebarMarquee.color]?.bg})`,
                 }}
               >
                 <div className="flex items-center gap-2">
                   <div
                     className="flex items-center gap-1.5 shrink-0 border-r pr-2"
-                    style={{ borderColor: MARQUEE_COLOR_STYLES[marquee.color]?.border }}
+                    style={{ borderColor: MARQUEE_COLOR_STYLES[sidebarMarquee.color]?.border }}
                   >
-                    <Megaphone className="w-4 h-4" style={{ color: MARQUEE_COLOR_STYLES[marquee.color]?.solid }} />
+                    <Megaphone className="w-4 h-4" style={{ color: MARQUEE_COLOR_STYLES[sidebarMarquee.color]?.solid }} />
                     <span
                       className="text-[10px] uppercase tracking-wider font-bold"
-                      style={{ color: MARQUEE_COLOR_STYLES[marquee.color]?.solid }}
+                      style={{ color: MARQUEE_COLOR_STYLES[sidebarMarquee.color]?.solid }}
                     >
                       Doar
                     </span>
                   </div>
                   <div className="flex-1 overflow-hidden">
                     <div
-                      className={`flex w-max animate-marquee whitespace-nowrap ${marquee.pause_on_hover ? "marquee-pausable" : ""}`}
+                      className={`flex w-max animate-marquee whitespace-nowrap ${sidebarMarquee.pause_on_hover ? "marquee-pausable" : ""}`}
                       style={{
-                        animationDuration: `${marquee.speed}s`,
-                        animationDirection: marquee.direction === "ltr" ? "reverse" : "normal",
+                        animationDuration: `${sidebarMarquee.speed}s`,
+                        animationDirection: sidebarMarquee.direction === "ltr" ? "reverse" : "normal",
                       }}
                     >
                       {[0, 1].map((i) => (
                         <span
                           key={i}
                           className="text-xs font-bold uppercase tracking-wider px-2"
-                          style={{ color: MARQUEE_COLOR_STYLES[marquee.color]?.solid }}
+                          style={{ color: MARQUEE_COLOR_STYLES[sidebarMarquee.color]?.solid }}
                         >
-                          FAÇA UMA DOAÇÃO DE DONATE •
+                          {sidebarMarquee.text || "FAÇA UMA DOAÇÃO DE DONATE"} •
                         </span>
                       ))}
                     </div>
@@ -532,9 +656,9 @@ export default function Admin() {
                 </div>
               </div>
 
-              <p className="text-[10px] text-muted-foreground mt-3">
-                Para alterar velocidade, cor ou direção, use a aba Geral e salve — o menu lateral acompanha o mesmo estilo.
-              </p>
+              <Button onClick={saveSidebarMarquee} disabled={sidebarSaving} className="mt-4 w-full sm:w-auto">
+                {sidebarSaving ? "Salvando..." : "Salvar letreiro lateral"}
+              </Button>
             </div>
           </div>
         ) : activeTab === "video" ? (
