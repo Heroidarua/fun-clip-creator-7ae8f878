@@ -14,6 +14,13 @@ export const DEFAULT_MARQUEE_SETTINGS: MarqueeSettings = {
   pause_on_hover: true,
 };
 
+export type SidebarMarqueeSettings = MarqueeSettings & { text: string };
+
+export const DEFAULT_SIDEBAR_MARQUEE_SETTINGS: SidebarMarqueeSettings = {
+  ...DEFAULT_MARQUEE_SETTINGS,
+  text: "FAÇA UMA DOAÇÃO DE DONATE",
+};
+
 type Palette = { solid: string; soft: string; border: string; bg: string };
 
 const token = (name: string): Palette => ({
