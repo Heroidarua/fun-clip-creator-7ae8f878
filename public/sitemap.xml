@@ -163,6 +163,9 @@
     <loc>https://sos01.com.br/ferramenta/velocidade</loc>
   </url>
   <url>
+    <loc>https://sos01.com.br/ferramenta/virus-do-bem</loc>
+  </url>
+  <url>
     <loc>https://sos01.com.br/ferramentas</loc>
   </url>
   <url>
@@ -197,5 +200,8 @@
   </url>
   <url>
     <loc>https://sos01.com.br/termos</loc>
+  </url>
+  <url>
+    <loc>https://sos01.com.br/virus-do-bem</loc>
   </url>
 </urlset>

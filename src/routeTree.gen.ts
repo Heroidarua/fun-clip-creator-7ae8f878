@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VirusDoBemRouteImport } from './routes/virus-do-bem'
 import { Route as TermosRouteImport } from './routes/termos'
 import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
@@ -68,6 +69,11 @@ import { Route as ApiPublicPinterestDownloadRouteImport } from './routes/api.pub
 import { Route as ApiPublicMercadopagoWebhookRouteImport } from './routes/api/public/mercadopago-webhook'
 import { Route as ApiYoutubeStatusRouteImport } from './routes/api.youtube.status.'
 
+const VirusDoBemRoute = VirusDoBemRouteImport.update({
+  id: '/virus-do-bem',
+  path: '/virus-do-bem',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
   path: '/termos',
@@ -395,6 +401,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
+  '/virus-do-bem': typeof VirusDoBemRoute
   '/api/download-facebook': typeof ApiDownloadFacebookRoute
   '/api/download-instagram': typeof ApiDownloadInstagramRoute
   '/api/download-kwai': typeof ApiDownloadKwaiRoute
@@ -454,6 +461,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
+  '/virus-do-bem': typeof VirusDoBemRoute
   '/api/download-facebook': typeof ApiDownloadFacebookRoute
   '/api/download-instagram': typeof ApiDownloadInstagramRoute
   '/api/download-kwai': typeof ApiDownloadKwaiRoute
@@ -515,6 +523,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
+  '/virus-do-bem': typeof VirusDoBemRoute
   '/api/download-facebook': typeof ApiDownloadFacebookRoute
   '/api/download-instagram': typeof ApiDownloadInstagramRoute
   '/api/download-kwai': typeof ApiDownloadKwaiRoute
@@ -577,6 +586,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/sobre'
     | '/termos'
+    | '/virus-do-bem'
     | '/api/download-facebook'
     | '/api/download-instagram'
     | '/api/download-kwai'
@@ -636,6 +646,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/sobre'
     | '/termos'
+    | '/virus-do-bem'
     | '/api/download-facebook'
     | '/api/download-instagram'
     | '/api/download-kwai'
@@ -696,6 +707,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/sobre'
     | '/termos'
+    | '/virus-do-bem'
     | '/api/download-facebook'
     | '/api/download-instagram'
     | '/api/download-kwai'
@@ -757,6 +769,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SobreRoute: typeof SobreRoute
   TermosRoute: typeof TermosRoute
+  VirusDoBemRoute: typeof VirusDoBemRoute
   ApiDownloadFacebookRoute: typeof ApiDownloadFacebookRoute
   ApiDownloadInstagramRoute: typeof ApiDownloadInstagramRoute
   ApiDownloadKwaiRoute: typeof ApiDownloadKwaiRoute
@@ -784,6 +797,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/virus-do-bem': {
+      id: '/virus-do-bem'
+      path: '/virus-do-bem'
+      fullPath: '/virus-do-bem'
+      preLoaderRoute: typeof VirusDoBemRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/termos': {
       id: '/termos'
       path: '/termos'
@@ -1250,6 +1270,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SobreRoute: SobreRoute,
   TermosRoute: TermosRoute,
+  VirusDoBemRoute: VirusDoBemRoute,
   ApiDownloadFacebookRoute: ApiDownloadFacebookRoute,
   ApiDownloadInstagramRoute: ApiDownloadInstagramRoute,
   ApiDownloadKwaiRoute: ApiDownloadKwaiRoute,

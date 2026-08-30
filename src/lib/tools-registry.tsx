@@ -18,6 +18,7 @@ import {
   Link2,
   UserSquare2,
   Video,
+  Bug,
   type LucideIcon,
 } from "lucide-react";
 import { PREMIUM_TOOLS } from "@/lib/premium-tools";
@@ -177,6 +178,17 @@ const UTILITY_TOOLS: RegisteredTool[] = [
     color: "280 100% 60%",
     component: lazy(() => import("@/components/tools/PixelAvatarGenerator")),
     featureKey: "pixel-avatar",
+    premium: false,
+    status: "ready",
+  },
+  {
+    slug: "virus-do-bem",
+    name: "Vírus do Bem",
+    description: "Gere e compartilhe um link de pegadinha com seus amigos.",
+    icon: Bug,
+    color: "150 80% 45%",
+    component: lazy(() => import("@/components/tools/VirusDoBem")),
+    featureKey: "virus-do-bem",
     premium: false,
     status: "ready",
   },
