@@ -75,6 +75,30 @@ function VirusDoBemPage() {
 
             <VirusDoBem />
           </article>
+
+          <section className="pixel-card rounded-sm p-6 mt-6">
+            <h2 className="font-pixel text-sm text-emerald-500 mb-4 text-center">
+              📖 COMO FUNCIONA
+            </h2>
+            <ol className="space-y-3">
+              <li className="flex gap-3 items-start">
+                <span className="flex-shrink-0 w-7 h-7 rounded-sm bg-emerald-600 text-primary-foreground font-pixel text-xs flex items-center justify-center">1</span>
+                <p className="text-sm text-muted-foreground pt-1">Abra a ferramenta Vírus do Bem no SOS01.</p>
+              </li>
+              <li className="flex gap-3 items-start">
+                <span className="flex-shrink-0 w-7 h-7 rounded-sm bg-emerald-600 text-primary-foreground font-pixel text-xs flex items-center justify-center">2</span>
+                <p className="text-sm text-muted-foreground pt-1">Clique em GERAR LINK para revelar o endereço da pegadinha.</p>
+              </li>
+              <li className="flex gap-3 items-start">
+                <span className="flex-shrink-0 w-7 h-7 rounded-sm bg-emerald-600 text-primary-foreground font-pixel text-xs flex items-center justify-center">3</span>
+                <p className="text-sm text-muted-foreground pt-1">Copie, abra ou compartilhe o link com seus amigos.</p>
+              </li>
+              <li className="flex gap-3 items-start">
+                <span className="flex-shrink-0 w-7 h-7 rounded-sm bg-emerald-600 text-primary-foreground font-pixel text-xs flex items-center justify-center">4</span>
+                <p className="text-sm text-muted-foreground pt-1">Convença o amigo a clicar no pato 🦆 que vai aparecer na tela após abrir o link gerado!</p>
+              </li>
+            </ol>
+          </section>
         </div>
       </main>
       <Footer />
