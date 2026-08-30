@@ -1,5 +1,5 @@
 import { useState, lazy, Suspense, ComponentType } from "react";
-import { Music, Eraser, Image, QrCode, Link2, Wrench, Stamp, KeyRound, UserSquare2, Sparkles, FileImage, PenTool, Languages, FileText, Loader2, Brain, Image as ImageIcon, Settings2, Play } from "lucide-react";
+import { Music, Eraser, Image, QrCode, Link2, Wrench, Stamp, KeyRound, UserSquare2, Sparkles, FileImage, PenTool, Languages, FileText, Loader2, Brain, Image as ImageIcon, Settings2, Play, Bug } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import FeatureGate from "@/components/FeatureGate";
@@ -20,6 +20,7 @@ const ImageToPdfConverter = lazy(() => import("@/components/tools/ImageToPdfConv
 const AITextGenerator     = lazy(() => import("@/components/tools/AITextGenerator"));
 const AutoTranslator      = lazy(() => import("@/components/tools/AutoTranslator"));
 const TextSummarizer      = lazy(() => import("@/components/tools/TextSummarizer"));
+const VirusDoBem          = lazy(() => import("@/components/tools/VirusDoBem"));
 
 
 const ToolFallback = () => (
@@ -209,6 +210,19 @@ const UtilityToolsSection = () => {
       featureKey: "summarizer",
       featured: true,
       category: "ia",
+    },
+    {
+      id: "virus-do-bem",
+      title: "VÍRUS DO BEM",
+      subtitle: "Gere e compartilhe uma pegadinha",
+      icon: <Bug className="w-5 h-5" />,
+      color: "hsl(150, 80%, 45%)",
+      borderColor: "hsl(150 80% 45% / 0.8)",
+      bgColor: "hsl(150, 80%, 45%, 0.2)",
+      Component: VirusDoBem,
+      trackKey: "virus-do-bem",
+      featureKey: "virus-do-bem",
+      category: "utilidades",
     },
   ];
 
