@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Copy, ExternalLink, Share2, Check, Sparkles } from "lucide-react";
+import { Copy, ExternalLink, Share2, Check, Sparkles, MessageCircle, Send } from "lucide-react";
 
 const PRANK_URL = "https://is.gd/8P4M50";
 const SHARE_TEXT = "Olha isso 😂👇";
+const WHATSAPP_URL = `https://wa.me/?text=${encodeURIComponent(`${SHARE_TEXT}\n${PRANK_URL}`)}`;
+const TELEGRAM_URL = `https://t.me/share/url?url=${encodeURIComponent(PRANK_URL)}&text=${encodeURIComponent(SHARE_TEXT)}`;
+const X_URL = `https://twitter.com/intent/tweet?text=${encodeURIComponent(`${SHARE_TEXT} ${PRANK_URL}`)}`;
 
 export default function VirusDoBem() {
   const { toast } = useToast();
