@@ -1106,6 +1106,53 @@ export const TOOLS_SEO: ToolSeo[] = [
     ],
     related: ["meu-ip", "encurtador-de-url", "gerador-qrcode"],
   },
+  {
+    slug: "virus-do-bem",
+    name: "Vírus do Bem",
+    title: "Vírus do Bem — Link de Pegadinha Grátis | SOS01",
+    description:
+      "Gere e compartilhe um link de pegadinha com seus amigos. Simples, rápido e divertido, sem cadastro no SOS01.",
+    h1: "Vírus do Bem — link de pegadinha",
+    keywords: [
+      "vírus do bem",
+      "pegadinha",
+      "link de pegadinha",
+      "trollar amigos",
+      "link engraçado",
+    ],
+    category: "utilidades",
+    intro:
+      "O Vírus do Bem é uma ferramenta simples do SOS01 para gerar um link de pegadinha pronto para copiar e compartilhar. O SOS01 apenas apresenta o endereço: quem recebe decide se abre ou não.",
+    steps: [
+      "Abra a ferramenta Vírus do Bem no SOS01.",
+      "Clique em GERAR LINK para revelar o endereço da pegadinha.",
+      "Copie, abra ou compartilhe o link com seus amigos.",
+    ],
+    features: [
+      "Geração instantânea do link",
+      "Copiar para área de transferência com um clique",
+      "Compartilhamento nativo em dispositivos compatíveis",
+      "Sem cadastro e sem coleta de dados",
+    ],
+    faq: [
+      {
+        question: "O que acontece quando a pessoa clica no link?",
+        answer:
+          "O link é um redirecionamento externo. O SOS01 não controla e não executa o conteúdo do destino.",
+      },
+      {
+        question: "Preciso instalar algo?",
+        answer:
+          "Não. A ferramenta funciona direto no navegador, em celular e computador.",
+      },
+      {
+        question: "O SOS01 coleta dados de quem usa o link?",
+        answer:
+          "Não. Nenhuma informação pessoal é coletada nem compartilhada ao gerar ou copiar o link.",
+      },
+    ],
+    related: ["encurtador-de-url", "gerador-qrcode", "gerador-de-senha"],
+  },
 ];
 
 export const TOOLS_SEO_BY_SLUG: Record<string, ToolSeo> = Object.fromEntries(
