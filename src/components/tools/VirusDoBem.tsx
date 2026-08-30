@@ -142,6 +142,41 @@ export default function VirusDoBem() {
             </button>
           </div>
 
+          <div className="space-y-2">
+            <p className="text-[10px] font-pixel text-center text-muted-foreground">
+              ENVIAR VIA:
+            </p>
+            <div className="grid grid-cols-3 gap-3">
+              <a
+                href={WHATSAPP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 px-3 py-3 rounded-sm border-2 border-green-500/50 font-pixel text-[10px] text-green-500 hover:bg-green-500/10 transition-colors"
+              >
+                <MessageCircle className="w-4 h-4" />
+                WHATSAPP
+              </a>
+              <a
+                href={TELEGRAM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 px-3 py-3 rounded-sm border-2 border-sky-500/50 font-pixel text-[10px] text-sky-500 hover:bg-sky-500/10 transition-colors"
+              >
+                <Send className="w-4 h-4" />
+                TELEGRAM
+              </a>
+              <a
+                href={X_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 px-3 py-3 rounded-sm border-2 border-foreground/30 font-pixel text-[10px] text-foreground hover:bg-foreground/10 transition-colors"
+              >
+                <Share2 className="w-4 h-4" />
+                X / TWITTER
+              </a>
+            </div>
+          </div>
+
           {copied && (
             <div className="flex items-center justify-center gap-2 text-sm font-medium text-emerald-500 animate-in fade-in zoom-in duration-200">
               <Check className="w-4 h-4" />
