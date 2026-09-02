@@ -71,11 +71,25 @@ export default function ProtectionLayer() {
       }
     };
 
+    // Trava anti-inspeção: enquanto o DevTools estiver aberto, o loop de
+    // debugger pausa a execução continuamente, tornando a depuração inviável.
+    // Em navegação normal (DevTools fechado) o custo é praticamente zero.
+    const debugTrap = window.setInterval(() => {
+      const threshold = 160;
+      const widthDiff = window.outerWidth - window.innerWidth > threshold;
+      const heightDiff = window.outerHeight - window.innerHeight > threshold;
+      if (widthDiff || heightDiff) {
+        // eslint-disable-next-line no-debugger
+        debugger;
+      }
+    }, 1500);
+
     document.addEventListener("contextmenu", onContextMenu);
     document.addEventListener("keydown", onKeyDown);
     document.addEventListener("dragstart", onDragStart);
 
     return () => {
+      window.clearInterval(debugTrap);
       document.removeEventListener("contextmenu", onContextMenu);
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("dragstart", onDragStart);
