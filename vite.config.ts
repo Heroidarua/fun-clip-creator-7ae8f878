@@ -207,6 +207,18 @@ export default defineConfig(({ command, mode }) => {
       host: "::",
       port: 8080,
     },
+    esbuild: {
+      // remove debuggers e comentários legais do bundle de produção
+      drop: command === "build" ? ["debugger"] : [],
+      legalComments: "none",
+    },
+    build: {
+      // nunca gerar sourcemaps: sem eles o DevTools não mostra o código-fonte
+      // original nem a estrutura de pastas de src/
+      sourcemap: false,
+      minify: "esbuild",
+      cssCodeSplit: true,
+    },
     define: envDefine,
     resolve: {
       alias: {
