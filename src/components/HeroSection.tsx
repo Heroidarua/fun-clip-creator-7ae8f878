@@ -1198,16 +1198,16 @@ const HeroSection = () => {
           {/* Pixel badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/20 border-2 border-primary mb-6 font-pixel text-[10px] text-primary">
             <Gamepad2 className="w-4 h-4" />
-            AVALIAÇÃO DO SITE 5.0 ⭐
+            
           </div>
           
           <h1 className="font-pixel text-lg sm:text-xl md:text-2xl lg:text-3xl mb-4 tracking-wider leading-relaxed">
-            <span className="block text-primary neon-text mb-2">SOS 01.</span>
+            <span className="block text-primary neon-text mb-2">SOS 01</span>
             <span className="block text-[hsl(var(--accent))]">Ferramentas, jogos e serviços</span>
           </h1>
           
           <p className="font-retro text-xl sm:text-2xl text-[hsl(var(--retro-red))] mb-6">
-            ⬇️ Explore. Descubra. Aproveite.
+             Explore. Descubra. Aproveite.
           </p>
           
           {/* Platform icons with retro style */}
