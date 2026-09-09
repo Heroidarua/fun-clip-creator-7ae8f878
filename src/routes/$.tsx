@@ -1,8 +1,14 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import NotFound from "@/pages/NotFound";
 
 export const Route = createFileRoute("/$")({
+  // Lança notFound() para que o servidor responda HTTP 404 de verdade
+  // (antes devolvia 200 — soft 404 aos olhos do Google).
+  loader: () => {
+    throw notFound();
+  },
   component: NotFound,
+  notFoundComponent: NotFound,
   head: () => ({
     meta: [
       { title: "Página não encontrada — SOS01" },

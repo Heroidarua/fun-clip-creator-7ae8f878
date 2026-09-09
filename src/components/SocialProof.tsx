@@ -2,12 +2,13 @@ import { Download, Users, Gamepad2, Star, Shield, Clock } from "lucide-react";
 import CounterAnimation from "./CounterAnimation";
 import { useEffect, useState } from "react";
 import { getSiteStats } from "@/lib/metrics.functions";
+import { TOTAL_GAMES, SITE_RATING } from "@/config/stats";
 
 const SocialProof = () => {
   const [dynamicStats, setDynamicStats] = useState({
-    downloads: 120000,
-    users: 65000,
-    games: 2757
+    downloads: 0,
+    users: 0,
+    games: TOTAL_GAMES
   });
 
   useEffect(() => {
@@ -22,7 +23,8 @@ const SocialProof = () => {
     });
   }, []);
 
-  const stats = [
+  // Nunca mostrar "0 +": o card só aparece quando existe número real.
+  const allStats = [
     {
       icon: Download,
       value: dynamicStats.downloads,
@@ -39,20 +41,22 @@ const SocialProof = () => {
     },
     {
       icon: Gamepad2,
-      value: dynamicStats.games,
+      value: TOTAL_GAMES,
       suffix: "+",
       label: "Jogos",
       color: "text-[hsl(var(--retro-cyan))]"
     },
     {
       icon: Star,
-      value: 4.9,
+      value: SITE_RATING,
       suffix: "★",
       label: "Avaliação",
       color: "text-[hsl(var(--retro-yellow))]",
       isDecimal: true
     }
   ];
+
+  const stats = allStats.filter((s) => Number(s.value) > 0);
 
   const badges = [
     { icon: Shield, text: "100% Seguro" },
@@ -70,7 +74,7 @@ const SocialProof = () => {
       
       <div className="container mx-auto px-4 relative z-10">
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 max-w-4xl mx-auto mb-8">
+        <div className={`grid grid-cols-2 ${stats.length >= 4 ? "md:grid-cols-4" : "md:grid-cols-3"} gap-4 sm:gap-6 max-w-4xl mx-auto mb-8`}>
           {stats.map((stat, index) => (
             <div 
               key={index}
