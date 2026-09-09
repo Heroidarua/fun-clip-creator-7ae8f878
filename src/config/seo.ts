@@ -16,8 +16,7 @@ export const SITE_CONFIG = {
   defaultTitle: "SOS01 — Ferramentas online gratuitas",
   defaultDescription:
     "Plataforma gratuita com downloaders de vídeo, ferramentas de imagem, PDF, texto e IA, além de jogos retrô. Tudo direto no navegador, sem cadastro.",
-  defaultImage:
-    "https://fun-clip-creator.lovable.app/og-image.png",
+  defaultImage: "https://sos01.com.br/og-cover.jpg",
 } as const;
 
 export type ToolCategoryId =

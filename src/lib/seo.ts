@@ -110,6 +110,8 @@ export function buildSeo(input: SeoInput): {
     { property: "og:url", content: url },
     { property: "og:image", content: image },
     { property: "og:image:alt", content: input.title },
+    { property: "og:image:width", content: "1200" },
+    { property: "og:image:height", content: "630" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:site", content: SITE.twitter },
     { name: "twitter:title", content: input.title },
@@ -117,6 +119,9 @@ export function buildSeo(input: SeoInput): {
     { name: "twitter:image", content: image },
   ];
 
+  if (type === "article") {
+    meta.push({ property: "article:author", content: SITE.name });
+  }
   if (input.article?.publishedTime) {
     meta.push({ property: "article:published_time", content: input.article.publishedTime });
   }
@@ -181,16 +186,18 @@ export function buildSeo(input: SeoInput): {
 export function buildArticleSeo(
   input: SeoInput & { publishedTime?: string },
 ): ReturnType<typeof buildSeo> {
+  const published = input.publishedTime ?? input.article?.publishedTime;
   return buildSeo({
     ...input,
     type: "article",
+    article: { ...(input.article ?? {}), publishedTime: published, section: input.article?.section ?? "Tutoriais" },
     schema: [
       {
         "@type": "Article",
         headline: input.title,
         description: input.description,
         image: input.image ? absoluteUrl(input.image) : SITE.defaultImage,
-        datePublished: input.publishedTime,
+        datePublished: published,
         author: { "@type": "Organization", name: SITE.name },
         publisher: {
           "@type": "Organization",

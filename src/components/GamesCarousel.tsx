@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { games, Game } from "@/data/games";
+import { TOTAL_GAMES, HOME_GAMES_PREVIEW } from "@/config/stats";
 import { useFavoriteGames } from "@/hooks/useFavoriteGames";
 
 function GameCard({ game, isFavorite, onToggleFavorite }: { game: Game; isFavorite: boolean; onToggleFavorite: () => void }) {
@@ -105,11 +106,13 @@ export default function GamesCarousel() {
 
   // Sort games: favorites first, then the rest
   const sortedGames = useMemo(() => {
-    return [...games].sort((a, b) => {
-      const aFav = favorites.includes(a.id) ? 0 : 1;
-      const bFav = favorites.includes(b.id) ? 0 : 1;
-      return aFav - bFav;
-    });
+    return [...games]
+      .sort((a, b) => {
+        const aFav = favorites.includes(a.id) ? 0 : 1;
+        const bFav = favorites.includes(b.id) ? 0 : 1;
+        return aFav - bFav;
+      })
+      .slice(0, HOME_GAMES_PREVIEW);
   }, [favorites]);
 
   const autoplayPlugin = useRef(
@@ -136,7 +139,7 @@ export default function GamesCarousel() {
         <div className="text-center mb-10 sm:mb-12">
           <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-[hsl(var(--accent)/0.12)] border border-[hsl(var(--accent)/0.25)] text-[hsl(var(--accent))] font-semibold text-[11px] tracking-wide mb-5">
             <Gamepad2 className="w-4 h-4" />
-            2700+ GAMES
+            {TOTAL_GAMES}+ GAMES
             {favorites.length > 0 && (
               <span className="ml-1 flex items-center gap-1 text-[hsl(var(--destructive))]">
                 <Heart className="w-3 h-3" fill="currentColor" />

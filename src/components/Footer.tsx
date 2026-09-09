@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { TOTAL_GAMES } from "@/config/stats";
 import { Share2, ChevronDown, ChevronUp, Joystick, AlertTriangle } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
@@ -82,7 +83,7 @@ const Footer = () => {
               </div>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed font-orbitron">
-              Ecossistema digital com +2700 jogos retrô, ferramentas de IA e downloaders seguros.
+              Ecossistema digital com +{TOTAL_GAMES} jogos retrô, ferramentas de IA e downloaders seguros.
             </p>
           </div>
 

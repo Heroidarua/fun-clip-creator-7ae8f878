@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { TOTAL_GAMES } from "@/config/stats";
 import { Link } from "@tanstack/react-router";
 import { Dices, Sparkles, Play, RotateCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -135,7 +136,7 @@ export default function RandomGamePicker() {
           </div>
 
           <p className="text-center text-xs text-[hsl(var(--muted-foreground))] mt-4">
-            {games.length} jogos disponíveis · 100% no navegador
+            {TOTAL_GAMES} jogos disponíveis · 100% no navegador
           </p>
         </div>
       </div>
