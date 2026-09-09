@@ -1,4 +1,5 @@
 import { Zap, Sparkles, Gift, Gamepad2 } from "lucide-react";
+import { TOTAL_GAMES } from "@/config/stats";
 
 const AdvantagesSection = () => {
   const advantages = [
@@ -20,7 +21,7 @@ const AdvantagesSection = () => {
     },
     {
       icon: <Gamepad2 className="w-8 h-8" />,
-      title: "2700+ JOGOS",
+      title: `${TOTAL_GAMES}+ JOGOS`,
       description: "Arcade retrô grátis",
       color: "text-[hsl(var(--accent))]",
       borderColor: "border-[hsl(var(--accent))]",

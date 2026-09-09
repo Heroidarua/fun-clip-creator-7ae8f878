@@ -7,8 +7,8 @@ export const Route = createFileRoute("/precos")({
   head: () =>
     buildSeo({
       path: "/precos",
-      title: "Preços — Tudo gratuito para sempre | SOS01",
-      description: "Todas as ferramentas, downloaders, utilitários com IA e jogos do SOS01 são gratuitos. Sem trial, sem paywall e sem cadastro.",
-      keywords: ["grátis","preços","sem assinatura"],
+      title: "Por que é grátis — SOS01 vive de doações",
+      description: "O SOS01 não tem planos nem cobrança: todas as ferramentas, downloaders e jogos são gratuitos, mantidos por doações voluntárias via Pix.",
+      keywords: ["por que é grátis","doação pix","sem assinatura"],
     }),
 });

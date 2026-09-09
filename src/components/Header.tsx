@@ -33,7 +33,7 @@ const NAV = [
   { to: "/iptv", label: "IPTV", icon: Tv, desc: "Pluto TV grátis" },
   { to: "/player", label: "IPTV 1.0 🎬", icon: Tv, desc: "Canais e mídia premium", premium: true },
   { to: "/blog", label: "Blog", icon: BookOpen, desc: "Guias e novidades" },
-  { to: "/precos", label: "Preços", icon: Tag, desc: "Planos e benefícios" },
+  { to: "/precos", label: "Por que é grátis", icon: Tag, desc: "Como o site se mantém" },
 ] as const;
 
 const Header = () => {

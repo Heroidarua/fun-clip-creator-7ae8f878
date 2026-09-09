@@ -395,7 +395,7 @@ const HeroSection = () => {
   };
 
   const getPlatformIcon = (platform: string | null) => {
-    if (platform === 'tiktok') return <img src={tiktokIcon} alt="Logotipo do TikTok" className="w-5 h-5" width={20} height={20} />;
+    if (platform === 'tiktok') return <img src={tiktokIcon} alt="Logotipo do TikTok" className="w-5 h-5" width={20} height={20} width={20} height={20} loading="lazy" decoding="async" fetchPriority="low" />;
     return null;
   };
 
@@ -1242,7 +1242,7 @@ const HeroSection = () => {
             <div className="mb-5 flex items-center justify-between gap-3 border-b border-foreground/10 pb-4">
               <div className="flex items-center gap-3 text-left">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-foreground/5 ring-1 ring-foreground/10">
-                  <img src={tiktokIcon} alt="TikTok" className="w-5 h-5 rounded-md" />
+                  <img src={tiktokIcon} alt="TikTok" className="w-5 h-5 rounded-md" width={20} height={20} loading="lazy" decoding="async" fetchPriority="low" />
                 </span>
                 <div>
                   <h2 className="font-pixel text-xs sm:text-sm text-primary">LINK DO TIKTOK</h2>
@@ -1427,7 +1427,7 @@ const HeroSection = () => {
             <div className="mb-5 flex items-center justify-between gap-3 border-b border-foreground/10 pb-4">
               <div className="flex items-center gap-3 text-left">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-foreground/5 ring-1 ring-foreground/10">
-                  <img src={instagramIcon} alt="Instagram" className="w-5 h-5 rounded-md" />
+                  <img src={instagramIcon} alt="Instagram" className="w-5 h-5 rounded-md" width={20} height={20} loading="lazy" decoding="async" fetchPriority="low" />
                 </span>
                 <div>
                   <h2 className="font-pixel text-xs sm:text-sm text-[hsl(var(--retro-magenta))]">LINK DO INSTAGRAM</h2>
@@ -1635,7 +1635,7 @@ const HeroSection = () => {
             <div className="mb-5 flex items-center justify-between gap-3 border-b border-foreground/10 pb-4">
               <div className="flex items-center gap-3 text-left">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-foreground/5 ring-1 ring-foreground/10">
-                  <img src={kwaiIcon} alt="Kwai" className="w-5 h-5 rounded-md" />
+                  <img src={kwaiIcon} alt="Kwai" className="w-5 h-5 rounded-md" width={20} height={20} loading="lazy" decoding="async" fetchPriority="low" />
                 </span>
                 <div>
                   <h2 className="font-pixel text-xs sm:text-sm text-[hsl(var(--retro-orange))]">LINK DO KWAI</h2>
@@ -1776,7 +1776,7 @@ const HeroSection = () => {
             <div className="mb-5 flex items-center justify-between gap-3 border-b border-foreground/10 pb-4">
               <div className="flex items-center gap-3 text-left">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-foreground/5 ring-1 ring-foreground/10">
-                  <img src={youtubeIcon} alt="YouTube" className="w-5 h-5 rounded-md" />
+                  <img src={youtubeIcon} alt="YouTube" className="w-5 h-5 rounded-md" width={20} height={20} loading="lazy" decoding="async" fetchPriority="low" />
                 </span>
                 <div>
                   <h2 className="font-pixel text-xs sm:text-sm text-[hsl(0,100%,50%)]">LINK DO YOUTUBE</h2>
@@ -1927,7 +1927,7 @@ const HeroSection = () => {
             <div className="mb-5 flex items-center justify-between gap-3 border-b border-foreground/10 pb-4">
               <div className="flex items-center gap-3 text-left">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-foreground/5 ring-1 ring-foreground/10">
-                  <img src={facebookIcon} alt="Facebook" className="w-5 h-5 rounded-md" />
+                  <img src={facebookIcon} alt="Facebook" className="w-5 h-5 rounded-md" width={20} height={20} loading="lazy" decoding="async" fetchPriority="low" />
                 </span>
                 <div>
                   <h2 className="font-pixel text-xs sm:text-sm" style={{ color: 'hsl(217, 89%, 61%)' }}>LINK DO FACEBOOK</h2>
