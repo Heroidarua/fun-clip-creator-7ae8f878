@@ -26,7 +26,7 @@ const STATIC_PAGES: SearchEntry[] = [
   { id: "p-player", title: "IPTV 1.0", description: "Player de canais e mídia premium.", path: "/player", type: "pagina", keywords: ["player", "iptv", "canais", "filmes"] },
   { id: "p-blog", title: "Blog", description: "Guias, tutoriais e novidades sobre downloads e ferramentas.", path: "/blog", type: "pagina", keywords: ["blog", "guias", "tutoriais"] },
   { id: "p-como-usar", title: "Como usar o SOS01", description: "Passo a passo para aproveitar todos os recursos da plataforma.", path: "/como-usar", type: "pagina", keywords: ["ajuda", "tutorial", "como usar"] },
-  { id: "p-precos", title: "Preços", description: "Planos e benefícios do SOS01.", path: "/precos", type: "pagina", keywords: ["precos", "planos", "gratis"] },
+  { id: "p-precos", title: "Por que é grátis", description: "Como o SOS01 se mantém: doações voluntárias, sem planos.", path: "/precos", type: "pagina", keywords: ["gratis", "doacao", "pix"] },
   { id: "p-sobre", title: "Sobre nós", description: "Quem somos e o que move o SOS01.", path: "/sobre", type: "pagina", keywords: ["sobre", "equipe", "historia"] },
   { id: "p-contato", title: "Contato", description: "Fale com a equipe do SOS01.", path: "/contato", type: "pagina", keywords: ["contato", "suporte", "email"] },
   { id: "p-privacidade", title: "Política de privacidade", description: "Como tratamos seus dados.", path: "/privacidade", type: "pagina", keywords: ["privacidade", "lgpd", "dados"] },

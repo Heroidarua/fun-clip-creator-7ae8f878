@@ -28,31 +28,23 @@ const Precos = () => {
             100% gratuito • para sempre
           </div>
           <h1 className="text-4xl sm:text-5xl font-bold tracking-tight">
-            Tudo grátis. <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Sem pegadinhas.</span>
+            Por que é grátis? <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Sem pegadinhas.</span>
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-            Acreditamos que ferramentas digitais úteis devem ser acessíveis a todos. Por isso o SOS/01 é, e sempre será, totalmente gratuito.
+            Não existem planos, trial nem paywall no SOS/01. O site se mantém com doações voluntárias de quem usa e gosta — e continua aberto para todo mundo.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
-          <div className="rounded-2xl border border-border bg-card/50 backdrop-blur p-6 opacity-60">
-            <div className="text-sm font-medium text-muted-foreground mb-2">Starter</div>
-            <div className="text-3xl font-bold mb-1">R$ 0</div>
-            <div className="text-xs text-muted-foreground mb-4">/mês</div>
-            <p className="text-sm text-muted-foreground">Plano básico hipotético</p>
-          </div>
-
+        <div className="grid md:grid-cols-2 gap-6 mb-12">
           <div className="rounded-2xl border-2 border-primary bg-gradient-to-br from-primary/10 via-card to-accent/10 backdrop-blur p-6 relative shadow-[0_20px_60px_-20px_hsl(var(--primary)/0.5)]">
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-semibold flex items-center gap-1">
-              <Sparkles className="w-3 h-3" /> O nosso plano
+            <div className="absolute -top-3 left-6 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-semibold flex items-center gap-1">
+              <Sparkles className="w-3 h-3" /> Tudo liberado
             </div>
-            <div className="text-sm font-medium text-primary mb-2">Free Forever</div>
-            <div className="flex items-baseline gap-1 mb-1">
+            <div className="text-sm font-medium text-primary mb-2 mt-2">Sempre gratuito</div>
+            <div className="flex items-baseline gap-1 mb-6">
               <span className="text-4xl font-bold">R$ 0</span>
               <InfinityIcon className="w-5 h-5 text-accent" />
             </div>
-            <div className="text-xs text-muted-foreground mb-6">para sempre</div>
             <ul className="space-y-2.5 mb-6">
               {features.map((f) => (
                 <li key={f} className="flex items-start gap-2 text-sm">
@@ -62,27 +54,27 @@ const Precos = () => {
               ))}
             </ul>
             <Button asChild className="w-full" size="lg">
-              <Link to="/dashboard">
+              <Link to="/ferramentas">
                 <Zap className="w-4 h-4" />
-                Começar agora
+                Usar as ferramentas
               </Link>
             </Button>
           </div>
 
-          <div className="rounded-2xl border border-border bg-card/50 backdrop-blur p-6 opacity-60">
-            <div className="text-sm font-medium text-muted-foreground mb-2">Pro</div>
-            <div className="text-3xl font-bold mb-1">R$ 0</div>
-            <div className="text-xs text-muted-foreground mb-4">/mês</div>
-            <p className="text-sm text-muted-foreground">Plano premium hipotético</p>
+          <div className="rounded-2xl border border-border bg-card/30 backdrop-blur p-8 space-y-4">
+            <h2 className="text-2xl font-bold">Como o site se sustenta</h2>
+            <p className="text-muted-foreground">
+              Servidores, domínio e manutenção saem do bolso de quem cuida do projeto. Quem quiser ajudar pode fazer uma doação via Pix — qualquer valor mantém tudo no ar por mais tempo.
+            </p>
+            <p className="text-muted-foreground">
+              Doar é opcional e não desbloqueia nada: quem doa e quem não doa usam exatamente as mesmas ferramentas, sem limite e sem anúncio invasivo.
+            </p>
+            <p className="text-muted-foreground">
+              O botão de doação fica sempre visível no canto da tela, em qualquer página.
+            </p>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border bg-card/30 backdrop-blur p-8 text-center">
-          <h2 className="text-2xl font-bold mb-3">Por que tudo é grátis?</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            O SOS/01 nasceu como projeto comunitário. Mantemos a plataforma com receita de anúncios discretos e doações voluntárias — você nunca verá um paywall, trial ou cobrança surpresa.
-          </p>
-        </div>
       </main>
       <Footer />
     </div>
