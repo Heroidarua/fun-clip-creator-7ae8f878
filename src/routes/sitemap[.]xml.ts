@@ -47,9 +47,25 @@ export const Route = createFileRoute("/sitemap.xml")({
           a === "/" ? -1 : b === "/" ? 1 : a.localeCompare(b),
         );
 
-        const urls = all.map(
-          (p) => `  <url>\n    <loc>${baseUrl}${p === "/" ? "/" : p}</loc>\n  </url>`,
-        );
+        // Prioridade e frequência por tipo de página.
+        const meta = (p: string): { priority: string; changefreq: string } => {
+          if (p === "/") return { priority: "1.0", changefreq: "daily" };
+          if (p === "/ferramentas" || p === "/jogos") return { priority: "0.9", changefreq: "weekly" };
+          if (p.startsWith("/ferramenta/")) return { priority: "0.8", changefreq: "weekly" };
+          if (p.startsWith("/blog")) return { priority: "0.7", changefreq: "monthly" };
+          return { priority: "0.6", changefreq: "monthly" };
+        };
+
+        const urls = all.map((p) => {
+          const { priority, changefreq } = meta(p);
+          return [
+            `  <url>`,
+            `    <loc>${baseUrl}${p === "/" ? "/" : p}</loc>`,
+            `    <changefreq>${changefreq}</changefreq>`,
+            `    <priority>${priority}</priority>`,
+            `  </url>`,
+          ].join("\n");
+        });
 
         const xml = [
           `<?xml version="1.0" encoding="UTF-8"?>`,
