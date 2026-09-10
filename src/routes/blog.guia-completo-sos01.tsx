@@ -6,14 +6,15 @@ export const Route = createFileRoute("/blog/guia-completo-sos01")({
   component: GuiaCompletoClipSave,
   head: () =>
     buildArticleSeo({
-      path: "/blog/guia-completo-clipsave",
-      title: "Guia Completo do SOS01 — Todos os recursos explicados",
-      description: "Conheça todos os recursos do SOS01: downloaders, utilitários com IA, jogos retrô, player e ferramentas de produtividade.",
-      keywords: ["guia sos01","recursos","tutorial completo"],
+      path: "/blog/guia-completo-sos01",
+      title: "Guia completo do SOS01 — Todos os recursos explicados",
+      description:
+        "Downloaders, utilitários com IA, jogos retrô, player e produtividade: veja tudo o que o SOS01 faz e comece a usar agora.",
+      publishedTime: "2025-02-04T09:00:00-03:00",
       breadcrumb: [
         { name: "Início", path: "/" },
         { name: "Blog", path: "/blog" },
-        { name: "Guia Completo do SOS01", path: "/blog/guia-completo-clipsave" },
+        { name: "Guia completo do SOS01", path: "/blog/guia-completo-sos01" },
       ],
     }),
 });
