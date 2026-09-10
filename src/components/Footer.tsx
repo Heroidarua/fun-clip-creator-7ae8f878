@@ -167,7 +167,7 @@ const Footer = () => {
         <div className="border-t-2 border-primary/20 mt-8 pt-8">
           <div className="flex flex-col items-center">
             <p className="text-muted-foreground text-sm font-orbitron">
-              © 2025 sos01.com.br. Todos os direitos reservados.
+              © {new Date().getFullYear()} sos01.com.br. Todos os direitos reservados.
             </p>
             <p className="text-muted-foreground/60 text-xs mt-2 font-orbitron text-center max-w-2xl">
               Plataforma de utilidades digitais. Todo conteúdo acessado permanece de propriedade de seus respectivos criadores.

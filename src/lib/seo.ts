@@ -90,7 +90,6 @@ export function buildSeo(input: SeoInput): {
   const url = absoluteUrl(input.path);
   const image = input.image ? absoluteUrl(input.image) : SITE.defaultImage;
   const type = input.type ?? "website";
-  const keywords = [...(input.keywords ?? []), ...SITE.defaultKeywords];
   const robots = input.noindex
     ? "noindex, nofollow"
     : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1";
@@ -98,7 +97,6 @@ export function buildSeo(input: SeoInput): {
   const meta: MetaTag[] = [
     { title: input.title },
     { name: "description", content: input.description },
-    { name: "keywords", content: Array.from(new Set(keywords)).join(", ") },
     { name: "robots", content: robots },
     { name: "googlebot", content: robots },
     { name: "author", content: SITE.name },
@@ -198,11 +196,13 @@ export function buildArticleSeo(
         description: input.description,
         image: input.image ? absoluteUrl(input.image) : SITE.defaultImage,
         datePublished: published,
-        author: { "@type": "Organization", name: SITE.name },
+        dateModified: input.article?.modifiedTime ?? published,
+        inLanguage: "pt-BR",
+        author: { "@type": "Organization", name: SITE.name, url: SITE.url },
         publisher: {
           "@type": "Organization",
           name: SITE.name,
-          logo: { "@type": "ImageObject", url: `${SITE.url}/favicon.png` },
+          logo: { "@type": "ImageObject", url: `${SITE.url}/icon-512.png`, width: 512, height: 512 },
         },
         mainEntityOfPage: absoluteUrl(input.path),
       },
@@ -211,19 +211,21 @@ export function buildArticleSeo(
   });
 }
 
-/** Atalho para páginas de ferramenta (SoftwareApplication). */
+/** Atalho para páginas de ferramenta (WebApplication). */
 export function buildToolSeo(
-  input: SeoInput & { toolName?: string },
+  input: SeoInput & { toolName?: string; applicationCategory?: string },
 ): ReturnType<typeof buildSeo> {
   return buildSeo({
     ...input,
     schema: [
       {
-        "@type": "SoftwareApplication",
+        "@type": "WebApplication",
         name: input.toolName ?? input.title,
         description: input.description,
-        applicationCategory: "UtilitiesApplication",
+        applicationCategory: input.applicationCategory ?? "UtilitiesApplication",
         operatingSystem: "Web",
+        browserRequirements: "Requer JavaScript",
+        inLanguage: "pt-BR",
         url: absoluteUrl(input.path),
         offers: { "@type": "Offer", price: "0", priceCurrency: "BRL" },
       },
