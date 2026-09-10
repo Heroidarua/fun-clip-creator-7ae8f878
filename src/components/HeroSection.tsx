@@ -395,7 +395,7 @@ const HeroSection = () => {
   };
 
   const getPlatformIcon = (platform: string | null) => {
-    if (platform === 'tiktok') return <img src={tiktokIcon} alt="Logotipo do TikTok" className="w-5 h-5" width={20} height={20} width={20} height={20} loading="lazy" decoding="async" fetchPriority="low" />;
+    if (platform === 'tiktok') return <img src={tiktokIcon} alt="Logotipo do TikTok" className="w-5 h-5" width={20} height={20} loading="lazy" decoding="async" fetchPriority="low" />;
     return null;
   };
 
