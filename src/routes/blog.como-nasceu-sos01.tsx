@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import ComoNasceuClipSave from "@/pages/blog/ComoNasceuClipSave";
 import { buildArticleSeo } from "@/lib/seo";
 
-export const Route = createFileRoute("/blog/como-nasceu-clipsave")({
+export const Route = createFileRoute("/blog/como-nasceu-sos01")({
   component: ComoNasceuClipSave,
   head: () =>
     buildArticleSeo({
