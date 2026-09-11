@@ -6,6 +6,8 @@ import YoutubeUrlInput from "@/components/youtube-downloader/YoutubeUrlInput";
 import YoutubeVideoPreview from "@/components/youtube-downloader/YoutubeVideoPreview";
 import YoutubeFormatSelector from "@/components/youtube-downloader/YoutubeFormatSelector";
 import YoutubeDownloadProgress from "@/components/youtube-downloader/YoutubeDownloadProgress";
+import ToolSeoContent from "@/components/ToolSeoContent";
+import { getToolSeo } from "@/config/seo";
 import {
   fetchYoutubeInfo,
   requestYoutubeDownload,
@@ -37,6 +39,7 @@ function saveBlob(blob: Blob, filename: string) {
 }
 
 export default function YoutubeDownloaderPage() {
+  const seo = getToolSeo("youtube-downloader");
   const [url, setUrl] = useState("");
   const [info, setInfo] = useState<YoutubeInfo | null>(null);
   const [selected, setSelected] = useState("");
@@ -204,7 +207,7 @@ export default function YoutubeDownloaderPage() {
 
         <header className="mb-6">
           <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
-            Downloader de Vídeos do YouTube
+            {seo?.h1 ?? "Baixar vídeo do YouTube grátis"}
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Baixe conteúdos que você tem autorização para baixar.
@@ -285,6 +288,7 @@ export default function YoutubeDownloaderPage() {
             gerados são temporários e expiram automaticamente.
           </p>
         </section>
+        {seo && <ToolSeoContent tool={seo} />}
       </main>
       <Footer />
     </div>

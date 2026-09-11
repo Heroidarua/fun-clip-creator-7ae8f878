@@ -39,7 +39,6 @@ export const Route = createFileRoute("/ferramenta/$slug")({
       path: `/ferramenta/${tool.slug}`,
       title: seo?.title ?? `${tool.name} Online Grátis | SOS01`,
       description: seo?.description ?? tool.description,
-      keywords: seo?.keywords ?? [tool.name.toLowerCase(), `${tool.name.toLowerCase()} online`],
       toolName: seo?.name ?? tool.name,
       noindex: tool.status !== "ready",
       breadcrumb,
