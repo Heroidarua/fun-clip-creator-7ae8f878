@@ -123,6 +123,55 @@ export type ToolSeo = {
   articles?: { label: string; to: string }[];
 };
 
+const CATEGORY_AUDIENCE: Record<ToolCategoryId, string> = {
+  video: "Ela atende criadores, estudantes e profissionais que precisam preparar vídeo ou áudio com rapidez, sem depender de programas complexos.",
+  imagem: "Ela foi pensada para criadores, pequenos negócios e usuários que precisam ajustar imagens com rapidez, mesmo sem experiência em edição.",
+  pdf: "Ela ajuda estudantes, profissionais e pequenos negócios a organizar documentos sem instalar programas ou enfrentar configurações complicadas.",
+  texto: "Ela é útil para estudantes, profissionais e criadores que desejam trabalhar com textos de forma mais rápida e organizada.",
+  ia: "Ela atende quem busca apoio prático de inteligência artificial para criar, revisar ou transformar conteúdo sem uma assinatura mensal.",
+  utilidades: "Ela serve para tarefas rápidas do cotidiano e funciona tanto no celular quanto no computador, sem exigir cadastro.",
+  privacidade: "Ela ajuda pessoas e equipes a executar tarefas digitais com mais segurança, mantendo o controle sobre as informações utilizadas.",
+  internet: "Ela foi criada para quem precisa consultar ou diagnosticar informações da conexão de maneira simples e objetiva.",
+};
+
+const FAQ_COMPLEMENT =
+  "A ferramenta informa o resultado na própria tela e permite tentar novamente quando necessário. Para obter uma experiência melhor, mantenha o navegador atualizado, confira os dados antes de iniciar e evite fechar a página durante o processamento.";
+
+/**
+ * Mantém todas as páginas publicadas dentro do padrão editorial definido para
+ * ferramentas, sem duplicar textos e regras nos componentes de cada utilitário.
+ */
+export function completeToolSeo(tool: ToolSeo): ToolSeo {
+  const introWords = tool.intro.trim().split(/\s+/).length;
+  const intro = introWords < 60 ? `${tool.intro} ${CATEGORY_AUDIENCE[tool.category]}` : tool.intro;
+  const faq = tool.faq.slice(0, 4).map((item) => {
+    const words = item.answer.trim().split(/\s+/).length;
+    return words < 40 ? { ...item, answer: `${item.answer} ${FAQ_COMPLEMENT}` } : item;
+  });
+
+  if (faq.length < 4) {
+    faq.push({
+      question: `Preciso criar uma conta para usar ${tool.name}?`,
+      answer:
+        "Não. Você pode abrir a ferramenta e utilizar os recursos disponíveis sem criar conta ou informar dados de pagamento. Antes de começar, confira as orientações exibidas na página e use somente arquivos ou conteúdos sobre os quais você tenha autorização.",
+    });
+  }
+
+  const callToAction = " Use grátis.";
+  const description = /[.!?]$/.test(tool.description.trim())
+    ? `${tool.description.trim().slice(0, 143)}${callToAction}`
+    : `${tool.description.trim().slice(0, 143)}.${callToAction}`;
+
+  return {
+    ...tool,
+    description: description.slice(0, 155),
+    intro,
+    steps: tool.steps.slice(0, 3),
+    features: tool.features.slice(0, 3),
+    faq,
+  };
+}
+
 export const TOOLS_SEO: ToolSeo[] = [
   {
     slug: "melhorar-video",
@@ -1155,7 +1204,10 @@ export const TOOLS_SEO: ToolSeo[] = [
 ];
 
 export const TOOLS_SEO_BY_SLUG: Record<string, ToolSeo> = Object.fromEntries(
-  TOOLS_SEO.map((t) => [t.slug, t]),
+  TOOLS_SEO.map((tool) => {
+    const completed = completeToolSeo(tool);
+    return [completed.slug, completed];
+  }),
 );
 
 export const getToolSeo = (slug: string): ToolSeo | undefined => TOOLS_SEO_BY_SLUG[slug];

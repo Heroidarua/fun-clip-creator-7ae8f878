@@ -1,16 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 import YoutubeDownloaderPage from "@/pages/YoutubeDownloader";
-import { buildSeo } from "@/lib/seo";
+import { buildToolSeo } from "@/lib/seo";
+import { getToolSeo } from "@/config/seo";
 
 export const Route = createFileRoute("/ferramentas_/youtube-downloader")({
   component: YoutubeDownloaderPage,
   head: () =>
-    buildSeo({
+    buildToolSeo({
       path: "/ferramentas/youtube-downloader",
-      title: "Downloader de Vídeos do YouTube | SOS01",
-      description:
-        "Baixe vídeos que você tem autorização para baixar usando a ferramenta do SOS01.",
-      keywords: ["downloader youtube", "baixar video youtube", "sos01 youtube downloader"],
+      title: getToolSeo("youtube-downloader")?.title ?? "Baixar Vídeo do YouTube Grátis | SOS01",
+      description: getToolSeo("youtube-downloader")?.description ?? "Baixe vídeos autorizados do YouTube online e grátis. Use agora.",
+      toolName: "Downloader de Vídeos do YouTube",
+      faq: getToolSeo("youtube-downloader")?.faq,
       breadcrumb: [
         { name: "Início", path: "/" },
         { name: "Ferramentas", path: "/ferramentas" },
