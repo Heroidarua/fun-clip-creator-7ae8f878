@@ -142,11 +142,21 @@ const FAQ_COMPLEMENT =
  * ferramentas, sem duplicar textos e regras nos componentes de cada utilitário.
  */
 export function completeToolSeo(tool: ToolSeo): ToolSeo {
+  const fitWords = (text: string, maximum: number) => {
+    const words = text.trim().split(/\s+/);
+    return words.length > maximum ? `${words.slice(0, maximum).join(" ").replace(/[,:;]$/, "")}.` : text.trim();
+  };
   const introWords = tool.intro.trim().split(/\s+/).length;
-  const intro = introWords < 60 ? `${tool.intro} ${CATEGORY_AUDIENCE[tool.category]}` : tool.intro;
+  const intro = fitWords(
+    introWords < 60 ? `${tool.intro} ${CATEGORY_AUDIENCE[tool.category]}` : tool.intro,
+    80,
+  );
   const faq = tool.faq.slice(0, 4).map((item) => {
     const words = item.answer.trim().split(/\s+/).length;
-    return words < 40 ? { ...item, answer: `${item.answer} ${FAQ_COMPLEMENT}` } : item;
+    return {
+      ...item,
+      answer: fitWords(words < 40 ? `${item.answer} ${FAQ_COMPLEMENT}` : item.answer, 60),
+    };
   });
 
   if (faq.length < 4) {
@@ -158,13 +168,13 @@ export function completeToolSeo(tool: ToolSeo): ToolSeo {
   }
 
   const callToAction = " Use grátis.";
-  const description = /[.!?]$/.test(tool.description.trim())
-    ? `${tool.description.trim().slice(0, 143)}${callToAction}`
-    : `${tool.description.trim().slice(0, 143)}.${callToAction}`;
+  const descriptionBody = tool.description.trim().replace(/[.!?]+$/, "");
+  const description = `${descriptionBody.slice(0, 155 - callToAction.length).trimEnd()}${callToAction}`;
 
   return {
     ...tool,
-    description: description.slice(0, 155),
+    title: tool.title.slice(0, 60),
+    description,
     intro,
     steps: tool.steps.slice(0, 3),
     features: tool.features.slice(0, 3),
@@ -1153,6 +1163,139 @@ export const TOOLS_SEO: ToolSeo[] = [
       },
     ],
     related: ["meu-ip", "encurtador-de-url", "gerador-qrcode"],
+  },
+  {
+    slug: "avioes",
+    name: "Rastreador de Aviões",
+    title: "Rastreador de Aviões em Tempo Real | SOS01",
+    description: "Acompanhe voos e aeronaves em um mapa online, confira rotas e explore o tráfego aéreo mundial. Use grátis.",
+    h1: "Rastrear aviões em tempo real grátis",
+    keywords: ["rastrear aviões", "voos em tempo real"],
+    category: "internet",
+    intro: "O Rastreador de Aviões reúne em um mapa interativo informações públicas sobre aeronaves em operação, permitindo observar rotas, posições aproximadas e o movimento do tráfego aéreo. A ferramenta serve para entusiastas de aviação, viajantes, estudantes e pessoas curiosas sobre os voos que passam por uma região. Os dados dependem da cobertura disponível e podem apresentar atraso ou ausência temporária.",
+    steps: ["Abra o mapa e permita que ele carregue os dados disponíveis.", "Mova ou amplie a região que deseja acompanhar.", "Selecione uma aeronave para consultar os detalhes exibidos."],
+    features: ["Mapa mundial interativo", "Consulta visual de rotas", "Uso direto no navegador"],
+    faq: [
+      { question: "As posições dos aviões são exatas?", answer: "As posições são baseadas nos dados disponibilizados pelo serviço integrado e podem ter atraso, falhas de cobertura ou estimativas. Por isso, o mapa deve ser usado para consulta e curiosidade, não como fonte oficial para decisões de viagem, segurança ou operação aeroportuária." },
+      { question: "Todos os voos aparecem no mapa?", answer: "Não. Algumas aeronaves não transmitem dados públicos, podem estar fora da área de cobertura ou ter informações ocultadas por motivos operacionais. A quantidade visível também varia conforme o local, o horário e a disponibilidade momentânea do serviço que fornece o mapa." },
+      { question: "Posso acompanhar um voo específico?", answer: "Quando o serviço integrado oferece busca e possui dados daquele voo, você pode localizá-lo pelo identificador informado pela companhia. Se nada aparecer, confirme o código, aguarde alguns minutos e lembre que determinados trajetos ou aeronaves podem não estar disponíveis publicamente." },
+      { question: "Preciso instalar algum aplicativo?", answer: "Não. O rastreador funciona diretamente no navegador do celular, tablet ou computador. Uma conexão estável ajuda o mapa e os dados a carregarem melhor. Caso a visualização fique vazia, atualize a página e verifique se bloqueadores estão impedindo o conteúdo integrado." },
+    ],
+    related: ["navios", "ceu", "terremotos", "meu-ip"],
+  },
+  {
+    slug: "raios",
+    name: "Raios em Tempo Real",
+    title: "Raios em Tempo Real no Mapa Online | SOS01",
+    description: "Veja descargas elétricas recentes em um mapa interativo e acompanhe tempestades em diferentes regiões. Use grátis.",
+    h1: "Ver raios em tempo real grátis",
+    keywords: ["raios em tempo real", "mapa de tempestades"],
+    category: "internet",
+    intro: "O mapa de Raios em Tempo Real apresenta descargas elétricas detectadas recentemente em diferentes regiões, facilitando a observação do deslocamento de tempestades. Ele é útil para pessoas interessadas em meteorologia, estudantes e usuários que desejam acompanhar mudanças no tempo de maneira visual. A ferramenta é apenas informativa e não substitui alertas oficiais da Defesa Civil, institutos meteorológicos ou autoridades locais.",
+    steps: ["Aguarde o carregamento do mapa meteorológico.", "Aproxime a região que deseja observar.", "Consulte os registros recentes e siga os alertas oficiais."],
+    features: ["Visualização geográfica de descargas", "Mapa interativo e ampliável", "Acesso sem instalação"],
+    faq: [
+      { question: "O mapa mostra cada raio imediatamente?", answer: "Os registros dependem da rede de sensores e do processamento do serviço integrado. Pode existir um pequeno atraso, e nem toda descarga será detectada. Use o mapa como referência visual, nunca como único recurso para avaliar riscos durante uma tempestade próxima." },
+      { question: "Posso usar o mapa para decidir se é seguro sair?", answer: "Não use apenas esta página para tomar decisões de segurança. Consulte alertas da Defesa Civil e a previsão oficial da sua região. Ao ouvir trovões, procure abrigo fechado imediatamente, pois descargas podem ocorrer longe da área de chuva mais intensa." },
+      { question: "Por que algumas regiões não mostram dados?", answer: "A cobertura varia conforme a disponibilidade de sensores, conexão e serviço cartográfico. Áreas remotas podem apresentar menos registros ou atualizações mais lentas. Tente afastar e aproximar o mapa, atualizar a página e comparar a informação com fontes meteorológicas oficiais." },
+      { question: "A ferramenta funciona no celular?", answer: "Sim. O mapa pode ser aberto em navegadores modernos de celular, tablet e computador. Uma conexão estável melhora o carregamento das camadas. Em aparelhos mais antigos, feche outras abas se a navegação ficar lenta ou se o conteúdo não responder aos gestos." },
+    ],
+    related: ["terremotos", "avioes", "ceu", "velocidade"],
+  },
+  {
+    slug: "navios",
+    name: "Navios em Tempo Real",
+    title: "Navios em Tempo Real no Mapa Online | SOS01",
+    description: "Acompanhe embarcações, rotas e tráfego marítimo em um mapa interativo direto no navegador. Use grátis.",
+    h1: "Rastrear navios em tempo real grátis",
+    keywords: ["navios em tempo real", "tráfego marítimo"],
+    category: "internet",
+    intro: "O Rastreador de Navios permite explorar o tráfego marítimo disponível em um mapa, observando embarcações, áreas portuárias e deslocamentos aproximados. A página atende curiosos, estudantes, profissionais de logística e pessoas que acompanham viagens pelo mar. A cobertura depende dos sinais públicos recebidos pelo serviço integrado, portanto algumas embarcações podem aparecer com atraso, dados incompletos ou ficar temporariamente ausentes.",
+    steps: ["Carregue o mapa e escolha uma área costeira ou porto.", "Use o zoom para visualizar as embarcações disponíveis.", "Selecione um marcador para conferir as informações públicas."],
+    features: ["Mapa de tráfego marítimo", "Exploração de portos e rotas", "Consulta em qualquer dispositivo"],
+    faq: [
+      { question: "Todos os navios aparecem no mapa?", answer: "Não. A exibição depende do sinal público, da cobertura de receptores e das regras do provedor integrado. Embarcações pequenas, militares ou fora de cobertura podem não aparecer. Os dados também podem chegar com atraso e não representam uma posição garantida em tempo real." },
+      { question: "A posição exibida é oficial?", answer: "A posição é uma referência fornecida pelo serviço de rastreamento e pode estar desatualizada ou incompleta. Para operações portuárias, navegação ou segurança, consulte autoridades marítimas e fontes profissionais autorizadas. Esta ferramenta foi criada somente para exploração informativa no navegador." },
+      { question: "Consigo procurar uma embarcação pelo nome?", answer: "Isso depende dos controles oferecidos pelo mapa integrado e da disponibilidade pública dos dados. Quando houver busca, informe o nome ou identificador corretamente. Se não houver resultado, a embarcação pode estar sem sinal, fora da cobertura ou com informações restritas." },
+      { question: "Por que o mapa demora para carregar?", answer: "Mapas marítimos carregam muitas camadas e marcadores externos, o que exige conexão estável e memória disponível. Aguarde alguns segundos, feche abas pesadas e atualize a página. Bloqueadores de conteúdo também podem impedir a exibição do serviço integrado." },
+    ],
+    related: ["avioes", "terremotos", "ceu", "meu-ip"],
+  },
+  {
+    slug: "terremotos",
+    name: "Terremotos em Tempo Real",
+    title: "Terremotos em Tempo Real no Mapa | SOS01",
+    description: "Consulte tremores recentes, magnitude e localização em um mapa mundial atualizado. Explore agora e use grátis.",
+    h1: "Ver terremotos em tempo real grátis",
+    keywords: ["terremotos em tempo real", "mapa de terremotos"],
+    category: "internet",
+    intro: "O mapa de Terremotos em Tempo Real organiza registros recentes de atividade sísmica e permite observar localização, magnitude e horário divulgados pelas fontes integradas. Ele serve para estudantes, professores e pessoas interessadas em geologia ou acontecimentos mundiais. As informações podem sofrer revisões conforme novas medições são processadas e não substituem comunicados de autoridades, centros sismológicos ou orientações oficiais de emergência.",
+    steps: ["Abra o mapa e aguarde os eventos recentes aparecerem.", "Aproxime a região ou selecione um marcador de tremor.", "Confira os detalhes e procure orientações oficiais quando necessário."],
+    features: ["Eventos sísmicos em mapa", "Consulta de magnitude e horário", "Exploração mundial gratuita"],
+    faq: [
+      { question: "Os dados de magnitude podem mudar?", answer: "Sim. Centros sismológicos revisam localização, profundidade e magnitude à medida que recebem novas leituras. Um valor inicial pode ser ajustado posteriormente. Para informações definitivas, alertas de tsunami ou instruções de segurança, consulte sempre as autoridades e instituições oficiais responsáveis." },
+      { question: "O mapa prevê terremotos?", answer: "Não. A ferramenta apresenta eventos detectados e divulgados, mas não prevê quando ou onde ocorrerá um novo terremoto. Desconfie de promessas de previsão exata. Em regiões de risco, siga planos de emergência e orientações emitidas pelos órgãos locais competentes." },
+      { question: "Por que um tremor local não aparece?", answer: "Eventos pequenos podem demorar para ser confirmados, ficar abaixo do limite exibido ou não chegar imediatamente ao serviço integrado. Atualize a página mais tarde e consulte o centro sismológico da sua região, que poderá fornecer dados locais mais completos e atualizados." },
+      { question: "Posso usar estes dados em trabalhos escolares?", answer: "Sim, como ponto de partida para observação e pesquisa. Registre a data da consulta e confirme números importantes nas fontes científicas originais antes de citar. Como os eventos podem ser revisados, valores vistos agora talvez sejam diferentes em uma consulta posterior." },
+    ],
+    related: ["raios", "ceu", "avioes", "navios"],
+  },
+  {
+    slug: "ceu",
+    name: "Céu em Tempo Real",
+    title: "Céu em Tempo Real no Mapa Estelar | SOS01",
+    description: "Explore estrelas, planetas e constelações em um mapa do céu interativo pelo navegador. Comece agora e use grátis.",
+    h1: "Explorar o céu em tempo real grátis",
+    keywords: ["céu em tempo real", "mapa estelar"],
+    category: "internet",
+    intro: "O mapa Céu em Tempo Real ajuda a identificar estrelas, planetas, constelações e outros objetos visíveis conforme o local e o horário selecionados. Ele foi pensado para estudantes, famílias, observadores iniciantes e pessoas curiosas sobre astronomia. A visualização funciona como guia educativo: condições do tempo, luminosidade urbana, horizonte e precisão da localização influenciam aquilo que realmente pode ser visto a olho nu.",
+    steps: ["Permita a localização ou escolha manualmente uma cidade.", "Mova o mapa para explorar diferentes partes do céu.", "Selecione um objeto para ler as informações disponíveis."],
+    features: ["Mapa estelar interativo", "Identificação de planetas e constelações", "Exploração educativa no navegador"],
+    faq: [
+      { question: "O mapa corresponde ao céu da minha cidade?", answer: "Quando a localização e o horário estão corretos, a orientação fica próxima do céu local. Ainda assim, sensores do aparelho e permissões podem afetar o alinhamento. Confira a direção dos pontos cardeais e ajuste manualmente a cidade se perceber diferenças." },
+      { question: "Por que não vejo no céu o objeto mostrado?", answer: "Nuvens, prédios, árvores, poluição luminosa e brilho da Lua podem esconder objetos. Alguns também são fracos demais para observação sem binóculos ou telescópio. Verifique o horário, procure um local escuro e nunca aponte instrumentos diretamente para o Sol." },
+      { question: "Preciso permitir minha localização?", answer: "Não necessariamente. A localização melhora a representação do céu, mas muitos mapas permitem escolher uma cidade manualmente. Se preferir não compartilhar a posição, negue a permissão e procure o controle de local dentro da experiência integrada para configurar uma referência aproximada." },
+      { question: "A ferramenta serve para astronomia profissional?", answer: "Ela é adequada para aprendizado, planejamento inicial e identificação visual, mas não substitui programas científicos nem efemérides de precisão. Para observações profissionais, navegação ou registros técnicos, confirme coordenadas e horários em fontes astronômicas oficiais e equipamentos devidamente calibrados." },
+    ],
+    related: ["terremotos", "raios", "avioes", "navios"],
+  },
+  {
+    slug: "financeira",
+    name: "Calculadora Financeira",
+    title: "Calculadora Financeira Online Grátis | SOS01",
+    description: "Calcule juros compostos, crescimento e valores de operações financeiras com rapidez. Faça sua simulação grátis.",
+    h1: "Calculadora financeira online grátis",
+    keywords: ["calculadora financeira", "juros compostos"],
+    category: "utilidades",
+    intro: "A Calculadora Financeira facilita simulações de juros, crescimento de valores e operações comuns sem exigir planilhas. Ela serve para estudantes, famílias, empreendedores e qualquer pessoa que queira comparar cenários antes de organizar o orçamento. Os resultados são matemáticos e informativos, não constituem recomendação de investimento, proposta de crédito ou garantia de rentabilidade; confirme taxas, impostos e condições com a instituição responsável.",
+    steps: ["Informe os valores e taxas solicitados pela operação.", "Revise o período e a unidade percentual escolhida.", "Calcule e compare o resultado com outros cenários."],
+    features: ["Simulações rápidas de valores", "Uso simples no celular", "Resultados sem cadastro"],
+    faq: [
+      { question: "Os cálculos incluem impostos e tarifas?", answer: "Somente quando esses valores forem informados ou fizerem parte da operação apresentada. Bancos e investimentos podem cobrar impostos, seguros e tarifas adicionais. Leia o contrato e refaça a simulação com todos os custos antes de tomar uma decisão financeira." },
+      { question: "A taxa deve ser mensal ou anual?", answer: "Use a unidade indicada em cada campo e mantenha taxa e período compatíveis. Uma taxa anual aplicada como mensal produz um resultado incorreto. Quando necessário, converta a taxa adequadamente ou consulte a instituição para saber qual percentual efetivo deve entrar na simulação." },
+      { question: "O resultado é uma recomendação de investimento?", answer: "Não. A calculadora apenas executa operações com os números informados. Rentabilidade futura, inflação, impostos e riscos podem alterar o resultado real. Para decisões importantes, compare documentos oficiais e procure orientação de um profissional habilitado e independente." },
+      { question: "Meus valores ficam armazenados?", answer: "A ferramenta foi criada para realizar a simulação exibida na tela, sem exigir cadastro. Evite inserir dados pessoais, números de conta ou informações sigilosas, pois os cálculos precisam apenas de valores, taxas e períodos para apresentar uma estimativa." },
+    ],
+    related: ["gerador-qrcode", "encurtador-de-url", "gerador-de-senha", "velocidade"],
+  },
+  {
+    slug: "vazamento-email",
+    name: "Verificador de Vazamento",
+    title: "Verificar Vazamento de E-mail Grátis | SOS01",
+    description: "Confira se um e-mail aparece em bases conhecidas de vazamentos e veja orientações de segurança. Verifique grátis.",
+    h1: "Verificar vazamento de e-mail grátis",
+    keywords: ["vazamento de email", "email vazado"],
+    category: "privacidade",
+    intro: "O Verificador de Vazamento consulta se um endereço de e-mail aparece em registros conhecidos de incidentes de segurança. Ele ajuda pessoas e equipes a reconhecer exposição e agir rapidamente, trocando senhas e ativando proteção adicional. Um resultado sem ocorrências não garante segurança completa, pois vazamentos recentes ou privados podem ainda não estar catalogados. Nunca informe sua senha: somente o endereço deve ser consultado.",
+    steps: ["Digite apenas o endereço de e-mail que deseja consultar.", "Inicie a verificação e aguarde o resultado.", "Siga as orientações de segurança exibidas para sua situação."],
+    features: ["Consulta objetiva de exposição conhecida", "Orientações práticas de proteção", "Nenhuma senha necessária"],
+    faq: [
+      { question: "Preciso informar minha senha?", answer: "Não. Uma verificação legítima precisa apenas do endereço de e-mail. Nunca digite sua senha nesta ou em qualquer página de consulta de vazamentos. Se alguém solicitar credenciais completas, feche a página e altere a senha pelo site oficial do serviço." },
+      { question: "O que faço se meu e-mail foi encontrado?", answer: "Troque primeiro a senha dos serviços afetados, use combinações exclusivas e ative a autenticação em dois fatores. Se você repetiu a mesma senha em outros lugares, altere-a também. Revise sessões abertas, dados de recuperação e movimentações suspeitas nas contas importantes." },
+      { question: "Um resultado limpo garante que estou seguro?", answer: "Não. Nenhuma base reúne todos os incidentes, e vazamentos novos podem demorar para aparecer. Continue usando senhas diferentes, gerenciador confiável, autenticação em dois fatores e atenção a mensagens suspeitas, mesmo quando a consulta não encontrar registros associados ao endereço." },
+      { question: "Posso consultar o e-mail de outra pessoa?", answer: "Use a ferramenta apenas para endereços próprios ou quando tiver autorização clara do titular. O resultado trata de segurança e privacidade. Evite divulgar publicamente qualquer ocorrência encontrada e oriente a pessoa afetada a proteger as contas diretamente nos serviços oficiais." },
+    ],
+    related: ["gerador-de-senha", "meu-ip", "velocidade", "encurtador-de-url"],
   },
   {
     slug: "virus-do-bem",

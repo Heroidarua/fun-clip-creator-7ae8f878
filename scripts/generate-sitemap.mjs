@@ -13,6 +13,10 @@ const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const BASE_URL = (process.argv[2] || process.env.SITE_URL || "https://sos01.com.br").replace(/\/$/, "");
 
 const EXCLUDED = new Set(["/admin", "/auth", "/dashboard", "/perfil", "/not-found"]);
+const REDIRECT_ONLY = new Set([
+  "/blog/como-nasceu-clipsave",
+  "/blog/guia-completo-clipsave",
+]);
 
 function walk(dir) {
   const out = [];
@@ -39,7 +43,7 @@ function discoverRoutePaths() {
     path = path.replace(/_(?=\/)/g, "");
     path = path.replace(/\/index$/, "");
     if (path === "") path = "/";
-    if (EXCLUDED.has(path)) continue;
+    if (EXCLUDED.has(path) || REDIRECT_ONLY.has(path)) continue;
 
     paths.add(path);
   }
