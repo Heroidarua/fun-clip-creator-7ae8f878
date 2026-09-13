@@ -2,12 +2,13 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { MonitorPlay, ArrowLeft, Tv } from "lucide-react";
 import IPTVModal from "@/components/IPTVModal";
+import ServiceEditorialContent from "@/components/ServiceEditorialContent";
 
 export default function Player() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-6">
+    <main className="min-h-screen bg-black flex flex-col items-center justify-center p-6">
       <div
         className="max-w-md w-full text-center p-8 sm:p-10 rounded-2xl border-2 border-[#28B6FF]/60 bg-[#0E4A7B]/40 backdrop-blur"
         style={{ boxShadow: "0 0 32px rgba(40,182,255,0.35), inset 0 0 24px rgba(182,109,255,0.15)" }}
@@ -52,6 +53,22 @@ export default function Player() {
       </div>
 
       <IPTVModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-    </div>
+      <ServiceEditorialContent
+        title="Entenda a roleta IPTV 1.0"
+        paragraphs={[
+          "O IPTV 1.0 do SOS01 é uma experiência de entretenimento em formato de roleta. Ao selecionar “Tentar a Sorte”, o visitante abre uma janela interativa que apresenta uma opção do catálogo configurado para a ferramenta. Ela foi pensada para quem prefere descobrir algo de maneira aleatória, sem percorrer listas extensas. O recurso funciona diretamente no navegador e não exige instalação. As opções exibidas podem mudar conforme a disponibilidade e a atualização do catálogo do serviço.",
+          "Para usar, abra a roleta, inicie o sorteio e aguarde o resultado. Quando houver um destino disponível, confira as informações antes de continuar. O SOS01 organiza a interação, mas serviços externos continuam responsáveis pelo conteúdo, acesso, estabilidade e eventuais requisitos próprios. Nunca reutilize senhas importantes em serviços desconhecidos e não instale programas enviados por terceiros. Se uma opção estiver indisponível, feche a janela e tente novamente mais tarde ou escolha outro recurso gratuito da plataforma.",
+          "A transmissão de canais pela internet pode envolver serviços gratuitos, assinaturas e catálogos sujeitos a direitos de exibição. Use somente fontes autorizadas na sua região e respeite os termos de cada plataforma. O SOS01 não garante permanência de canais, credenciais ou endereços externos, pois esses elementos podem ser alterados sem aviso. Para uma alternativa oficial, acesse a Pluto TV; para outros tipos de lazer, visite os jogos online ou a experiência da NASA. Todas essas páginas funcionam de forma independente. Você pode retornar à página inicial a qualquer momento sem perder configurações das demais ferramentas.",
+        ]}
+        currentPath="/player"
+        currentLabel="IPTV 1.0"
+        links={[
+          { label: "Pluto TV", to: "/iptv" },
+          { label: "+SBT", to: "/mais-sbt" },
+          { label: "Jogos online", to: "/jogos" },
+          { label: "Ferramentas gratuitas", to: "/ferramentas" },
+        ]}
+      />
+    </main>
   );
 }
