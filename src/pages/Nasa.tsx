@@ -1,22 +1,36 @@
 import { Link } from "@tanstack/react-router";
 import { Home } from "lucide-react";
+import ServiceEditorialContent from "@/components/ServiceEditorialContent";
 
 const Nasa = () => {
   return (
-    <>
+    <main className="bg-background text-foreground">
       <iframe
         src="https://eyes.nasa.gov/apps/earth/#/satellites?rate=1"
         title="NASA Eyes on the Earth — Satellites"
         allowFullScreen
         style={{
-          position: "fixed",
-          inset: 0,
-          width: "100vw",
+          display: "block",
+          width: "100%",
           height: "100vh",
           border: 0,
           background: "#000",
           zIndex: 9999,
         }}
+      />
+      <ServiceEditorialContent
+        title="Explore satélites e a Terra com a NASA"
+        paragraphs={[
+          "A página NASA do SOS01 incorpora o Eyes on the Earth, uma experiência oficial que apresenta a Terra em três dimensões e permite acompanhar missões e satélites de observação. Ela é indicada para estudantes, professores, curiosos por ciência e qualquer pessoa interessada em entender como instrumentos espaciais ajudam a observar o planeta. A visualização e os dados vêm da NASA; o SOS01 apenas oferece um caminho direto para abrir a experiência no navegador, sem alterar as informações apresentadas.",
+          "Use o mouse, o toque ou os controles exibidos pela aplicação para girar o globo, aproximar regiões e selecionar satélites. Os elementos disponíveis podem incluir órbitas, missões e camadas relacionadas à observação terrestre. Como se trata de uma experiência tridimensional, o carregamento pode exigir mais memória e processamento do aparelho. Se a tela ficar lenta, feche outras abas, reduza o número de elementos ativos ou recarregue a página em uma conexão estável. O botão discreto “Sair” retorna ao SOS01.",
+          "As posições e visualizações servem principalmente para exploração educativa e podem combinar dados observados, modelos e animações. Elas não devem substituir fontes especializadas em decisões de navegação, segurança ou previsão imediata. Para aprofundar um assunto, consulte as explicações e páginas de cada missão dentro do ambiente oficial da NASA. No SOS01, você também encontra experiências relacionadas a céu, raios, terremotos, aviões e navios, além de ferramentas gratuitas para tarefas cotidianas, todas acessíveis separadamente pelo navegador.",
+        ]}
+        links={[
+          { label: "Ver o céu", to: "/ferramenta/ceu" },
+          { label: "Rastreador de terremotos", to: "/ferramenta/terremotos" },
+          { label: "Rastreador de aviões", to: "/ferramenta/avioes" },
+          { label: "Todas as ferramentas", to: "/ferramentas" },
+        ]}
       />
       <Link
         to="/"
@@ -105,7 +119,7 @@ const Nasa = () => {
           }
         }
       `}</style>
-    </>
+    </main>
   );
 };
 
