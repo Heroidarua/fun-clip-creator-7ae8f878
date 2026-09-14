@@ -66,7 +66,7 @@ const Header = () => {
     if (typeof navigator !== "undefined" && navigator.share) {
       try {
         await navigator.share({
-          title: "sos01 — Utilidades digitais",
+          title: "SOS01 — Utilidades digitais",
           text: "Ferramentas, AI e entretenimento — tudo em um só lugar.",
           url: window.location.origin,
         });
@@ -112,7 +112,7 @@ const Header = () => {
             </div>
             <div className="flex flex-col leading-none">
               <span className="font-display text-lg sm:text-xl tracking-tight text-foreground">
-                sos<span className="italic text-accent">01</span>
+                SOS<span className="italic text-accent">01</span>
               </span>
               <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.18em] text-muted-foreground mt-0.5">
                 Studio Digital
