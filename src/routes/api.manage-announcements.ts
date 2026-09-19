@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
+  clearRateLimit,
   corsHeaders,
   isCrossOrigin,
   isRateLimited,
@@ -39,12 +40,6 @@ export const Route = createFileRoute("/api/manage-announcements")({
               { status: 403, headers: corsHeaders(request) }
             );
           }
-          if (await isRateLimited(request)) {
-            return Response.json(
-              { error: "Muitas tentativas. Aguarde um minuto." },
-              { status: 429, headers: corsHeaders(request) }
-            );
-          }
           const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
           if (!ADMIN_PASSWORD) {
             console.error("ADMIN_PASSWORD env var is not configured");
@@ -57,11 +52,14 @@ export const Route = createFileRoute("/api/manage-announcements")({
           const { action, password, data: payload } = body;
 
           if (typeof password !== "string" || !timingSafeEqual(password, ADMIN_PASSWORD)) {
+            const limited = await isRateLimited(request);
             return Response.json(
-              { error: "Senha incorreta" },
-              { status: 401, headers: corsHeaders(request) }
+              { error: limited ? "Muitas tentativas. Aguarde cinco minutos." : "Senha incorreta" },
+              { status: limited ? 429 : 401, headers: corsHeaders(request) }
             );
           }
+
+          await clearRateLimit(request);
 
           const { supabaseAdmin } = await import(
             "@/integrations/supabase/client.server"

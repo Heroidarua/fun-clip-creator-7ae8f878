@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
-import { isRateLimited } from "./admin-auth.server";
+import { clearRateLimit, isRateLimited, timingSafeEqual } from "./admin-auth.server";
 
 export const listEnhancementJobs = createServerFn({ method: "POST" })
   .inputValidator(z.object({ password: z.string() }))
@@ -9,15 +9,14 @@ export const listEnhancementJobs = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const adminPassword = process.env['ADMIN_PASSWORD'];
 
-    // Rate limiting check
     const request = getRequest();
-    if (await isRateLimited(request)) {
-      throw new Error("Muitas tentativas. Aguarde alguns minutos.");
-    }
-
-    if (!adminPassword || data.password !== adminPassword) {
+    if (!adminPassword || !timingSafeEqual(data.password, adminPassword)) {
+      if (await isRateLimited(request)) {
+        throw new Error("Muitas tentativas. Aguarde cinco minutos.");
+      }
       throw new Error("Não autorizado");
     }
+    await clearRateLimit(request);
 
     const { data: jobs, error } = await (supabaseAdmin
       .from("video_enhancement_jobs" as any)
@@ -35,15 +34,14 @@ export const deleteEnhancementJob = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const adminPassword = process.env['ADMIN_PASSWORD'];
 
-    // Rate limiting check
     const request = getRequest();
-    if (await isRateLimited(request)) {
-      throw new Error("Muitas tentativas. Aguarde alguns minutos.");
-    }
-
-    if (!adminPassword || data.password !== adminPassword) {
+    if (!adminPassword || !timingSafeEqual(data.password, adminPassword)) {
+      if (await isRateLimited(request)) {
+        throw new Error("Muitas tentativas. Aguarde cinco minutos.");
+      }
       throw new Error("Não autorizado");
     }
+    await clearRateLimit(request);
 
     // First get the job to find the file to delete from storage if it exists
     const { data: job } = await (supabaseAdmin

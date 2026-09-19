@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
+  clearRateLimit,
   corsHeaders,
   isCrossOrigin,
   isRateLimited,
@@ -19,12 +20,6 @@ export const Route = createFileRoute("/api/manage-feature-status")({
               { status: 403, headers: corsHeaders(request) }
             );
           }
-          if (await isRateLimited(request)) {
-            return Response.json(
-              { error: "Muitas tentativas. Aguarde um minuto." },
-              { status: 429, headers: corsHeaders(request) }
-            );
-          }
           const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
           if (!ADMIN_PASSWORD) {
             return Response.json(
@@ -34,11 +29,13 @@ export const Route = createFileRoute("/api/manage-feature-status")({
           }
           const { password, id, status } = await request.json();
           if (typeof password !== "string" || !timingSafeEqual(password, ADMIN_PASSWORD)) {
+            const limited = await isRateLimited(request);
             return Response.json(
-              { error: "Senha incorreta" },
-              { status: 401, headers: corsHeaders(request) }
+              { error: limited ? "Muitas tentativas. Aguarde cinco minutos." : "Senha incorreta" },
+              { status: limited ? 429 : 401, headers: corsHeaders(request) }
             );
           }
+          await clearRateLimit(request);
           const UUID_RE =
             /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
           if (
