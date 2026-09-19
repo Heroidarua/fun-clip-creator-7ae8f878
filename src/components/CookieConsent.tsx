@@ -18,9 +18,14 @@ const loadTrackingScripts = () => {
   analytics.src = `https://www.googletagmanager.com/gtag/js?id=${ANALYTICS_ID}`;
   document.head.appendChild(analytics);
 
-  const analyticsInit = document.createElement("script");
-  analyticsInit.text = `window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', '${ANALYTICS_ID}');`;
-  document.head.appendChild(analyticsInit);
+  const analyticsWindow = window as typeof window & {
+    dataLayer?: unknown[][];
+    gtag?: (...args: unknown[]) => void;
+  };
+  analyticsWindow.dataLayer = analyticsWindow.dataLayer || [];
+  analyticsWindow.gtag = (...args: unknown[]) => analyticsWindow.dataLayer?.push(args);
+  analyticsWindow.gtag("js", new Date());
+  analyticsWindow.gtag("config", ANALYTICS_ID);
 };
 
 const CookieConsent = () => {
