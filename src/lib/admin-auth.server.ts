@@ -80,6 +80,19 @@ export async function isRateLimited(request: Request | { headers: Headers }): Pr
   return isLimited;
 }
 
+export async function clearRateLimit(request: Request | { headers: Headers }): Promise<void> {
+  const ip = clientIp(request);
+  if (ip === "unknown") return;
+
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { error } = await supabaseAdmin
+    .from("admin_rate_limit")
+    .delete()
+    .eq("ip", ip);
+
+  if (error) console.error("Rate limit clear error:", error);
+}
+
 export function timingSafeEqual(a: string, b: string): boolean {
   const encoder = new TextEncoder();
   const bufA = encoder.encode(a);

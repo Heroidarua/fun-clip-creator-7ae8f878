@@ -206,8 +206,12 @@ export default function Admin() {
       fetchSidebarMarquee(password);
       fetchVideoJobs();
       toast({ title: "Login realizado com sucesso!" });
-    } catch {
-      toast({ title: "Senha incorreta", variant: "destructive" });
+    } catch (error) {
+      toast({
+        title: "Não foi possível entrar",
+        description: error instanceof Error ? error.message : "Confira a senha e tente novamente.",
+        variant: "destructive",
+      });
     }
     setLoading(false);
   };
@@ -318,6 +322,7 @@ export default function Admin() {
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Senha</label>
               <Input
                 type="password"
+                autoComplete="current-password"
                 placeholder="Digite a senha de admin"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
