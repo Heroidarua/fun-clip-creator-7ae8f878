@@ -10,6 +10,7 @@ function createContentSecurityPolicy(nonce: string): string {
     "form-action 'self'",
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' blob: https://www.googletagmanager.com https://unpkg.com https://cdn.jsdelivr.net`,
     `style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com`,
+    "style-src-attr 'unsafe-inline'",
     "font-src 'self' data: https://fonts.gstatic.com",
     "img-src 'self' data: blob: https:",
     "media-src 'self' blob: https:",
