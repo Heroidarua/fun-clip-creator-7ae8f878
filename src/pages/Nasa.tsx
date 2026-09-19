@@ -1,8 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { Home } from "lucide-react";
 import ServiceEditorialContent from "@/components/ServiceEditorialContent";
+import { useCspNonce } from "@/hooks/use-csp-nonce";
 
 const Nasa = () => {
+  const cspNonce = useCspNonce();
   return (
     <main className="bg-background text-foreground">
       <iframe
@@ -43,7 +45,7 @@ const Nasa = () => {
         <Home size={16} aria-hidden />
         <span className="nasa-exit-label">Sair · SOS/01</span>
       </Link>
-      <style>{`
+      <style nonce={cspNonce}>{`
         :root {
           --nasa-safe-top: env(safe-area-inset-top, 0px);
           --nasa-safe-right: env(safe-area-inset-right, 0px);

@@ -1,7 +1,9 @@
 import developerPhoto from "@/assets/developer-photo.jpg";
 import { Mail, Gamepad2 } from "lucide-react";
+import { useCspNonce } from "@/hooks/use-csp-nonce";
 
 const AboutSection = () => {
+  const cspNonce = useCspNonce();
   return (
     <section className="relative py-16 sm:py-20 bg-background overflow-hidden">
       {/* Futuristic Grid Background */}
@@ -148,7 +150,7 @@ const AboutSection = () => {
         </div>
       </div>
 
-      <style>{`
+      <style nonce={cspNonce}>{`
         @keyframes scanMove {
           0% { opacity: 0; transform: translateY(-100px); }
           10% { opacity: 1; }

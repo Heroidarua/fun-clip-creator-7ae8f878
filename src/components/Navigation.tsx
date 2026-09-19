@@ -5,6 +5,7 @@ import IPTVModal from "./IPTVModal";
 import ThemeToggle from "./ThemeToggle";
 import { useSidebarMarqueeSettings } from "@/hooks/useAppearanceSettings";
 import { MARQUEE_COLOR_STYLES } from "@/lib/marquee-settings";
+import { useCspNonce } from "@/hooks/use-csp-nonce";
 import {
   Tooltip,
   TooltipContent,
@@ -31,6 +32,7 @@ const ITEMS = [
 ] as const;
 
 export default function SidebarNav() {
+  const cspNonce = useCspNonce();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [iptvModalOpen, setIptvModalOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -245,7 +247,7 @@ export default function SidebarNav() {
       {/* IPTVModal removed from here as it is now inside the /player page */}
 
       {/* Main Layout Adjustments for Sidebar & Mobile Nav */}
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style nonce={cspNonce} dangerouslySetInnerHTML={{ __html: `
         @media (min-width: 768px) {
           main, header, footer {
             margin-left: ${isCollapsed ? '80px' : '256px'};
