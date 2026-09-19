@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useCspNonce } from "@/hooks/use-csp-nonce";
 
 const BG = "#124F7D";
 const TOTAL_MS = 3200;
@@ -15,6 +16,7 @@ type Particle = {
 };
 
 export default function SplashScreen() {
+  const cspNonce = useCspNonce();
   const [visible, setVisible] = useState(true);
   const [fading, setFading] = useState(false);
 
@@ -72,7 +74,7 @@ export default function SplashScreen() {
         willChange: "opacity",
       }}
     >
-      <style>{`
+      <style nonce={cspNonce}>{`
         @keyframes sos01-splash-in {
           0% {
             opacity: 0;
