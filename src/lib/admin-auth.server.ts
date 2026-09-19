@@ -86,8 +86,39 @@ export function timingSafeEqual(a: string, b: string): boolean {
   const bufB = encoder.encode(b);
   if (bufA.length !== bufB.length) return false;
   let diff = 0;
-  for (let i = 0; i < bufA.length; i++) diff |= bufA[i]! ^ bufB[i]!;
+  for (let i = 0; i < bufA.length; i++) diff |= (bufA[i] ?? 0) ^ (bufB[i] ?? 0);
   return diff === 0;
+}
+
+function decodeBasicCredentials(value: string): { username: string; password: string } | null {
+  if (!value.startsWith("Basic ")) return null;
+
+  try {
+    const encoded = value.slice(6).trim();
+    const bytes = Uint8Array.from(atob(encoded), (character) => character.charCodeAt(0));
+    const decoded = new TextDecoder().decode(bytes);
+    const separator = decoded.indexOf(":");
+    if (separator < 0) return null;
+
+    return {
+      username: decoded.slice(0, separator),
+      password: decoded.slice(separator + 1),
+    };
+  } catch {
+    return null;
+  }
+}
+
+/** Validate the browser-level HTTP Basic challenge used to conceal /admin. */
+export function hasValidAdminBasicAuth(request: Request): boolean {
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  if (!adminPassword) return false;
+
+  const credentials = decodeBasicCredentials(request.headers.get("authorization") ?? "");
+  return Boolean(
+    credentials?.username === "admin" &&
+      timingSafeEqual(credentials.password, adminPassword),
+  );
 }
 
 /** Restrict admin endpoints to same-origin requests only. */
