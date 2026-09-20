@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import {
   clearRateLimit,
   corsHeaders,
+  hasValidAdminAuth,
   isCrossOrigin,
   isRateLimited,
-  timingSafeEqual,
 } from "@/lib/admin-auth.server";
 
 const UUID_RE =
@@ -40,8 +40,7 @@ export const Route = createFileRoute("/api/manage-announcements")({
               { status: 403, headers: corsHeaders(request) }
             );
           }
-          const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
-          if (!ADMIN_PASSWORD) {
+          if (!process.env.ADMIN_PASSWORD) {
             console.error("ADMIN_PASSWORD env var is not configured");
             return Response.json(
               { error: "Servidor mal configurado" },
@@ -51,7 +50,7 @@ export const Route = createFileRoute("/api/manage-announcements")({
           const body = await request.json();
           const { action, password, data: payload } = body;
 
-          if (typeof password !== "string" || !timingSafeEqual(password, ADMIN_PASSWORD)) {
+          if (!hasValidAdminAuth(request, password)) {
             const limited = await isRateLimited(request);
             return Response.json(
               { error: limited ? "Muitas tentativas. Aguarde cinco minutos." : "Senha incorreta" },

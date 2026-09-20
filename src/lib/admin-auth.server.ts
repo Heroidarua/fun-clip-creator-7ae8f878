@@ -134,6 +134,18 @@ export function hasValidAdminBasicAuth(request: Request): boolean {
   );
 }
 
+/** Accept the browser-level admin login or the password supplied by the panel. */
+export function hasValidAdminAuth(request: Request, suppliedPassword: unknown): boolean {
+  if (hasValidAdminBasicAuth(request)) return true;
+
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  return Boolean(
+    adminPassword &&
+      typeof suppliedPassword === "string" &&
+      timingSafeEqual(suppliedPassword, adminPassword),
+  );
+}
+
 /** Restrict admin endpoints to same-origin requests only. */
 export function corsHeaders(request?: Request): Record<string, string> {
   const headers: Record<string, string> = {

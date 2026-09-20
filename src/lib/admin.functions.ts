@@ -1,16 +1,14 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
-import { clearRateLimit, isRateLimited, timingSafeEqual } from "./admin-auth.server";
+import { clearRateLimit, hasValidAdminAuth, isRateLimited } from "./admin-auth.server";
 
 export const listEnhancementJobs = createServerFn({ method: "POST" })
   .inputValidator(z.object({ password: z.string() }))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const adminPassword = process.env['ADMIN_PASSWORD'];
-
     const request = getRequest();
-    if (!adminPassword || !timingSafeEqual(data.password, adminPassword)) {
+    if (!hasValidAdminAuth(request, data.password)) {
       if (await isRateLimited(request)) {
         throw new Error("Muitas tentativas. Aguarde cinco minutos.");
       }
@@ -32,10 +30,8 @@ export const deleteEnhancementJob = createServerFn({ method: "POST" })
   .inputValidator(z.object({ password: z.string(), jobId: z.string() }))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const adminPassword = process.env['ADMIN_PASSWORD'];
-
     const request = getRequest();
-    if (!adminPassword || !timingSafeEqual(data.password, adminPassword)) {
+    if (!hasValidAdminAuth(request, data.password)) {
       if (await isRateLimited(request)) {
         throw new Error("Muitas tentativas. Aguarde cinco minutos.");
       }
