@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import {
   clearRateLimit,
   corsHeaders,
+  hasValidAdminAuth,
   isCrossOrigin,
   isRateLimited,
-  timingSafeEqual,
 } from "@/lib/admin-auth.server";
 
 export const Route = createFileRoute("/api/manage-feature-status")({
@@ -20,15 +20,14 @@ export const Route = createFileRoute("/api/manage-feature-status")({
               { status: 403, headers: corsHeaders(request) }
             );
           }
-          const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
-          if (!ADMIN_PASSWORD) {
+          if (!process.env.ADMIN_PASSWORD) {
             return Response.json(
               { error: "Servidor mal configurado" },
               { status: 500, headers: corsHeaders(request) }
             );
           }
           const { password, id, status } = await request.json();
-          if (typeof password !== "string" || !timingSafeEqual(password, ADMIN_PASSWORD)) {
+          if (!hasValidAdminAuth(request, password)) {
             const limited = await isRateLimited(request);
             return Response.json(
               { error: limited ? "Muitas tentativas. Aguarde cinco minutos." : "Senha incorreta" },
