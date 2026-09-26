@@ -15,6 +15,8 @@ import {
   type YoutubeInfo,
 } from "@/services/youtubeDownloader";
 import { AlertCircle, Download, RotateCcw, Trash2 } from "lucide-react";
+import { startYoutubeFileDownload } from "@/lib/youtube-download-flow";
+import { Button } from "@/components/ui/button";
 
 const GENERIC_ERROR =
   "Não foi possível processar este vídeo. Verifique a URL e tente novamente.";
@@ -131,6 +133,14 @@ export default function YoutubeDownloaderPage() {
     setProgress(null);
   }, []);
 
+  const changeUrl = useCallback((nextUrl: string) => {
+    setUrl(nextUrl);
+    setInfo(null);
+    setSelected("");
+    setError("");
+    setProgress(null);
+  }, []);
+
   const download = useCallback(async () => {
     if (!info || downloading) return;
     const format = info.formats.find((f) => f.id === selected);
@@ -179,7 +189,7 @@ export default function YoutubeDownloaderPage() {
       const err = e as Error & { directUrl?: string; muxed?: boolean };
       if (err.message === TOO_LARGE) {
         if (err.directUrl && (format.type === "audio" || err.muxed)) {
-          window.location.href = err.directUrl;
+          startYoutubeFileDownload(err.directUrl);
         } else {
           setError(
             "Este arquivo passa de 500 MB e não pode ser processado no navegador. Escolha uma qualidade menor.",
@@ -217,7 +227,7 @@ export default function YoutubeDownloaderPage() {
         <section className="space-y-6 rounded-md border border-border bg-card/40 p-4 sm:p-6">
           <YoutubeUrlInput
             value={url}
-            onChange={setUrl}
+            onChange={changeUrl}
             onSubmit={analyze}
             loading={analyzing}
             disabled={downloading}
@@ -232,20 +242,20 @@ export default function YoutubeDownloaderPage() {
                 {error}
               </p>
               <div className="flex flex-wrap gap-2">
-                <button
+                 <Button
                   type="button"
                   onClick={() => (info ? download() : analyze())}
                   className="inline-flex min-h-10 items-center gap-2 rounded-md border-2 border-border px-4 text-sm font-medium text-foreground"
                 >
                   <RotateCcw className="h-4 w-4" /> Nova tentativa
-                </button>
-                <button
+                 </Button>
+                 <Button
                   type="button"
                   onClick={clearAll}
                   className="inline-flex min-h-10 items-center gap-2 rounded-md border-2 border-border px-4 text-sm font-medium text-foreground"
                 >
                   <Trash2 className="h-4 w-4" /> Limpar
-                </button>
+                 </Button>
               </div>
             </div>
           )}
@@ -264,21 +274,21 @@ export default function YoutubeDownloaderPage() {
               )}
 
               <div className="flex flex-wrap gap-2">
-                <button
+                 <Button
                   type="button"
                   onClick={download}
                   disabled={downloading || !selected}
                   className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-md bg-primary px-6 text-sm font-bold text-primary-foreground disabled:opacity-60 sm:flex-none"
                 >
                   <Download className="h-4 w-4" /> Baixar
-                </button>
-                <button
+                 </Button>
+                 <Button
                   type="button"
                   onClick={clearAll}
                   className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border-2 border-border px-6 text-sm font-medium text-foreground"
                 >
                   <Trash2 className="h-4 w-4" /> Limpar
-                </button>
+                 </Button>
               </div>
             </div>
           )}
