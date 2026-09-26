@@ -852,13 +852,20 @@ const HeroSection = () => {
   };
 
   // YouTube handlers
+  const changeYoutubeUrl = (url: string) => {
+    setYoutubeUrl(url);
+    setYoutubeData(null);
+    setYoutubeFormats([]);
+    youtubeInfoRef.current = null;
+  };
+
   const handleYoutubePaste = async () => {
     setClickedYoutubeButton("paste");
     setTimeout(() => setClickedYoutubeButton(null), 300);
     
     try {
       const text = await navigator.clipboard.readText();
-      setYoutubeUrl(text);
+      changeYoutubeUrl(text);
       const vid = getYouTubeVideoId(text);
       if (vid) {
         toast({
@@ -1792,12 +1799,12 @@ const HeroSection = () => {
                   type="url"
                   placeholder="Cole o link do YouTube aqui..."
                   value={youtubeUrl}
-                  onChange={(e) => setYoutubeUrl(e.target.value)}
+                  onChange={(e) => changeYoutubeUrl(e.target.value)}
                   onPaste={(e) => {
                     const text = e.clipboardData.getData("text");
                     if (text) {
                       e.preventDefault();
-                      setYoutubeUrl(text);
+                      changeYoutubeUrl(text);
                     }
                   }}
                   disabled={!isActive('youtube')}

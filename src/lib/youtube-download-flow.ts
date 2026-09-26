@@ -11,6 +11,16 @@ export const BROWSER_PROCESS_LIMIT = 500 * 1024 * 1024; // 500MB
 
 const TOO_LARGE = "TOO_LARGE";
 
+/** Solicita o arquivo sem substituir a página da ferramenta. */
+export function startYoutubeFileDownload(fileUrl: string): void {
+  const frame = document.createElement("iframe");
+  frame.hidden = true;
+  frame.title = "Download do YouTube";
+  document.body.appendChild(frame);
+  frame.src = fileUrl;
+  window.setTimeout(() => frame.remove(), 5 * 60_000);
+}
+
 export function safeFileName(title: string) {
   return title.replace(/[\\/:*?"<>|]+/g, " ").trim().slice(0, 100) || "youtube";
 }
@@ -59,7 +69,7 @@ async function fetchStream(
   }
   await validation.body?.cancel().catch(() => undefined);
 
-  window.location.assign(fileUrl);
+  startYoutubeFileDownload(fileUrl);
   onRatio(1);
   return {
     bytes: new Uint8Array(0),
@@ -133,7 +143,7 @@ export async function downloadYoutubeMedia({
     const err = e as Error & { directUrl?: string; muxed?: boolean };
     if (err.message === TOO_LARGE) {
       if (err.directUrl && (type === "audio" || err.muxed)) {
-        window.location.href = err.directUrl;
+        startYoutubeFileDownload(err.directUrl);
         return;
       }
       throw new Error(
