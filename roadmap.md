@@ -1,0 +1,5 @@
+- [ ] Padronizar marca e renomear apresentação da pegadinha sem mudar o endereço.
+- [ ] Exibir avisos legais junto às ações de download e acesso a vídeo.
+- [ ] Distinguir ferramentas grátis, Premium grátis e doações opcionais nos cartões.
+- [ ] Conferir SEO, mídia, consentimento e cabeçalhos de segurança.
+- [ ] Validar páginas, títulos, avisos e rotas no navegador.
