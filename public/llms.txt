@@ -1,11 +1,11 @@
-# SOS/01
+# SOS01
 
 > Plataforma 100% gratuita de utilidades digitais: downloaders de vídeo (TikTok, YouTube, Kwai, Instagram), ferramentas com IA, conversores, gerador de QR Code, jogos retrô no navegador e biblioteca de quadrinhos.
 
 ## Pages
 
 - [Início](/): Visão geral da plataforma, downloaders e principais ferramentas.
-- [Sobre](/sobre): Quem somos e a missão do SOS/01.
+- [Sobre](/sobre): Quem somos e a missão do SOS01.
 - [Como usar](/como-usar): Guia rápido das ferramentas e downloaders.
 - [Ferramentas](/ferramentas): Catálogo completo de utilitários gratuitos.
 - [Jogos](/jogos): Coleção de jogos retrô que rodam no navegador.

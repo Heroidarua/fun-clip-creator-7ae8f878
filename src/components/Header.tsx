@@ -99,7 +99,7 @@ const Header = () => {
               >
                 <img
                   src="/favicon.png"
-                  alt="sos01"
+                  alt="SOS01"
                   className="w-full h-full object-cover rounded-2xl"
                 />
                 <div
@@ -115,7 +115,7 @@ const Header = () => {
                 SOS<span className="italic text-accent">01</span>
               </span>
               <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.18em] text-muted-foreground mt-0.5">
-                Studio Digital
+                 Ferramentas e jogos
               </span>
             </div>
           </Link>

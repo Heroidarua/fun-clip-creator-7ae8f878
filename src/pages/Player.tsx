@@ -3,6 +3,8 @@ import { Link } from "@tanstack/react-router";
 import { MonitorPlay, ArrowLeft, Tv } from "lucide-react";
 import IPTVModal from "@/components/IPTVModal";
 import ServiceEditorialContent from "@/components/ServiceEditorialContent";
+import LegalNotice from "@/components/LegalNotice";
+import { Button } from "@/components/ui/button";
 
 export default function Player() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,13 +32,14 @@ export default function Player() {
         </p>
         
         <div className="space-y-4">
-          <button
+          <LegalNotice kind="video" />
+          <Button
             onClick={() => setIsModalOpen(true)}
             className="btn-3d inline-flex items-center justify-center gap-2 w-full px-6 py-4 rounded-xl bg-[#FFD93D] text-[#0E4A7B] font-silkscreen uppercase tracking-wider text-base hover:brightness-110 transition-all"
           >
             <Tv className="w-5 h-5" />
             Tentar a Sorte
-          </button>
+          </Button>
           
           <p className="text-[10px] text-[#E8EEF5]/50 italic">
             Desbloqueie credenciais premium girando a roleta.

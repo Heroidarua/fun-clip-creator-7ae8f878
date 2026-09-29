@@ -17,6 +17,7 @@ import {
 import { AlertCircle, Download, RotateCcw, Trash2 } from "lucide-react";
 import { startYoutubeFileDownload } from "@/lib/youtube-download-flow";
 import { Button } from "@/components/ui/button";
+import LegalNotice from "@/components/LegalNotice";
 
 const GENERIC_ERROR =
   "Não foi possível processar este vídeo. Verifique a URL e tente novamente.";
@@ -241,7 +242,8 @@ export default function YoutubeDownloaderPage() {
                 <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
                 {error}
               </p>
-              <div className="flex flex-wrap gap-2">
+               <LegalNotice />
+               <div className="flex flex-wrap gap-2">
                  <Button
                   type="button"
                   onClick={() => (info ? download() : analyze())}
@@ -293,10 +295,7 @@ export default function YoutubeDownloaderPage() {
             </div>
           )}
 
-          <p className="text-xs text-muted-foreground">
-            Use apenas com conteúdos próprios ou que você tenha autorização para baixar. Os links
-            gerados são temporários e expiram automaticamente.
-          </p>
+           <p className="text-xs text-muted-foreground">Os links gerados são temporários e expiram automaticamente.</p>
         </section>
         {seo && <ToolSeoContent tool={seo} />}
       </main>

@@ -20,7 +20,7 @@ const Dashboard = () => {
             Bem-vindo de volta
           </h1>
           <p className="text-muted-foreground mt-3 max-w-lg">
-            Tudo do SOS/01 em um só lugar. Escolha por onde começar.
+             Tudo do SOS01 em um só lugar. Escolha por onde começar.
           </p>
         </header>
 
