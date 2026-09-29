@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { Tv, ArrowLeft, ExternalLink } from "lucide-react";
 import ServiceEditorialContent from "@/components/ServiceEditorialContent";
+import LegalNotice from "@/components/LegalNotice";
 
 const SBT_URL = "https://mais.sbt.com.br/";
 
@@ -33,6 +34,7 @@ export default function MaisSbt() {
         <p className="text-[#E8EEF5]/80 text-sm mb-7 leading-relaxed">
           Redirecionando você para o +SBT. Se nada acontecer em alguns segundos, use o botão abaixo.
         </p>
+        <LegalNotice kind="video" />
         <a
           href={SBT_URL}
           rel="noopener nofollow"

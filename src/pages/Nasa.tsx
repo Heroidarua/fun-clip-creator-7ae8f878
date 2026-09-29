@@ -38,12 +38,12 @@ const Nasa = () => {
       />
       <Link
         to="/"
-        aria-label="Voltar para a página inicial do SOS/01"
-        title="Sair · SOS/01"
+         aria-label="Voltar para a página inicial do SOS01"
+         title="Sair · SOS01"
         className="nasa-exit-btn"
       >
         <Home size={16} aria-hidden />
-        <span className="nasa-exit-label">Sair · SOS/01</span>
+         <span className="nasa-exit-label">Sair · SOS01</span>
       </Link>
       <style nonce={cspNonce}>{`
         :root {

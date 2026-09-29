@@ -31,7 +31,7 @@ const Precos = () => {
             Por que é grátis? <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Sem pegadinhas.</span>
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-            Não existem planos, trial nem paywall no SOS/01. O site se mantém com doações voluntárias de quem usa e gosta — e continua aberto para todo mundo.
+             Não existem planos, trial nem paywall no SOS01. O site se mantém com doações voluntárias de quem usa e gosta — e continua aberto para todo mundo.
           </p>
         </div>
 

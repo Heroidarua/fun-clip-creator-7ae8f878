@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { Tv, ArrowLeft, ExternalLink } from "lucide-react";
 import ServiceEditorialContent from "@/components/ServiceEditorialContent";
+import LegalNotice from "@/components/LegalNotice";
 
 const PLUTO_URL = "https://pluto.tv/br/live-tv/655e5c4d2c46f3000877a54b";
 
@@ -31,6 +32,7 @@ export default function Iptv() {
         <p className="text-[#E8EEF5]/80 text-sm mb-7 leading-relaxed">
           Redirecionando você para a Pluto TV. Se nada acontecer em alguns segundos, use o botão abaixo.
         </p>
+        <LegalNotice kind="video" />
         <a
           href={PLUTO_URL}
           rel="noopener nofollow"
