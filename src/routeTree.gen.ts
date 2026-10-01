@@ -9,183 +9,73 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as VirusDoBemRouteImport } from './routes/virus-do-bem'
-import { Route as TermosRouteImport } from './routes/termos'
-import { Route as SobreRouteImport } from './routes/sobre'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as PrivacidadeRouteImport } from './routes/privacidade'
-import { Route as PrecosRouteImport } from './routes/precos'
-import { Route as PlayerRouteImport } from './routes/player'
-import { Route as PerfilRouteImport } from './routes/perfil'
-import { Route as NasaRouteImport } from './routes/nasa'
-import { Route as MaisSbtRouteImport } from './routes/mais-sbt'
-import { Route as LojaRouteImport } from './routes/loja'
-import { Route as JogosJavaRouteImport } from './routes/jogos-java'
-import { Route as JogosRouteImport } from './routes/jogos'
-import { Route as IptvRouteImport } from './routes/iptv'
-import { Route as FerramentasRouteImport } from './routes/ferramentas'
-import { Route as DmcaRouteImport } from './routes/dmca'
-import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as ContatoRouteImport } from './routes/contato'
-import { Route as ComoUsarRouteImport } from './routes/como-usar'
-import { Route as BuscaRouteImport } from './routes/busca'
-import { Route as BlogRouteImport } from './routes/blog'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AdminRouteImport } from './routes/admin'
-import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as BlogIndexRouteImport } from './routes/blog.index'
-import { Route as FerramentasYoutubeDownloaderRouteImport } from './routes/ferramentas_.youtube-downloader'
-import { Route as FerramentaMelhorarVideoRouteImport } from './routes/ferramenta.melhorar-video'
-import { Route as FerramentaSlugRouteImport } from './routes/ferramenta.$slug'
-import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
-import { Route as BlogJogosRetroGratisRouteImport } from './routes/blog.jogos-retro-gratis'
-import { Route as BlogGuiaCompletoSos01RouteImport } from './routes/blog.guia-completo-sos01'
-import { Route as BlogGuiaCompletoClipsaveRouteImport } from './routes/blog.guia-completo-clipsave'
-import { Route as BlogFerramentasGratuitasRouteImport } from './routes/blog.ferramentas-gratuitas'
-import { Route as BlogDicasCriadoresConteudoRouteImport } from './routes/blog.dicas-criadores-conteudo'
-import { Route as BlogComoUsarDownloadersRouteImport } from './routes/blog.como-usar-downloaders'
-import { Route as BlogComoNasceuSos01RouteImport } from './routes/blog.como-nasceu-sos01'
-import { Route as BlogComoNasceuClipsaveRouteImport } from './routes/blog.como-nasceu-clipsave'
-import { Route as BlogComoExtrairAudioTiktokRouteImport } from './routes/blog.como-extrair-audio-tiktok'
-import { Route as BlogComoBaixarVideosYoutubeRouteImport } from './routes/blog.como-baixar-videos-youtube'
-import { Route as BlogComoBaixarVideosTiktokSemMarcaRouteImport } from './routes/blog.como-baixar-videos-tiktok-sem-marca'
-import { Route as BlogComoBaixarVideosKwaiRouteImport } from './routes/blog.como-baixar-videos-kwai'
-import { Route as BlogBibliotecaQuadrinhosRouteImport } from './routes/blog.biblioteca-quadrinhos'
-import { Route as ApiRemoveBgRouteImport } from './routes/api.remove-bg'
-import { Route as ApiPlayerCatalogRouteImport } from './routes/api.player-catalog'
-import { Route as ApiManageFeatureStatusRouteImport } from './routes/api.manage-feature-status'
-import { Route as ApiManageAnnouncementsRouteImport } from './routes/api.manage-announcements'
-import { Route as ApiFreeTextRouteImport } from './routes/api.free-text'
-import { Route as ApiDownloadYoutubeStreamRouteImport } from './routes/api.download-youtube-stream'
-import { Route as ApiDownloadYoutubeRouteImport } from './routes/api.download-youtube'
-import { Route as ApiDownloadTiktokRouteImport } from './routes/api.download-tiktok'
-import { Route as ApiDownloadPinterestRouteImport } from './routes/api.download-pinterest'
-import { Route as ApiDownloadKwaiRouteImport } from './routes/api.download-kwai'
-import { Route as ApiDownloadInstagramRouteImport } from './routes/api.download-instagram'
-import { Route as ApiDownloadFacebookRouteImport } from './routes/api.download-facebook'
+import { Route as SplatRouteImport } from './routes/$'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as BlogRouteImport } from './routes/blog'
+import { Route as BuscaRouteImport } from './routes/busca'
+import { Route as ComoUsarRouteImport } from './routes/como-usar'
+import { Route as ContatoRouteImport } from './routes/contato'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as DmcaRouteImport } from './routes/dmca'
+import { Route as FerramentasRouteImport } from './routes/ferramentas'
+import { Route as IptvRouteImport } from './routes/iptv'
+import { Route as JogosRouteImport } from './routes/jogos'
+import { Route as JogosJavaRouteImport } from './routes/jogos-java'
+import { Route as LojaRouteImport } from './routes/loja'
+import { Route as MaisSbtRouteImport } from './routes/mais-sbt'
+import { Route as NasaRouteImport } from './routes/nasa'
+import { Route as PerfilRouteImport } from './routes/perfil'
+import { Route as PlayerRouteImport } from './routes/player'
+import { Route as PrecosRouteImport } from './routes/precos'
+import { Route as PrivacidadeRouteImport } from './routes/privacidade'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SobreRouteImport } from './routes/sobre'
+import { Route as TermosRouteImport } from './routes/termos'
+import { Route as VirusDoBemRouteImport } from './routes/virus-do-bem'
 import { Route as ApiCanbosoRouteImport } from './routes/api.canboso'
-import { Route as ApiYoutubeInfoRouteImport } from './routes/api.youtube.info'
-import { Route as ApiYoutubeFileRouteImport } from './routes/api.youtube.file'
-import { Route as ApiYoutubeDownloadRouteImport } from './routes/api.youtube.download'
-import { Route as ApiVideoEnhancerProcessRouteImport } from './routes/api.video-enhancer.process'
-import { Route as ApiPublicPinterestDownloadRouteImport } from './routes/api.public.pinterest-download'
+import { Route as ApiDownloadFacebookRouteImport } from './routes/api.download-facebook'
+import { Route as ApiDownloadInstagramRouteImport } from './routes/api.download-instagram'
+import { Route as ApiDownloadKwaiRouteImport } from './routes/api.download-kwai'
+import { Route as ApiDownloadPinterestRouteImport } from './routes/api.download-pinterest'
+import { Route as ApiDownloadTiktokRouteImport } from './routes/api.download-tiktok'
+import { Route as ApiDownloadYoutubeRouteImport } from './routes/api.download-youtube'
+import { Route as ApiDownloadYoutubeStreamRouteImport } from './routes/api.download-youtube-stream'
+import { Route as ApiFreeTextRouteImport } from './routes/api.free-text'
+import { Route as ApiManageAnnouncementsRouteImport } from './routes/api.manage-announcements'
+import { Route as ApiManageFeatureStatusRouteImport } from './routes/api.manage-feature-status'
+import { Route as ApiPlayerCatalogRouteImport } from './routes/api.player-catalog'
+import { Route as ApiRemoveBgRouteImport } from './routes/api.remove-bg'
+import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as BlogBibliotecaQuadrinhosRouteImport } from './routes/blog.biblioteca-quadrinhos'
+import { Route as BlogComoBaixarVideosKwaiRouteImport } from './routes/blog.como-baixar-videos-kwai'
+import { Route as BlogComoBaixarVideosTiktokSemMarcaRouteImport } from './routes/blog.como-baixar-videos-tiktok-sem-marca'
+import { Route as BlogComoBaixarVideosYoutubeRouteImport } from './routes/blog.como-baixar-videos-youtube'
+import { Route as BlogComoExtrairAudioTiktokRouteImport } from './routes/blog.como-extrair-audio-tiktok'
+import { Route as BlogComoNasceuClipsaveRouteImport } from './routes/blog.como-nasceu-clipsave'
+import { Route as BlogComoNasceuSos01RouteImport } from './routes/blog.como-nasceu-sos01'
+import { Route as BlogComoUsarDownloadersRouteImport } from './routes/blog.como-usar-downloaders'
+import { Route as BlogDicasCriadoresConteudoRouteImport } from './routes/blog.dicas-criadores-conteudo'
+import { Route as BlogFerramentasGratuitasRouteImport } from './routes/blog.ferramentas-gratuitas'
+import { Route as BlogGuiaCompletoClipsaveRouteImport } from './routes/blog.guia-completo-clipsave'
+import { Route as BlogGuiaCompletoSos01RouteImport } from './routes/blog.guia-completo-sos01'
+import { Route as BlogJogosRetroGratisRouteImport } from './routes/blog.jogos-retro-gratis'
+import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
+import { Route as FerramentaSlugRouteImport } from './routes/ferramenta.$slug'
+import { Route as FerramentaMelhorarVideoRouteImport } from './routes/ferramenta.melhorar-video'
+import { Route as FerramentasYoutubeDownloaderRouteImport } from './routes/ferramentas_.youtube-downloader'
 import { Route as ApiPublicMercadopagoWebhookRouteImport } from './routes/api/public/mercadopago-webhook'
+import { Route as ApiPublicPinterestDownloadRouteImport } from './routes/api.public.pinterest-download'
+import { Route as ApiVideoEnhancerProcessRouteImport } from './routes/api.video-enhancer.process'
+import { Route as ApiYoutubeDownloadRouteImport } from './routes/api.youtube.download'
+import { Route as ApiYoutubeFileRouteImport } from './routes/api.youtube.file'
+import { Route as ApiYoutubeInfoRouteImport } from './routes/api.youtube.info'
 import { Route as ApiYoutubeStatusRouteImport } from './routes/api.youtube.status.'
 
-const VirusDoBemRoute = VirusDoBemRouteImport.update({
-  id: '/virus-do-bem',
-  path: '/virus-do-bem',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TermosRoute = TermosRouteImport.update({
-  id: '/termos',
-  path: '/termos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SobreRoute = SobreRouteImport.update({
-  id: '/sobre',
-  path: '/sobre',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacidadeRoute = PrivacidadeRouteImport.update({
-  id: '/privacidade',
-  path: '/privacidade',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrecosRoute = PrecosRouteImport.update({
-  id: '/precos',
-  path: '/precos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PlayerRoute = PlayerRouteImport.update({
-  id: '/player',
-  path: '/player',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PerfilRoute = PerfilRouteImport.update({
-  id: '/perfil',
-  path: '/perfil',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NasaRoute = NasaRouteImport.update({
-  id: '/nasa',
-  path: '/nasa',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MaisSbtRoute = MaisSbtRouteImport.update({
-  id: '/mais-sbt',
-  path: '/mais-sbt',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LojaRoute = LojaRouteImport.update({
-  id: '/loja',
-  path: '/loja',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const JogosJavaRoute = JogosJavaRouteImport.update({
-  id: '/jogos-java',
-  path: '/jogos-java',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const JogosRoute = JogosRouteImport.update({
-  id: '/jogos',
-  path: '/jogos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const IptvRoute = IptvRouteImport.update({
-  id: '/iptv',
-  path: '/iptv',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FerramentasRoute = FerramentasRouteImport.update({
-  id: '/ferramentas',
-  path: '/ferramentas',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DmcaRoute = DmcaRouteImport.update({
-  id: '/dmca',
-  path: '/dmca',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContatoRoute = ContatoRouteImport.update({
-  id: '/contato',
-  path: '/contato',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ComoUsarRoute = ComoUsarRouteImport.update({
-  id: '/como-usar',
-  path: '/como-usar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BuscaRoute = BuscaRouteImport.update({
-  id: '/busca',
-  path: '/busca',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BlogRoute = BlogRouteImport.update({
-  id: '/blog',
-  path: '/blog',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SplatRoute = SplatRouteImport.update({
@@ -193,133 +83,154 @@ const SplatRoute = SplatRouteImport.update({
   path: '/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BlogIndexRoute = BlogIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => BlogRoute,
-} as any)
-const FerramentasYoutubeDownloaderRoute =
-  FerramentasYoutubeDownloaderRouteImport.update({
-    id: '/ferramentas_/youtube-downloader',
-    path: '/ferramentas/youtube-downloader',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const FerramentaMelhorarVideoRoute = FerramentaMelhorarVideoRouteImport.update({
-  id: '/ferramenta/melhorar-video',
-  path: '/ferramenta/melhorar-video',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const FerramentaSlugRoute = FerramentaSlugRouteImport.update({
-  id: '/ferramenta/$slug',
-  path: '/ferramenta/$slug',
+const BlogRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CategoriaSlugRoute = CategoriaSlugRouteImport.update({
-  id: '/categoria/$slug',
-  path: '/categoria/$slug',
+const BuscaRoute = BuscaRouteImport.update({
+  id: '/busca',
+  path: '/busca',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BlogJogosRetroGratisRoute = BlogJogosRetroGratisRouteImport.update({
-  id: '/jogos-retro-gratis',
-  path: '/jogos-retro-gratis',
-  getParentRoute: () => BlogRoute,
-} as any)
-const BlogGuiaCompletoSos01Route = BlogGuiaCompletoSos01RouteImport.update({
-  id: '/guia-completo-sos01',
-  path: '/guia-completo-sos01',
-  getParentRoute: () => BlogRoute,
-} as any)
-const BlogGuiaCompletoClipsaveRoute =
-  BlogGuiaCompletoClipsaveRouteImport.update({
-    id: '/guia-completo-clipsave',
-    path: '/guia-completo-clipsave',
-    getParentRoute: () => BlogRoute,
-  } as any)
-const BlogFerramentasGratuitasRoute =
-  BlogFerramentasGratuitasRouteImport.update({
-    id: '/ferramentas-gratuitas',
-    path: '/ferramentas-gratuitas',
-    getParentRoute: () => BlogRoute,
-  } as any)
-const BlogDicasCriadoresConteudoRoute =
-  BlogDicasCriadoresConteudoRouteImport.update({
-    id: '/dicas-criadores-conteudo',
-    path: '/dicas-criadores-conteudo',
-    getParentRoute: () => BlogRoute,
-  } as any)
-const BlogComoUsarDownloadersRoute = BlogComoUsarDownloadersRouteImport.update({
-  id: '/como-usar-downloaders',
-  path: '/como-usar-downloaders',
-  getParentRoute: () => BlogRoute,
-} as any)
-const BlogComoNasceuSos01Route = BlogComoNasceuSos01RouteImport.update({
-  id: '/como-nasceu-sos01',
-  path: '/como-nasceu-sos01',
-  getParentRoute: () => BlogRoute,
-} as any)
-const BlogComoNasceuClipsaveRoute = BlogComoNasceuClipsaveRouteImport.update({
-  id: '/como-nasceu-clipsave',
-  path: '/como-nasceu-clipsave',
-  getParentRoute: () => BlogRoute,
-} as any)
-const BlogComoExtrairAudioTiktokRoute =
-  BlogComoExtrairAudioTiktokRouteImport.update({
-    id: '/como-extrair-audio-tiktok',
-    path: '/como-extrair-audio-tiktok',
-    getParentRoute: () => BlogRoute,
-  } as any)
-const BlogComoBaixarVideosYoutubeRoute =
-  BlogComoBaixarVideosYoutubeRouteImport.update({
-    id: '/como-baixar-videos-youtube',
-    path: '/como-baixar-videos-youtube',
-    getParentRoute: () => BlogRoute,
-  } as any)
-const BlogComoBaixarVideosTiktokSemMarcaRoute =
-  BlogComoBaixarVideosTiktokSemMarcaRouteImport.update({
-    id: '/como-baixar-videos-tiktok-sem-marca',
-    path: '/como-baixar-videos-tiktok-sem-marca',
-    getParentRoute: () => BlogRoute,
-  } as any)
-const BlogComoBaixarVideosKwaiRoute =
-  BlogComoBaixarVideosKwaiRouteImport.update({
-    id: '/como-baixar-videos-kwai',
-    path: '/como-baixar-videos-kwai',
-    getParentRoute: () => BlogRoute,
-  } as any)
-const BlogBibliotecaQuadrinhosRoute =
-  BlogBibliotecaQuadrinhosRouteImport.update({
-    id: '/biblioteca-quadrinhos',
-    path: '/biblioteca-quadrinhos',
-    getParentRoute: () => BlogRoute,
-  } as any)
-const ApiRemoveBgRoute = ApiRemoveBgRouteImport.update({
-  id: '/api/remove-bg',
-  path: '/api/remove-bg',
+const ComoUsarRoute = ComoUsarRouteImport.update({
+  id: '/como-usar',
+  path: '/como-usar',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPlayerCatalogRoute = ApiPlayerCatalogRouteImport.update({
-  id: '/api/player-catalog',
-  path: '/api/player-catalog',
+const ContatoRoute = ContatoRouteImport.update({
+  id: '/contato',
+  path: '/contato',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiManageFeatureStatusRoute = ApiManageFeatureStatusRouteImport.update({
-  id: '/api/manage-feature-status',
-  path: '/api/manage-feature-status',
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiManageAnnouncementsRoute = ApiManageAnnouncementsRouteImport.update({
-  id: '/api/manage-announcements',
-  path: '/api/manage-announcements',
+const DmcaRoute = DmcaRouteImport.update({
+  id: '/dmca',
+  path: '/dmca',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiFreeTextRoute = ApiFreeTextRouteImport.update({
-  id: '/api/free-text',
-  path: '/api/free-text',
+const FerramentasRoute = FerramentasRouteImport.update({
+  id: '/ferramentas',
+  path: '/ferramentas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IptvRoute = IptvRouteImport.update({
+  id: '/iptv',
+  path: '/iptv',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JogosRoute = JogosRouteImport.update({
+  id: '/jogos',
+  path: '/jogos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JogosJavaRoute = JogosJavaRouteImport.update({
+  id: '/jogos-java',
+  path: '/jogos-java',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LojaRoute = LojaRouteImport.update({
+  id: '/loja',
+  path: '/loja',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MaisSbtRoute = MaisSbtRouteImport.update({
+  id: '/mais-sbt',
+  path: '/mais-sbt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NasaRoute = NasaRouteImport.update({
+  id: '/nasa',
+  path: '/nasa',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerfilRoute = PerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlayerRoute = PlayerRouteImport.update({
+  id: '/player',
+  path: '/player',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrecosRoute = PrecosRouteImport.update({
+  id: '/precos',
+  path: '/precos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacidadeRoute = PrivacidadeRouteImport.update({
+  id: '/privacidade',
+  path: '/privacidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SobreRoute = SobreRouteImport.update({
+  id: '/sobre',
+  path: '/sobre',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermosRoute = TermosRouteImport.update({
+  id: '/termos',
+  path: '/termos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VirusDoBemRoute = VirusDoBemRouteImport.update({
+  id: '/virus-do-bem',
+  path: '/virus-do-bem',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCanbosoRoute = ApiCanbosoRouteImport.update({
+  id: '/api/canboso',
+  path: '/api/canboso',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDownloadFacebookRoute = ApiDownloadFacebookRouteImport.update({
+  id: '/api/download-facebook',
+  path: '/api/download-facebook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDownloadInstagramRoute = ApiDownloadInstagramRouteImport.update({
+  id: '/api/download-instagram',
+  path: '/api/download-instagram',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDownloadKwaiRoute = ApiDownloadKwaiRouteImport.update({
+  id: '/api/download-kwai',
+  path: '/api/download-kwai',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDownloadPinterestRoute = ApiDownloadPinterestRouteImport.update({
+  id: '/api/download-pinterest',
+  path: '/api/download-pinterest',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDownloadTiktokRoute = ApiDownloadTiktokRouteImport.update({
+  id: '/api/download-tiktok',
+  path: '/api/download-tiktok',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDownloadYoutubeRoute = ApiDownloadYoutubeRouteImport.update({
+  id: '/api/download-youtube',
+  path: '/api/download-youtube',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiDownloadYoutubeStreamRoute =
@@ -328,65 +239,128 @@ const ApiDownloadYoutubeStreamRoute =
     path: '/api/download-youtube-stream',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiDownloadYoutubeRoute = ApiDownloadYoutubeRouteImport.update({
-  id: '/api/download-youtube',
-  path: '/api/download-youtube',
+const ApiFreeTextRoute = ApiFreeTextRouteImport.update({
+  id: '/api/free-text',
+  path: '/api/free-text',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiDownloadTiktokRoute = ApiDownloadTiktokRouteImport.update({
-  id: '/api/download-tiktok',
-  path: '/api/download-tiktok',
+const ApiManageAnnouncementsRoute = ApiManageAnnouncementsRouteImport.update({
+  id: '/api/manage-announcements',
+  path: '/api/manage-announcements',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiDownloadPinterestRoute = ApiDownloadPinterestRouteImport.update({
-  id: '/api/download-pinterest',
-  path: '/api/download-pinterest',
+const ApiManageFeatureStatusRoute = ApiManageFeatureStatusRouteImport.update({
+  id: '/api/manage-feature-status',
+  path: '/api/manage-feature-status',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiDownloadKwaiRoute = ApiDownloadKwaiRouteImport.update({
-  id: '/api/download-kwai',
-  path: '/api/download-kwai',
+const ApiPlayerCatalogRoute = ApiPlayerCatalogRouteImport.update({
+  id: '/api/player-catalog',
+  path: '/api/player-catalog',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiDownloadInstagramRoute = ApiDownloadInstagramRouteImport.update({
-  id: '/api/download-instagram',
-  path: '/api/download-instagram',
+const ApiRemoveBgRoute = ApiRemoveBgRouteImport.update({
+  id: '/api/remove-bg',
+  path: '/api/remove-bg',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiDownloadFacebookRoute = ApiDownloadFacebookRouteImport.update({
-  id: '/api/download-facebook',
-  path: '/api/download-facebook',
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BlogRoute,
+} as any)
+const BlogBibliotecaQuadrinhosRoute =
+  BlogBibliotecaQuadrinhosRouteImport.update({
+    id: '/biblioteca-quadrinhos',
+    path: '/biblioteca-quadrinhos',
+    getParentRoute: () => BlogRoute,
+  } as any)
+const BlogComoBaixarVideosKwaiRoute =
+  BlogComoBaixarVideosKwaiRouteImport.update({
+    id: '/como-baixar-videos-kwai',
+    path: '/como-baixar-videos-kwai',
+    getParentRoute: () => BlogRoute,
+  } as any)
+const BlogComoBaixarVideosTiktokSemMarcaRoute =
+  BlogComoBaixarVideosTiktokSemMarcaRouteImport.update({
+    id: '/como-baixar-videos-tiktok-sem-marca',
+    path: '/como-baixar-videos-tiktok-sem-marca',
+    getParentRoute: () => BlogRoute,
+  } as any)
+const BlogComoBaixarVideosYoutubeRoute =
+  BlogComoBaixarVideosYoutubeRouteImport.update({
+    id: '/como-baixar-videos-youtube',
+    path: '/como-baixar-videos-youtube',
+    getParentRoute: () => BlogRoute,
+  } as any)
+const BlogComoExtrairAudioTiktokRoute =
+  BlogComoExtrairAudioTiktokRouteImport.update({
+    id: '/como-extrair-audio-tiktok',
+    path: '/como-extrair-audio-tiktok',
+    getParentRoute: () => BlogRoute,
+  } as any)
+const BlogComoNasceuClipsaveRoute = BlogComoNasceuClipsaveRouteImport.update({
+  id: '/como-nasceu-clipsave',
+  path: '/como-nasceu-clipsave',
+  getParentRoute: () => BlogRoute,
+} as any)
+const BlogComoNasceuSos01Route = BlogComoNasceuSos01RouteImport.update({
+  id: '/como-nasceu-sos01',
+  path: '/como-nasceu-sos01',
+  getParentRoute: () => BlogRoute,
+} as any)
+const BlogComoUsarDownloadersRoute = BlogComoUsarDownloadersRouteImport.update({
+  id: '/como-usar-downloaders',
+  path: '/como-usar-downloaders',
+  getParentRoute: () => BlogRoute,
+} as any)
+const BlogDicasCriadoresConteudoRoute =
+  BlogDicasCriadoresConteudoRouteImport.update({
+    id: '/dicas-criadores-conteudo',
+    path: '/dicas-criadores-conteudo',
+    getParentRoute: () => BlogRoute,
+  } as any)
+const BlogFerramentasGratuitasRoute =
+  BlogFerramentasGratuitasRouteImport.update({
+    id: '/ferramentas-gratuitas',
+    path: '/ferramentas-gratuitas',
+    getParentRoute: () => BlogRoute,
+  } as any)
+const BlogGuiaCompletoClipsaveRoute =
+  BlogGuiaCompletoClipsaveRouteImport.update({
+    id: '/guia-completo-clipsave',
+    path: '/guia-completo-clipsave',
+    getParentRoute: () => BlogRoute,
+  } as any)
+const BlogGuiaCompletoSos01Route = BlogGuiaCompletoSos01RouteImport.update({
+  id: '/guia-completo-sos01',
+  path: '/guia-completo-sos01',
+  getParentRoute: () => BlogRoute,
+} as any)
+const BlogJogosRetroGratisRoute = BlogJogosRetroGratisRouteImport.update({
+  id: '/jogos-retro-gratis',
+  path: '/jogos-retro-gratis',
+  getParentRoute: () => BlogRoute,
+} as any)
+const CategoriaSlugRoute = CategoriaSlugRouteImport.update({
+  id: '/categoria/$slug',
+  path: '/categoria/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiCanbosoRoute = ApiCanbosoRouteImport.update({
-  id: '/api/canboso',
-  path: '/api/canboso',
+const FerramentaSlugRoute = FerramentaSlugRouteImport.update({
+  id: '/ferramenta/$slug',
+  path: '/ferramenta/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiYoutubeInfoRoute = ApiYoutubeInfoRouteImport.update({
-  id: '/api/youtube/info',
-  path: '/api/youtube/info',
+const FerramentaMelhorarVideoRoute = FerramentaMelhorarVideoRouteImport.update({
+  id: '/ferramenta/melhorar-video',
+  path: '/ferramenta/melhorar-video',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiYoutubeFileRoute = ApiYoutubeFileRouteImport.update({
-  id: '/api/youtube/file',
-  path: '/api/youtube/file',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiYoutubeDownloadRoute = ApiYoutubeDownloadRouteImport.update({
-  id: '/api/youtube/download',
-  path: '/api/youtube/download',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiVideoEnhancerProcessRoute = ApiVideoEnhancerProcessRouteImport.update({
-  id: '/api/video-enhancer/process',
-  path: '/api/video-enhancer/process',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicPinterestDownloadRoute =
-  ApiPublicPinterestDownloadRouteImport.update({
-    id: '/api/public/pinterest-download',
-    path: '/api/public/pinterest-download',
+const FerramentasYoutubeDownloaderRoute =
+  FerramentasYoutubeDownloaderRouteImport.update({
+    id: '/ferramentas_/youtube-downloader',
+    path: '/ferramentas/youtube-downloader',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicMercadopagoWebhookRoute =
@@ -395,6 +369,32 @@ const ApiPublicMercadopagoWebhookRoute =
     path: '/api/public/mercadopago-webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicPinterestDownloadRoute =
+  ApiPublicPinterestDownloadRouteImport.update({
+    id: '/api/public/pinterest-download',
+    path: '/api/public/pinterest-download',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiVideoEnhancerProcessRoute = ApiVideoEnhancerProcessRouteImport.update({
+  id: '/api/video-enhancer/process',
+  path: '/api/video-enhancer/process',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiYoutubeDownloadRoute = ApiYoutubeDownloadRouteImport.update({
+  id: '/api/youtube/download',
+  path: '/api/youtube/download',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiYoutubeFileRoute = ApiYoutubeFileRouteImport.update({
+  id: '/api/youtube/file',
+  path: '/api/youtube/file',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiYoutubeInfoRoute = ApiYoutubeInfoRouteImport.update({
+  id: '/api/youtube/info',
+  path: '/api/youtube/info',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiYoutubeStatusRoute = ApiYoutubeStatusRouteImport.update({
   id: '/api/youtube/status/',
   path: '/api/youtube/status/',
@@ -847,165 +847,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/virus-do-bem': {
-      id: '/virus-do-bem'
-      path: '/virus-do-bem'
-      fullPath: '/virus-do-bem'
-      preLoaderRoute: typeof VirusDoBemRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/termos': {
-      id: '/termos'
-      path: '/termos'
-      fullPath: '/termos'
-      preLoaderRoute: typeof TermosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sobre': {
-      id: '/sobre'
-      path: '/sobre'
-      fullPath: '/sobre'
-      preLoaderRoute: typeof SobreRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacidade': {
-      id: '/privacidade'
-      path: '/privacidade'
-      fullPath: '/privacidade'
-      preLoaderRoute: typeof PrivacidadeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/precos': {
-      id: '/precos'
-      path: '/precos'
-      fullPath: '/precos'
-      preLoaderRoute: typeof PrecosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/player': {
-      id: '/player'
-      path: '/player'
-      fullPath: '/player'
-      preLoaderRoute: typeof PlayerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/perfil': {
-      id: '/perfil'
-      path: '/perfil'
-      fullPath: '/perfil'
-      preLoaderRoute: typeof PerfilRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/nasa': {
-      id: '/nasa'
-      path: '/nasa'
-      fullPath: '/nasa'
-      preLoaderRoute: typeof NasaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mais-sbt': {
-      id: '/mais-sbt'
-      path: '/mais-sbt'
-      fullPath: '/mais-sbt'
-      preLoaderRoute: typeof MaisSbtRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/loja': {
-      id: '/loja'
-      path: '/loja'
-      fullPath: '/loja'
-      preLoaderRoute: typeof LojaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/jogos-java': {
-      id: '/jogos-java'
-      path: '/jogos-java'
-      fullPath: '/jogos-java'
-      preLoaderRoute: typeof JogosJavaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/jogos': {
-      id: '/jogos'
-      path: '/jogos'
-      fullPath: '/jogos'
-      preLoaderRoute: typeof JogosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/iptv': {
-      id: '/iptv'
-      path: '/iptv'
-      fullPath: '/iptv'
-      preLoaderRoute: typeof IptvRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ferramentas': {
-      id: '/ferramentas'
-      path: '/ferramentas'
-      fullPath: '/ferramentas'
-      preLoaderRoute: typeof FerramentasRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dmca': {
-      id: '/dmca'
-      path: '/dmca'
-      fullPath: '/dmca'
-      preLoaderRoute: typeof DmcaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contato': {
-      id: '/contato'
-      path: '/contato'
-      fullPath: '/contato'
-      preLoaderRoute: typeof ContatoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/como-usar': {
-      id: '/como-usar'
-      path: '/como-usar'
-      fullPath: '/como-usar'
-      preLoaderRoute: typeof ComoUsarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/busca': {
-      id: '/busca'
-      path: '/busca'
-      fullPath: '/busca'
-      preLoaderRoute: typeof BuscaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/blog': {
-      id: '/blog'
-      path: '/blog'
-      fullPath: '/blog'
-      preLoaderRoute: typeof BlogRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/$': {
@@ -1015,221 +861,165 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/blog/': {
-      id: '/blog/'
-      path: '/'
-      fullPath: '/blog/'
-      preLoaderRoute: typeof BlogIndexRouteImport
-      parentRoute: typeof BlogRoute
-    }
-    '/ferramentas_/youtube-downloader': {
-      id: '/ferramentas_/youtube-downloader'
-      path: '/ferramentas/youtube-downloader'
-      fullPath: '/ferramentas/youtube-downloader'
-      preLoaderRoute: typeof FerramentasYoutubeDownloaderRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/ferramenta/melhorar-video': {
-      id: '/ferramenta/melhorar-video'
-      path: '/ferramenta/melhorar-video'
-      fullPath: '/ferramenta/melhorar-video'
-      preLoaderRoute: typeof FerramentaMelhorarVideoRouteImport
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/ferramenta/$slug': {
-      id: '/ferramenta/$slug'
-      path: '/ferramenta/$slug'
-      fullPath: '/ferramenta/$slug'
-      preLoaderRoute: typeof FerramentaSlugRouteImport
+    '/busca': {
+      id: '/busca'
+      path: '/busca'
+      fullPath: '/busca'
+      preLoaderRoute: typeof BuscaRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/categoria/$slug': {
-      id: '/categoria/$slug'
-      path: '/categoria/$slug'
-      fullPath: '/categoria/$slug'
-      preLoaderRoute: typeof CategoriaSlugRouteImport
+    '/como-usar': {
+      id: '/como-usar'
+      path: '/como-usar'
+      fullPath: '/como-usar'
+      preLoaderRoute: typeof ComoUsarRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/blog/jogos-retro-gratis': {
-      id: '/blog/jogos-retro-gratis'
-      path: '/jogos-retro-gratis'
-      fullPath: '/blog/jogos-retro-gratis'
-      preLoaderRoute: typeof BlogJogosRetroGratisRouteImport
-      parentRoute: typeof BlogRoute
-    }
-    '/blog/guia-completo-sos01': {
-      id: '/blog/guia-completo-sos01'
-      path: '/guia-completo-sos01'
-      fullPath: '/blog/guia-completo-sos01'
-      preLoaderRoute: typeof BlogGuiaCompletoSos01RouteImport
-      parentRoute: typeof BlogRoute
-    }
-    '/blog/guia-completo-clipsave': {
-      id: '/blog/guia-completo-clipsave'
-      path: '/guia-completo-clipsave'
-      fullPath: '/blog/guia-completo-clipsave'
-      preLoaderRoute: typeof BlogGuiaCompletoClipsaveRouteImport
-      parentRoute: typeof BlogRoute
-    }
-    '/blog/ferramentas-gratuitas': {
-      id: '/blog/ferramentas-gratuitas'
-      path: '/ferramentas-gratuitas'
-      fullPath: '/blog/ferramentas-gratuitas'
-      preLoaderRoute: typeof BlogFerramentasGratuitasRouteImport
-      parentRoute: typeof BlogRoute
-    }
-    '/blog/dicas-criadores-conteudo': {
-      id: '/blog/dicas-criadores-conteudo'
-      path: '/dicas-criadores-conteudo'
-      fullPath: '/blog/dicas-criadores-conteudo'
-      preLoaderRoute: typeof BlogDicasCriadoresConteudoRouteImport
-      parentRoute: typeof BlogRoute
-    }
-    '/blog/como-usar-downloaders': {
-      id: '/blog/como-usar-downloaders'
-      path: '/como-usar-downloaders'
-      fullPath: '/blog/como-usar-downloaders'
-      preLoaderRoute: typeof BlogComoUsarDownloadersRouteImport
-      parentRoute: typeof BlogRoute
-    }
-    '/blog/como-nasceu-sos01': {
-      id: '/blog/como-nasceu-sos01'
-      path: '/como-nasceu-sos01'
-      fullPath: '/blog/como-nasceu-sos01'
-      preLoaderRoute: typeof BlogComoNasceuSos01RouteImport
-      parentRoute: typeof BlogRoute
-    }
-    '/blog/como-nasceu-clipsave': {
-      id: '/blog/como-nasceu-clipsave'
-      path: '/como-nasceu-clipsave'
-      fullPath: '/blog/como-nasceu-clipsave'
-      preLoaderRoute: typeof BlogComoNasceuClipsaveRouteImport
-      parentRoute: typeof BlogRoute
-    }
-    '/blog/como-extrair-audio-tiktok': {
-      id: '/blog/como-extrair-audio-tiktok'
-      path: '/como-extrair-audio-tiktok'
-      fullPath: '/blog/como-extrair-audio-tiktok'
-      preLoaderRoute: typeof BlogComoExtrairAudioTiktokRouteImport
-      parentRoute: typeof BlogRoute
-    }
-    '/blog/como-baixar-videos-youtube': {
-      id: '/blog/como-baixar-videos-youtube'
-      path: '/como-baixar-videos-youtube'
-      fullPath: '/blog/como-baixar-videos-youtube'
-      preLoaderRoute: typeof BlogComoBaixarVideosYoutubeRouteImport
-      parentRoute: typeof BlogRoute
-    }
-    '/blog/como-baixar-videos-tiktok-sem-marca': {
-      id: '/blog/como-baixar-videos-tiktok-sem-marca'
-      path: '/como-baixar-videos-tiktok-sem-marca'
-      fullPath: '/blog/como-baixar-videos-tiktok-sem-marca'
-      preLoaderRoute: typeof BlogComoBaixarVideosTiktokSemMarcaRouteImport
-      parentRoute: typeof BlogRoute
-    }
-    '/blog/como-baixar-videos-kwai': {
-      id: '/blog/como-baixar-videos-kwai'
-      path: '/como-baixar-videos-kwai'
-      fullPath: '/blog/como-baixar-videos-kwai'
-      preLoaderRoute: typeof BlogComoBaixarVideosKwaiRouteImport
-      parentRoute: typeof BlogRoute
-    }
-    '/blog/biblioteca-quadrinhos': {
-      id: '/blog/biblioteca-quadrinhos'
-      path: '/biblioteca-quadrinhos'
-      fullPath: '/blog/biblioteca-quadrinhos'
-      preLoaderRoute: typeof BlogBibliotecaQuadrinhosRouteImport
-      parentRoute: typeof BlogRoute
-    }
-    '/api/remove-bg': {
-      id: '/api/remove-bg'
-      path: '/api/remove-bg'
-      fullPath: '/api/remove-bg'
-      preLoaderRoute: typeof ApiRemoveBgRouteImport
+    '/contato': {
+      id: '/contato'
+      path: '/contato'
+      fullPath: '/contato'
+      preLoaderRoute: typeof ContatoRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/player-catalog': {
-      id: '/api/player-catalog'
-      path: '/api/player-catalog'
-      fullPath: '/api/player-catalog'
-      preLoaderRoute: typeof ApiPlayerCatalogRouteImport
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/manage-feature-status': {
-      id: '/api/manage-feature-status'
-      path: '/api/manage-feature-status'
-      fullPath: '/api/manage-feature-status'
-      preLoaderRoute: typeof ApiManageFeatureStatusRouteImport
+    '/dmca': {
+      id: '/dmca'
+      path: '/dmca'
+      fullPath: '/dmca'
+      preLoaderRoute: typeof DmcaRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/manage-announcements': {
-      id: '/api/manage-announcements'
-      path: '/api/manage-announcements'
-      fullPath: '/api/manage-announcements'
-      preLoaderRoute: typeof ApiManageAnnouncementsRouteImport
+    '/ferramentas': {
+      id: '/ferramentas'
+      path: '/ferramentas'
+      fullPath: '/ferramentas'
+      preLoaderRoute: typeof FerramentasRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/free-text': {
-      id: '/api/free-text'
-      path: '/api/free-text'
-      fullPath: '/api/free-text'
-      preLoaderRoute: typeof ApiFreeTextRouteImport
+    '/iptv': {
+      id: '/iptv'
+      path: '/iptv'
+      fullPath: '/iptv'
+      preLoaderRoute: typeof IptvRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/download-youtube-stream': {
-      id: '/api/download-youtube-stream'
-      path: '/api/download-youtube-stream'
-      fullPath: '/api/download-youtube-stream'
-      preLoaderRoute: typeof ApiDownloadYoutubeStreamRouteImport
+    '/jogos': {
+      id: '/jogos'
+      path: '/jogos'
+      fullPath: '/jogos'
+      preLoaderRoute: typeof JogosRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/download-youtube': {
-      id: '/api/download-youtube'
-      path: '/api/download-youtube'
-      fullPath: '/api/download-youtube'
-      preLoaderRoute: typeof ApiDownloadYoutubeRouteImport
+    '/jogos-java': {
+      id: '/jogos-java'
+      path: '/jogos-java'
+      fullPath: '/jogos-java'
+      preLoaderRoute: typeof JogosJavaRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/download-tiktok': {
-      id: '/api/download-tiktok'
-      path: '/api/download-tiktok'
-      fullPath: '/api/download-tiktok'
-      preLoaderRoute: typeof ApiDownloadTiktokRouteImport
+    '/loja': {
+      id: '/loja'
+      path: '/loja'
+      fullPath: '/loja'
+      preLoaderRoute: typeof LojaRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/download-pinterest': {
-      id: '/api/download-pinterest'
-      path: '/api/download-pinterest'
-      fullPath: '/api/download-pinterest'
-      preLoaderRoute: typeof ApiDownloadPinterestRouteImport
+    '/mais-sbt': {
+      id: '/mais-sbt'
+      path: '/mais-sbt'
+      fullPath: '/mais-sbt'
+      preLoaderRoute: typeof MaisSbtRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/download-kwai': {
-      id: '/api/download-kwai'
-      path: '/api/download-kwai'
-      fullPath: '/api/download-kwai'
-      preLoaderRoute: typeof ApiDownloadKwaiRouteImport
+    '/nasa': {
+      id: '/nasa'
+      path: '/nasa'
+      fullPath: '/nasa'
+      preLoaderRoute: typeof NasaRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/download-instagram': {
-      id: '/api/download-instagram'
-      path: '/api/download-instagram'
-      fullPath: '/api/download-instagram'
-      preLoaderRoute: typeof ApiDownloadInstagramRouteImport
+    '/perfil': {
+      id: '/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof PerfilRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/download-facebook': {
-      id: '/api/download-facebook'
-      path: '/api/download-facebook'
-      fullPath: '/api/download-facebook'
-      preLoaderRoute: typeof ApiDownloadFacebookRouteImport
+    '/player': {
+      id: '/player'
+      path: '/player'
+      fullPath: '/player'
+      preLoaderRoute: typeof PlayerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/precos': {
+      id: '/precos'
+      path: '/precos'
+      fullPath: '/precos'
+      preLoaderRoute: typeof PrecosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacidade': {
+      id: '/privacidade'
+      path: '/privacidade'
+      fullPath: '/privacidade'
+      preLoaderRoute: typeof PrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sobre': {
+      id: '/sobre'
+      path: '/sobre'
+      fullPath: '/sobre'
+      preLoaderRoute: typeof SobreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/termos': {
+      id: '/termos'
+      path: '/termos'
+      fullPath: '/termos'
+      preLoaderRoute: typeof TermosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/virus-do-bem': {
+      id: '/virus-do-bem'
+      path: '/virus-do-bem'
+      fullPath: '/virus-do-bem'
+      preLoaderRoute: typeof VirusDoBemRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/canboso': {
@@ -1239,32 +1029,221 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCanbosoRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/youtube/info': {
-      id: '/api/youtube/info'
-      path: '/api/youtube/info'
-      fullPath: '/api/youtube/info'
-      preLoaderRoute: typeof ApiYoutubeInfoRouteImport
+    '/api/download-facebook': {
+      id: '/api/download-facebook'
+      path: '/api/download-facebook'
+      fullPath: '/api/download-facebook'
+      preLoaderRoute: typeof ApiDownloadFacebookRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/youtube/file': {
-      id: '/api/youtube/file'
-      path: '/api/youtube/file'
-      fullPath: '/api/youtube/file'
-      preLoaderRoute: typeof ApiYoutubeFileRouteImport
+    '/api/download-instagram': {
+      id: '/api/download-instagram'
+      path: '/api/download-instagram'
+      fullPath: '/api/download-instagram'
+      preLoaderRoute: typeof ApiDownloadInstagramRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/youtube/download': {
-      id: '/api/youtube/download'
-      path: '/api/youtube/download'
-      fullPath: '/api/youtube/download'
-      preLoaderRoute: typeof ApiYoutubeDownloadRouteImport
+    '/api/download-kwai': {
+      id: '/api/download-kwai'
+      path: '/api/download-kwai'
+      fullPath: '/api/download-kwai'
+      preLoaderRoute: typeof ApiDownloadKwaiRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/video-enhancer/process': {
-      id: '/api/video-enhancer/process'
-      path: '/api/video-enhancer/process'
-      fullPath: '/api/video-enhancer/process'
-      preLoaderRoute: typeof ApiVideoEnhancerProcessRouteImport
+    '/api/download-pinterest': {
+      id: '/api/download-pinterest'
+      path: '/api/download-pinterest'
+      fullPath: '/api/download-pinterest'
+      preLoaderRoute: typeof ApiDownloadPinterestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/download-tiktok': {
+      id: '/api/download-tiktok'
+      path: '/api/download-tiktok'
+      fullPath: '/api/download-tiktok'
+      preLoaderRoute: typeof ApiDownloadTiktokRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/download-youtube': {
+      id: '/api/download-youtube'
+      path: '/api/download-youtube'
+      fullPath: '/api/download-youtube'
+      preLoaderRoute: typeof ApiDownloadYoutubeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/download-youtube-stream': {
+      id: '/api/download-youtube-stream'
+      path: '/api/download-youtube-stream'
+      fullPath: '/api/download-youtube-stream'
+      preLoaderRoute: typeof ApiDownloadYoutubeStreamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/free-text': {
+      id: '/api/free-text'
+      path: '/api/free-text'
+      fullPath: '/api/free-text'
+      preLoaderRoute: typeof ApiFreeTextRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/manage-announcements': {
+      id: '/api/manage-announcements'
+      path: '/api/manage-announcements'
+      fullPath: '/api/manage-announcements'
+      preLoaderRoute: typeof ApiManageAnnouncementsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/manage-feature-status': {
+      id: '/api/manage-feature-status'
+      path: '/api/manage-feature-status'
+      fullPath: '/api/manage-feature-status'
+      preLoaderRoute: typeof ApiManageFeatureStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/player-catalog': {
+      id: '/api/player-catalog'
+      path: '/api/player-catalog'
+      fullPath: '/api/player-catalog'
+      preLoaderRoute: typeof ApiPlayerCatalogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/remove-bg': {
+      id: '/api/remove-bg'
+      path: '/api/remove-bg'
+      fullPath: '/api/remove-bg'
+      preLoaderRoute: typeof ApiRemoveBgRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/': {
+      id: '/blog/'
+      path: '/'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof BlogRoute
+    }
+    '/blog/biblioteca-quadrinhos': {
+      id: '/blog/biblioteca-quadrinhos'
+      path: '/biblioteca-quadrinhos'
+      fullPath: '/blog/biblioteca-quadrinhos'
+      preLoaderRoute: typeof BlogBibliotecaQuadrinhosRouteImport
+      parentRoute: typeof BlogRoute
+    }
+    '/blog/como-baixar-videos-kwai': {
+      id: '/blog/como-baixar-videos-kwai'
+      path: '/como-baixar-videos-kwai'
+      fullPath: '/blog/como-baixar-videos-kwai'
+      preLoaderRoute: typeof BlogComoBaixarVideosKwaiRouteImport
+      parentRoute: typeof BlogRoute
+    }
+    '/blog/como-baixar-videos-tiktok-sem-marca': {
+      id: '/blog/como-baixar-videos-tiktok-sem-marca'
+      path: '/como-baixar-videos-tiktok-sem-marca'
+      fullPath: '/blog/como-baixar-videos-tiktok-sem-marca'
+      preLoaderRoute: typeof BlogComoBaixarVideosTiktokSemMarcaRouteImport
+      parentRoute: typeof BlogRoute
+    }
+    '/blog/como-baixar-videos-youtube': {
+      id: '/blog/como-baixar-videos-youtube'
+      path: '/como-baixar-videos-youtube'
+      fullPath: '/blog/como-baixar-videos-youtube'
+      preLoaderRoute: typeof BlogComoBaixarVideosYoutubeRouteImport
+      parentRoute: typeof BlogRoute
+    }
+    '/blog/como-extrair-audio-tiktok': {
+      id: '/blog/como-extrair-audio-tiktok'
+      path: '/como-extrair-audio-tiktok'
+      fullPath: '/blog/como-extrair-audio-tiktok'
+      preLoaderRoute: typeof BlogComoExtrairAudioTiktokRouteImport
+      parentRoute: typeof BlogRoute
+    }
+    '/blog/como-nasceu-clipsave': {
+      id: '/blog/como-nasceu-clipsave'
+      path: '/como-nasceu-clipsave'
+      fullPath: '/blog/como-nasceu-clipsave'
+      preLoaderRoute: typeof BlogComoNasceuClipsaveRouteImport
+      parentRoute: typeof BlogRoute
+    }
+    '/blog/como-nasceu-sos01': {
+      id: '/blog/como-nasceu-sos01'
+      path: '/como-nasceu-sos01'
+      fullPath: '/blog/como-nasceu-sos01'
+      preLoaderRoute: typeof BlogComoNasceuSos01RouteImport
+      parentRoute: typeof BlogRoute
+    }
+    '/blog/como-usar-downloaders': {
+      id: '/blog/como-usar-downloaders'
+      path: '/como-usar-downloaders'
+      fullPath: '/blog/como-usar-downloaders'
+      preLoaderRoute: typeof BlogComoUsarDownloadersRouteImport
+      parentRoute: typeof BlogRoute
+    }
+    '/blog/dicas-criadores-conteudo': {
+      id: '/blog/dicas-criadores-conteudo'
+      path: '/dicas-criadores-conteudo'
+      fullPath: '/blog/dicas-criadores-conteudo'
+      preLoaderRoute: typeof BlogDicasCriadoresConteudoRouteImport
+      parentRoute: typeof BlogRoute
+    }
+    '/blog/ferramentas-gratuitas': {
+      id: '/blog/ferramentas-gratuitas'
+      path: '/ferramentas-gratuitas'
+      fullPath: '/blog/ferramentas-gratuitas'
+      preLoaderRoute: typeof BlogFerramentasGratuitasRouteImport
+      parentRoute: typeof BlogRoute
+    }
+    '/blog/guia-completo-clipsave': {
+      id: '/blog/guia-completo-clipsave'
+      path: '/guia-completo-clipsave'
+      fullPath: '/blog/guia-completo-clipsave'
+      preLoaderRoute: typeof BlogGuiaCompletoClipsaveRouteImport
+      parentRoute: typeof BlogRoute
+    }
+    '/blog/guia-completo-sos01': {
+      id: '/blog/guia-completo-sos01'
+      path: '/guia-completo-sos01'
+      fullPath: '/blog/guia-completo-sos01'
+      preLoaderRoute: typeof BlogGuiaCompletoSos01RouteImport
+      parentRoute: typeof BlogRoute
+    }
+    '/blog/jogos-retro-gratis': {
+      id: '/blog/jogos-retro-gratis'
+      path: '/jogos-retro-gratis'
+      fullPath: '/blog/jogos-retro-gratis'
+      preLoaderRoute: typeof BlogJogosRetroGratisRouteImport
+      parentRoute: typeof BlogRoute
+    }
+    '/categoria/$slug': {
+      id: '/categoria/$slug'
+      path: '/categoria/$slug'
+      fullPath: '/categoria/$slug'
+      preLoaderRoute: typeof CategoriaSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ferramenta/$slug': {
+      id: '/ferramenta/$slug'
+      path: '/ferramenta/$slug'
+      fullPath: '/ferramenta/$slug'
+      preLoaderRoute: typeof FerramentaSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ferramenta/melhorar-video': {
+      id: '/ferramenta/melhorar-video'
+      path: '/ferramenta/melhorar-video'
+      fullPath: '/ferramenta/melhorar-video'
+      preLoaderRoute: typeof FerramentaMelhorarVideoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ferramentas_/youtube-downloader': {
+      id: '/ferramentas_/youtube-downloader'
+      path: '/ferramentas/youtube-downloader'
+      fullPath: '/ferramentas/youtube-downloader'
+      preLoaderRoute: typeof FerramentasYoutubeDownloaderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/mercadopago-webhook': {
+      id: '/api/public/mercadopago-webhook'
+      path: '/api/public/mercadopago-webhook'
+      fullPath: '/api/public/mercadopago-webhook'
+      preLoaderRoute: typeof ApiPublicMercadopagoWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/pinterest-download': {
@@ -1274,11 +1253,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPinterestDownloadRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/mercadopago-webhook': {
-      id: '/api/public/mercadopago-webhook'
-      path: '/api/public/mercadopago-webhook'
-      fullPath: '/api/public/mercadopago-webhook'
-      preLoaderRoute: typeof ApiPublicMercadopagoWebhookRouteImport
+    '/api/video-enhancer/process': {
+      id: '/api/video-enhancer/process'
+      path: '/api/video-enhancer/process'
+      fullPath: '/api/video-enhancer/process'
+      preLoaderRoute: typeof ApiVideoEnhancerProcessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/youtube/download': {
+      id: '/api/youtube/download'
+      path: '/api/youtube/download'
+      fullPath: '/api/youtube/download'
+      preLoaderRoute: typeof ApiYoutubeDownloadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/youtube/file': {
+      id: '/api/youtube/file'
+      path: '/api/youtube/file'
+      fullPath: '/api/youtube/file'
+      preLoaderRoute: typeof ApiYoutubeFileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/youtube/info': {
+      id: '/api/youtube/info'
+      path: '/api/youtube/info'
+      fullPath: '/api/youtube/info'
+      preLoaderRoute: typeof ApiYoutubeInfoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/youtube/status/': {
