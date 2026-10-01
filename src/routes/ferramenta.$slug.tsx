@@ -19,7 +19,7 @@ export const Route = createFileRoute("/ferramenta/$slug")({
   ),
   errorComponent: ({ error }) => (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <p className="text-destructive text-center">Erro: {error.message}</p>
+      <p className="text-destructive text-center">Erro: {(error as Error).message}</p>
     </div>
   ),
   head: ({ params }) => {

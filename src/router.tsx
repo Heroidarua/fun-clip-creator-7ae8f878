@@ -73,7 +73,7 @@ export const getRouter = () => {
     defaultPreloadDelay: 0,
     defaultPreloadStaleTime: 60_000,
     defaultPendingMs: 0,
-    defaultErrorComponent: DefaultErrorComponent,
+    defaultErrorComponent: DefaultErrorComponent as any,
     ssr: { nonce: startContext?.cspNonce },
   });
 
