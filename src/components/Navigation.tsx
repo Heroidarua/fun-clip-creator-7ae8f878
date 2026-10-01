@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, Search, Wrench, Gamepad2, Globe2, Tv, Radio, PlayCircle, BookOpen, Share2, PanelLeftClose, PanelLeftOpen, Menu, X, Plane, Ship, CloudLightning, Activity, Stars, Lock, Megaphone } from "lucide-react";
+import { Home, Search, Wrench, Gamepad2, Globe2, Tv, Radio, PlayCircle, BookOpen, Share2, PanelLeftClose, PanelLeftOpen, Menu, X, Plane, Ship, CloudLightning, Activity, Stars, Lock, Megaphone, ShoppingBag } from "lucide-react";
 import { useState, useEffect } from "react";
 import IPTVModal from "./IPTVModal";
 import ThemeToggle from "./ThemeToggle";
@@ -28,6 +28,7 @@ const ITEMS = [
   { to: "/iptv", label: "PLUTO TV", icon: Radio, desc: "Canais" },
   { to: "/player", label: "IPTV 1.0", icon: PlayCircle, desc: "Premium" },
   { to: "/blog", label: "Blog", icon: BookOpen, desc: "Notícias" },
+  { to: "/loja", label: "Loja", icon: ShoppingBag, desc: "Digital Haven" },
   
 ] as const;
 
