@@ -19,6 +19,7 @@ import { Route as PlayerRouteImport } from './routes/player'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as NasaRouteImport } from './routes/nasa'
 import { Route as MaisSbtRouteImport } from './routes/mais-sbt'
+import { Route as LojaRouteImport } from './routes/loja'
 import { Route as JogosJavaRouteImport } from './routes/jogos-java'
 import { Route as JogosRouteImport } from './routes/jogos'
 import { Route as IptvRouteImport } from './routes/iptv'
@@ -63,6 +64,7 @@ import { Route as ApiDownloadPinterestRouteImport } from './routes/api.download-
 import { Route as ApiDownloadKwaiRouteImport } from './routes/api.download-kwai'
 import { Route as ApiDownloadInstagramRouteImport } from './routes/api.download-instagram'
 import { Route as ApiDownloadFacebookRouteImport } from './routes/api.download-facebook'
+import { Route as ApiCanbosoRouteImport } from './routes/api.canboso'
 import { Route as ApiYoutubeInfoRouteImport } from './routes/api.youtube.info'
 import { Route as ApiYoutubeFileRouteImport } from './routes/api.youtube.file'
 import { Route as ApiYoutubeDownloadRouteImport } from './routes/api.youtube.download'
@@ -119,6 +121,11 @@ const NasaRoute = NasaRouteImport.update({
 const MaisSbtRoute = MaisSbtRouteImport.update({
   id: '/mais-sbt',
   path: '/mais-sbt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LojaRoute = LojaRouteImport.update({
+  id: '/loja',
+  path: '/loja',
   getParentRoute: () => rootRouteImport,
 } as any)
 const JogosJavaRoute = JogosJavaRouteImport.update({
@@ -351,6 +358,11 @@ const ApiDownloadFacebookRoute = ApiDownloadFacebookRouteImport.update({
   path: '/api/download-facebook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCanbosoRoute = ApiCanbosoRouteImport.update({
+  id: '/api/canboso',
+  path: '/api/canboso',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiYoutubeInfoRoute = ApiYoutubeInfoRouteImport.update({
   id: '/api/youtube/info',
   path: '/api/youtube/info',
@@ -404,6 +416,7 @@ export interface FileRoutesByFullPath {
   '/iptv': typeof IptvRoute
   '/jogos': typeof JogosRoute
   '/jogos-java': typeof JogosJavaRoute
+  '/loja': typeof LojaRoute
   '/mais-sbt': typeof MaisSbtRoute
   '/nasa': typeof NasaRoute
   '/perfil': typeof PerfilRoute
@@ -414,6 +427,7 @@ export interface FileRoutesByFullPath {
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
   '/virus-do-bem': typeof VirusDoBemRoute
+  '/api/canboso': typeof ApiCanbosoRoute
   '/api/download-facebook': typeof ApiDownloadFacebookRoute
   '/api/download-instagram': typeof ApiDownloadInstagramRoute
   '/api/download-kwai': typeof ApiDownloadKwaiRoute
@@ -466,6 +480,7 @@ export interface FileRoutesByTo {
   '/iptv': typeof IptvRoute
   '/jogos': typeof JogosRoute
   '/jogos-java': typeof JogosJavaRoute
+  '/loja': typeof LojaRoute
   '/mais-sbt': typeof MaisSbtRoute
   '/nasa': typeof NasaRoute
   '/perfil': typeof PerfilRoute
@@ -476,6 +491,7 @@ export interface FileRoutesByTo {
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
   '/virus-do-bem': typeof VirusDoBemRoute
+  '/api/canboso': typeof ApiCanbosoRoute
   '/api/download-facebook': typeof ApiDownloadFacebookRoute
   '/api/download-instagram': typeof ApiDownloadInstagramRoute
   '/api/download-kwai': typeof ApiDownloadKwaiRoute
@@ -530,6 +546,7 @@ export interface FileRoutesById {
   '/iptv': typeof IptvRoute
   '/jogos': typeof JogosRoute
   '/jogos-java': typeof JogosJavaRoute
+  '/loja': typeof LojaRoute
   '/mais-sbt': typeof MaisSbtRoute
   '/nasa': typeof NasaRoute
   '/perfil': typeof PerfilRoute
@@ -540,6 +557,7 @@ export interface FileRoutesById {
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
   '/virus-do-bem': typeof VirusDoBemRoute
+  '/api/canboso': typeof ApiCanbosoRoute
   '/api/download-facebook': typeof ApiDownloadFacebookRoute
   '/api/download-instagram': typeof ApiDownloadInstagramRoute
   '/api/download-kwai': typeof ApiDownloadKwaiRoute
@@ -595,6 +613,7 @@ export interface FileRouteTypes {
     | '/iptv'
     | '/jogos'
     | '/jogos-java'
+    | '/loja'
     | '/mais-sbt'
     | '/nasa'
     | '/perfil'
@@ -605,6 +624,7 @@ export interface FileRouteTypes {
     | '/sobre'
     | '/termos'
     | '/virus-do-bem'
+    | '/api/canboso'
     | '/api/download-facebook'
     | '/api/download-instagram'
     | '/api/download-kwai'
@@ -657,6 +677,7 @@ export interface FileRouteTypes {
     | '/iptv'
     | '/jogos'
     | '/jogos-java'
+    | '/loja'
     | '/mais-sbt'
     | '/nasa'
     | '/perfil'
@@ -667,6 +688,7 @@ export interface FileRouteTypes {
     | '/sobre'
     | '/termos'
     | '/virus-do-bem'
+    | '/api/canboso'
     | '/api/download-facebook'
     | '/api/download-instagram'
     | '/api/download-kwai'
@@ -720,6 +742,7 @@ export interface FileRouteTypes {
     | '/iptv'
     | '/jogos'
     | '/jogos-java'
+    | '/loja'
     | '/mais-sbt'
     | '/nasa'
     | '/perfil'
@@ -730,6 +753,7 @@ export interface FileRouteTypes {
     | '/sobre'
     | '/termos'
     | '/virus-do-bem'
+    | '/api/canboso'
     | '/api/download-facebook'
     | '/api/download-instagram'
     | '/api/download-kwai'
@@ -784,6 +808,7 @@ export interface RootRouteChildren {
   IptvRoute: typeof IptvRoute
   JogosRoute: typeof JogosRoute
   JogosJavaRoute: typeof JogosJavaRoute
+  LojaRoute: typeof LojaRoute
   MaisSbtRoute: typeof MaisSbtRoute
   NasaRoute: typeof NasaRoute
   PerfilRoute: typeof PerfilRoute
@@ -794,6 +819,7 @@ export interface RootRouteChildren {
   SobreRoute: typeof SobreRoute
   TermosRoute: typeof TermosRoute
   VirusDoBemRoute: typeof VirusDoBemRoute
+  ApiCanbosoRoute: typeof ApiCanbosoRoute
   ApiDownloadFacebookRoute: typeof ApiDownloadFacebookRoute
   ApiDownloadInstagramRoute: typeof ApiDownloadInstagramRoute
   ApiDownloadKwaiRoute: typeof ApiDownloadKwaiRoute
@@ -889,6 +915,13 @@ declare module '@tanstack/react-router' {
       path: '/mais-sbt'
       fullPath: '/mais-sbt'
       preLoaderRoute: typeof MaisSbtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/loja': {
+      id: '/loja'
+      path: '/loja'
+      fullPath: '/loja'
+      preLoaderRoute: typeof LojaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/jogos-java': {
@@ -1199,6 +1232,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiDownloadFacebookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/canboso': {
+      id: '/api/canboso'
+      path: '/api/canboso'
+      fullPath: '/api/canboso'
+      preLoaderRoute: typeof ApiCanbosoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/youtube/info': {
       id: '/api/youtube/info'
       path: '/api/youtube/info'
@@ -1303,6 +1343,7 @@ const rootRouteChildren: RootRouteChildren = {
   IptvRoute: IptvRoute,
   JogosRoute: JogosRoute,
   JogosJavaRoute: JogosJavaRoute,
+  LojaRoute: LojaRoute,
   MaisSbtRoute: MaisSbtRoute,
   NasaRoute: NasaRoute,
   PerfilRoute: PerfilRoute,
@@ -1313,6 +1354,7 @@ const rootRouteChildren: RootRouteChildren = {
   SobreRoute: SobreRoute,
   TermosRoute: TermosRoute,
   VirusDoBemRoute: VirusDoBemRoute,
+  ApiCanbosoRoute: ApiCanbosoRoute,
   ApiDownloadFacebookRoute: ApiDownloadFacebookRoute,
   ApiDownloadInstagramRoute: ApiDownloadInstagramRoute,
   ApiDownloadKwaiRoute: ApiDownloadKwaiRoute,
