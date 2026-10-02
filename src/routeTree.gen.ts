@@ -35,6 +35,7 @@ import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as TermosRouteImport } from './routes/termos'
 import { Route as VirusDoBemRouteImport } from './routes/virus-do-bem'
 import { Route as ApiCanbosoRouteImport } from './routes/api.canboso'
+import { Route as ApiCanbosoCheckoutRouteImport } from './routes/api.canboso-checkout'
 import { Route as ApiDownloadFacebookRouteImport } from './routes/api.download-facebook'
 import { Route as ApiDownloadInstagramRouteImport } from './routes/api.download-instagram'
 import { Route as ApiDownloadKwaiRouteImport } from './routes/api.download-kwai'
@@ -201,6 +202,11 @@ const VirusDoBemRoute = VirusDoBemRouteImport.update({
 const ApiCanbosoRoute = ApiCanbosoRouteImport.update({
   id: '/api/canboso',
   path: '/api/canboso',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCanbosoCheckoutRoute = ApiCanbosoCheckoutRouteImport.update({
+  id: '/api/canboso-checkout',
+  path: '/api/canboso-checkout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiDownloadFacebookRoute = ApiDownloadFacebookRouteImport.update({
@@ -428,6 +434,7 @@ export interface FileRoutesByFullPath {
   '/termos': typeof TermosRoute
   '/virus-do-bem': typeof VirusDoBemRoute
   '/api/canboso': typeof ApiCanbosoRoute
+  '/api/canboso-checkout': typeof ApiCanbosoCheckoutRoute
   '/api/download-facebook': typeof ApiDownloadFacebookRoute
   '/api/download-instagram': typeof ApiDownloadInstagramRoute
   '/api/download-kwai': typeof ApiDownloadKwaiRoute
@@ -492,6 +499,7 @@ export interface FileRoutesByTo {
   '/termos': typeof TermosRoute
   '/virus-do-bem': typeof VirusDoBemRoute
   '/api/canboso': typeof ApiCanbosoRoute
+  '/api/canboso-checkout': typeof ApiCanbosoCheckoutRoute
   '/api/download-facebook': typeof ApiDownloadFacebookRoute
   '/api/download-instagram': typeof ApiDownloadInstagramRoute
   '/api/download-kwai': typeof ApiDownloadKwaiRoute
@@ -558,6 +566,7 @@ export interface FileRoutesById {
   '/termos': typeof TermosRoute
   '/virus-do-bem': typeof VirusDoBemRoute
   '/api/canboso': typeof ApiCanbosoRoute
+  '/api/canboso-checkout': typeof ApiCanbosoCheckoutRoute
   '/api/download-facebook': typeof ApiDownloadFacebookRoute
   '/api/download-instagram': typeof ApiDownloadInstagramRoute
   '/api/download-kwai': typeof ApiDownloadKwaiRoute
@@ -625,6 +634,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/virus-do-bem'
     | '/api/canboso'
+    | '/api/canboso-checkout'
     | '/api/download-facebook'
     | '/api/download-instagram'
     | '/api/download-kwai'
@@ -689,6 +699,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/virus-do-bem'
     | '/api/canboso'
+    | '/api/canboso-checkout'
     | '/api/download-facebook'
     | '/api/download-instagram'
     | '/api/download-kwai'
@@ -754,6 +765,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/virus-do-bem'
     | '/api/canboso'
+    | '/api/canboso-checkout'
     | '/api/download-facebook'
     | '/api/download-instagram'
     | '/api/download-kwai'
@@ -820,6 +832,7 @@ export interface RootRouteChildren {
   TermosRoute: typeof TermosRoute
   VirusDoBemRoute: typeof VirusDoBemRoute
   ApiCanbosoRoute: typeof ApiCanbosoRoute
+  ApiCanbosoCheckoutRoute: typeof ApiCanbosoCheckoutRoute
   ApiDownloadFacebookRoute: typeof ApiDownloadFacebookRoute
   ApiDownloadInstagramRoute: typeof ApiDownloadInstagramRoute
   ApiDownloadKwaiRoute: typeof ApiDownloadKwaiRoute
@@ -1027,6 +1040,13 @@ declare module '@tanstack/react-router' {
       path: '/api/canboso'
       fullPath: '/api/canboso'
       preLoaderRoute: typeof ApiCanbosoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/canboso-checkout': {
+      id: '/api/canboso-checkout'
+      path: '/api/canboso-checkout'
+      fullPath: '/api/canboso-checkout'
+      preLoaderRoute: typeof ApiCanbosoCheckoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/download-facebook': {
@@ -1355,6 +1375,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermosRoute: TermosRoute,
   VirusDoBemRoute: VirusDoBemRoute,
   ApiCanbosoRoute: ApiCanbosoRoute,
+  ApiCanbosoCheckoutRoute: ApiCanbosoCheckoutRoute,
   ApiDownloadFacebookRoute: ApiDownloadFacebookRoute,
   ApiDownloadInstagramRoute: ApiDownloadInstagramRoute,
   ApiDownloadKwaiRoute: ApiDownloadKwaiRoute,
