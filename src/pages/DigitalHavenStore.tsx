@@ -1,5 +1,4 @@
-import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Search, ShieldCheck, Loader2, ShoppingBag, X, AlertTriangle } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -27,7 +26,18 @@ async function fetchProducts(): Promise<Product[]> {
 }
 
 const DigitalHavenStore = () => {
-  const { data, isLoading, error, refetch } = useQuery({ queryKey: ["canboso-products"], queryFn: fetchProducts, staleTime: 60_000 });
+  const [data, setData] = useState<Product[] | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+  const refetch = useCallback(() => {
+    setIsLoading(true);
+    setError(null);
+    fetchProducts()
+      .then(setData)
+      .catch((e: Error) => setError(e))
+      .finally(() => setIsLoading(false));
+  }, []);
+  useEffect(() => { refetch(); }, [refetch]);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<(typeof CATEGORIES)[number]>("Todos");
   const [selected, setSelected] = useState<Product | null>(null);
