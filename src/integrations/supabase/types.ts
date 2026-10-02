@@ -801,6 +801,66 @@ export type Database = {
         }
         Relationships: []
       }
+      store_orders: {
+        Row: {
+          amount_brl: number
+          created_at: string
+          customer_email: string | null
+          delivered_data: Json | null
+          error_message: string | null
+          expires_at: string | null
+          fee_brl: number
+          id: string
+          mp_payment_id: string | null
+          paid_at: string | null
+          product_id: string
+          product_name: string
+          qr_code: string | null
+          qr_code_base64: string | null
+          quantity: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount_brl: number
+          created_at?: string
+          customer_email?: string | null
+          delivered_data?: Json | null
+          error_message?: string | null
+          expires_at?: string | null
+          fee_brl?: number
+          id?: string
+          mp_payment_id?: string | null
+          paid_at?: string | null
+          product_id: string
+          product_name: string
+          qr_code?: string | null
+          qr_code_base64?: string | null
+          quantity?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount_brl?: number
+          created_at?: string
+          customer_email?: string | null
+          delivered_data?: Json | null
+          error_message?: string | null
+          expires_at?: string | null
+          fee_brl?: number
+          id?: string
+          mp_payment_id?: string | null
+          paid_at?: string | null
+          product_id?: string
+          product_name?: string
+          qr_code?: string | null
+          qr_code_base64?: string | null
+          quantity?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_stats: {
         Row: {
           achievements_unlocked: number
