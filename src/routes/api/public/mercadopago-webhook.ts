@@ -81,7 +81,7 @@ export const Route = createFileRoute('/api/public/mercadopago-webhook')({
                       if (purchaseRes.ok && purchaseData.success !== false) {
                         await supabaseAdmin
                           .from('store_orders')
-                          .update({ status: 'delivered', delivered_data: purchaseData })
+                          .update({ status: 'delivered', delivered_data: JSON.parse(JSON.stringify(purchaseData)) })
                           .eq('id', order.id);
                       } else {
                         await supabaseAdmin
