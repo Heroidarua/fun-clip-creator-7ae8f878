@@ -1,7 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Search, ShieldCheck, Loader2, ShoppingBag, X, AlertTriangle } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Search, ShieldCheck, Loader2, ShoppingBag, X, AlertTriangle, Copy, Check, QrCode } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+
+const FEE_BRL = 4;
+const brl = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
 type Product = {
   id: string;
@@ -118,7 +121,9 @@ const DigitalHavenStore = () => {
               </div>
               <p className="text-sm text-muted-foreground mt-3 line-clamp-3 flex-1">{p.description}</p>
               <div className="flex items-center justify-between mt-4">
-                <span className="text-lg font-bold text-foreground">{p.price?.text ?? "—"}</span>
+                <span className="text-lg font-bold text-foreground">
+                  {p.price ? brl(p.price.amount + FEE_BRL) : "—"}
+                </span>
                 <span className="text-xs text-muted-foreground">{p.sold} vendidos</span>
               </div>
             </button>
