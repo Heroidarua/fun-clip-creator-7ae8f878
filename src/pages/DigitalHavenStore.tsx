@@ -136,29 +136,66 @@ const DigitalHavenStore = () => {
   );
 };
 
+type CheckoutState =
+  | { step: "form" }
+  | { step: "loading" }
+  | { step: "pix"; orderId: string; amount: number; qrCode: string | null; qrCodeBase64: string | null }
+  | { step: "delivered"; delivered: unknown }
+  | { step: "error"; msg: string };
+
 function OrderModal({ product, onClose }: { product: Product; onClose: () => void }) {
   const needsEmail = Boolean(product.requirements.customerEmail);
   const fixedQty = typeof product.requirements.quantityFixed === "number" ? product.requirements.quantityFixed : null;
   const [email, setEmail] = useState("");
   const [quantity, setQuantity] = useState(fixedQty ?? 1);
-  const [password, setPassword] = useState("");
-  const [status, setStatus] = useState<{ type: "idle" | "loading" | "ok" | "error"; msg?: string }>({ type: "idle" });
+  const [state, setState] = useState<CheckoutState>({ step: "form" });
+  const [copied, setCopied] = useState(false);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const unitPrice = product.price?.amount ?? 0;
+  const total = Math.round((unitPrice * quantity + FEE_BRL) * 100) / 100;
+
+  useEffect(() => () => { if (pollRef.current) clearInterval(pollRef.current); }, []);
+
+  const startPolling = (orderId: string) => {
+    pollRef.current = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/canboso-checkout?id=${orderId}`);
+        const data = await res.json().catch(() => ({}));
+        if (data.status === "delivered") {
+          if (pollRef.current) clearInterval(pollRef.current);
+          setState({ step: "delivered", delivered: data.delivered });
+        } else if (data.status === "error" || data.status === "rejected" || data.status === "cancelled") {
+          if (pollRef.current) clearInterval(pollRef.current);
+          setState({ step: "error", msg: data.errorMessage || "O pagamento não foi concluído." });
+        }
+      } catch { /* mantém tentando */ }
+    }, 5000);
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus({ type: "loading" });
+    setState({ step: "loading" });
     try {
-      const res = await fetch("/api/canboso", {
+      const res = await fetch("/api/canboso-checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId: product.id, quantity, customerEmail: needsEmail ? email : undefined, password }),
+        body: JSON.stringify({ productId: product.id, quantity, customerEmail: needsEmail || email ? email : undefined }),
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || "A compra não pôde ser concluída.");
-      setStatus({ type: "ok", msg: "Pedido realizado com sucesso! A ativação seguirá as instruções do produto." });
+      if (!res.ok) throw new Error(data.error || "Não foi possível gerar o Pix.");
+      setState({ step: "pix", orderId: data.orderId, amount: data.amount, qrCode: data.qrCode, qrCodeBase64: data.qrCodeBase64 });
+      startPolling(data.orderId);
     } catch (err) {
-      setStatus({ type: "error", msg: (err as Error).message });
+      setState({ step: "error", msg: (err as Error).message });
     }
+  };
+
+  const copyPix = async () => {
+    if (state.step !== "pix" || !state.qrCode) return;
+    await navigator.clipboard.writeText(state.qrCode).catch(() => {});
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -168,33 +205,59 @@ function OrderModal({ product, onClose }: { product: Product; onClose: () => voi
           <h2 className="font-display text-xl text-foreground">{product.name}</h2>
           <button onClick={onClose} aria-label="Fechar" className="p-1 text-muted-foreground hover:text-foreground"><X className="w-5 h-5" /></button>
         </div>
-        <p className="text-2xl font-bold text-primary mt-2">{product.price?.text}</p>
+        <p className="text-2xl font-bold text-primary mt-2">{brl(total)}</p>
+        <p className="text-xs text-muted-foreground mt-1">Inclui taxa de serviço de {brl(FEE_BRL)}.</p>
         <div className="mt-4 rounded-xl bg-muted/50 p-4">
           <p className="flex items-center gap-2 text-sm font-bold text-foreground mb-2"><ShieldCheck className="w-4 h-4 text-primary" /> Garantia e ativação</p>
           <p className="text-sm text-muted-foreground whitespace-pre-line">{product.description || "Sem detalhes adicionais."}</p>
         </div>
 
-        {status.type === "ok" ? (
-          <p className="mt-5 rounded-xl border-2 border-primary/40 bg-primary/10 p-4 text-foreground font-bold">{status.msg}</p>
-        ) : (
-          <form onSubmit={submit} className="mt-5 space-y-3">
-            {needsEmail && (
-              <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="E-mail para ativação"
-                className="w-full px-3 py-3 rounded-xl border-2 border-border bg-background text-foreground focus:border-primary outline-none" />
+        {state.step === "delivered" && (
+          <div className="mt-5 rounded-xl border-2 border-primary/40 bg-primary/10 p-4">
+            <p className="text-foreground font-bold mb-2">Pagamento confirmado! Seu pedido foi entregue:</p>
+            <pre className="text-xs text-foreground bg-background rounded-lg p-3 overflow-x-auto whitespace-pre-wrap break-all">
+              {JSON.stringify(state.delivered, null, 2)}
+            </pre>
+            <p className="text-xs text-muted-foreground mt-2">Guarde essas informações. Elas também seguem as instruções de ativação do produto.</p>
+          </div>
+        )}
+
+        {state.step === "pix" && (
+          <div className="mt-5 text-center">
+            <p className="flex items-center justify-center gap-2 text-sm font-bold text-foreground mb-3">
+              <QrCode className="w-4 h-4 text-primary" /> Pague {brl(state.amount)} com Pix
+            </p>
+            {state.qrCodeBase64 && (
+              <img src={`data:image/png;base64,${state.qrCodeBase64}`} alt="QR Code Pix" className="mx-auto w-48 h-48 rounded-xl border-2 border-border" />
             )}
+            {state.qrCode && (
+              <button onClick={copyPix} className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-border text-sm font-bold text-foreground hover:border-primary transition-colors">
+                {copied ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />}
+                {copied ? "Copiado!" : "Copiar código Pix"}
+              </button>
+            )}
+            <p className="mt-3 text-xs text-muted-foreground flex items-center justify-center gap-1">
+              <Loader2 className="w-3 h-3 animate-spin" /> Aguardando confirmação do pagamento...
+            </p>
+          </div>
+        )}
+
+        {(state.step === "form" || state.step === "loading" || state.step === "error") && (
+          <form onSubmit={submit} className="mt-5 space-y-3">
+            <input type="email" required={needsEmail} value={email} onChange={(e) => setEmail(e.target.value)}
+              placeholder={needsEmail ? "E-mail para ativação" : "Seu e-mail (opcional, para contato)"}
+              className="w-full px-3 py-3 rounded-xl border-2 border-border bg-background text-foreground focus:border-primary outline-none" />
             {!fixedQty && (
               <input type="number" min={1} max={50} value={quantity} onChange={(e) => setQuantity(Number(e.target.value))} aria-label="Quantidade"
                 className="w-full px-3 py-3 rounded-xl border-2 border-border bg-background text-foreground focus:border-primary outline-none" />
             )}
-            <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Senha de administrador" autoComplete="current-password"
-              className="w-full px-3 py-3 rounded-xl border-2 border-border bg-background text-foreground focus:border-primary outline-none" />
-            <p className="text-xs text-muted-foreground">Compras usam o saldo da loja e só podem ser confirmadas pelo administrador.</p>
-            {status.type === "error" && <p className="text-sm font-bold text-destructive">{status.msg}</p>}
-            <button type="submit" disabled={status.type === "loading"}
+            {state.step === "error" && <p className="text-sm font-bold text-destructive">{state.msg}</p>}
+            <button type="submit" disabled={state.step === "loading"}
               className="btn-3d w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-primary text-primary-foreground font-bold disabled:opacity-60">
-              {status.type === "loading" ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShoppingBag className="w-4 h-4" />}
-              Confirmar pedido
+              {state.step === "loading" ? <Loader2 className="w-4 h-4 animate-spin" /> : <QrCode className="w-4 h-4" />}
+              Pagar com Pix
             </button>
+            <p className="text-xs text-muted-foreground text-center">Após a confirmação do Pix, o produto é entregue automaticamente aqui mesmo.</p>
           </form>
         )}
       </div>
