@@ -64,23 +64,23 @@ const DigitalHavenStore = () => {
           </p>
         </header>
 
-        <div className="flex flex-col sm:flex-row gap-3 mb-6">
-          <label className="relative flex-1">
+        <div className="mb-8 rounded-2xl border-2 border-border bg-card p-4 sm:p-5">
+          <label className="relative block">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Buscar produto (ex.: Canva, Gemini, Netflix)"
-              className="w-full pl-9 pr-3 py-3 rounded-xl border-2 border-border bg-card text-foreground focus:border-primary outline-none"
+              className="w-full pl-9 pr-3 py-3 rounded-xl border-2 border-border bg-background text-foreground focus:border-primary outline-none"
             />
           </label>
-          <div className="flex gap-2 overflow-x-auto">
+          <div className="flex gap-2 overflow-x-auto mt-3 pb-1">
             {CATEGORIES.map((c) => (
               <button
                 key={c}
                 onClick={() => setCategory(c)}
-                className={`px-4 py-2 rounded-xl border-2 text-sm font-bold whitespace-nowrap transition-colors ${
-                  category === c ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground"
+                className={`px-4 py-2 rounded-full border-2 text-sm font-bold whitespace-nowrap transition-colors ${
+                  category === c ? "border-primary bg-primary text-primary-foreground" : "border-border text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {c}
