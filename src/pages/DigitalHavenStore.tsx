@@ -146,24 +146,7 @@ const DigitalHavenStore = () => {
               onClick={() => setSelected(p)}
               className="group text-left rounded-2xl border-2 border-border bg-card overflow-hidden hover:border-primary hover:shadow-lg hover:shadow-primary/10 transition-all flex flex-col"
             >
-              <div className="relative aspect-[4/3] w-full bg-muted overflow-hidden">
-                {p.image ? (
-                  <img
-                    src={p.image}
-                    alt={p.name}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                ) : (
-                  <div className="w-full h-full grid place-items-center">
-                    <ShoppingBag className="w-10 h-10 text-muted-foreground/40" />
-                  </div>
-                )}
-                <span className="absolute top-2 left-2 px-2.5 py-1 rounded-full bg-background/90 backdrop-blur text-[10px] uppercase tracking-wider font-bold text-primary">
-                  {p.category}
-                </span>
-              </div>
+              <ProductCover product={p} />
               <div className="p-4 flex flex-col flex-1">
                 <h2 className="font-bold text-foreground leading-snug line-clamp-2 min-h-[2.6em]">{p.name}</h2>
                 <p className="text-xs text-muted-foreground mt-2 line-clamp-2 flex-1">{p.description}</p>
