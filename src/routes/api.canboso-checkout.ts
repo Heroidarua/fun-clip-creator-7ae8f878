@@ -99,6 +99,7 @@ export const Route = createFileRoute("/api/canboso-checkout")({
                 last_name: "SOS01",
               },
               external_reference: order.id,
+              notification_url: "https://sos01.com.br/api/public/mercadopago-webhook",
             }),
           });
           const mpData = await mpResponse.json();
