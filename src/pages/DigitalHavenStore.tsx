@@ -21,6 +21,40 @@ type Product = {
 
 const CATEGORIES = ["Todos", "IA", "Streaming", "Softwares", "Outros"] as const;
 
+const CATEGORY_COVER: Record<string, string> = {
+  IA: "from-violet-500 to-fuchsia-600",
+  Streaming: "from-rose-500 to-orange-500",
+  Softwares: "from-sky-500 to-blue-600",
+  Outros: "from-emerald-500 to-teal-600",
+};
+
+function ProductCover({ product }: { product: Product }) {
+  const [imgOk, setImgOk] = useState(Boolean(product.image));
+  const initial = product.name.replace(/^(SLOT|LINK|CONTA)\s+/i, "").charAt(0).toUpperCase() || "S";
+  const gradient = CATEGORY_COVER[product.category] ?? CATEGORY_COVER.Outros;
+  return (
+    <div className={`relative aspect-[4/3] w-full overflow-hidden bg-gradient-to-br ${gradient}`}>
+      <div className="absolute inset-0 grid place-items-center">
+        <span className="font-display text-7xl text-white/90 drop-shadow-lg select-none">{initial}</span>
+      </div>
+      <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "radial-gradient(circle at 20% 20%, white 1.5px, transparent 1.5px)", backgroundSize: "22px 22px" }} />
+      {imgOk && product.image && (
+        <img
+          src={product.image}
+          alt={product.name}
+          loading="lazy"
+          decoding="async"
+          onError={() => setImgOk(false)}
+          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+        />
+      )}
+      <span className="absolute top-2 left-2 px-2.5 py-1 rounded-full bg-background/90 backdrop-blur text-[10px] uppercase tracking-wider font-bold text-primary">
+        {product.category}
+      </span>
+    </div>
+  );
+}
+
 async function fetchProducts(): Promise<Product[]> {
   const res = await fetch("/api/canboso");
   const data = await res.json().catch(() => ({}));
@@ -64,23 +98,23 @@ const DigitalHavenStore = () => {
           </p>
         </header>
 
-        <div className="flex flex-col sm:flex-row gap-3 mb-6">
-          <label className="relative flex-1">
+        <div className="mb-8 rounded-2xl border-2 border-border bg-card p-4 sm:p-5">
+          <label className="relative block">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Buscar produto (ex.: Canva, Gemini, Netflix)"
-              className="w-full pl-9 pr-3 py-3 rounded-xl border-2 border-border bg-card text-foreground focus:border-primary outline-none"
+              className="w-full pl-9 pr-3 py-3 rounded-xl border-2 border-border bg-background text-foreground focus:border-primary outline-none"
             />
           </label>
-          <div className="flex gap-2 overflow-x-auto">
+          <div className="flex gap-2 overflow-x-auto mt-3 pb-1">
             {CATEGORIES.map((c) => (
               <button
                 key={c}
                 onClick={() => setCategory(c)}
-                className={`px-4 py-2 rounded-xl border-2 text-sm font-bold whitespace-nowrap transition-colors ${
-                  category === c ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground"
+                className={`px-4 py-2 rounded-full border-2 text-sm font-bold whitespace-nowrap transition-colors ${
+                  category === c ? "border-primary bg-primary text-primary-foreground" : "border-border text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {c}
@@ -105,26 +139,28 @@ const DigitalHavenStore = () => {
           <p className="text-center text-muted-foreground py-16">Nenhum produto encontrado com esses filtros.</p>
         )}
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-5 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filtered.map((p) => (
             <button
               key={p.id}
               onClick={() => setSelected(p)}
-              className="text-left rounded-2xl border-2 border-border bg-card p-4 hover:border-primary transition-colors flex flex-col"
+              className="group text-left rounded-2xl border-2 border-border bg-card overflow-hidden hover:border-primary hover:shadow-lg hover:shadow-primary/10 transition-all flex flex-col"
             >
-              <div className="flex items-start gap-3">
-                {p.image && <img src={p.image} alt={p.name} loading="lazy" width={48} height={48} className="w-12 h-12 rounded-lg object-cover shrink-0" />}
-                <div className="min-w-0">
-                  <span className="text-[10px] uppercase tracking-wider font-bold text-primary">{p.category}</span>
-                  <h2 className="font-bold text-foreground leading-tight line-clamp-2">{p.name}</h2>
+              <ProductCover product={p} />
+              <div className="p-4 flex flex-col flex-1">
+                <h2 className="font-bold text-foreground leading-snug line-clamp-2 min-h-[2.6em]">{p.name}</h2>
+                <p className="text-xs text-muted-foreground mt-2 line-clamp-2 flex-1">{p.description}</p>
+                <div className="flex items-end justify-between gap-2 mt-4 pt-3 border-t border-border">
+                  <div className="min-w-0">
+                    <span className="block text-lg font-bold text-foreground leading-none">
+                      {p.price ? brl(p.price.amount + FEE_BRL) : "—"}
+                    </span>
+                    <span className="block text-[11px] text-muted-foreground mt-1">{p.sold} vendidos</span>
+                  </div>
+                  <span className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-bold group-hover:brightness-110 transition">
+                    <ShoppingBag className="w-3.5 h-3.5" /> Comprar
+                  </span>
                 </div>
-              </div>
-              <p className="text-sm text-muted-foreground mt-3 line-clamp-3 flex-1">{p.description}</p>
-              <div className="flex items-center justify-between mt-4">
-                <span className="text-lg font-bold text-foreground">
-                  {p.price ? brl(p.price.amount + FEE_BRL) : "—"}
-                </span>
-                <span className="text-xs text-muted-foreground">{p.sold} vendidos</span>
               </div>
             </button>
           ))}
