@@ -242,7 +242,6 @@ function OrderModal({ product, onClose }: { product: Product; onClose: () => voi
           <button onClick={onClose} aria-label="Fechar" className="p-1 text-muted-foreground hover:text-foreground"><X className="w-5 h-5" /></button>
         </div>
         <p className="text-2xl font-bold text-primary mt-2">{brl(total)}</p>
-        <p className="text-xs text-muted-foreground mt-1">Inclui taxa de serviço de {brl(FEE_BRL)}.</p>
         <div className="mt-4 rounded-xl bg-muted/50 p-4">
           <p className="flex items-center gap-2 text-sm font-bold text-foreground mb-2"><ShieldCheck className="w-4 h-4 text-primary" /> Garantia e ativação</p>
           <p className="text-sm text-muted-foreground whitespace-pre-line">{product.description || "Sem detalhes adicionais."}</p>
