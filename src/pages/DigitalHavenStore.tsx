@@ -21,6 +21,40 @@ type Product = {
 
 const CATEGORIES = ["Todos", "IA", "Streaming", "Softwares", "Outros"] as const;
 
+const CATEGORY_COVER: Record<string, string> = {
+  IA: "from-violet-500 to-fuchsia-600",
+  Streaming: "from-rose-500 to-orange-500",
+  Softwares: "from-sky-500 to-blue-600",
+  Outros: "from-emerald-500 to-teal-600",
+};
+
+function ProductCover({ product }: { product: Product }) {
+  const [imgOk, setImgOk] = useState(Boolean(product.image));
+  const initial = product.name.replace(/^(SLOT|LINK|CONTA)\s+/i, "").charAt(0).toUpperCase() || "S";
+  const gradient = CATEGORY_COVER[product.category] ?? CATEGORY_COVER.Outros;
+  return (
+    <div className={`relative aspect-[4/3] w-full overflow-hidden bg-gradient-to-br ${gradient}`}>
+      <div className="absolute inset-0 grid place-items-center">
+        <span className="font-display text-7xl text-white/90 drop-shadow-lg select-none">{initial}</span>
+      </div>
+      <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "radial-gradient(circle at 20% 20%, white 1.5px, transparent 1.5px)", backgroundSize: "22px 22px" }} />
+      {imgOk && product.image && (
+        <img
+          src={product.image}
+          alt={product.name}
+          loading="lazy"
+          decoding="async"
+          onError={() => setImgOk(false)}
+          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+        />
+      )}
+      <span className="absolute top-2 left-2 px-2.5 py-1 rounded-full bg-background/90 backdrop-blur text-[10px] uppercase tracking-wider font-bold text-primary">
+        {product.category}
+      </span>
+    </div>
+  );
+}
+
 async function fetchProducts(): Promise<Product[]> {
   const res = await fetch("/api/canboso");
   const data = await res.json().catch(() => ({}));
