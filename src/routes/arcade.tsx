@@ -10,7 +10,7 @@ export const Route = createFileRoute("/arcade")({
   head: () =>
     buildSeo({
       path: "/arcade",
-      title: "Arcade grátis online — 546 jogos retrô e Flash | SOS01",
+      title: "Arcade grátis online — 533 jogos retrô e Flash | SOS01",
       description: `Jogue ${ARCADE_COUNTS.all} clássicos retrô e Flash direto no navegador: Neo Geo, Capcom, Clássicos, PC em WASM e Flash. Coleção compilação do parceiro WASM Arcade, grátis e sem download.`,
       keywords: [
         "arcade grátis online",
