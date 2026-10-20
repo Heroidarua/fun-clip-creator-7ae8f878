@@ -9,7 +9,7 @@ function createContentSecurityPolicy(nonce: string, arcadeDocument = false): str
     arcadeDocument ? "frame-ancestors 'self'" : "frame-ancestors 'none'",
     "form-action 'self'",
     arcadeDocument
-      ? `script-src 'self' 'nonce-${nonce}' 'wasm-unsafe-eval' blob:`
+      ? `script-src 'self' 'nonce-${nonce}' 'wasm-unsafe-eval' 'unsafe-eval' blob:`
       : `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'wasm-unsafe-eval' blob: https://www.googletagmanager.com https://unpkg.com https://cdn.jsdelivr.net`,
     `style-src 'self' 'nonce-${nonce}' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-CIxDM5jnsGiKqXs2v7NKCY5MzdR9gu6TtiMJrDw29AY=' https://fonts.googleapis.com`,
     "style-src-attr 'unsafe-inline'",
