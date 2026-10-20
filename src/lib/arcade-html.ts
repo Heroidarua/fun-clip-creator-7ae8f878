@@ -12,6 +12,7 @@ const INJECT = `
     if (u.charAt(0) === "#") return u;
     try {
       var url = new URL(u, location.href);
+      if (url.protocol !== "https:" && url.protocol !== "http:") return u;
       if (url.origin !== S && url.origin !== location.origin) return u;
       if (url.pathname.indexOf(M + "/") === 0) return url.pathname + url.search + url.hash;
       return M + url.pathname + url.search + url.hash;
@@ -41,7 +42,7 @@ const INJECT = `
       try { if ((n === "src" || n === "href") && typeof v === "string") v = rw(v); } catch (e) {}
       return _sa.call(this, n, v);
     };
-       var types = ["HTMLScriptElement","HTMLLinkElement","HTMLImageElement","HTMLSourceElement","HTMLAudioElement","HTMLVideoElement"];
+    var types = ["HTMLScriptElement","HTMLLinkElement","HTMLImageElement","HTMLSourceElement","HTMLAudioElement","HTMLVideoElement"];
     for (var i = 0; i < types.length; i++) {
       var proto = window[types[i]];
       if (!proto) continue;
