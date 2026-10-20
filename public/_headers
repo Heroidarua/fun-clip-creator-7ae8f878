@@ -14,3 +14,16 @@
 
 /api/arcade/proxy
   Cache-Control: public, max-age=604800
+
+/api/arcade/page
+  Cache-Control: no-cache
+  Access-Control-Allow-Origin: *
+  X-Frame-Options: SAMEORIGIN
+
+/api/arcade/mirror*
+  Cache-Control: public, max-age=604800
+  Access-Control-Allow-Origin: *
+
+/wasm-mirror/*
+  Cache-Control: public, max-age=604800
+  Access-Control-Allow-Origin: *
