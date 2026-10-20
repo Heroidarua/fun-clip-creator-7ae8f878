@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as ArcadeRouteImport } from './routes/arcade'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as BuscaRouteImport } from './routes/busca'
@@ -66,6 +67,10 @@ import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
 import { Route as FerramentaSlugRouteImport } from './routes/ferramenta.$slug'
 import { Route as FerramentaMelhorarVideoRouteImport } from './routes/ferramenta.melhorar-video'
 import { Route as FerramentasYoutubeDownloaderRouteImport } from './routes/ferramentas_.youtube-downloader'
+import { Route as WasmMirrorSplatRouteImport } from './routes/wasm-mirror/$'
+import { Route as ApiArcadeMirrorRouteImport } from './routes/api.arcade.mirror'
+import { Route as ApiArcadePageRouteImport } from './routes/api.arcade.page'
+import { Route as ApiArcadeProxyRouteImport } from './routes/api.arcade.proxy'
 import { Route as ApiPublicMercadopagoWebhookRouteImport } from './routes/api/public/mercadopago-webhook'
 import { Route as ApiPublicPinterestDownloadRouteImport } from './routes/api.public.pinterest-download'
 import { Route as ApiVideoEnhancerProcessRouteImport } from './routes/api.video-enhancer.process'
@@ -87,6 +92,11 @@ const SplatRoute = SplatRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArcadeRoute = ArcadeRouteImport.update({
+  id: '/arcade',
+  path: '/arcade',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -369,6 +379,26 @@ const FerramentasYoutubeDownloaderRoute =
     path: '/ferramentas/youtube-downloader',
     getParentRoute: () => rootRouteImport,
   } as any)
+const WasmMirrorSplatRoute = WasmMirrorSplatRouteImport.update({
+  id: '/wasm-mirror/$',
+  path: '/wasm-mirror/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiArcadeMirrorRoute = ApiArcadeMirrorRouteImport.update({
+  id: '/api/arcade/mirror',
+  path: '/api/arcade/mirror',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiArcadePageRoute = ApiArcadePageRouteImport.update({
+  id: '/api/arcade/page',
+  path: '/api/arcade/page',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiArcadeProxyRoute = ApiArcadeProxyRouteImport.update({
+  id: '/api/arcade/proxy',
+  path: '/api/arcade/proxy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicMercadopagoWebhookRoute =
   ApiPublicMercadopagoWebhookRouteImport.update({
     id: '/api/public/mercadopago-webhook',
@@ -411,6 +441,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/admin': typeof AdminRoute
+  '/arcade': typeof ArcadeRoute
   '/auth': typeof AuthRoute
   '/blog': typeof BlogRouteWithChildren
   '/busca': typeof BuscaRoute
@@ -464,7 +495,11 @@ export interface FileRoutesByFullPath {
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/ferramenta/melhorar-video': typeof FerramentaMelhorarVideoRoute
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
+  '/wasm-mirror/$': typeof WasmMirrorSplatRoute
   '/blog/': typeof BlogIndexRoute
+  '/api/arcade/mirror': typeof ApiArcadeMirrorRoute
+  '/api/arcade/page': typeof ApiArcadePageRoute
+  '/api/arcade/proxy': typeof ApiArcadeProxyRoute
   '/api/public/mercadopago-webhook': typeof ApiPublicMercadopagoWebhookRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/video-enhancer/process': typeof ApiVideoEnhancerProcessRoute
@@ -477,6 +512,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/admin': typeof AdminRoute
+  '/arcade': typeof ArcadeRoute
   '/auth': typeof AuthRoute
   '/busca': typeof BuscaRoute
   '/como-usar': typeof ComoUsarRoute
@@ -529,7 +565,11 @@ export interface FileRoutesByTo {
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/ferramenta/melhorar-video': typeof FerramentaMelhorarVideoRoute
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
+  '/wasm-mirror/$': typeof WasmMirrorSplatRoute
   '/blog': typeof BlogIndexRoute
+  '/api/arcade/mirror': typeof ApiArcadeMirrorRoute
+  '/api/arcade/page': typeof ApiArcadePageRoute
+  '/api/arcade/proxy': typeof ApiArcadeProxyRoute
   '/api/public/mercadopago-webhook': typeof ApiPublicMercadopagoWebhookRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/video-enhancer/process': typeof ApiVideoEnhancerProcessRoute
@@ -543,6 +583,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/admin': typeof AdminRoute
+  '/arcade': typeof ArcadeRoute
   '/auth': typeof AuthRoute
   '/blog': typeof BlogRouteWithChildren
   '/busca': typeof BuscaRoute
@@ -596,7 +637,11 @@ export interface FileRoutesById {
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/ferramenta/melhorar-video': typeof FerramentaMelhorarVideoRoute
   '/ferramentas_/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
+  '/wasm-mirror/$': typeof WasmMirrorSplatRoute
   '/blog/': typeof BlogIndexRoute
+  '/api/arcade/mirror': typeof ApiArcadeMirrorRoute
+  '/api/arcade/page': typeof ApiArcadePageRoute
+  '/api/arcade/proxy': typeof ApiArcadeProxyRoute
   '/api/public/mercadopago-webhook': typeof ApiPublicMercadopagoWebhookRoute
   '/api/public/pinterest-download': typeof ApiPublicPinterestDownloadRoute
   '/api/video-enhancer/process': typeof ApiVideoEnhancerProcessRoute
@@ -611,6 +656,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/admin'
+    | '/arcade'
     | '/auth'
     | '/blog'
     | '/busca'
@@ -664,7 +710,11 @@ export interface FileRouteTypes {
     | '/ferramenta/$slug'
     | '/ferramenta/melhorar-video'
     | '/ferramentas/youtube-downloader'
+    | '/wasm-mirror/$'
     | '/blog/'
+    | '/api/arcade/mirror'
+    | '/api/arcade/page'
+    | '/api/arcade/proxy'
     | '/api/public/mercadopago-webhook'
     | '/api/public/pinterest-download'
     | '/api/video-enhancer/process'
@@ -677,6 +727,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/admin'
+    | '/arcade'
     | '/auth'
     | '/busca'
     | '/como-usar'
@@ -729,7 +780,11 @@ export interface FileRouteTypes {
     | '/ferramenta/$slug'
     | '/ferramenta/melhorar-video'
     | '/ferramentas/youtube-downloader'
+    | '/wasm-mirror/$'
     | '/blog'
+    | '/api/arcade/mirror'
+    | '/api/arcade/page'
+    | '/api/arcade/proxy'
     | '/api/public/mercadopago-webhook'
     | '/api/public/pinterest-download'
     | '/api/video-enhancer/process'
@@ -742,6 +797,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/admin'
+    | '/arcade'
     | '/auth'
     | '/blog'
     | '/busca'
@@ -795,7 +851,11 @@ export interface FileRouteTypes {
     | '/ferramenta/$slug'
     | '/ferramenta/melhorar-video'
     | '/ferramentas_/youtube-downloader'
+    | '/wasm-mirror/$'
     | '/blog/'
+    | '/api/arcade/mirror'
+    | '/api/arcade/page'
+    | '/api/arcade/proxy'
     | '/api/public/mercadopago-webhook'
     | '/api/public/pinterest-download'
     | '/api/video-enhancer/process'
@@ -809,6 +869,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SplatRoute: typeof SplatRoute
   AdminRoute: typeof AdminRoute
+  ArcadeRoute: typeof ArcadeRoute
   AuthRoute: typeof AuthRoute
   BlogRoute: typeof BlogRouteWithChildren
   BuscaRoute: typeof BuscaRoute
@@ -849,6 +910,10 @@ export interface RootRouteChildren {
   FerramentaSlugRoute: typeof FerramentaSlugRoute
   FerramentaMelhorarVideoRoute: typeof FerramentaMelhorarVideoRoute
   FerramentasYoutubeDownloaderRoute: typeof FerramentasYoutubeDownloaderRoute
+  WasmMirrorSplatRoute: typeof WasmMirrorSplatRoute
+  ApiArcadeMirrorRoute: typeof ApiArcadeMirrorRoute
+  ApiArcadePageRoute: typeof ApiArcadePageRoute
+  ApiArcadeProxyRoute: typeof ApiArcadeProxyRoute
   ApiPublicMercadopagoWebhookRoute: typeof ApiPublicMercadopagoWebhookRoute
   ApiPublicPinterestDownloadRoute: typeof ApiPublicPinterestDownloadRoute
   ApiVideoEnhancerProcessRoute: typeof ApiVideoEnhancerProcessRoute
@@ -879,6 +944,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/arcade': {
+      id: '/arcade'
+      path: '/arcade'
+      fullPath: '/arcade'
+      preLoaderRoute: typeof ArcadeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -1259,6 +1331,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FerramentasYoutubeDownloaderRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/wasm-mirror/$': {
+      id: '/wasm-mirror/$'
+      path: '/wasm-mirror/$'
+      fullPath: '/wasm-mirror/$'
+      preLoaderRoute: typeof WasmMirrorSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/arcade/mirror': {
+      id: '/api/arcade/mirror'
+      path: '/api/arcade/mirror'
+      fullPath: '/api/arcade/mirror'
+      preLoaderRoute: typeof ApiArcadeMirrorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/arcade/page': {
+      id: '/api/arcade/page'
+      path: '/api/arcade/page'
+      fullPath: '/api/arcade/page'
+      preLoaderRoute: typeof ApiArcadePageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/arcade/proxy': {
+      id: '/api/arcade/proxy'
+      path: '/api/arcade/proxy'
+      fullPath: '/api/arcade/proxy'
+      preLoaderRoute: typeof ApiArcadeProxyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/mercadopago-webhook': {
       id: '/api/public/mercadopago-webhook'
       path: '/api/public/mercadopago-webhook'
@@ -1352,6 +1452,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
   AdminRoute: AdminRoute,
+  ArcadeRoute: ArcadeRoute,
   AuthRoute: AuthRoute,
   BlogRoute: BlogRouteWithChildren,
   BuscaRoute: BuscaRoute,
@@ -1392,6 +1493,10 @@ const rootRouteChildren: RootRouteChildren = {
   FerramentaSlugRoute: FerramentaSlugRoute,
   FerramentaMelhorarVideoRoute: FerramentaMelhorarVideoRoute,
   FerramentasYoutubeDownloaderRoute: FerramentasYoutubeDownloaderRoute,
+  WasmMirrorSplatRoute: WasmMirrorSplatRoute,
+  ApiArcadeMirrorRoute: ApiArcadeMirrorRoute,
+  ApiArcadePageRoute: ApiArcadePageRoute,
+  ApiArcadeProxyRoute: ApiArcadeProxyRoute,
   ApiPublicMercadopagoWebhookRoute: ApiPublicMercadopagoWebhookRoute,
   ApiPublicPinterestDownloadRoute: ApiPublicPinterestDownloadRoute,
   ApiVideoEnhancerProcessRoute: ApiVideoEnhancerProcessRoute,
