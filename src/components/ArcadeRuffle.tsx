@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AlertTriangle, Loader2, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useCspNonce } from "@/hooks/use-csp-nonce";
 
 declare global {
   interface Window {
@@ -45,6 +46,7 @@ type Status = "loading" | "ready" | "error";
  * vindo do nosso proxy same-origin (/api/arcade/proxy?p=/flash/swf/<id>.swf).
  */
 export default function ArcadeRuffle({ swfUrl }: { swfUrl: string }) {
+  const nonce = useCspNonce();
   const hostRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<ReturnType<ReturnType<NonNullable<typeof window.RufflePlayer>["newest"]>["createPlayer"]> | null>(null);
   const [status, setStatus] = useState<Status>("loading");
@@ -62,6 +64,13 @@ export default function ArcadeRuffle({ swfUrl }: { swfUrl: string }) {
         const RP = window.RufflePlayer;
         if (!RP) throw new Error("Ruffle indisponível");
         const player = RP.newest().createPlayer();
+        if (nonce) {
+          player.shadowRoot?.querySelectorAll("style").forEach((style) => {
+            style.setAttribute("nonce", nonce);
+            style.textContent = style.textContent;
+          });
+        }
+        player.className = "block h-full w-full";
         player.config = {
           publicPath: RUFFLE_BASE,
           letterbox: "on",
@@ -96,7 +105,7 @@ export default function ArcadeRuffle({ swfUrl }: { swfUrl: string }) {
       }
       playerRef.current = null;
     };
-  }, [swfUrl, attempt]);
+  }, [swfUrl, attempt, nonce]);
 
   return (
     <div className="relative w-full overflow-hidden rounded-xl border border-border bg-black/60">
