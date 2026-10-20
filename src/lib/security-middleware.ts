@@ -1,14 +1,16 @@
 import { createMiddleware } from "@tanstack/react-start";
 import { hasValidAdminBasicAuth } from "./admin-auth.server";
 
-function createContentSecurityPolicy(nonce: string): string {
+function createContentSecurityPolicy(nonce: string, arcadeDocument = false): string {
   return [
     "default-src 'self'",
     "base-uri 'self'",
     "object-src 'none'",
-    "frame-ancestors 'none'",
+    arcadeDocument ? "frame-ancestors 'self'" : "frame-ancestors 'none'",
     "form-action 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' blob: https://www.googletagmanager.com https://unpkg.com https://cdn.jsdelivr.net`,
+    arcadeDocument
+      ? `script-src 'self' 'nonce-${nonce}' 'wasm-unsafe-eval' blob:`
+      : `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'wasm-unsafe-eval' blob: https://www.googletagmanager.com https://unpkg.com https://cdn.jsdelivr.net`,
     `style-src 'self' 'nonce-${nonce}' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-CIxDM5jnsGiKqXs2v7NKCY5MzdR9gu6TtiMJrDw29AY=' https://fonts.googleapis.com`,
     "style-src-attr 'unsafe-inline'",
     "font-src 'self' data: https://fonts.gstatic.com",
@@ -29,12 +31,15 @@ const SECURITY_HEADERS = {
   "Permissions-Policy": "camera=(), geolocation=(), microphone=(self)",
 } as const;
 
-function secureResponse(response: Response, nonce: string): Response {
+function secureResponse(response: Response, nonce: string, arcadeDocument = false): Response {
   const headers = new Headers(response.headers);
-  headers.set("Content-Security-Policy", createContentSecurityPolicy(nonce));
+  const documentNonce = arcadeDocument ? headers.get("X-Arcade-Nonce") ?? nonce : nonce;
+  headers.delete("X-Arcade-Nonce");
+  headers.set("Content-Security-Policy", createContentSecurityPolicy(documentNonce, arcadeDocument));
   for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
     headers.set(name, value);
   }
+  if (arcadeDocument) headers.set("X-Frame-Options", "SAMEORIGIN");
 
   return new Response(response.body, {
     status: response.status,
@@ -68,7 +73,7 @@ export const securityMiddleware = createMiddleware({ type: "request" }).server(
     const result = await next({ context: { cspNonce: nonce } });
     return {
       ...result,
-      response: secureResponse(result.response, nonce),
+      response: secureResponse(result.response, nonce, pathname === "/api/arcade/page" || pathname.startsWith("/wasm-mirror/")),
     };
   },
 );

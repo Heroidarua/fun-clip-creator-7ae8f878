@@ -23,17 +23,15 @@ const INJECT = `
   var S = "https://wasmarcade.com";
   var P = "//wasmarcade.com";
   var M = "/wasm-mirror";
-  function encPath(u) {
-    return M + u.split("/").map(encodeURIComponent).join("/");
-  }
   function rw(u) {
     if (typeof u !== "string" || !u.length) return u;
-    if (u.indexOf(M) === 0) return u;
-    if (u.indexOf(S) === 0) return encPath(u.slice(S.length));
-    if (u.indexOf(P) === 0) return encPath(u.slice(P.length));
-    if (u.charAt(0) === "/") return encPath(u);
-    if (u.charAt(0) !== "#" && u.indexOf(":") < 0) return encPath("/" + u);
-    return u;
+    if (u.charAt(0) === "#") return u;
+    try {
+      var url = new URL(u, location.href);
+      if (url.origin !== S && url.origin !== location.origin) return u;
+      if (url.pathname.indexOf(M + "/") === 0) return url.pathname + url.search + url.hash;
+      return M + url.pathname + url.search + url.hash;
+    } catch (e) { return u; }
   }
   var _fetch = window.fetch ? window.fetch.bind(window) : null;
   if (_fetch) {
@@ -59,7 +57,7 @@ const INJECT = `
       try { if ((n === "src" || n === "href") && typeof v === "string") v = rw(v); } catch (e) {}
       return _sa.call(this, n, v);
     };
-    var types = ["HTMLScriptElement","HTMLLinkElement","HTMLImageElement","HTMLSourceElement","HTMLAudioElement","HTMLVideoElement"];
+       var types = ["HTMLScriptElement","HTMLLinkElement","HTMLImageElement","HTMLSourceElement","HTMLAudioElement","HTMLVideoElement"];
     for (var i = 0; i < types.length; i++) {
       var proto = window[types[i]];
       if (!proto) continue;
