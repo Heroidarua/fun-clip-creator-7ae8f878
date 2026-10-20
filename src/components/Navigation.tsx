@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, Search, Wrench, Gamepad2, Globe2, Tv, Radio, PlayCircle, BookOpen, Share2, PanelLeftClose, PanelLeftOpen, Menu, X, Plane, Ship, CloudLightning, Activity, Stars, Lock, Megaphone, ShoppingBag } from "lucide-react";
+import { Home, Search, Wrench, Gamepad2, Globe2, Tv, Radio, PlayCircle, BookOpen, Share2, PanelLeftClose, PanelLeftOpen, Menu, X, Plane, Ship, CloudLightning, Activity, Stars, Lock, Megaphone, ShoppingBag, Joystick } from "lucide-react";
 import { useState, useEffect } from "react";
 import IPTVModal from "./IPTVModal";
 import ThemeToggle from "./ThemeToggle";
@@ -18,6 +18,7 @@ const ITEMS = [
   { to: "/ferramentas", label: "Ferramentas", icon: Wrench, desc: "Utilidades" },
   { to: "/busca", label: "Busca", icon: Search, desc: "Encontre rápido" },
   { to: "/jogos", label: "Jogos", icon: Gamepad2, desc: "Diversão" },
+  { to: "/arcade", label: "Arcade", icon: Joystick, desc: "WASM + Flash" },
   { to: "/nasa", label: "NASA", icon: Globe2, desc: "Espaço" },
   { to: "/ferramenta/avioes", label: "Aviões", icon: Plane, desc: "Tempo Real" },
   { to: "/ferramenta/navios", label: "Navios", icon: Ship, desc: "Marítimo" },
