@@ -15,7 +15,7 @@ export const Route = createFileRoute("/api/arcade/page")({
         } catch {
           p = "";
         }
-        if (!/^\/[A-Za-z0-9._\-/]+$/.test(p) || p.includes("//") || p.length > 400) {
+        if (!/^\/[A-Za-z0-9._\-/]+$/.test(p) || p.includes("//") || p.split("/").includes("..") || p.length > 400) {
           return Response.json({ error: "Caminho inválido" }, { status: 400, headers: HEADERS });
         }
 

@@ -1,4 +1,5 @@
 import { notFound } from "@tanstack/react-router";
+import { rewriteArcadeHtml } from "./arcade-html";
 
 /**
  * Espelho em caminho real do parceiro WASM Arcade.
@@ -35,7 +36,7 @@ const CORS = {
 // caminho que não existe aqui.
 function rewriteCss(css: string): string {
   return css.replace(/url\(\s*("|')?(\/[^"')]+)\1\s*\)/g, (m, q: string, path: string) =>
-    path.startsWith("/wasm-mirror/") ? m : `url(${q}/wasm-mirror${path})`,
+    path.startsWith("/wasm-mirror/") ? m : `url(${q ?? ""}/wasm-mirror${path}${q ?? ""})`,
   );
 }
 
@@ -43,15 +44,15 @@ function rewriteCss(css: string): string {
 export function streamMirror(prefix: string) {
   return async ({ request }: { request: Request }) => {
     const u = new URL(request.url);
-    const idx = u.pathname.indexOf(prefix);
-    let p = idx >= 0 ? u.pathname.slice(idx + prefix.length) : "";
+    const matches = u.pathname === prefix || u.pathname.startsWith(prefix + "/");
+    let p = matches ? prefix === "/wasm-mirror" ? u.pathname.slice(prefix.length) : u.pathname : "";
     try {
       p = decodeURIComponent(p);
     } catch {
       // mantém bruto se não for encoded
     }
     if (p && !p.startsWith("/")) p = "/" + p;
-    if (!SAFE.test(p) || p.includes("//") || p.length > 400) {
+    if (!SAFE.test(p) || p.includes("//") || p.split("/").includes("..") || p.length > 400) {
       return Response.json({ error: "Caminho inválido" }, { status: 400, headers: CORS });
     }
 
@@ -83,15 +84,17 @@ export function streamMirror(prefix: string) {
         if (v) headers[h] = v;
       }
 
+      if (upstream.ok && ct?.toLowerCase().includes("text/html")) {
+        const nonce = crypto.randomUUID().replaceAll("-", "");
+        headers["X-Arcade-Nonce"] = nonce;
+        headers["Cache-Control"] = "no-cache";
+        return new Response(rewriteArcadeHtml(await upstream.text(), p + u.search, nonce), { status: upstream.status, headers });
+      }
+
       // CSS: pequeno e transformado (urls absolutas -> espelho); sem length fixo.
       if (upstream.ok && ct && ct.toLowerCase().includes("text/css")) {
         const css = await upstream.text();
         return new Response(rewriteCss(css), { status: 200, headers });
-      }
-
-      if (upstream.ok) {
-        const cl = upstream.headers.get("content-length");
-        if (cl && upstream.status === 200) headers["Content-Length"] = cl;
       }
 
       return new Response(upstream.ok ? upstream.body : null, {
