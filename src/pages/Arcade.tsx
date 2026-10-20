@@ -25,6 +25,16 @@ import type { ArcadeGame, ArcadeSystem } from "@/data/arcade";
 const PAGE_SIZE = 60;
 const PLACEHOLDER = "/placeholder.svg";
 
+// O site do parceiro bloqueia hotlink com Referer de fora (403), então as capas
+// também passam pelo nosso proxy same-origin (que envia o referer deles).
+const thumbUrl = (u?: string) => {
+  if (!u) return "";
+  if (u.startsWith("https://wasmarcade.com/")) {
+    return "/api/arcade/proxy?p=" + encodeURIComponent(u.slice("https://wasmarcade.com".length));
+  }
+  return u;
+};
+
 function swfProxyPath(id: string): string {
   return "/api/arcade/proxy?p=" + encodeURIComponent("/flash/swf/" + id + ".swf");
 }
@@ -143,7 +153,7 @@ export default function ArcadePage() {
               >
                 <div className="relative aspect-[3/4] w-full overflow-hidden bg-muted">
                   <img
-                    src={g.thumb}
+                    src={thumbUrl(g.thumb)}
                     alt={g.title}
                     loading="lazy"
                     className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
@@ -252,9 +262,16 @@ export default function ArcadePage() {
               ) : (
                 <div className="space-y-3">
                   <img
-                    src={open.thumb}
+                    src={thumbUrl(open.thumb)}
                     alt={open.title}
                     className="max-h-72 w-auto rounded-lg border border-border"
+                    onError={(e) => {
+                      const t = e.currentTarget as HTMLImageElement;
+                      if (!t.dataset.fb) {
+                        t.dataset.fb = "1";
+                        t.src = PLACEHOLDER;
+                      }
+                    }}
                   />
                   {open.desc && <p className="text-sm text-muted-foreground">{open.desc}</p>}
                   {open.year && <p className="text-sm">Ano: {open.year}</p>}
