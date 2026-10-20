@@ -25,6 +25,7 @@ export const Route = createFileRoute("/wasm-mirror/$")({
         } catch {
           // mantém bruto se não for encoded
         }
+        if (p && !p.startsWith("/")) p = "/" + p; // o splat não traz a barra inicial
         if (!SAFE.test(p) || p.includes("//") || p.length > 400) {
           return Response.json({ error: "Caminho inválido" }, { status: 400, headers: HEADERS });
         }
