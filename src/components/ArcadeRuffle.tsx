@@ -5,11 +5,12 @@ import { Button } from "@/components/ui/button";
 declare global {
   interface Window {
     RufflePlayer?: {
-      createPlayer: (context?: unknown, config?: Record<string, unknown>) => {
+      newest: () => { createPlayer: () => HTMLElement & {
+        config: Record<string, unknown>;
         addEventListener: (event: string, handler: () => void) => void;
         load: (opts: { url: string }) => Promise<unknown>;
         remove: () => void;
-      };
+      } };
     };
   }
 }
@@ -45,7 +46,7 @@ type Status = "loading" | "ready" | "error";
  */
 export default function ArcadeRuffle({ swfUrl }: { swfUrl: string }) {
   const hostRef = useRef<HTMLDivElement>(null);
-  const playerRef = useRef<ReturnType<NonNullable<typeof window.RufflePlayer>["createPlayer"]> | null>(null);
+  const playerRef = useRef<ReturnType<ReturnType<NonNullable<typeof window.RufflePlayer>["newest"]>["createPlayer"]> | null>(null);
   const [status, setStatus] = useState<Status>("loading");
   const [attempt, setAttempt] = useState(0);
 
@@ -60,7 +61,8 @@ export default function ArcadeRuffle({ swfUrl }: { swfUrl: string }) {
         hostRef.current.innerHTML = "";
         const RP = window.RufflePlayer;
         if (!RP) throw new Error("Ruffle indisponível");
-        const player = RP.createPlayer(undefined, {
+        const player = RP.newest().createPlayer();
+        player.config = {
           publicPath: RUFFLE_BASE,
           letterbox: "on",
           contextMenu: "off",
@@ -69,7 +71,7 @@ export default function ArcadeRuffle({ swfUrl }: { swfUrl: string }) {
           autoplay: "on",
           logLevel: "warn",
           openUrlMode: "deny",
-        });
+        };
         playerRef.current = player;
         player.addEventListener("error", () => {
           if (!cancelled) setStatus("error");
