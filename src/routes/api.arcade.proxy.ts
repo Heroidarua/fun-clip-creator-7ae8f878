@@ -7,7 +7,7 @@ import { createFileRoute } from "@tanstack/react-router";
  * Aceita apenas caminhos de asset estático: /flash/, /emulation/, /covers/, /og/.
  */
 const SOURCE = "https://wasmarcade.com";
-const SAFE_PATH = /^\/(?:flash|emulation|covers|og)\/[A-Za-z0-9._\-\/]+$/;
+const SAFE_PATH = /^\/(?:flash|emulation|covers|og)\/[A-Za-z0-9.\/_-]+$/;
 
 const CORS: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
