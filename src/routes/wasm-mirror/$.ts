@@ -17,15 +17,26 @@ export const Route = createFileRoute("/wasm-mirror/$")({
   server: {
     handlers: {
       OPTIONS: async () => new Response(null, { status: 204, headers: HEADERS }),
-      GET: async ({ params }) => {
-        // @ts-ignore - splat param is typed by the route path
-        let p: string = params.$ ?? "";
+      GET: async ({ params, request }) => {
+        // caminho direto da URL (a prova de qualquer convenção de param do framework)
+        let p = "";
         try {
-          p = decodeURIComponent(p);
+          const u = new URL(request.url);
+          const idx = u.pathname.lastIndexOf("/wasm-mirror");
+          p = idx >= 0 ? decodeURIComponent(u.pathname.slice(idx + "/wasm-mirror".length)) : "";
         } catch {
-          // mantém bruto se não for encoded
+          p = "";
         }
-        if (p && !p.startsWith("/")) p = "/" + p; // o splat não traz a barra inicial
+        if (!p) {
+          // @ts-ignore - fallback: splat param
+          p = params.$ ?? "";
+          try {
+            p = decodeURIComponent(p);
+          } catch {
+            // mantém bruto
+          }
+        }
+        if (p && !p.startsWith("/")) p = "/" + p;
         if (!SAFE.test(p) || p.includes("//") || p.length > 400) {
           return Response.json({ error: "Caminho inválido" }, { status: 400, headers: HEADERS });
         }
