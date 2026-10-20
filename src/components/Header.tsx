@@ -9,6 +9,7 @@ import {
   X,
   ArrowRight,
   Tv,
+  Joystick,
 } from "lucide-react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
@@ -28,6 +29,7 @@ import {
 const NAV = [
   { to: "/ferramentas", label: "Ferramentas", icon: Wrench, desc: "QR, PDF, áudio, imagens" },
   { to: "/jogos", label: "Jogos", icon: Gamepad2, desc: "Clássicos retrô grátis" },
+  { to: "/arcade", label: "Arcade", icon: Joystick, desc: "546 jogos WASM e Flash" },
   { to: "/nasa", label: "🌎 NASA", icon: Wrench, desc: "Satélites em tempo real", premium: true },
   { to: "/mais-sbt", label: "+SBT 📺", icon: Tv, desc: "Assista +SBT grátis" },
   { to: "/iptv", label: "IPTV", icon: Tv, desc: "Pluto TV grátis" },
