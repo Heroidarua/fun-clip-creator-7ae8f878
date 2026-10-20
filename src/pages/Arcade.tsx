@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { AlertTriangle, ExternalLink, Info, Joystick, Search } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ARCADE_COUNTS,
   ARCADE_GAMES,
@@ -37,6 +37,13 @@ const thumbUrl = (u?: string) => {
 
 function swfProxyPath(id: string): string {
   return "/api/arcade/proxy?p=" + encodeURIComponent("/flash/swf/" + id + ".swf");
+}
+
+// Página de jogo do parceiro espelhada no nosso domínio (player inline).
+function pageProxySrc(g: ArcadeGame): string {
+  const src = g.url ?? "";
+  const path = src.startsWith("https://wasmarcade.com") ? src.slice("https://wasmarcade.com".length) : src;
+  return "/api/arcade/page?p=" + encodeURIComponent(path);
 }
 
 function Chip({
@@ -65,6 +72,7 @@ export default function ArcadePage() {
   const [system, setSystem] = useState<ArcadeSystem | "all">("all");
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [open, setOpen] = useState<ArcadeGame | null>(null);
+  const [playing, setPlaying] = useState<ArcadeGame | null>(null);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -83,6 +91,21 @@ export default function ArcadePage() {
     setVisible(PAGE_SIZE);
   };
 
+  // fecha o player com Escape e trava o scroll da página enquanto ele abre
+  useEffect(() => {
+    if (!playing) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setPlaying(null);
+    };
+    window.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [playing]);
+
   return (
     <>
       <Header />
@@ -98,7 +121,8 @@ export default function ArcadePage() {
                 Arcade — {ARCADE_COUNTS.all} jogos grátis
               </h1>
               <p className="text-sm text-muted-foreground">
-                Neo Geo, Capcom, Clássicos de fliperama, PC em WASM e Flash. Sem download, sem cadastro.
+                Neo Geo, Capcom, Clássicos de fliperama, PC em WASM e Flash — jogando direto aqui
+                no SOS01, sem download e sem cadastro.
               </p>
             </div>
           </div>
@@ -148,7 +172,7 @@ export default function ArcadePage() {
             {shown.map((g) => (
               <button
                 key={g.id}
-                onClick={() => setOpen(g)}
+                onClick={() => (g.swf ? setOpen(g) : setPlaying(g))}
                 className="group overflow-hidden rounded-xl border border-border bg-card text-left transition duration-200 hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-lg"
               >
                 <div className="relative aspect-[3/4] w-full overflow-hidden bg-muted">
@@ -209,7 +233,7 @@ export default function ArcadePage() {
               WASM Arcade
             </a>{" "}
             para que fiquem acessíveis junto com o resto da coleção do SOS01. Capas, builds e
-            motores continuam hospedados no servidor deles.
+            motores são reproduzidos aqui no SOS01 por um espelho same-origin dos assets deles.
           </p>
           <p>
             Todos os jogos pertencem aos seus respectivos detentores de direitos autorais. Confira{" "}
@@ -233,6 +257,56 @@ export default function ArcadePage() {
         </section>
       </main>
       <Footer />
+
+      {/* Player inline: página do jogo espelhada no nosso domínio */}
+      {playing && (
+        <div
+          className="fixed inset-0 z-[100] flex flex-col bg-black"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Jogando ${playing.title}`}
+        >
+          <div className="flex items-center justify-between gap-3 border-b border-white/10 bg-black px-3 py-2 sm:px-4">
+            <div className="flex min-w-0 items-center gap-2">
+              <Joystick className="h-4 w-4 shrink-0 text-primary" />
+              <p className="truncate text-sm font-semibold text-white">{playing.title}</p>
+              <Badge variant="secondary" className="hidden shrink-0 sm:inline-flex">
+                {SYSTEM_META[playing.system].label}
+                {playing.year ? ` • ${playing.year}` : ""}
+              </Badge>
+            </div>
+            <div className="flex shrink-0 items-center gap-1">
+              <Button
+                asChild
+                size="sm"
+                variant="ghost"
+                className="text-white/80 hover:bg-white/10 hover:text-white"
+              >
+                <a href={playing.url} target="_blank" rel="noreferrer noopener">
+                  <ExternalLink className="mr-1.5 h-4 w-4" /> Origem
+                </a>
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="text-white/80 hover:bg-white/10 hover:text-white"
+                onClick={() => setPlaying(null)}
+                aria-label="Fechar jogador"
+              >
+                &#x2715;
+              </Button>
+            </div>
+          </div>
+          <iframe
+            key={playing.id}
+            src={pageProxySrc(playing)}
+            title={playing.title}
+            className="w-full flex-1 border-0 bg-black"
+            allow="autoplay; fullscreen; gamepad; pointer-lock"
+            allowFullScreen
+          />
+        </div>
+      )}
 
       {/* Diálogo do jogo */}
       <Dialog open={!!open} onOpenChange={(o) => !o && setOpen(null)}>
