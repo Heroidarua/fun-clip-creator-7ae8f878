@@ -92,7 +92,7 @@ function esc(p: string): string {
   return MIRROR + p.split("/").map(encodeURIComponent).join("/");
 }
 
-function rewrite(html: string): string {
+function rewrite(html: string, path: string): string {
   let out = html.replace(
     /<meta[^>]*http-equiv=["']Content-Security-Policy["'][^>]*>/gi,
     "",
@@ -138,7 +138,10 @@ function rewrite(html: string): string {
     out = INJECT + out;
   }
 
-  return out;
+  // O site do parceiro é uma SPA: sem isto, o roteador deles lê o path do
+  // iframe (/api/arcade/page) e renderiza a página 404 deles.
+  const locationScript = `<script>history.replaceState(null,"",${JSON.stringify(path).replaceAll("<", "\\u003c")});</script>`;
+  return out.replace(/<head[^>]*>/i, (head) => head + locationScript);
 }
 
 export const Route = createFileRoute("/api/arcade/page")({
@@ -182,7 +185,7 @@ export const Route = createFileRoute("/api/arcade/page")({
           }
 
           const html = await upstream.text();
-          return new Response(rewrite(html), {
+          return new Response(rewrite(html, p), {
             status: 200,
             headers: {
               ...HEADERS,
