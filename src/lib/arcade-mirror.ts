@@ -40,7 +40,9 @@ export const MIRROR_PREFIXES = [
   "/assets",
 ] as const;
 
-const SAFE = /^\/[A-Za-z0-9._\-/]+$/;
+// Aceita caracteres válidos de path de URL, inclusive % (segmentos codificados
+// pelo espelho, ex.: espaços/acentos viram %20). ".." segue bloqueado abaixo.
+const SAFE = /^\/[A-Za-z0-9._\-/%+~(),!&=@']+$/;
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",

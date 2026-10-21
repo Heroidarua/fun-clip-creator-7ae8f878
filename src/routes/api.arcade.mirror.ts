@@ -9,7 +9,7 @@ import { UPSTREAM_HEADERS } from "../lib/arcade-mirror";
  * vindo de https://wasmarcade.com/<caminho>.
  */
 const SOURCE = "https://wasmarcade.com";
-const SAFE = /^\/[A-Za-z0-9._\-/]+$/;
+const SAFE = /^\/[A-Za-z0-9._\-/%+~(),!&=@']+$/;
 
 const HEADERS: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
