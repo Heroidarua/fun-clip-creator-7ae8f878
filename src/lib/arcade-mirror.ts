@@ -69,7 +69,7 @@ export function streamMirror(prefix: string) {
       // mantém bruto se não for encoded
     }
     if (p === "" || p === "/") p = "/";
-    if (!SAFE.test(p) || p.includes("//") || p.length > 400) {
+    if (!SAFE.test(p) || p.includes("//") || p.includes("..") || p.length > 400) {
       return Response.json({ error: "Caminho inválido" }, { status: 400, headers: CORS });
     }
 

@@ -26,7 +26,7 @@ export const Route = createFileRoute("/api/arcade/mirror")({
         } catch {
           p = "";
         }
-        if (!SAFE.test(p) || p.includes("//") || p.length > 400) {
+        if (!SAFE.test(p) || p.includes("//") || p.includes("..") || p.length > 400) {
           return Response.json({ error: "Caminho inválido" }, { status: 400, headers: HEADERS });
         }
 

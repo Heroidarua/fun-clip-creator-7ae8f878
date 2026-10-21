@@ -159,10 +159,19 @@ export const Route = createFileRoute("/api/arcade/page")({
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), 90_000);
         try {
-          const upstream = await fetch(SOURCE + p, {
+          // O edge do parceiro às vezes responde 403/404 para tráfego "de
+          // máquina"; uma segunda tentativa costuma passar.
+          let upstream = await fetch(SOURCE + p, {
             signal: controller.signal,
             headers: { ...UPSTREAM_HEADERS, accept: "text/html,*/*" },
           });
+          if (upstream.status === 403 || upstream.status === 404) {
+            await new Promise((r) => setTimeout(r, 400));
+            upstream = await fetch(SOURCE + p, {
+              signal: controller.signal,
+              headers: { ...UPSTREAM_HEADERS, accept: "text/html,*/*" },
+            });
+          }
 
           if (!upstream.ok) {
             const text = await upstream.text().catch(() => "");
