@@ -282,7 +282,7 @@ export default function ArcadePage() {
                 variant="ghost"
                 className="text-white/80 hover:bg-white/10 hover:text-white"
               >
-                <a href={playing.url} target="_blank" rel="noreferrer noopener">
+                <a href={"/api/arcade/page?p=" + encodeURIComponent(playing.url.replace(/^https?:\/\/wasmarcade\.com/, ""))} target="_blank" rel="noreferrer noopener">
                   <ExternalLink className="mr-1.5 h-4 w-4" /> Origem
                 </a>
               </Button>
