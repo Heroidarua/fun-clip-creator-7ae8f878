@@ -30,6 +30,7 @@ export const UPSTREAM_HEADERS: Record<string, string> = {
 export const MIRROR_PREFIXES = [
   "/wasm-mirror",
   "/games",
+  "/gta3sky",
   "/revc",
   "/vc-data",
   "/vc-assets",
@@ -56,6 +57,38 @@ function rewriteCss(css: string): string {
   return css.replace(/url\(\s*("|')?(\/[^"')]+)\1\s*\)/g, (m, q: string, path: string) =>
     path.startsWith("/wasm-mirror/") ? m : `url(${q}/wasm-mirror${path})`,
   );
+}
+
+// Onda 3: as ROMs moram no nosso bucket R2 (Cloudflare). Servimos daqui
+// primeiro; o parceiro vira reserva cega se faltar algo no bucket.
+export const R2_ROMS_BASE = "https://sos01-roms.523b77a14a08cedb4c6136a7f27ed57e.r2.dev";
+
+/** Tenta servir /emulation/roms/* do nosso R2 (suporta Range). Null = nao tem la. */
+export async function tryR2Roms(p: string, search: string, request: Request): Promise<Response | null> {
+  if (!p.startsWith("/emulation/roms/")) return null;
+  try {
+    const h: Record<string, string> = { ...UPSTREAM_HEADERS };
+    const range = request.headers.get("range");
+    if (range) h["range"] = range;
+    const r2 = await fetch(R2_ROMS_BASE + p + search, { headers: h });
+    if (r2.status !== 200 && r2.status !== 206) return null;
+    const headers: Record<string, string> = {
+      "Access-Control-Allow-Origin": "*",
+      "X-Arcade-Source": "r2",
+      "Cache-Control": "public, max-age=2592000, immutable",
+    };
+    const ct = r2.headers.get("content-type");
+    if (ct) headers["Content-Type"] = ct;
+    for (const hh of ["content-range", "accept-ranges"] as const) {
+      const v = r2.headers.get(hh);
+      if (v) headers[hh] = v;
+    }
+    const cl = r2.headers.get("content-length");
+    if (cl && r2.status === 200) headers["Content-Length"] = cl;
+    return new Response(r2.body, { status: r2.status, headers });
+  } catch {
+    return null; // R2 fora do ar -> cai no parceiro
+  }
 }
 
 /** Monta o handler GET de uma rota espelho para o prefixo informado. */
@@ -94,6 +127,10 @@ export function streamMirror(prefix: string) {
         /* sem static interno -> segue para a origem */
       }
     }
+
+    // Onda 3: ROMs primeiro no nosso R2; parceiro so como reserva.
+    const fromR2 = await tryR2Roms(p, u.search, request);
+    if (fromR2) return fromR2;
 
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 300_000);
