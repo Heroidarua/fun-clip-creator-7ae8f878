@@ -82,6 +82,24 @@ const INJECT = `
         return Promise.reject(new Error("service worker desativado no espelho"));
       };
     }
+    var _gesture = 0;
+    try {
+      ["click","pointerdown","keydown"].forEach(function (ev) {
+        document.addEventListener(ev, function () { _gesture = Date.now(); }, true);
+      });
+      var _wopen = window.open;
+      window.open = function (url) {
+        try {
+          if (typeof url === "string") {
+            var lu = url.toLowerCase();
+            var cross = lu.indexOf("http") === 0 || lu.indexOf("//") === 0;
+            var ours = lu.indexOf("sos01.com.br") !== -1 || lu.indexOf("fiveplay.lol") !== -1;
+            if (cross && !ours && Date.now() - _gesture > 1500) return null;
+          }
+        } catch (e2) {}
+        return _wopen.apply(window, arguments);
+      };
+    } catch (e2) {}
   } catch (e) {}
 })();
 </script>
@@ -93,9 +111,14 @@ function esc(p: string): string {
 }
 
 function rewrite(html: string, path: string): string {
+  // CSP original deles libera duas redes de anuncio (al5sm.com, my.rtmark.net).
+  // Substituir por uma nossa igual menos essas origens mata o script de ad
+  // injetado em runtime. Meta CSP nao suporta frame-ancestors/report-uri.
+  const OUR_CSP =
+    "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://static.cloudflareinsights.com; worker-src 'self' blob: data:; child-src 'self' blob: https://fiveplay.lol; connect-src 'self' blob: data: https://cloudflareinsights.com https:; media-src 'self' blob: data:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; object-src 'none'; base-uri 'self'; form-action 'self'\">";
   let out = html.replace(
     /<meta[^>]*http-equiv=["']Content-Security-Policy["'][^>]*>/gi,
-    "",
+    OUR_CSP,
   );
 
   // origens absolutas entre aspas: "https://wasmarcade.com/x" ou "//wasmarcade.com/x"
