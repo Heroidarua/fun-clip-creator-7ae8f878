@@ -1,5 +1,4 @@
 import { notFound } from "@tanstack/react-router";
-import { rewriteArcadeHtml } from "./arcade-html";
 
 /**
  * Espelho em caminho real do parceiro WASM Arcade.
@@ -9,6 +8,11 @@ import { rewriteArcadeHtml } from "./arcade-html";
  * em runtime (scripts do motor, WASM, dados, fontes) resolverem corretamente.
  */
 export const MIRROR_SOURCE = "https://wasmarcade.com";
+
+// O edge do parceiro bloqueia pedidos sem User-Agent (403/404) — o fetch do
+// worker por padrão não envia UA. Todos os espelhos usam este UA de browser.
+export const UPSTREAM_UA =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
 
 // Prefixos que o motor dos jogos pede em runtime com caminho absoluto.
 export const MIRROR_PREFIXES = [
@@ -36,7 +40,7 @@ const CORS = {
 // caminho que não existe aqui.
 function rewriteCss(css: string): string {
   return css.replace(/url\(\s*("|')?(\/[^"')]+)\1\s*\)/g, (m, q: string, path: string) =>
-    path.startsWith("/wasm-mirror/") ? m : `url(${q ?? ""}/wasm-mirror${path}${q ?? ""})`,
+    path.startsWith("/wasm-mirror/") ? m : `url(${q}/wasm-mirror${path})`,
   );
 }
 
@@ -44,22 +48,26 @@ function rewriteCss(css: string): string {
 export function streamMirror(prefix: string) {
   return async ({ request }: { request: Request }) => {
     const u = new URL(request.url);
-    const matches = u.pathname === prefix || u.pathname.startsWith(prefix + "/");
-    let p = matches ? prefix === "/wasm-mirror" ? u.pathname.slice(prefix.length) : u.pathname : "";
+    const idx = u.pathname.indexOf(prefix);
+    let p = idx >= 0 ? u.pathname.slice(idx + prefix.length) : "";
     try {
       p = decodeURIComponent(p);
     } catch {
       // mantém bruto se não for encoded
     }
     if (p && !p.startsWith("/")) p = "/" + p;
-    if (!SAFE.test(p) || p.includes("//") || p.split("/").includes("..") || p.length > 400) {
+    if (!SAFE.test(p) || p.includes("//") || p.length > 400) {
       return Response.json({ error: "Caminho inválido" }, { status: 400, headers: CORS });
     }
 
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 300_000);
     try {
-      const upHeaders: Record<string, string> = { accept: "*/*", referer: MIRROR_SOURCE + "/" };
+      const upHeaders: Record<string, string> = {
+        accept: "*/*",
+        referer: MIRROR_SOURCE + "/",
+        "user-agent": UPSTREAM_UA,
+      };
       const range = request.headers.get("range");
       if (range) upHeaders["range"] = range;
 
@@ -84,17 +92,15 @@ export function streamMirror(prefix: string) {
         if (v) headers[h] = v;
       }
 
-      if (upstream.ok && ct?.toLowerCase().includes("text/html")) {
-        const nonce = crypto.randomUUID().replaceAll("-", "");
-        headers["X-Arcade-Nonce"] = nonce;
-        headers["Cache-Control"] = "no-cache";
-        return new Response(rewriteArcadeHtml(await upstream.text(), p + u.search, nonce), { status: upstream.status, headers });
-      }
-
       // CSS: pequeno e transformado (urls absolutas -> espelho); sem length fixo.
       if (upstream.ok && ct && ct.toLowerCase().includes("text/css")) {
         const css = await upstream.text();
         return new Response(rewriteCss(css), { status: 200, headers });
+      }
+
+      if (upstream.ok) {
+        const cl = upstream.headers.get("content-length");
+        if (cl && upstream.status === 200) headers["Content-Length"] = cl;
       }
 
       return new Response(upstream.ok ? upstream.body : null, {

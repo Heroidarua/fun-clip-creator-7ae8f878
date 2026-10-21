@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { UPSTREAM_UA } from "../lib/arcade-mirror";
 
 /**
  * Espelho byte-a-byte do parceiro WASM Arcade.
@@ -34,7 +35,7 @@ export const Route = createFileRoute("/api/arcade/mirror")({
         try {
           const upstream = await fetch(SOURCE + p, {
             signal: controller.signal,
-            headers: { accept: "*/*", referer: SOURCE + "/" },
+            headers: { accept: "*/*", referer: SOURCE + "/", "user-agent": UPSTREAM_UA },
           });
 
           const headers: Record<string, string> = {

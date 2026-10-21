@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { UPSTREAM_UA } from "../lib/arcade-mirror";
 
 /**
  * Proxy same-origin para assets do parceiro WASM Arcade (wasmarcade.com).
@@ -28,7 +29,7 @@ export const Route = createFileRoute("/api/arcade/proxy")({
         try {
           const upstream = await fetch(SOURCE + p, {
             signal: controller.signal,
-            headers: { accept: "*/*", referer: SOURCE + "/" },
+            headers: { accept: "*/*", referer: SOURCE + "/", "user-agent": UPSTREAM_UA },
           });
 
           if (!upstream.ok) {

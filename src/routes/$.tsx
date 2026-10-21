@@ -1,21 +1,11 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import NotFound from "@/pages/NotFound";
-import { mirrorFallbackGet } from "@/lib/arcade-mirror";
 
 export const Route = createFileRoute("/$")({
   // Lança notFound() para que o servidor responda HTTP 404 de verdade
   // (antes devolvia 200 — soft 404 aos olhos do Google).
   loader: () => {
     throw notFound();
-  },
-  server: {
-    handlers: {
-      GET: ({ request }) => {
-        // Caminhos espelhados do Arcade (engine dos jogos) viram proxy;
-        // o resto segue o 404 normal.
-        return mirrorFallbackGet({ request });
-      },
-    },
   },
   component: NotFound,
   notFoundComponent: NotFound,
