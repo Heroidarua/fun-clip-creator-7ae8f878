@@ -1,1 +1,0 @@
-UPDATE public.downloader_status SET status = 'maintenance', last_checked = now() WHERE platform IN ('instagram','kwai');
