@@ -1,0 +1,1 @@
+UPDATE public.downloader_status SET status = 'active', last_checked = now() WHERE platform = 'kwai';

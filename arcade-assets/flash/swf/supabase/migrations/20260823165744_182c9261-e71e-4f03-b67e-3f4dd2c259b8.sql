@@ -1,0 +1,4 @@
+ALTER POLICY "Usuários podem editar seus próprios comentários" ON public.community_comments USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+ALTER POLICY "Usuários podem marcar suas notificações como lidas" ON public.community_notifications USING (auth.uid() = receiver_id) WITH CHECK (auth.uid() = receiver_id);
+ALTER POLICY "Usuários podem editar seus próprios posts" ON public.community_posts USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+ALTER POLICY "Users can update their own profile" ON public.profiles USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);

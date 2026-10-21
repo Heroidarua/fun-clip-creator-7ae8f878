@@ -1,0 +1,39 @@
+import { AlertTriangle, Wrench } from "lucide-react";
+import { useDownloaderStatus } from "@/hooks/useDownloaderStatus";
+
+interface FeatureGateProps {
+  featureKey: string;
+  label?: string;
+  children: React.ReactNode;
+}
+
+/**
+ * Wrap any tool/feature with this. When an admin marks the feature as
+ * "maintenance" in the Admin panel, the children are replaced with a
+ * friendly maintenance card so users know the service is paused.
+ */
+export function FeatureGate({ featureKey, label, children }: FeatureGateProps) {
+  const { isActive, loading } = useDownloaderStatus();
+
+  if (loading || isActive(featureKey)) return <div>{children}</div>;
+
+  return (
+    <div className="rounded-sm border-2 border-red-500/40 bg-red-500/10 p-6 text-center">
+      <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full border-2 border-red-500/40 bg-red-500/20">
+        <Wrench className="h-6 w-6 text-red-500" />
+      </div>
+      <div className="flex items-center justify-center gap-2 mb-1">
+        <AlertTriangle className="w-4 h-4 text-red-500" />
+        <span className="font-pixel text-[11px] text-red-500 uppercase">
+          em manutenção
+        </span>
+      </div>
+      <p className="text-sm text-red-50 mt-1">
+        {label ? `${label} está` : "Esta ferramenta está"} temporariamente
+        indisponível para reparos. Volte em breve!
+      </p>
+    </div>
+  );
+}
+
+export default FeatureGate;

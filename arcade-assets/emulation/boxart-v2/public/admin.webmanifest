@@ -1,0 +1,19 @@
+{
+  "name": "SOS01 Admin",
+  "short_name": "SOS Admin",
+  "description": "Painel administrativo do SOS01: ferramentas, anúncios e avisos.",
+  "id": "/admin",
+  "start_url": "/admin",
+  "scope": "/admin",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#0E4A7B",
+  "background_color": "#0E4A7B",
+  "lang": "pt-BR",
+  "icons": [
+    { "src": "/admin-icon.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/admin-icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/admin-icon.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/admin-icon.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

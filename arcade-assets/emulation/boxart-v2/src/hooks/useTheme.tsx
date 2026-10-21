@@ -1,0 +1,75 @@
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+
+export type Theme = "dark" | "light" | "sepia" | "ocean" | "forest";
+
+export const themeConfig: Record<Theme, { label: string; icon: string }> = {
+  dark: { label: "Escuro", icon: "moon" },
+  light: { label: "Claro", icon: "sun" },
+  sepia: { label: "Sépia", icon: "coffee" },
+  ocean: { label: "Oceano", icon: "waves" },
+  forest: { label: "Floresta", icon: "trees" },
+};
+
+interface ThemeContextType {
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
+  toggleTheme: () => void;
+}
+
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+
+const themes: Theme[] = ["dark", "light", "sepia", "ocean", "forest"];
+
+export const ThemeProvider = ({ children }: { children: ReactNode }) => {
+  // SSR always renders "light" (see RootShell) — the stored theme is read in an
+  // effect after hydration so server and client markup stay identical.
+  const [theme, setThemeState] = useState<Theme>("light");
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("sos01-theme") as Theme | null;
+      if (stored && themes.includes(stored)) {
+        setThemeState(stored);
+      }
+    } catch {
+      // localStorage unavailable (private mode) — keep the default theme.
+    }
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      localStorage.setItem("sos01-theme", theme);
+    } catch {
+      // ignore write failures
+    }
+    document.documentElement.classList.remove(...themes);
+    document.documentElement.classList.add(theme);
+  }, [theme, hydrated]);
+
+  const setTheme = (newTheme: Theme) => {
+    setThemeState(newTheme);
+  };
+
+  const toggleTheme = () => {
+    const currentIndex = themes.indexOf(theme);
+    const nextIndex = (currentIndex + 1) % themes.length;
+    setThemeState(themes[nextIndex]);
+  };
+
+  return (
+    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+
+export const useTheme = () => {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error("useTheme must be used within a ThemeProvider");
+  }
+  return context;
+};
