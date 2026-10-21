@@ -9,7 +9,7 @@ import { UPSTREAM_HEADERS } from "../lib/arcade-mirror";
  * vindo de https://wasmarcade.com/<caminho>.
  */
 const SOURCE = "https://wasmarcade.com";
-const SAFE = /^\/[A-Za-z0-9._\-/]+$/;
+const SAFE = /^\/[A-Za-z0-9._\-/%+~(),!&=@']+$/;
 
 const HEADERS: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -26,7 +26,7 @@ export const Route = createFileRoute("/api/arcade/mirror")({
         } catch {
           p = "";
         }
-        if (!SAFE.test(p) || p.includes("//") || p.length > 400) {
+        if (!SAFE.test(p) || p.includes("//") || p.includes("..") || p.length > 400) {
           return Response.json({ error: "Caminho inválido" }, { status: 400, headers: HEADERS });
         }
 

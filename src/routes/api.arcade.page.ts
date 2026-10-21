@@ -92,7 +92,7 @@ function esc(p: string): string {
   return MIRROR + p.split("/").map(encodeURIComponent).join("/");
 }
 
-function rewrite(html: string): string {
+function rewrite(html: string, path: string): string {
   let out = html.replace(
     /<meta[^>]*http-equiv=["']Content-Security-Policy["'][^>]*>/gi,
     "",
@@ -138,7 +138,10 @@ function rewrite(html: string): string {
     out = INJECT + out;
   }
 
-  return out;
+  // O site do parceiro é uma SPA: sem isto, o roteador deles lê o path do
+  // iframe (/api/arcade/page) e renderiza a página 404 deles.
+  const locationScript = `<script>history.replaceState(null,"",${JSON.stringify(path).replaceAll("<", "\\u003c")});</script>`;
+  return out.replace(/<head[^>]*>/i, (head) => head + locationScript);
 }
 
 export const Route = createFileRoute("/api/arcade/page")({
@@ -152,17 +155,26 @@ export const Route = createFileRoute("/api/arcade/page")({
         } catch {
           p = "";
         }
-        if (!/^\/[A-Za-z0-9._\-/]+$/.test(p) || p.includes("//") || p.length > 400) {
+        if (!/^\/[A-Za-z0-9._\-/%+~(),!&=@']+$/.test(p) || p.includes("//") || p.includes("..") || p.length > 400) {
           return Response.json({ error: "Caminho inválido" }, { status: 400, headers: HEADERS });
         }
 
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), 90_000);
         try {
-          const upstream = await fetch(SOURCE + p, {
+          // O edge do parceiro às vezes responde 403/404 para tráfego "de
+          // máquina"; uma segunda tentativa costuma passar.
+          let upstream = await fetch(SOURCE + p, {
             signal: controller.signal,
             headers: { ...UPSTREAM_HEADERS, accept: "text/html,*/*" },
           });
+          if (upstream.status === 403 || upstream.status === 404) {
+            await new Promise((r) => setTimeout(r, 400));
+            upstream = await fetch(SOURCE + p, {
+              signal: controller.signal,
+              headers: { ...UPSTREAM_HEADERS, accept: "text/html,*/*" },
+            });
+          }
 
           if (!upstream.ok) {
             const text = await upstream.text().catch(() => "");
@@ -173,7 +185,7 @@ export const Route = createFileRoute("/api/arcade/page")({
           }
 
           const html = await upstream.text();
-          return new Response(rewrite(html), {
+          return new Response(rewrite(html, p), {
             status: 200,
             headers: {
               ...HEADERS,

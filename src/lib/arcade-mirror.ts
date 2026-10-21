@@ -40,7 +40,9 @@ export const MIRROR_PREFIXES = [
   "/assets",
 ] as const;
 
-const SAFE = /^\/[A-Za-z0-9._\-/]+$/;
+// Aceita caracteres válidos de path de URL, inclusive % (segmentos codificados
+// pelo espelho, ex.: espaços/acentos viram %20). ".." segue bloqueado abaixo.
+const SAFE = /^\/[A-Za-z0-9._\-/%+~(),!&=@']+$/;
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -59,15 +61,17 @@ function rewriteCss(css: string): string {
 export function streamMirror(prefix: string) {
   return async ({ request }: { request: Request }) => {
     const u = new URL(request.url);
-    const idx = u.pathname.indexOf(prefix);
-    let p = idx >= 0 ? u.pathname.slice(idx + prefix.length) : "";
+    // Só o /wasm-mirror é um prefixo artificial: ele sai do caminho antes de
+    // pedir à origem. Os demais prefixos (/assets, /games, /flash...) fazem
+    // parte do caminho real no parceiro e precisam ser mantidos.
+    let p = prefix === "/wasm-mirror" ? u.pathname.slice(prefix.length) : u.pathname;
     try {
       p = decodeURIComponent(p);
     } catch {
       // mantém bruto se não for encoded
     }
     if (p === "" || p === "/") p = "/";
-    if (!SAFE.test(p) || p.includes("//") || p.length > 400) {
+    if (!SAFE.test(p) || p.includes("//") || p.includes("..") || p.length > 400) {
       return Response.json({ error: "Caminho inválido" }, { status: 400, headers: CORS });
     }
 
