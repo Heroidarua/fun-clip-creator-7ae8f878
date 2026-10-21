@@ -1,4 +1,5 @@
 import { notFound } from "@tanstack/react-router";
+import { localCandidates } from "./arcade-local";
 
 /**
  * Espelho em caminho real do parceiro WASM Arcade.
@@ -73,6 +74,25 @@ export function streamMirror(prefix: string) {
     if (p === "" || p === "/") p = "/";
     if (!SAFE.test(p) || p.includes("//") || p.includes("..") || p.length > 400) {
       return Response.json({ error: "Caminho inválido" }, { status: 400, headers: CORS });
+    }
+
+    // Onda 1: o que ja tem na despensa local sai daqui, sem tocar na origem.
+    for (const cand of localCandidates(p)) {
+      try {
+        const local = await fetch(new URL(cand, request.url));
+        if (local.ok) {
+          const lh: Record<string, string> = {
+            ...CORS,
+            "X-Arcade-Source": "local",
+            "Cache-Control": "public, max-age=604800",
+          };
+          const lct = local.headers.get("content-type");
+          if (lct) lh["Content-Type"] = lct;
+          return new Response(local.body, { status: 200, headers: lh });
+        }
+      } catch {
+        /* sem static interno -> segue para a origem */
+      }
     }
 
     const controller = new AbortController();
