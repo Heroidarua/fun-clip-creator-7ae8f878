@@ -1,1 +1,0 @@
-UPDATE public.downloader_status SET status='operational', last_checked=now() WHERE platform='instagram';
