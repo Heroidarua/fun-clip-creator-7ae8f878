@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { UPSTREAM_HEADERS } from "../lib/arcade-mirror";
+import { UPSTREAM_HEADERS, tryR2Roms } from "../lib/arcade-mirror";
 
 /**
  * Espelho byte-a-byte do parceiro WASM Arcade.
@@ -29,6 +29,10 @@ export const Route = createFileRoute("/api/arcade/mirror")({
         if (!SAFE.test(p) || p.includes("//") || p.includes("..") || p.length > 400) {
           return Response.json({ error: "Caminho inválido" }, { status: 400, headers: HEADERS });
         }
+
+        // Onda 3: ROMs primeiro no nosso R2; parceiro so como reserva.
+        const fromR2 = await tryR2Roms(p, "", request);
+        if (fromR2) return fromR2;
 
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), 120_000);
