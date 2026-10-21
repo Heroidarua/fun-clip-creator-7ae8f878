@@ -1,0 +1,1 @@
+CREATE POLICY "Deny all client access" ON public.store_orders FOR ALL TO anon, authenticated USING (false) WITH CHECK (false);

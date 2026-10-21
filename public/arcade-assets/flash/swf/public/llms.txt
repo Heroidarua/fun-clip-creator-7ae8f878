@@ -1,0 +1,35 @@
+# SOS01
+
+> Plataforma 100% gratuita de utilidades digitais: downloaders de vídeo (TikTok, YouTube, Kwai, Instagram), ferramentas com IA, conversores, gerador de QR Code, jogos retrô no navegador e biblioteca de quadrinhos.
+
+## Pages
+
+- [Início](/): Visão geral da plataforma, downloaders e principais ferramentas.
+- [Sobre](/sobre): Quem somos e a missão do SOS01.
+- [Como usar](/como-usar): Guia rápido das ferramentas e downloaders.
+- [Ferramentas](/ferramentas): Catálogo completo de utilitários gratuitos.
+- [Jogos](/jogos): Coleção de jogos retrô que rodam no navegador.
+- [Jogos Java](/jogos-java): Jogos Java clássicos online.
+- [Blog](/blog): Tutoriais, dicas e novidades.
+- [Preços](/precos): Plano gratuito permanente.
+- [Contato](/contato): Canais de contato.
+
+## Blog
+
+- [Como baixar vídeos do TikTok sem marca d'água](/blog/como-baixar-videos-tiktok-sem-marca)
+- [Como baixar vídeos do YouTube](/blog/como-baixar-videos-youtube)
+- [Como baixar vídeos do Kwai](/blog/como-baixar-videos-kwai)
+- [Como extrair áudio do TikTok](/blog/como-extrair-audio-tiktok)
+- [Como usar os downloaders](/blog/como-usar-downloaders)
+- [Guia completo do SOS01](/blog/guia-completo-sos01)
+- [Como nasceu o SOS01](/blog/como-nasceu-sos01)
+- [Dicas para criadores de conteúdo](/blog/dicas-criadores-conteudo)
+- [Ferramentas gratuitas](/blog/ferramentas-gratuitas)
+- [Jogos retrô grátis](/blog/jogos-retro-gratis)
+- [Biblioteca de quadrinhos](/blog/biblioteca-quadrinhos)
+
+## Optional
+
+- [DMCA](/dmca): Política de direitos autorais.
+- [Privacidade](/privacidade): Política de privacidade.
+- [Termos](/termos): Termos de uso.
