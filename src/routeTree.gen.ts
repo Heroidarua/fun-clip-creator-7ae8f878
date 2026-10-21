@@ -49,6 +49,7 @@ import { Route as ApiManageAnnouncementsRouteImport } from './routes/api.manage-
 import { Route as ApiManageFeatureStatusRouteImport } from './routes/api.manage-feature-status'
 import { Route as ApiPlayerCatalogRouteImport } from './routes/api.player-catalog'
 import { Route as ApiRemoveBgRouteImport } from './routes/api.remove-bg'
+import { Route as AssetsSplatRouteImport } from './routes/assets/$'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogBibliotecaQuadrinhosRouteImport } from './routes/blog.biblioteca-quadrinhos'
 import { Route as BlogComoBaixarVideosKwaiRouteImport } from './routes/blog.como-baixar-videos-kwai'
@@ -64,9 +65,18 @@ import { Route as BlogGuiaCompletoClipsaveRouteImport } from './routes/blog.guia
 import { Route as BlogGuiaCompletoSos01RouteImport } from './routes/blog.guia-completo-sos01'
 import { Route as BlogJogosRetroGratisRouteImport } from './routes/blog.jogos-retro-gratis'
 import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
+import { Route as CoversSplatRouteImport } from './routes/covers/$'
+import { Route as EmulationSplatRouteImport } from './routes/emulation/$'
 import { Route as FerramentaSlugRouteImport } from './routes/ferramenta.$slug'
 import { Route as FerramentaMelhorarVideoRouteImport } from './routes/ferramenta.melhorar-video'
 import { Route as FerramentasYoutubeDownloaderRouteImport } from './routes/ferramentas_.youtube-downloader'
+import { Route as FlashSplatRouteImport } from './routes/flash/$'
+import { Route as GamesSplatRouteImport } from './routes/games/$'
+import { Route as OgSplatRouteImport } from './routes/og/$'
+import { Route as PcSplatRouteImport } from './routes/pc/$'
+import { Route as RevcSplatRouteImport } from './routes/revc/$'
+import { Route as VcAssetsSplatRouteImport } from './routes/vc-assets/$'
+import { Route as VcDataSplatRouteImport } from './routes/vc-data/$'
 import { Route as WasmMirrorSplatRouteImport } from './routes/wasm-mirror/$'
 import { Route as ApiArcadeMirrorRouteImport } from './routes/api.arcade.mirror'
 import { Route as ApiArcadePageRouteImport } from './routes/api.arcade.page'
@@ -280,6 +290,11 @@ const ApiRemoveBgRoute = ApiRemoveBgRouteImport.update({
   path: '/api/remove-bg',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AssetsSplatRoute = AssetsSplatRouteImport.update({
+  id: '/assets/$',
+  path: '/assets/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -363,6 +378,16 @@ const CategoriaSlugRoute = CategoriaSlugRouteImport.update({
   path: '/categoria/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CoversSplatRoute = CoversSplatRouteImport.update({
+  id: '/covers/$',
+  path: '/covers/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmulationSplatRoute = EmulationSplatRouteImport.update({
+  id: '/emulation/$',
+  path: '/emulation/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FerramentaSlugRoute = FerramentaSlugRouteImport.update({
   id: '/ferramenta/$slug',
   path: '/ferramenta/$slug',
@@ -379,6 +404,41 @@ const FerramentasYoutubeDownloaderRoute =
     path: '/ferramentas/youtube-downloader',
     getParentRoute: () => rootRouteImport,
   } as any)
+const FlashSplatRoute = FlashSplatRouteImport.update({
+  id: '/flash/$',
+  path: '/flash/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GamesSplatRoute = GamesSplatRouteImport.update({
+  id: '/games/$',
+  path: '/games/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OgSplatRoute = OgSplatRouteImport.update({
+  id: '/og/$',
+  path: '/og/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PcSplatRoute = PcSplatRouteImport.update({
+  id: '/pc/$',
+  path: '/pc/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RevcSplatRoute = RevcSplatRouteImport.update({
+  id: '/revc/$',
+  path: '/revc/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VcAssetsSplatRoute = VcAssetsSplatRouteImport.update({
+  id: '/vc-assets/$',
+  path: '/vc-assets/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VcDataSplatRoute = VcDataSplatRouteImport.update({
+  id: '/vc-data/$',
+  path: '/vc-data/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WasmMirrorSplatRoute = WasmMirrorSplatRouteImport.update({
   id: '/wasm-mirror/$',
   path: '/wasm-mirror/$',
@@ -478,6 +538,7 @@ export interface FileRoutesByFullPath {
   '/api/manage-feature-status': typeof ApiManageFeatureStatusRoute
   '/api/player-catalog': typeof ApiPlayerCatalogRoute
   '/api/remove-bg': typeof ApiRemoveBgRoute
+  '/assets/$': typeof AssetsSplatRoute
   '/blog/biblioteca-quadrinhos': typeof BlogBibliotecaQuadrinhosRoute
   '/blog/como-baixar-videos-kwai': typeof BlogComoBaixarVideosKwaiRoute
   '/blog/como-baixar-videos-tiktok-sem-marca': typeof BlogComoBaixarVideosTiktokSemMarcaRoute
@@ -492,9 +553,18 @@ export interface FileRoutesByFullPath {
   '/blog/guia-completo-sos01': typeof BlogGuiaCompletoSos01Route
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
+  '/covers/$': typeof CoversSplatRoute
+  '/emulation/$': typeof EmulationSplatRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/ferramenta/melhorar-video': typeof FerramentaMelhorarVideoRoute
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
+  '/flash/$': typeof FlashSplatRoute
+  '/games/$': typeof GamesSplatRoute
+  '/og/$': typeof OgSplatRoute
+  '/pc/$': typeof PcSplatRoute
+  '/revc/$': typeof RevcSplatRoute
+  '/vc-assets/$': typeof VcAssetsSplatRoute
+  '/vc-data/$': typeof VcDataSplatRoute
   '/wasm-mirror/$': typeof WasmMirrorSplatRoute
   '/blog/': typeof BlogIndexRoute
   '/api/arcade/mirror': typeof ApiArcadeMirrorRoute
@@ -548,6 +618,7 @@ export interface FileRoutesByTo {
   '/api/manage-feature-status': typeof ApiManageFeatureStatusRoute
   '/api/player-catalog': typeof ApiPlayerCatalogRoute
   '/api/remove-bg': typeof ApiRemoveBgRoute
+  '/assets/$': typeof AssetsSplatRoute
   '/blog/biblioteca-quadrinhos': typeof BlogBibliotecaQuadrinhosRoute
   '/blog/como-baixar-videos-kwai': typeof BlogComoBaixarVideosKwaiRoute
   '/blog/como-baixar-videos-tiktok-sem-marca': typeof BlogComoBaixarVideosTiktokSemMarcaRoute
@@ -562,9 +633,18 @@ export interface FileRoutesByTo {
   '/blog/guia-completo-sos01': typeof BlogGuiaCompletoSos01Route
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
+  '/covers/$': typeof CoversSplatRoute
+  '/emulation/$': typeof EmulationSplatRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/ferramenta/melhorar-video': typeof FerramentaMelhorarVideoRoute
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
+  '/flash/$': typeof FlashSplatRoute
+  '/games/$': typeof GamesSplatRoute
+  '/og/$': typeof OgSplatRoute
+  '/pc/$': typeof PcSplatRoute
+  '/revc/$': typeof RevcSplatRoute
+  '/vc-assets/$': typeof VcAssetsSplatRoute
+  '/vc-data/$': typeof VcDataSplatRoute
   '/wasm-mirror/$': typeof WasmMirrorSplatRoute
   '/blog': typeof BlogIndexRoute
   '/api/arcade/mirror': typeof ApiArcadeMirrorRoute
@@ -620,6 +700,7 @@ export interface FileRoutesById {
   '/api/manage-feature-status': typeof ApiManageFeatureStatusRoute
   '/api/player-catalog': typeof ApiPlayerCatalogRoute
   '/api/remove-bg': typeof ApiRemoveBgRoute
+  '/assets/$': typeof AssetsSplatRoute
   '/blog/biblioteca-quadrinhos': typeof BlogBibliotecaQuadrinhosRoute
   '/blog/como-baixar-videos-kwai': typeof BlogComoBaixarVideosKwaiRoute
   '/blog/como-baixar-videos-tiktok-sem-marca': typeof BlogComoBaixarVideosTiktokSemMarcaRoute
@@ -634,9 +715,18 @@ export interface FileRoutesById {
   '/blog/guia-completo-sos01': typeof BlogGuiaCompletoSos01Route
   '/blog/jogos-retro-gratis': typeof BlogJogosRetroGratisRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
+  '/covers/$': typeof CoversSplatRoute
+  '/emulation/$': typeof EmulationSplatRoute
   '/ferramenta/$slug': typeof FerramentaSlugRoute
   '/ferramenta/melhorar-video': typeof FerramentaMelhorarVideoRoute
   '/ferramentas_/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
+  '/flash/$': typeof FlashSplatRoute
+  '/games/$': typeof GamesSplatRoute
+  '/og/$': typeof OgSplatRoute
+  '/pc/$': typeof PcSplatRoute
+  '/revc/$': typeof RevcSplatRoute
+  '/vc-assets/$': typeof VcAssetsSplatRoute
+  '/vc-data/$': typeof VcDataSplatRoute
   '/wasm-mirror/$': typeof WasmMirrorSplatRoute
   '/blog/': typeof BlogIndexRoute
   '/api/arcade/mirror': typeof ApiArcadeMirrorRoute
@@ -693,6 +783,7 @@ export interface FileRouteTypes {
     | '/api/manage-feature-status'
     | '/api/player-catalog'
     | '/api/remove-bg'
+    | '/assets/$'
     | '/blog/biblioteca-quadrinhos'
     | '/blog/como-baixar-videos-kwai'
     | '/blog/como-baixar-videos-tiktok-sem-marca'
@@ -707,9 +798,18 @@ export interface FileRouteTypes {
     | '/blog/guia-completo-sos01'
     | '/blog/jogos-retro-gratis'
     | '/categoria/$slug'
+    | '/covers/$'
+    | '/emulation/$'
     | '/ferramenta/$slug'
     | '/ferramenta/melhorar-video'
     | '/ferramentas/youtube-downloader'
+    | '/flash/$'
+    | '/games/$'
+    | '/og/$'
+    | '/pc/$'
+    | '/revc/$'
+    | '/vc-assets/$'
+    | '/vc-data/$'
     | '/wasm-mirror/$'
     | '/blog/'
     | '/api/arcade/mirror'
@@ -763,6 +863,7 @@ export interface FileRouteTypes {
     | '/api/manage-feature-status'
     | '/api/player-catalog'
     | '/api/remove-bg'
+    | '/assets/$'
     | '/blog/biblioteca-quadrinhos'
     | '/blog/como-baixar-videos-kwai'
     | '/blog/como-baixar-videos-tiktok-sem-marca'
@@ -777,9 +878,18 @@ export interface FileRouteTypes {
     | '/blog/guia-completo-sos01'
     | '/blog/jogos-retro-gratis'
     | '/categoria/$slug'
+    | '/covers/$'
+    | '/emulation/$'
     | '/ferramenta/$slug'
     | '/ferramenta/melhorar-video'
     | '/ferramentas/youtube-downloader'
+    | '/flash/$'
+    | '/games/$'
+    | '/og/$'
+    | '/pc/$'
+    | '/revc/$'
+    | '/vc-assets/$'
+    | '/vc-data/$'
     | '/wasm-mirror/$'
     | '/blog'
     | '/api/arcade/mirror'
@@ -834,6 +944,7 @@ export interface FileRouteTypes {
     | '/api/manage-feature-status'
     | '/api/player-catalog'
     | '/api/remove-bg'
+    | '/assets/$'
     | '/blog/biblioteca-quadrinhos'
     | '/blog/como-baixar-videos-kwai'
     | '/blog/como-baixar-videos-tiktok-sem-marca'
@@ -848,9 +959,18 @@ export interface FileRouteTypes {
     | '/blog/guia-completo-sos01'
     | '/blog/jogos-retro-gratis'
     | '/categoria/$slug'
+    | '/covers/$'
+    | '/emulation/$'
     | '/ferramenta/$slug'
     | '/ferramenta/melhorar-video'
     | '/ferramentas_/youtube-downloader'
+    | '/flash/$'
+    | '/games/$'
+    | '/og/$'
+    | '/pc/$'
+    | '/revc/$'
+    | '/vc-assets/$'
+    | '/vc-data/$'
     | '/wasm-mirror/$'
     | '/blog/'
     | '/api/arcade/mirror'
@@ -906,10 +1026,20 @@ export interface RootRouteChildren {
   ApiManageFeatureStatusRoute: typeof ApiManageFeatureStatusRoute
   ApiPlayerCatalogRoute: typeof ApiPlayerCatalogRoute
   ApiRemoveBgRoute: typeof ApiRemoveBgRoute
+  AssetsSplatRoute: typeof AssetsSplatRoute
   CategoriaSlugRoute: typeof CategoriaSlugRoute
+  CoversSplatRoute: typeof CoversSplatRoute
+  EmulationSplatRoute: typeof EmulationSplatRoute
   FerramentaSlugRoute: typeof FerramentaSlugRoute
   FerramentaMelhorarVideoRoute: typeof FerramentaMelhorarVideoRoute
   FerramentasYoutubeDownloaderRoute: typeof FerramentasYoutubeDownloaderRoute
+  FlashSplatRoute: typeof FlashSplatRoute
+  GamesSplatRoute: typeof GamesSplatRoute
+  OgSplatRoute: typeof OgSplatRoute
+  PcSplatRoute: typeof PcSplatRoute
+  RevcSplatRoute: typeof RevcSplatRoute
+  VcAssetsSplatRoute: typeof VcAssetsSplatRoute
+  VcDataSplatRoute: typeof VcDataSplatRoute
   WasmMirrorSplatRoute: typeof WasmMirrorSplatRoute
   ApiArcadeMirrorRoute: typeof ApiArcadeMirrorRoute
   ApiArcadePageRoute: typeof ApiArcadePageRoute
@@ -1205,6 +1335,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiRemoveBgRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/assets/$': {
+      id: '/assets/$'
+      path: '/assets/$'
+      fullPath: '/assets/$'
+      preLoaderRoute: typeof AssetsSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog/': {
       id: '/blog/'
       path: '/'
@@ -1310,6 +1447,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriaSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/covers/$': {
+      id: '/covers/$'
+      path: '/covers/$'
+      fullPath: '/covers/$'
+      preLoaderRoute: typeof CoversSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/emulation/$': {
+      id: '/emulation/$'
+      path: '/emulation/$'
+      fullPath: '/emulation/$'
+      preLoaderRoute: typeof EmulationSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ferramenta/$slug': {
       id: '/ferramenta/$slug'
       path: '/ferramenta/$slug'
@@ -1329,6 +1480,55 @@ declare module '@tanstack/react-router' {
       path: '/ferramentas/youtube-downloader'
       fullPath: '/ferramentas/youtube-downloader'
       preLoaderRoute: typeof FerramentasYoutubeDownloaderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/flash/$': {
+      id: '/flash/$'
+      path: '/flash/$'
+      fullPath: '/flash/$'
+      preLoaderRoute: typeof FlashSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/games/$': {
+      id: '/games/$'
+      path: '/games/$'
+      fullPath: '/games/$'
+      preLoaderRoute: typeof GamesSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/og/$': {
+      id: '/og/$'
+      path: '/og/$'
+      fullPath: '/og/$'
+      preLoaderRoute: typeof OgSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pc/$': {
+      id: '/pc/$'
+      path: '/pc/$'
+      fullPath: '/pc/$'
+      preLoaderRoute: typeof PcSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/revc/$': {
+      id: '/revc/$'
+      path: '/revc/$'
+      fullPath: '/revc/$'
+      preLoaderRoute: typeof RevcSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vc-assets/$': {
+      id: '/vc-assets/$'
+      path: '/vc-assets/$'
+      fullPath: '/vc-assets/$'
+      preLoaderRoute: typeof VcAssetsSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vc-data/$': {
+      id: '/vc-data/$'
+      path: '/vc-data/$'
+      fullPath: '/vc-data/$'
+      preLoaderRoute: typeof VcDataSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/wasm-mirror/$': {
@@ -1489,10 +1689,20 @@ const rootRouteChildren: RootRouteChildren = {
   ApiManageFeatureStatusRoute: ApiManageFeatureStatusRoute,
   ApiPlayerCatalogRoute: ApiPlayerCatalogRoute,
   ApiRemoveBgRoute: ApiRemoveBgRoute,
+  AssetsSplatRoute: AssetsSplatRoute,
   CategoriaSlugRoute: CategoriaSlugRoute,
+  CoversSplatRoute: CoversSplatRoute,
+  EmulationSplatRoute: EmulationSplatRoute,
   FerramentaSlugRoute: FerramentaSlugRoute,
   FerramentaMelhorarVideoRoute: FerramentaMelhorarVideoRoute,
   FerramentasYoutubeDownloaderRoute: FerramentasYoutubeDownloaderRoute,
+  FlashSplatRoute: FlashSplatRoute,
+  GamesSplatRoute: GamesSplatRoute,
+  OgSplatRoute: OgSplatRoute,
+  PcSplatRoute: PcSplatRoute,
+  RevcSplatRoute: RevcSplatRoute,
+  VcAssetsSplatRoute: VcAssetsSplatRoute,
+  VcDataSplatRoute: VcDataSplatRoute,
   WasmMirrorSplatRoute: WasmMirrorSplatRoute,
   ApiArcadeMirrorRoute: ApiArcadeMirrorRoute,
   ApiArcadePageRoute: ApiArcadePageRoute,
