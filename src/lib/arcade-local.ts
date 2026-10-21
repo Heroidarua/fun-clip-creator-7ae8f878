@@ -4,7 +4,8 @@
  *
  * Regra de ouro das rotas: local primeiro, origem so como plano B.
  * - Prefixos espelhados na integra (caminho identico): SWF, thumbs Flash,
- *   capas og-v2 e boxart-v2.
+ *   capas og-v2 e boxart-v2; Onda 2 soma /revc/, /vc-data/ e /games/
+ *   (motores PC, mesmo caminho sob public/arcade-assets/).
  * - Capas boxart-v2 com alias curto (ex.: 3-count-bout -> 3countb): o nome
  *   original da capa nao existe nem aqui nem la; o RETRO_ALIAS mapeia o
  *   caminho pedido para o arquivo local real.
@@ -14,6 +15,10 @@ export const LOCAL_PREFIXES = [
   "/flash/thumbs/",
   "/emulation/og-v2/",
   "/emulation/boxart-v2/",
+  // Onda 2: motores PC espelhados em caminho identico sob public/arcade-assets/
+  "/revc/",
+  "/vc-data/",
+  "/games/",
 ] as const;
 
 // caminho pedido (raiz-absoluto do parceiro) -> caminho local no dominio
