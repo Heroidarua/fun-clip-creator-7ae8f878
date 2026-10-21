@@ -57,6 +57,14 @@ function unauthorizedAdminResponse(nonce: string): Response {
   );
 }
 
+// Isolamento cross-origin: o motor WASM do Arcade (reVC etc.) exige
+// window.crossOriginIsolated === true (SharedArrayBuffer), igual ao site do
+// parceiro. Sem COOP+COEP o jogo mostra "NOT ON THIS DEVICE".
+const ISOLATION_HEADERS = {
+  "Cross-Origin-Opener-Policy": "same-origin",
+  "Cross-Origin-Embedder-Policy": "credentialless",
+} as const;
+
 // Superfícies do player Arcade: o documento de jogo roda em iframe same-origin
 // e o motor injeta scripts inline — CSP rígida (frame-ancestors 'none', nonce)
 // e X-Frame-Options: DENY matariam o jogo. Nessas rotas a CSP sai e o frame
@@ -83,6 +91,10 @@ function arcadeResponse(response: Response): Response {
     headers.set(name, value);
   }
   headers.set("X-Frame-Options", "SAMEORIGIN");
+  for (const [name, value] of Object.entries(ISOLATION_HEADERS)) {
+    headers.set(name, value);
+  }
+  headers.set("Cross-Origin-Resource-Policy", "cross-origin");
   return new Response(response.body, {
     status: response.status,
     statusText: response.statusText,
