@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { UPSTREAM_HEADERS } from "../lib/arcade-mirror";
+import { localCandidates } from "../lib/arcade-local";
 
 /**
  * Proxy same-origin para assets do parceiro WASM Arcade (wasmarcade.com).
@@ -22,6 +23,25 @@ export const Route = createFileRoute("/api/arcade/proxy")({
         const p = new URL(request.url).searchParams.get("p") ?? "";
         if (!SAFE_PATH.test(p) || p.includes("//")) {
           return Response.json({ error: "Caminho inválido" }, { status: 400, headers: CORS });
+        }
+
+        // Onda 1: despensa local primeiro; origem so se nao estiver aqui.
+        for (const cand of localCandidates(p)) {
+          try {
+            const local = await fetch(new URL(cand, request.url));
+            if (local.ok) {
+              const lh: Record<string, string> = {
+                ...CORS,
+                "X-Arcade-Source": "local",
+                "Cache-Control": "public, max-age=604800",
+              };
+              const lct = local.headers.get("content-type");
+              if (lct) lh["Content-Type"] = lct;
+              return new Response(local.body, { status: 200, headers: lh });
+            }
+          } catch {
+            /* sem static interno -> segue para a origem */
+          }
         }
 
         const controller = new AbortController();
