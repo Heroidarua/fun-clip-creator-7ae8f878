@@ -9,10 +9,21 @@ import { notFound } from "@tanstack/react-router";
  */
 export const MIRROR_SOURCE = "https://wasmarcade.com";
 
-// O edge do parceiro bloqueia pedidos sem User-Agent (403/404) — o fetch do
-// worker por padrão não envia UA. Todos os espelhos usam este UA de browser.
-export const UPSTREAM_UA =
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
+// O edge do parceiro filtra o tráfego do nosso worker (pedidos "de máquina"
+// chegam como 403/404 nalguns paths). Todos os espelhos saem com o conjunto
+// completo de cabeçalhos de um browser desktop. identity = sem compressão,
+// então o body pode passar direto para frente sem decodificar.
+export const UPSTREAM_HEADERS: Record<string, string> = {
+  "user-agent":
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+  accept: "*/*",
+  "accept-encoding": "identity",
+  "accept-language": "en-US,en;q=0.9",
+  referer: MIRROR_SOURCE + "/",
+  "sec-fetch-dest": "script",
+  "sec-fetch-mode": "no-cors",
+  "sec-fetch-site": "cross-site",
+};
 
 // Prefixos que o motor dos jogos pede em runtime com caminho absoluto.
 export const MIRROR_PREFIXES = [
@@ -55,7 +66,7 @@ export function streamMirror(prefix: string) {
     } catch {
       // mantém bruto se não for encoded
     }
-    if (p && !p.startsWith("/")) p = "/" + p;
+    if (p === "" || p === "/") p = "/";
     if (!SAFE.test(p) || p.includes("//") || p.length > 400) {
       return Response.json({ error: "Caminho inválido" }, { status: 400, headers: CORS });
     }
@@ -63,11 +74,7 @@ export function streamMirror(prefix: string) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 300_000);
     try {
-      const upHeaders: Record<string, string> = {
-        accept: "*/*",
-        referer: MIRROR_SOURCE + "/",
-        "user-agent": UPSTREAM_UA,
-      };
+      const upHeaders: Record<string, string> = { ...UPSTREAM_HEADERS };
       const range = request.headers.get("range");
       if (range) upHeaders["range"] = range;
 

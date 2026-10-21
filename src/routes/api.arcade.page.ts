@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { UPSTREAM_UA } from "../lib/arcade-mirror";
+import { UPSTREAM_HEADERS } from "../lib/arcade-mirror";
 
 /**
  * Página de jogo do parceiro servida no nosso domínio para o player inline.
@@ -161,7 +161,7 @@ export const Route = createFileRoute("/api/arcade/page")({
         try {
           const upstream = await fetch(SOURCE + p, {
             signal: controller.signal,
-            headers: { accept: "text/html,*/*", referer: SOURCE + "/", "user-agent": UPSTREAM_UA },
+            headers: { ...UPSTREAM_HEADERS, accept: "text/html,*/*" },
           });
 
           if (!upstream.ok) {
