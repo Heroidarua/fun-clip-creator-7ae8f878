@@ -20,9 +20,11 @@ export const Route = createFileRoute("/api/arcade/mirror")({
     handlers: {
       OPTIONS: async () => new Response(null, { status: 204, headers: HEADERS }),
       GET: async ({ request }) => {
+        const urlM = new URL(request.url);
+        const qRaw = urlM.searchParams.get("p") ?? ""; // ja vem percent-encoded
         let p = "";
         try {
-          p = decodeURIComponent(new URL(request.url).searchParams.get("p") ?? "");
+          p = decodeURIComponent(qRaw);
         } catch {
           p = "";
         }
@@ -30,8 +32,8 @@ export const Route = createFileRoute("/api/arcade/mirror")({
           return Response.json({ error: "Caminho inválido" }, { status: 400, headers: HEADERS });
         }
 
-        // Onda 3: ROMs primeiro no nosso R2; parceiro so como reserva.
-        const fromR2 = await tryR2Roms(p, "", request);
+        // Onda 4: ROMs e Vice City primeiro no nosso R2; parceiro so como reserva.
+        const fromR2 = await tryR2Roms(qRaw.startsWith("/") ? qRaw : p, "", request);
         if (fromR2) return fromR2;
 
         const controller = new AbortController();
