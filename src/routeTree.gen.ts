@@ -72,6 +72,7 @@ import { Route as FerramentaMelhorarVideoRouteImport } from './routes/ferramenta
 import { Route as FerramentasYoutubeDownloaderRouteImport } from './routes/ferramentas_.youtube-downloader'
 import { Route as FlashSplatRouteImport } from './routes/flash/$'
 import { Route as GamesSplatRouteImport } from './routes/games/$'
+import { Route as Gta3skySplatRouteImport } from './routes/gta3sky/$'
 import { Route as OgSplatRouteImport } from './routes/og/$'
 import { Route as PcSplatRouteImport } from './routes/pc/$'
 import { Route as RevcSplatRouteImport } from './routes/revc/$'
@@ -414,6 +415,11 @@ const GamesSplatRoute = GamesSplatRouteImport.update({
   path: '/games/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Gta3skySplatRoute = Gta3skySplatRouteImport.update({
+  id: '/gta3sky/$',
+  path: '/gta3sky/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OgSplatRoute = OgSplatRouteImport.update({
   id: '/og/$',
   path: '/og/$',
@@ -560,6 +566,7 @@ export interface FileRoutesByFullPath {
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/flash/$': typeof FlashSplatRoute
   '/games/$': typeof GamesSplatRoute
+  '/gta3sky/$': typeof Gta3skySplatRoute
   '/og/$': typeof OgSplatRoute
   '/pc/$': typeof PcSplatRoute
   '/revc/$': typeof RevcSplatRoute
@@ -640,6 +647,7 @@ export interface FileRoutesByTo {
   '/ferramentas/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/flash/$': typeof FlashSplatRoute
   '/games/$': typeof GamesSplatRoute
+  '/gta3sky/$': typeof Gta3skySplatRoute
   '/og/$': typeof OgSplatRoute
   '/pc/$': typeof PcSplatRoute
   '/revc/$': typeof RevcSplatRoute
@@ -722,6 +730,7 @@ export interface FileRoutesById {
   '/ferramentas_/youtube-downloader': typeof FerramentasYoutubeDownloaderRoute
   '/flash/$': typeof FlashSplatRoute
   '/games/$': typeof GamesSplatRoute
+  '/gta3sky/$': typeof Gta3skySplatRoute
   '/og/$': typeof OgSplatRoute
   '/pc/$': typeof PcSplatRoute
   '/revc/$': typeof RevcSplatRoute
@@ -805,6 +814,7 @@ export interface FileRouteTypes {
     | '/ferramentas/youtube-downloader'
     | '/flash/$'
     | '/games/$'
+    | '/gta3sky/$'
     | '/og/$'
     | '/pc/$'
     | '/revc/$'
@@ -885,6 +895,7 @@ export interface FileRouteTypes {
     | '/ferramentas/youtube-downloader'
     | '/flash/$'
     | '/games/$'
+    | '/gta3sky/$'
     | '/og/$'
     | '/pc/$'
     | '/revc/$'
@@ -966,6 +977,7 @@ export interface FileRouteTypes {
     | '/ferramentas_/youtube-downloader'
     | '/flash/$'
     | '/games/$'
+    | '/gta3sky/$'
     | '/og/$'
     | '/pc/$'
     | '/revc/$'
@@ -1035,6 +1047,7 @@ export interface RootRouteChildren {
   FerramentasYoutubeDownloaderRoute: typeof FerramentasYoutubeDownloaderRoute
   FlashSplatRoute: typeof FlashSplatRoute
   GamesSplatRoute: typeof GamesSplatRoute
+  Gta3skySplatRoute: typeof Gta3skySplatRoute
   OgSplatRoute: typeof OgSplatRoute
   PcSplatRoute: typeof PcSplatRoute
   RevcSplatRoute: typeof RevcSplatRoute
@@ -1496,6 +1509,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GamesSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/gta3sky/$': {
+      id: '/gta3sky/$'
+      path: '/gta3sky/$'
+      fullPath: '/gta3sky/$'
+      preLoaderRoute: typeof Gta3skySplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/og/$': {
       id: '/og/$'
       path: '/og/$'
@@ -1698,6 +1718,7 @@ const rootRouteChildren: RootRouteChildren = {
   FerramentasYoutubeDownloaderRoute: FerramentasYoutubeDownloaderRoute,
   FlashSplatRoute: FlashSplatRoute,
   GamesSplatRoute: GamesSplatRoute,
+  Gta3skySplatRoute: Gta3skySplatRoute,
   OgSplatRoute: OgSplatRoute,
   PcSplatRoute: PcSplatRoute,
   RevcSplatRoute: RevcSplatRoute,
