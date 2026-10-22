@@ -59,18 +59,31 @@ function rewriteCss(css: string): string {
   );
 }
 
-// Onda 3: as ROMs moram no nosso bucket R2 (Cloudflare). Servimos daqui
-// primeiro; o parceiro vira reserva cega se faltar algo no bucket.
+// Onda 4: ROMs retrô E o pacote completo do Vice City (vc-data, games, revc)
+// moram no nosso bucket R2 (Cloudflare). Servimos daqui primeiro; o parceiro
+// vira reserva cega se faltar algo no bucket. Chaves no bucket = caminho
+// original sem a barra inicial.
 export const R2_ROMS_BASE = "https://sos01-roms.523b77a14a08cedb4c6136a7f27ed57e.r2.dev";
 
-/** Tenta servir /emulation/roms/* do nosso R2 (suporta Range). Null = nao tem la. */
-export async function tryR2Roms(p: string, search: string, request: Request): Promise<Response | null> {
-  if (!p.startsWith("/emulation/roms/")) return null;
+// Prefixos que consultamos no R2 antes de ir ao parceiro. (local-first ainda
+// roda antes: o que existe em public/ ganha do bucket.)
+const R2_PREFIXES = ["/emulation/roms/", "/vc-data/", "/games/", "/revc/"];
+
+/** Tenta servir os prefixos acima do nosso R2 (suporta Range). Null = nao tem la.
+ *  pRaw = pathname ainda percent-encoded, como chegou no request: o nome de
+ *  dois arquivos do VC tem "%" literal no nome (kb_planter%2Bbush.dff); se o
+ *  acesso simples der 404 por causa disso, tenta com "%" re-codificado (%25). */
+export async function tryR2Roms(pRaw: string, search: string, request: Request): Promise<Response | null> {
+  const okPrefix = R2_PREFIXES.some((x) => pRaw.startsWith(x));
+  if (!okPrefix) return null;
   try {
     const h: Record<string, string> = { ...UPSTREAM_HEADERS };
     const range = request.headers.get("range");
     if (range) h["range"] = range;
-    const r2 = await fetch(R2_ROMS_BASE + p + search, { headers: h });
+    let r2 = await fetch(R2_ROMS_BASE + pRaw + search, { headers: h });
+    if (r2.status === 404 && pRaw.includes("%")) {
+      r2 = await fetch(R2_ROMS_BASE + pRaw.replace(/%/g, "%25") + search, { headers: h });
+    }
     if (r2.status !== 200 && r2.status !== 206) return null;
     const headers: Record<string, string> = {
       "Access-Control-Allow-Origin": "*",
@@ -128,8 +141,8 @@ export function streamMirror(prefix: string) {
       }
     }
 
-    // Onda 3: ROMs primeiro no nosso R2; parceiro so como reserva.
-    const fromR2 = await tryR2Roms(p, u.search, request);
+    // Onda 4: ROMs e Vice City primeiro no nosso R2; parceiro so como reserva.
+    const fromR2 = await tryR2Roms(u.pathname, u.search, request);
     if (fromR2) return fromR2;
 
     const controller = new AbortController();
