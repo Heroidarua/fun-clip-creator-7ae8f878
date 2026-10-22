@@ -20,7 +20,7 @@ const RUFFLE_BASE = "/ruffle-0.6.0/";
 
 let scriptPromise: Promise<void> | null = null;
 
-function loadRuffleScript(): Promise<void> {
+function loadRuffleScript(nonce?: string): Promise<void> {
   if (typeof window === "undefined") return Promise.resolve();
   if (window.RufflePlayer) return Promise.resolve();
   if (!scriptPromise) {
@@ -28,6 +28,7 @@ function loadRuffleScript(): Promise<void> {
       const s = document.createElement("script");
       s.src = RUFFLE_BASE + "ruffle.js";
       s.async = true;
+      if (nonce) s.nonce = nonce;
       s.onload = () => resolve();
       s.onerror = () => {
         scriptPromise = null;
@@ -58,7 +59,7 @@ export default function ArcadeRuffle({ swfUrl }: { swfUrl: string }) {
 
     const start = async () => {
       try {
-        await loadRuffleScript();
+        await loadRuffleScript(nonce);
         if (cancelled || !hostRef.current) return;
         hostRef.current.innerHTML = "";
         const RP = window.RufflePlayer;
