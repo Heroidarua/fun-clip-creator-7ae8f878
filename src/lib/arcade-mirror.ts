@@ -112,6 +112,7 @@ export function streamMirror(prefix: string) {
     // pedir à origem. Os demais prefixos (/assets, /games, /flash...) fazem
     // parte do caminho real no parceiro e precisam ser mantidos.
     let p = prefix === "/wasm-mirror" ? u.pathname.slice(prefix.length) : u.pathname;
+    const pRawEff = p; // forma percent-encoded, como o bucket R2 guarda as chaves
     try {
       p = decodeURIComponent(p);
     } catch {
@@ -142,7 +143,7 @@ export function streamMirror(prefix: string) {
     }
 
     // Onda 4: ROMs e Vice City primeiro no nosso R2; parceiro so como reserva.
-    const fromR2 = await tryR2Roms(u.pathname, u.search, request);
+    const fromR2 = await tryR2Roms(pRawEff, u.search, request);
     if (fromR2) return fromR2;
 
     const controller = new AbortController();
