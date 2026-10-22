@@ -1,14 +1,14 @@
 import { createMiddleware } from "@tanstack/react-start";
 import { hasValidAdminBasicAuth } from "./admin-auth.server";
 
-function createContentSecurityPolicy(nonce: string): string {
+function createContentSecurityPolicy(nonce: string, arcadeHost = false): string {
   return [
     "default-src 'self'",
     "base-uri 'self'",
     "object-src 'none'",
     "frame-ancestors 'none'",
     "form-action 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' blob: https://www.googletagmanager.com https://unpkg.com https://cdn.jsdelivr.net`,
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' ${arcadeHost ? "'wasm-unsafe-eval' " : ""}blob: https://www.googletagmanager.com https://unpkg.com https://cdn.jsdelivr.net`,
     `style-src 'self' 'nonce-${nonce}' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-CIxDM5jnsGiKqXs2v7NKCY5MzdR9gu6TtiMJrDw29AY=' https://fonts.googleapis.com`,
     "style-src-attr 'unsafe-inline'",
     "font-src 'self' data: https://fonts.gstatic.com",
@@ -29,9 +29,12 @@ const SECURITY_HEADERS = {
   "Permissions-Policy": "camera=(), geolocation=(), microphone=(self)",
 } as const;
 
-function secureResponse(response: Response, nonce: string): Response {
+function secureResponse(response: Response, nonce: string, arcadeHost = false): Response {
   const headers = new Headers(response.headers);
-  headers.set("Content-Security-Policy", createContentSecurityPolicy(nonce));
+  headers.set("Content-Security-Policy", createContentSecurityPolicy(nonce, arcadeHost));
+  if (arcadeHost) {
+    for (const [name, value] of Object.entries(ISOLATION_HEADERS)) headers.set(name, value);
+  }
   for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
     headers.set(name, value);
   }
@@ -73,6 +76,7 @@ const ARCADE_PREFIXES = [
   "/api/arcade/",
   "/wasm-mirror/",
   "/games/",
+  "/gta3sky/",
   "/revc/",
   "/vc-data/",
   "/vc-assets/",
@@ -85,7 +89,7 @@ const ARCADE_PREFIXES = [
 
 function arcadeResponse(response: Response): Response {
   const headers = new Headers(response.headers);
-  headers.delete("Content-Security-Policy");
+  // Game documents supply a nonce policy; assets need no document policy.
   for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
     if (name === "X-Frame-Options") continue;
     headers.set(name, value);
@@ -116,7 +120,7 @@ export const securityMiddleware = createMiddleware({ type: "request" }).server(
     );
     return {
       ...result,
-      response: isArcade ? arcadeResponse(result.response) : secureResponse(result.response, nonce),
+      response: isArcade ? arcadeResponse(result.response) : secureResponse(result.response, nonce, pathname === "/arcade" || pathname === "/arcade/"),
     };
   },
 );
